@@ -114,7 +114,9 @@ All models were checked live on OpenRouter on 24 Oct 2026. Prices are per millio
 
 **Client.** `langchain_openrouter.ChatOpenRouter`, with `openrouter_provider={"require_parameters": True, "data_collection": "deny"}`.
 
-**Cost tracking.** Every response carries `usage.cost`; we log it to traces and to Prometheus.
+**Keys.** We use the API keys provided by the faculty. Spike S6 confirms that the keys can reach each model above. Any substitute comes from the same family and is recorded in `Docs/DECISIONS.md`.
+
+**Cost tracking.** Every response carries `usage.cost`; we log it to traces and to Prometheus, because the course guide asks for cost per case.
 
 ### D10 · Retrieval
 

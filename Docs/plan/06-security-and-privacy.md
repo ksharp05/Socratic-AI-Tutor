@@ -13,7 +13,7 @@ R4 writes the one-page threat model and R5 reviews it. The submitted page follow
 - Question-bank integrity
 - The teacher's authority
 - Prompts and the playbook
-- The budget
+- API usage on the faculty-provided keys
 
 ### Who or what threatens it
 

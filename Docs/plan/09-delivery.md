@@ -70,29 +70,25 @@
 9. The leak alert fires.
 10. Forget-me deletes a learner's data.
 
-## Budget
+## API keys and usage
 
-Prices were checked on 24 Oct 2026. The estimates assume:
-- 8 tutor turns per session;
-- the team configuration on gpt-4.1-mini makes about 4 model calls per turn, at about 3,500 input and 300 output tokens each;
-- guard calls cost about $0.0004 per turn;
-- the simulator and judge add about $0.005 per session.
+- **We use the API keys provided by the faculty.** We don't need to buy credits or manage our own spending budget.
+- **Keep the keys secret.** Each member keeps the key in their local `.env`. R6 stores one as a GitHub secret for the manual `live-eval` workflow. Never commit a key or paste it into an issue, a pull request or chat.
+- **Check model access first.** On Sat 24 Oct and in spike S6, confirm which of the [models in D9](03-decisions.md#d9--models) the provided keys can reach. If one isn't available, pick the closest model from the same family and record the change in `Docs/DECISIONS.md`. The judge must still come from a different family than the tutor.
+- **We still log the cost and tokens of every call.** The course guide asks for cost per case for every configuration, and the log also warns us early if we approach any usage limit on the keys.
 
-| Item | Runs | Estimated cost |
-|---|---|---|
-| Spikes, development and debugging | About 250 sessions | $15–25 |
-| Reflexion (2 iterations × 32 development sessions, plus reflection calls) | 64 sessions | $5–8 |
-| E1 (3 configurations × 24 students × 3 seeds) | 216 sessions | $15–20 |
-| E3 after the playbook (24 students × 3 seeds) | 72 sessions | $5–8 |
-| E4a, E4b and the deployment configuration (24 sessions each) | 72 sessions | $8–12 |
-| E2 (about 80 tasks, defences off and on) | 160 short runs | $3–5 |
-| Golden set (100 cases × 3 configurations × 3 seeds) | 900 short runs | $8–12 |
-| Judge (all transcripts) | About 700 | $2–4 |
-| **Total** | | **About $60–95** |
+**Planned volume, to pace our usage:**
 
-**Spending limit.** Set an OpenRouter key limit of **$150**.
-
-Spike S6 (due Mon 26 Oct) replaces these estimates with a measured cost per session. Every run logs its actual cost.
+| Workload | Runs |
+|---|---|
+| Spikes, development and debugging | About 250 sessions |
+| Reflexion | 64 development sessions |
+| E1 | 216 sessions |
+| E3 | 72 sessions |
+| E4a, E4b and the deployment configuration | 72 sessions |
+| E2 | About 160 short runs |
+| Golden set | About 900 short runs |
+| Judge | About 700 transcripts |
 
 ## Risks and cut lines
 
@@ -105,7 +101,7 @@ Spike S6 (due Mon 26 Oct) replaces these estimates with a measured cost per sess
 | The simulator is not credible | Validation on Tue 3 Nov fails | Tighten the rules, lower the temperature, and report the problem openly |
 | Judge agreement (kappa) is below 0.6 | Fri 6 Nov | Use only the code diagnosis for transitions; report the judge as secondary |
 | OpenRouter rate limits (429s) or provider drift | Errors during runs | Pin providers; retry with backoff; keep concurrency at 4 or less; count failures |
-| Budget overrun | Daily cost metric | The key limit; cut the extra E2 and E4 seeds first |
+| Usage limits on the faculty-provided keys | Cost and token metrics | Pace the runs; cut the extra E2 and E4 seeds first; ask the faculty early if we need more |
 | People unavailable | Daily stand-up | The [reduced-team plan](07-team-and-roles.md#if-fewer-than-six-people-are-active); the cut list below |
 | Schedule slip | M2 not met | The cut list below |
 

@@ -209,7 +209,7 @@ Details: [07 · Team and roles](07-team-and-roles.md).
 | [06 · Security and privacy](06-security-and-privacy.md) | Threat model, attack suite, memory policy, minors and Indian law | R4, R5, R2, R1 |
 | [07 · Team and roles](07-team-and-roles.md) | Ownership, separation rules, working agreements, human-only tasks | Everyone |
 | [08 · Schedule](08-schedule.md) | Day-by-day plan for each role, with milestones | Everyone |
-| [09 · Delivery](09-delivery.md) | Deliverables, budget, risks and cut lines, viva preparation | Everyone |
+| [09 · Delivery](09-delivery.md) | Deliverables, API keys and usage, risks and cut lines, viva preparation | Everyone |
 | [Appendix](appendix.md) | Configuration skeleton, repository layout, sources | As needed |
 
 ## Open decisions
@@ -221,7 +221,7 @@ To settle at kickoff on Sun 25 Oct.
 | **Q1** | Repository layout and rules | Adopt the Architecture Guide's layout and folder-ownership table. The plan's paths are then updated to match, replacing the [appendix](appendix.md#b-repository-layout) layout. Every change goes through a pull request with one review, and `CODEOWNERS` enforces ownership. | R6 |
 | **Q2** | Repository visibility | Private until the review on 15 Nov | All |
 | **Q3** | Names for R1–R6, and a maths teacher to review misconceptions, rubric, lessons and question sets | Settle at kickoff. If no teacher is available, R1 acts as teacher and the report says so. | All |
-| **Q4** | OpenRouter account | One team key with a hard $150 limit. It lives in GitHub secrets and in each member's local `.env`, and is never committed. | R6 |
+| **Q4** | API keys | Use the API keys provided by the faculty. Each member keeps them in their local `.env`, and R6 adds one as a GitHub secret for the manual evaluation workflow. Keys are never committed. Confirm which models the keys can reach. | R6 |
 | **Q5** | Local setup | Docker Desktop on every member's machine, with at least 8 GB of memory for WSL2. At least two machines run the full stack (one is needed for the clean-install test). | Each member |
 | **Q6** | Access to Prompt Guard 2 on Hugging Face | Each member who runs the stack requests access personally. The form asks for legal name, date of birth and organisation. | Each member |
 | **Q7** | Traces leaving our machines | By default, traces stay in Postgres. If we want a trace UI, use Langfuse Cloud (free tier, with masking) for synthetic runs only. | R6 + R2 |

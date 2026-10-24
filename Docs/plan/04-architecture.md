@@ -592,7 +592,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 
    The code-level security checks cover role-from-token, cross-learner access, the payload-hash token and free-text profile updates. The job writes `reports/eval_gate.md` to the run summary, prints a `::error` annotation for each failing metric, and uploads the report as an artifact.
 3. **`compose-smoke`.** `docker compose up -d --wait`, then check `/health` and `/metrics`, then run one scripted session against a stub LLM, then `down -v`.
-4. **`live-eval`.** Started by hand only. Uses the OpenRouter secret on 10 development cases, with a cost cap.
+4. **`live-eval`.** Started by hand only. Uses a faculty-provided key, stored as a GitHub secret, on 10 development cases, with a cost cap.
 
 **The failed CI run** (required evidence), on Sun 8 Nov:
 1. Open pull request `demo/eval-regression` with one honest regression: a chunk-size change that splits display equations, dropping section Recall@5 below its gate.

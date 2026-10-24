@@ -124,7 +124,7 @@ Checked against PyPI, OpenRouter and official documentation on 24 Oct 2026.
 - [ ] Git and a GitHub account with access to the team repository.
 - [ ] Python 3.12 and [uv](https://docs.astral.sh/uv/).
 - [ ] Docker Desktop, with at least 8 GB of memory for WSL2 (set in `%UserProfile%\.wslconfig` on Windows).
-- [ ] The team OpenRouter key in your local `.env`. Never commit it.
+- [ ] The API key provided by the faculty, in your local `.env`. Never commit it.
 - [ ] Access to `meta-llama/Llama-Prompt-Guard-2-86M` on Hugging Face, plus a read token in `.env`.
 
 ---

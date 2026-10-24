@@ -41,7 +41,7 @@ R5 freezes these on **Sun 25 Oct, before any tuning**, and records the seed and 
 | Attacks and controls | — | 30 existing + ≥ 10 new by R5, each with a matching control | `attacks.jsonl`, `eval/attacks/` |
 | Judge calibration | 10 (for prompt tuning) | 20+ (reported) | People label these on 6 Nov |
 
-The other 390 held-out golden cases stay untouched as a reserve for a confirmation run, if the budget allows.
+The other 390 held-out golden cases stay untouched as a reserve for a confirmation run, if time allows.
 
 ## Code checkers
 
@@ -221,7 +221,7 @@ One harness runs every experiment: `python -m eval.run --config eval/configs/<na
 | Experiment | Configurations | Population | Seeds |
 |---|---|---|---|
 | **E1** Does the team of agents justify its cost? | Three configurations, **all on gpt-4.1-mini**:<br/>• `e1_c0_fixed`: a fixed workflow (guard → retrieve → one six-slot hint prompt → guard) with no agent decisions<br/>• `e1_c1_single`: one agent with every tool, the same middleware and the same budget<br/>• `e1_c2_team`: the full team | 24 held-out students + 60 held-out golden cases | **3** |
-| **E2** Do the defences work? | `e2_off` against `e2_on` (all layers). Per-layer ablation if the budget allows | ≥ 40 attacks + matching controls + 24 clean held-out sessions | 1 (3 if the budget allows) |
+| **E2** Do the defences work? | `e2_off` against `e2_on` (all layers). Per-layer ablation if time allows | ≥ 40 attacks + matching controls + 24 clean held-out sessions | 1 (3 if time allows) |
 | **E3** Did the lessons help? | `e3_before` (= E1 C2) against `e3_after` (playbook v1) | 24 held-out students | **3** |
 | **E4a** Learner memory | `e4_memory_off` (no learner model; a static plan) against C2 | 24 held-out students | 1 |
 | **E4b** Hints vs telling | `e4_direct_answers` (tutor may answer; leak guard off) against C2 | 24 held-out students | 1 |

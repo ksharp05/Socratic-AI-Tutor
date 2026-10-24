@@ -63,7 +63,7 @@ gantt
 ### Sat 24 Oct · accounts and decisions
 
 - Prepare the [open decisions](README.md#open-decisions).
-- Create the OpenRouter key with a $150 limit.
+- Collect the API keys provided by the faculty, and check which models they can reach.
 - Every member installs Docker Desktop and requests Prompt Guard 2 access on Hugging Face.
 
 ### Sun 25 Oct · kickoff (2 hours) → **M0**
@@ -83,7 +83,7 @@ gantt
 | S3 | R2 | Docling or PyMuPDF? Compare extraction on three pages: the quadratic formula, the AP sum derivation and the trig table. |
 | S4 | R4 | Llama Guard 4 on OpenRouter: does it apply its template, and how do we parse its output? Also measure Prompt Guard 2 latency on CPU. |
 | S5 | R6 | Does `docker compose up --wait` bring up postgres, chroma, prometheus and grafana? |
-| S6 | R5 | What does one session cost? Measure on a 4-turn scripted C2 run. |
+| S6 | R5 | Do the faculty-provided keys reach every model we plan to use? How many tokens and how much cost does one session take (which we must report as cost per case)? Measure on a 4-turn scripted C2 run. |
 
 ### Mon 26 Oct · contracts day
 
