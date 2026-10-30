@@ -13,10 +13,12 @@ Every member adds an entry for each day they work, newest first. The course guid
 
 ---
 
-### 2026-10-30 · ksharp05 (Lead)
+### 2026-10-30 · ksharp05 (Lead, R1, R5)
 - **Work:** pushed the proof of concept to branch `poc/walking-skeleton`; wrote the [lead roadmap](LEAD_ROADMAP.md), the contributing guide and the pull request template; added the tutor-visible dataset content.
 - **AI-assisted:** written with Claude Code, then reviewed and tested.
-- **Decisions:** proposes running the rest of Phase 1 from the POC (open decision Q9).
+- **Decisions:**
+  - [D-1](DECISIONS.md): takes R1 and R5 alongside Lead, with hand-offs for the separation rules.
+  - Proposes running the rest of Phase 1 from the POC (open decision Q9).
 
 ### 2026-10-24 · ksharp05 (Lead)
 - **Work:**

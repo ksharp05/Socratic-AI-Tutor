@@ -37,7 +37,7 @@ These decide whether our experiments count. They are in [07 · Team and roles](D
 
 - **R3** (who tunes the agents) never opens held-out cases or looks at held-out results before the freeze.
 - **R4** (who builds the defences) does not see R5's new attacks before experiment E2.
-- **R5's simulator** is written without reading the diagnosis rules in `src/tutor/mathcore.py`.
+- **The simulator and the diagnosis rules have different authors.** R3 and R2 write the diagnosis rules in `src/tutor/mathcore.py` from the misconception catalogue, without reading the simulator in `src/tutor_eval/`. R5 never edits the diagnosis rules, guards, prompts or agents.
 
 ## AI coding tools
 

@@ -8,11 +8,11 @@ Each role gets a name at kickoff on Sun 25 Oct.
 
 | Role | Name | Owns (code and documents) | Never does |
 |---|---|---|---|
-| **R1** Domain and product lead | _TBD_ | Teaching and mode policy; definition of an answer leak; policy for what happens after the last hint; review of the misconception catalogue (with the teacher); demo script; held-out policy check; lesson review; judge labels; slides | Write attacks |
+| **R1** Domain and product lead | ksharp05 (also Lead and R5) | Teaching and mode policy; definition of an answer leak; policy for what happens after the last hint; review of the misconception catalogue (with the teacher); demo script; held-out policy check; lesson review; judge labels; slides | Write attacks |
 | **R2** Knowledge and memory engineer | _TBD_ | `tutor/retrieval/`, the ingest job, section labels (with R5), `tutor/memory/` (mastery model, store, summarisation, forget-me), memory policy | — |
 | **R3** Agents and orchestration engineer | _TBD_ | `tutor/graph/`, agents and prompts, planner, self-correction loop, C0 and C1 baselines, Reflexion code, diagnosis rules (with R2) | **Read `eval/private/`, or look at held-out results before the freeze** |
 | **R4** Tools, control and security engineer | _TBD_ | `tutor/mcp_servers/`, hooks, guardrails, approval gate, answer adapter, threat model | **See R5's new attacks before E2** |
-| **R5** Evaluation and red-team engineer | _TBD_ | `eval/` (harness, simulator engine and rules, judge, scorers, configurations, pre-registration), the held-out freeze, new attacks, results tables | **Edit prompts, agents or guards** |
+| **R5** Evaluation and red-team engineer | ksharp05 (also Lead and R1) | `eval/` (harness, simulator engine and rules, judge, scorers, configurations, pre-registration), the held-out freeze, new attacks, results tables | **Edit prompts, agents or guards** |
 | **R6** Deployment and operations engineer | _TBD_ | Compose, Dockerfiles, API, UI, authentication, Prometheus and Grafana, alerting, CI, README, clean-machine test, demo recording | — |
 
 ## Separation rules
