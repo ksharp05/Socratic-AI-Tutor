@@ -1,0 +1,20 @@
+# Environments and secrets
+.venv*/
+.env
+**/.env
+
+# Local state: databases, traces, reports (reset with `tutor setup`)
+var/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# Never commit: NCERT PDFs and page images, the frozen dataset build, held-out material kept outside git
+data/ncert/
+**/pages/*.png
+socratic_tutor_dataset*/

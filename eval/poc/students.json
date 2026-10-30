@@ -1,0 +1,104 @@
+[
+  {
+    "hidden_card": {
+      "persona": {
+        "communication_style": "brief",
+        "confidence_expression": "hesitant",
+        "provenance": "fictional_simulator_configuration_not_observed_student_traits",
+        "response_pace": "quick"
+      },
+      "seeded_misconception_ids": [
+        "qe_m04",
+        "qe_m01"
+      ],
+      "target_concept_ids": [
+        "qe01",
+        "qe04"
+      ],
+      "true_mastery_by_concept": {
+        "ap01": 0.4,
+        "ap02": 0.61,
+        "ap03": 0.61,
+        "ap04": 0.59,
+        "ap05": 0.86,
+        "ap06": 0.4,
+        "ap07": 0.63,
+        "ap08": 0.79,
+        "qe01": 0.18,
+        "qe02": 0.51,
+        "qe03": 0.61,
+        "qe04": 0.17,
+        "qe05": 0.57,
+        "qe06": 0.8,
+        "qe07": 0.47,
+        "qe08": 0.63,
+        "tr01": 0.81,
+        "tr02": 0.41,
+        "tr03": 0.4,
+        "tr04": 0.75,
+        "tr05": 0.83,
+        "tr06": 0.58,
+        "tr07": 0.75,
+        "tr08": 0.72,
+        "tr09": 0.84
+      }
+    },
+    "independently_authored": false,
+    "partition": "development",
+    "review_status": "pending_independent_owner_review",
+    "seed": 20271029,
+    "student_id": "sim_v2_010",
+    "synthetic": true,
+    "visibility": "simulator_only_never_tutor_or_learner_store"
+  },
+  {
+    "hidden_card": {
+      "persona": {
+        "communication_style": "brief",
+        "confidence_expression": "steady",
+        "provenance": "fictional_simulator_configuration_not_observed_student_traits",
+        "response_pace": "quick"
+      },
+      "seeded_misconception_ids": [
+        "qe_m05"
+      ],
+      "target_concept_ids": [
+        "qe03"
+      ],
+      "true_mastery_by_concept": {
+        "ap01": 0.76,
+        "ap02": 0.53,
+        "ap03": 0.77,
+        "ap04": 0.59,
+        "ap05": 0.7,
+        "ap06": 0.57,
+        "ap07": 0.73,
+        "ap08": 0.51,
+        "qe01": 0.79,
+        "qe02": 0.45,
+        "qe03": 0.29,
+        "qe04": 0.63,
+        "qe05": 0.63,
+        "qe06": 0.53,
+        "qe07": 0.54,
+        "qe08": 0.6,
+        "tr01": 0.57,
+        "tr02": 0.45,
+        "tr03": 0.78,
+        "tr04": 0.42,
+        "tr05": 0.86,
+        "tr06": 0.85,
+        "tr07": 0.77,
+        "tr08": 0.8,
+        "tr09": 0.86
+      }
+    },
+    "independently_authored": false,
+    "partition": "development",
+    "review_status": "pending_independent_owner_review",
+    "seed": 20271032,
+    "student_id": "sim_v2_013",
+    "synthetic": true,
+    "visibility": "simulator_only_never_tutor_or_learner_store"
+  }
+]

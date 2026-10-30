@@ -1,0 +1,35 @@
+{
+  "dataset_version": "0.10.0",
+  "payload_sha256": "49862eeaace8edc53b31849813e4f46195dbbe1c619948cb7614327a47afaf26",
+  "note": "Byte-identical copies of the tutor-visible files of the frozen build. Each sha256 matches the build's metadata/files.sha256.json.",
+  "files": {
+    "corpus.jsonl": {
+      "from": "development_preview/corpus.jsonl",
+      "sha256": "b12828c9c4030b56d3d90974cf8bc6548a4a8e6e6beefd4fd193afdcb467c739"
+    },
+    "practice_questions.jsonl": {
+      "from": "development_preview/practice_questions.jsonl",
+      "sha256": "4285fcdf521add7e9e72e16834b7eed06bf5b72f1d27b9decd488eb653232934"
+    },
+    "grading_contract.json": {
+      "from": "development_preview/grading_contract.json",
+      "sha256": "4342eeda7ea8a8a65ee0046d200e4c90ab7b0758964b1a55235ed37f97669c20"
+    },
+    "answer.schema.json": {
+      "from": "development_preview/answer.schema.json",
+      "sha256": "d5bc0fa080d072746a4239b7e01348e47d64409bad103c55d25ab7906bfcaacd"
+    },
+    "export_manifest.json": {
+      "from": "development_preview/export_manifest.json",
+      "sha256": "140146ed29405022004bcbf4a5a9cec105c381c5449895853e961c98a66e2f19"
+    },
+    "concepts.jsonl": {
+      "from": "metadata/concepts.jsonl",
+      "sha256": "1414a67e456a23b72e64871ee13e426b1335f7f999d239e3806b32ccf920c930"
+    },
+    "misconceptions.jsonl": {
+      "from": "metadata/misconceptions.jsonl",
+      "sha256": "5b5b73b645244a25883489703b9f74b72c4b957a9b4e613e5e12a7b43fc56f7b"
+    }
+  }
+}

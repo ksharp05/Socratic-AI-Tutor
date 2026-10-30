@@ -1,0 +1,205 @@
+[
+  {
+    "authorship": "original_assistant_authored_curriculum_notes",
+    "chapter": "quadratic_equations",
+    "class": 10,
+    "concept_id": "qe01",
+    "diagnostic_probe": "After collecting like terms, does a nonzero squared term remain?",
+    "domain": "Real coefficients; classify after collecting like powers.",
+    "explanation": "A polynomial is quadratic exactly when its collected x^2 coefficient is nonzero.",
+    "hint": "Start by expanding brackets and collecting the powers of the variable.",
+    "language": "en",
+    "learning_outcome": {
+      "description": "Explain and apply standard form and degree after simplification",
+      "task_type_refs": [
+        "quadratic_coefficients",
+        "quadratic_degree",
+        "quadratic_reconstruct"
+      ]
+    },
+    "mastery_criterion": {
+      "candidate_rule": "correct_exact_answer_and_valid_method_on_two_distinct_items_with_stated_assumptions",
+      "human_approved": false,
+      "status": "proposed_requires_teacher_review"
+    },
+    "normalization_status": "verified_reference_replaces_unverified_legacy_LaTex",
+    "prerequisites": [],
+    "review_status": "pending_human_review",
+    "source_anchor_status": "assistant_visual_checked_human_review_pending",
+    "source_id": "ncert_qe",
+    "source_pdf_page": 2,
+    "source_printed_page": 39,
+    "source_section": "4.2",
+    "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+    "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+    "subject": "mathematics",
+    "supporting_passage_ids": [
+      "normalized:qe01"
+    ],
+    "title": "Standard form and degree after simplification"
+  },
+  {
+    "authorship": "original_assistant_authored_curriculum_notes",
+    "chapter": "quadratic_equations",
+    "class": 10,
+    "concept_id": "qe02",
+    "diagnostic_probe": "Which sign belongs to the linear coefficient?",
+    "domain": "Real signed coefficients, including zero coefficients.",
+    "explanation": "Keep coefficient signs when moving terms to one side and collecting powers.",
+    "hint": "Rewrite subtraction as addition of a signed term before reading coefficients.",
+    "language": "en",
+    "learning_outcome": {
+      "description": "Explain and apply signed coefficients",
+      "task_type_refs": [
+        "quadratic_classify",
+        "quadratic_coefficients",
+        "quadratic_parameter_repeated",
+        "quadratic_reconstruct"
+      ]
+    },
+    "mastery_criterion": {
+      "candidate_rule": "correct_exact_answer_and_valid_method_on_two_distinct_items_with_stated_assumptions",
+      "human_approved": false,
+      "status": "proposed_requires_teacher_review"
+    },
+    "normalization_status": "verified_reference_replaces_unverified_legacy_LaTex",
+    "prerequisites": [
+      "qe01"
+    ],
+    "review_status": "pending_human_review",
+    "source_anchor_status": "assistant_visual_checked_human_review_pending",
+    "source_id": "ncert_qe",
+    "source_pdf_page": 3,
+    "source_printed_page": 40,
+    "source_section": "4.2",
+    "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+    "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+    "subject": "mathematics",
+    "supporting_passage_ids": [
+      "normalized:qe02"
+    ],
+    "title": "Signed coefficients"
+  },
+  {
+    "authorship": "original_assistant_authored_curriculum_notes",
+    "chapter": "quadratic_equations",
+    "class": 10,
+    "concept_id": "qe03",
+    "diagnostic_probe": "What value does the original left-hand side have at your proposed root?",
+    "domain": "Real x and real candidate r.",
+    "explanation": "Substitute a candidate into the original polynomial. A zero remainder certifies that candidate, but completeness needs all roots.",
+    "hint": "Substitute the proposed value before deciding whether it is a root.",
+    "language": "en",
+    "learning_outcome": {
+      "description": "Explain and apply roots verified by substitution",
+      "task_type_refs": [
+        "quadratic_check_claim",
+        "quadratic_solve"
+      ]
+    },
+    "mastery_criterion": {
+      "candidate_rule": "correct_exact_answer_and_valid_method_on_two_distinct_items_with_stated_assumptions",
+      "human_approved": false,
+      "status": "proposed_requires_teacher_review"
+    },
+    "normalization_status": "verified_reference_replaces_unverified_legacy_LaTex",
+    "prerequisites": [
+      "qe01"
+    ],
+    "review_status": "pending_human_review",
+    "source_anchor_status": "assistant_visual_checked_human_review_pending",
+    "source_id": "ncert_qe",
+    "source_pdf_page": 5,
+    "source_printed_page": 42,
+    "source_section": "4.3",
+    "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+    "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+    "subject": "mathematics",
+    "supporting_passage_ids": [
+      "normalized:qe03"
+    ],
+    "title": "Roots verified by substitution"
+  },
+  {
+    "authorship": "original_assistant_authored_curriculum_notes",
+    "chapter": "quadratic_equations",
+    "class": 10,
+    "concept_id": "qe04",
+    "diagnostic_probe": "Could either factor be zero, rather than just the first?",
+    "domain": "Real factors. No division by a possibly zero factor.",
+    "explanation": "A product of two real factors is zero only when at least one factor is zero. Check both factors; retain a possible zero root.",
+    "hint": "Keep both factors visible and ask what makes each one vanish.",
+    "language": "en",
+    "learning_outcome": {
+      "description": "Explain and apply factorisation and zero-product reasoning",
+      "task_type_refs": [
+        "quadratic_check_claim",
+        "quadratic_reconstruct",
+        "quadratic_solve"
+      ]
+    },
+    "mastery_criterion": {
+      "candidate_rule": "correct_exact_answer_and_valid_method_on_two_distinct_items_with_stated_assumptions",
+      "human_approved": false,
+      "status": "proposed_requires_teacher_review"
+    },
+    "normalization_status": "verified_reference_replaces_unverified_legacy_LaTex",
+    "prerequisites": [
+      "qe02",
+      "qe03"
+    ],
+    "review_status": "pending_human_review",
+    "source_anchor_status": "assistant_visual_checked_human_review_pending",
+    "source_id": "ncert_qe",
+    "source_pdf_page": 5,
+    "source_printed_page": 42,
+    "source_section": "4.3",
+    "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+    "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+    "subject": "mathematics",
+    "supporting_passage_ids": [
+      "normalized:qe04"
+    ],
+    "title": "Factorisation and zero-product reasoning"
+  },
+  {
+    "authorship": "original_assistant_authored_curriculum_notes",
+    "chapter": "quadratic_equations",
+    "class": 10,
+    "concept_id": "qe05",
+    "diagnostic_probe": "What separate value comes from each sign in the numerator?",
+    "domain": "a != 0; D >= 0; c=(b^2-D)/(4*a). Distinct values only.",
+    "explanation": "The two quadratic-formula branches are (-b+sqrt(D))/(2*a) and (-b-sqrt(D))/(2*a); D=0 gives one distinct value. Keep sqrt(D) symbolic when an exact answer is requested; a rounded decimal is an approximation.",
+    "hint": "Write one line for the plus branch and another for the minus branch.",
+    "language": "en",
+    "learning_outcome": {
+      "description": "Explain and apply quadratic formula and both branches",
+      "task_type_refs": [
+        "quadratic_check_claim",
+        "quadratic_solve"
+      ]
+    },
+    "mastery_criterion": {
+      "candidate_rule": "correct_exact_answer_and_valid_method_on_two_distinct_items_with_stated_assumptions",
+      "human_approved": false,
+      "status": "proposed_requires_teacher_review"
+    },
+    "normalization_status": "verified_reference_replaces_unverified_legacy_LaTex",
+    "prerequisites": [
+      "qe02"
+    ],
+    "review_status": "pending_human_review",
+    "source_anchor_status": "assistant_visual_checked_human_review_pending",
+    "source_id": "ncert_qe",
+    "source_pdf_page": 10,
+    "source_printed_page": 47,
+    "source_section": "4.5",
+    "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+    "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+    "subject": "mathematics",
+    "supporting_passage_ids": [
+      "normalized:qe05"
+    ],
+    "title": "Quadratic formula and both branches"
+  }
+]

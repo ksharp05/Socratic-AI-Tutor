@@ -172,7 +172,7 @@ gantt
 | Milestone | Date | Exit criterion |
 |---|---|---|
 | **M0** Kickoff | Sun 25 Oct (contracts Mon 26) | Roles named; API key works; held-out sets frozen; first commit pushed; interface contracts frozen |
-| **M1** Walking skeleton | Fri 30 Oct | `docker compose up`, then the demo question gets a streamed, cited Socratic hint; full trace recorded; tool tests pass in CI |
+| **M1** Walking skeleton | Fri 30 Oct | `docker compose up`, then the demo question gets a streamed, cited Socratic hint; full trace recorded; tool tests pass in CI. If Q9 is adopted, the [proof of concept's exit criteria](10-proof-of-concept.md#exit-criteria) apply instead. |
 | **M2** All features basic | Mon 2 Nov | Every minimum-bar feature works at a basic level; go/no-go on the cut list |
 | **M3** Behaviour frozen | Wed 4 Nov | Every experiment configuration runs on development cases; pre-registration hashed; CI green |
 | **M4** Results | Sun 8 Nov | E1–E4 done, with three repeats where required; failed CI run explained; clean-machine install done |
@@ -210,6 +210,7 @@ Details: [07 · Team and roles](07-team-and-roles.md).
 | [07 · Team and roles](07-team-and-roles.md) | Ownership, separation rules, working agreements, human-only tasks | Everyone |
 | [08 · Schedule](08-schedule.md) | Day-by-day plan for each role, with milestones | Everyone |
 | [09 · Delivery](09-delivery.md) | Deliverables, API keys and usage, risks and cut lines, viva preparation | Everyone |
+| [10 · Proof of concept](10-proof-of-concept.md) | A thin slice through every box, built Mon 26 – Thu 29 Oct on one chapter and two misconceptions, with a demo and go/no-go on Fri 30 Oct | Everyone |
 | [Appendix](appendix.md) | Configuration skeleton, repository layout, sources | As needed |
 
 ## Open decisions
@@ -226,6 +227,7 @@ To settle at kickoff on Sun 25 Oct.
 | **Q6** | Access to Prompt Guard 2 on Hugging Face | Each member who runs the stack requests access personally. The form asks for legal name, date of birth and organisation. | Each member |
 | **Q7** | Traces leaving our machines | By default, traces stay in Postgres. If we want a trace UI, use Langfuse Cloud (free tier, with masking) for synthetic runs only. | R6 + R2 |
 | **Q8** | Independence rules (D19) and pre-registration (D20) | Accept both | All |
+| **Q9** | Run Phase 1 as a proof of concept | Yes. Build the [POC slice](10-proof-of-concept.md) Mon 26 – Thu 29 Oct; it replaces the separate spikes. Its demo and go/no-go on Fri 30 Oct become M1. | All |
 
 ## Project integrity rules
 

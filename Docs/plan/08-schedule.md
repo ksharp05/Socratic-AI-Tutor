@@ -2,6 +2,9 @@
 
 [← Team and roles](07-team-and-roles.md) · [Plan overview](README.md) · [Next: Delivery →](09-delivery.md)
 
+> [!IMPORTANT]
+> **Re-dated on Fri 30 Oct.** The [lead roadmap](../LEAD_ROADMAP.md) replaces Phases 0 and 1 below: the proof of concept stands in for the walking skeleton, and each role takes over its box from it. The dates from M2 (Mon 2 Nov) onward are unchanged.
+
 The schedule runs from **Sat 24 Oct** to **Sun 15 Nov 2026**.
 
 | Phase | Dates | Goal |
@@ -14,6 +17,9 @@ The schedule runs from **Sat 24 Oct** to **Sun 15 Nov 2026**.
 | 5 · Viva | Fri 13 – Sun 15 Nov | Preparation and review |
 
 Integration days are fixed: **Fri 30 Oct, Mon 2 Nov and Wed 4 Nov**.
+
+> [!TIP]
+> **If we adopt Q9**, Mon 26 – Fri 30 Oct follows the [proof-of-concept day plan](10-proof-of-concept.md#day-by-day), not the spikes and Phase 1 tasks below. The Phase 1 tasks the POC does not cover move to Sat 31 Oct – Mon 2 Nov.
 
 ```mermaid
 gantt

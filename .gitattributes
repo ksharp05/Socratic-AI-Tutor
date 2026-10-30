@@ -1,0 +1,4 @@
+# Byte-identical copies of dataset files: keep their exact bytes so the recorded SHA-256 values still match
+content/** -text
+eval/poc/** -text
+src/socratic_data/*.py -text

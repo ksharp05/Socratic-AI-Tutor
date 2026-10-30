@@ -1,6 +1,6 @@
 # 09 · Delivery
 
-[← Schedule](08-schedule.md) · [Plan overview](README.md) · [Next: Appendix →](appendix.md)
+[← Schedule](08-schedule.md) · [Plan overview](README.md) · [Next: Proof of concept →](10-proof-of-concept.md)
 
 ## Deliverables
 
@@ -146,4 +146,4 @@ The eight questions from the guide (p.17), and where each answer comes from:
 
 ---
 
-[← Schedule](08-schedule.md) · [Plan overview](README.md) · [Next: Appendix →](appendix.md)
+[← Schedule](08-schedule.md) · [Plan overview](README.md) · [Next: Proof of concept →](10-proof-of-concept.md)

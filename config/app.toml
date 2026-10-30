@@ -1,0 +1,33 @@
+# Socratic Tutor POC configuration. Every run records this file's SHA-256 in its trace.
+
+[dataset]
+version = "0.10.0"
+# The frozen build is not in git. When it is present, `tutor setup` recopies the slice from it;
+# otherwise the committed content/poc/ and eval/poc/ are used as they are.
+build = "socratic_tutor_dataset_v2/builds/v0.10.0"
+
+[llm]
+# Used only when LLM_API_KEY (or OPENROUTER_API_KEY) is set; otherwise the deterministic stub runs.
+base_url = "https://openrouter.ai/api/v1"
+specialist_model = "openai/gpt-4.1-mini"
+temperature = 0.2
+timeout_s = 60
+
+[learner_model]
+p_init = 0.25
+p_learn = 0.15
+p_slip = 0.10
+p_guess_set = 0.05
+mastered = 0.95
+prerequisite_ready = 0.80
+
+[budgets]
+tool_calls_per_session = 300
+max_revisions = 1
+
+[poc]
+chapter = "quadratic_equations"
+concepts = ["qe01", "qe02", "qe03", "qe04", "qe05"]
+practice_task_type = "quadratic_solve"
+practice_items = 10
+dev_students = ["sim_v2_010", "sim_v2_013"]

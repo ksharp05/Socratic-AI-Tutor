@@ -1,6 +1,6 @@
 # Appendix
 
-[← Delivery](09-delivery.md) · [Plan overview](README.md)
+[← Proof of concept](10-proof-of-concept.md) · [Plan overview](README.md)
 
 ## A. Configuration skeleton
 
@@ -186,4 +186,4 @@ These are tested during the spikes or need a primary source:
 
 ---
 
-[← Delivery](09-delivery.md) · [Plan overview](README.md)
+[← Proof of concept](10-proof-of-concept.md) · [Plan overview](README.md)

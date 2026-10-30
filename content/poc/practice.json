@@ -1,0 +1,692 @@
+[
+  {
+    "question_id": "q_028dfffbe6e5b3715d82",
+    "prompt": "Find every distinct real root of (5)*x^2+(-100)*x+(510)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 5,
+        "b": -100,
+        "c": 510
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 3,
+        "largest_integer_literal_digits": 3,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_08800254a3a51a512432",
+    "prompt": "Find every distinct real root of (-1)*x^2+(-8)*x+(11)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -1,
+        "b": -8,
+        "c": 11
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_0d33282cf9a1ba57cdd0",
+    "prompt": "Find every distinct real root of (1)*x^2+(-17)*x+(-18)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": -17,
+        "c": -18
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_1385d2587590633d5cf1",
+    "prompt": "Find every distinct real root of (-2)*x^2+(60)*x+(-432)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -2,
+        "b": 60,
+        "c": -432
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 3,
+        "largest_integer_literal_digits": 3,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_1c7baccbfeb210691d61",
+    "prompt": "Find every distinct real root of (-2)*x^2+(24)*x+(5)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -2,
+        "b": 24,
+        "c": 5
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_207bed453e0fb1e92ed6",
+    "prompt": "Find every distinct real root of (-1)*x^2+(19)*x+(39)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -1,
+        "b": 19,
+        "c": 39
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_21bdee520b89aaf9b6c2",
+    "prompt": "Find every distinct real root of (-5)*x^2+(-12)*x+(31)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -5,
+        "b": -12,
+        "c": 31
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_21cb3f8ee8eef0d782a4",
+    "prompt": "Find every distinct real root of (1)*x^2+(28)*x+(196)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": 28,
+        "c": 196
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 3,
+        "largest_integer_literal_digits": 3,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_294873f33b5a209eb883",
+    "prompt": "Find every distinct real root of (2)*x^2+(-14)*x+(-196)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 2,
+        "b": -14,
+        "c": -196
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 3,
+        "largest_integer_literal_digits": 3,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  },
+  {
+    "question_id": "q_2ea4fb22c9e6c589fdd4",
+    "prompt": "Find every distinct real root of (-2)*x^2+(-3)*x+(49)=0. Give exact values; do not repeat a repeated root.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": -2,
+        "b": -3,
+        "c": 49
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "contains_worked_solution": false,
+        "prompt": "Which signed coefficients remain when every term is on one side?",
+        "stage": 1,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Can you factor, or use both branches of the quadratic formula?",
+        "stage": 2,
+        "style": "socratic_question"
+      },
+      {
+        "contains_worked_solution": false,
+        "prompt": "Have you checked each distinct candidate in the original equation and accounted for every real root?",
+        "stage": 3,
+        "style": "socratic_question"
+      }
+    ],
+    "difficulty": {
+      "basis": {
+        "arithmetic_size_band": 2,
+        "largest_integer_literal_digits": 2,
+        "task_structure_level": 3
+      },
+      "level": "hard",
+      "status": "provisional_structural_estimate_not_human_or_empirical_rating"
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "dataset_version": "0.10.0",
+  "source_build": "socratic_tutor_dataset_v2/builds/v0.10.0",
+  "files_sha256": {
+    "content/poc/concepts.json": "aff069d636de967efa71af74bbca2cdcd18fa3ad0f8d5422e8fd3254b473835a",
+    "content/poc/cards.json": "01fbc8f256c18b4bbdc758e25988c4eb8ba8687c3cbb676fa92251d0509fedbe",
+    "content/poc/misconceptions.json": "682482f87b1c92b4a28f3826349e21d03454e9f90473becd47d68aed989ef5a9",
+    "content/poc/practice.json": "dc824a2e98adbf4a9ce4098eaf1ad8096342a6c89e318d073d7f2e23850e6c8c",
+    "eval/poc/students.json": "15e5fca4f6765653acea5e88b7b93b516fcb09d8233e2a38a94403b6f35fc709",
+    "eval/poc/quiz_pairs.json": "67d35e5ec27de4a3d52202f414f7b9d62ff890f18c9b2b18004bb995a1aed5fd"
+  },
+  "note": "POC slice. Teaching content is an unapproved development preview."
+}

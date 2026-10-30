@@ -1,0 +1,209 @@
+[
+  {
+    "pair_id": "pair_87e2f8eded7a1a91",
+    "pre": {
+      "question_id": "q_a06b831b4b807193d652",
+      "prompt": "Find every distinct real root of (-3)*x^2+(24)*x+(195)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": -3,
+          "b": 24,
+          "c": 195
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    },
+    "post": {
+      "question_id": "q_6964dcd497905efa4aa4",
+      "prompt": "Find every distinct real root of (2)*x^2+(-40)*x+(182)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": 2,
+          "b": -40,
+          "c": 182
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    }
+  },
+  {
+    "pair_id": "pair_064ba9f5089e4df3",
+    "pre": {
+      "question_id": "q_e3545ccc59f658cfabc9",
+      "prompt": "Find every distinct real root of (-5)*x^2+(60)*x+(-180)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": -5,
+          "b": 60,
+          "c": -180
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    },
+    "post": {
+      "question_id": "q_6f70a7c729cce2a1aded",
+      "prompt": "Find every distinct real root of (3)*x^2+(60)*x+(300)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": 3,
+          "b": 60,
+          "c": 300
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    }
+  },
+  {
+    "pair_id": "pair_80869636138c995f",
+    "pre": {
+      "question_id": "q_284770a3114d507a45c5",
+      "prompt": "Find every distinct real root of (-2)*x^2+(-16)*x+(-42)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": -2,
+          "b": -16,
+          "c": -42
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    },
+    "post": {
+      "question_id": "q_4dd18b53ec44eccfa2bf",
+      "prompt": "Find every distinct real root of (-3)*x^2+(-6)*x+(-21)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "answer_precision": "exact",
+        "class": 10,
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "givens": {
+          "a": -3,
+          "b": -6,
+          "c": -21
+        },
+        "language": "en",
+        "number_domain": "real",
+        "task_type": "quadratic_solve"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+        "number_domain": "real",
+        "precision": "exact",
+        "reasoning_assessed_separately": true,
+        "required_units_by_kind": {},
+        "schema_id": "urn:socratic:typed-answer:1",
+        "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+      }
+    }
+  }
+]
