@@ -30,3 +30,9 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Data:** development; 40 turns of the run above
 - **Outcome:** 40 labelled, 0 failed; leak "none" on all 40, matching the code checker; about USD 0.015 (estimated); labels not yet calibrated
 - **Decision:** judge tokens are now logged; judge whole runs only for reported experiments
+
+### 2026-10-31 · s3_retrieval-20261031-214425 · Spike S3: baseline card and hybrid retrieval
+- **Config:** `config/app.toml` (`c0492e339f06`), `[retrieval]` cards `content/dataset-v0.10.0/corpus.jsonl`, index `data/ncert/index` (78 section chunks of `jemh104`, `jemh105`, `jemh108`, extracted with pdftotext 4.00 `-layout`), dense `BAAI/bge-small-en-v1.5` (fastembed 0.9.1, CPU), RRF k = 60, depth 20; deterministic, no seed; no model API calls
+- **Data:** development only: the 15 development card queries from `plan_freeze(v0.10.0, 0)["dev_files"]`; labels assistant-proposed, not human
+- **Outcome:** Recall@5 / MRR. Cards-only BM25 (POC tokenizer) 0.839 / 0.802. Cards-only BM25 (maths tokenizer) 0.861 / 0.736. Cards BM25 + dense 0.878 / 0.839. Hybrid BM25 + dense, card view 0.861 / 0.907. Hybrid BM25 + dense, strict (sections count as misses) 0.706 / 0.784. 0 failures. Not a result: 15 queries, and no section labels yet
+- **Decision:** hybrid stays behind `[retrieval] mode = "hybrid"`, and the default remains `poc_cards`. Section retrieval is to be judged on Set B (section labels), not this card set. See [S3](spikes/S3.md)

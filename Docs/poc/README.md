@@ -255,7 +255,7 @@ Replacing them is an open question in [DECISIONS.md](../DECISIONS.md#still-open)
 | Tools | Four FastMCP 4.1 servers, called over FastMCP's in-memory transport (real MCP protocol); hooks enforce role, learner and budget rules | stdio and HTTP transports in Docker; LangChain's MCP adapter for LLM tool-calling |
 | Maths | Dataset kernel: keys from two routes, solver grading, rule-based answer parser, buggy-rule diagnosis for `qe_m04` and `qe_m05` | More rules; LaTeX and degree input |
 | Learner model | Bayesian Knowledge Tracing (BKT) mastery, misconception states, styles that worked, outer-fringe plan, replanning | Stuck-for-3-sessions alert; threshold sensitivity |
-| Retrieval | BM25 (bm25s) over the 5 reference cards | NCERT Chapter 4 ingestion, vectors, RRF, reranker, query rewriting |
+| Retrieval | Default `[retrieval] mode = "poc_cards"`: BM25 (bm25s) over the 5 reference cards. `mode = "hybrid"`: BM25 over the 25 dataset cards + BM25 over NCERT chapters 4, 5 and 8 chunked by section (`python -m tutor.retrieval.ingest`, index git-ignored) + fastembed `bge-small-en-v1.5` vectors, fused with RRF; falls back to cards with a notice when no index is built ([S3](../spikes/S3.md)) | Reranker (the pre-registered change), query rewriting, exemplar problems, section-query labels (Set B), one chunk per exercise question |
 | Guardrails | Rule layer: personal data, distress, role claims, injection; output leak and citation checks | Prompt Guard 2 and Llama Guard 4 |
 | Model | Stub templates; real model when a key is set | Faculty-provided keys |
 | UI and operations | Command line, traces in SQLite | FastAPI with streaming, Streamlit, Prometheus, Grafana, CI |
