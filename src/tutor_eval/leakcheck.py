@@ -23,7 +23,8 @@ _VERDICT = re.compile(r"\b(?:(?:claim|statement|identity|it|this|that)\s+(?:is|i
                       r"|(?:is|isn't|is\s+not)\s+an?\s+(?:ap|arithmetic\s+progression))\b", re.I)
 _CLASS_WORDS = {
     "two_distinct_real": ["two distinct real", "two different real", "two unequal real"],
-    "repeated_real": ["repeated real", "equal roots", "repeated root", "two equal real", "coincident roots"],
+    "repeated_real": ["repeated real", "equal roots", "repeated root", "two equal real", "coincident roots", "equal (repeated)",
+                      "real and equal", "equal real roots"],
     "no_real": ["no real roots", "no real solution", "not real", "imaginary roots", "complex roots"],
 }
 

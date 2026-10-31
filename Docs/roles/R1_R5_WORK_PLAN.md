@@ -54,7 +54,7 @@ The course's architecture guide (pp. 5–9) defines R1 as the role that "decides
 | **Development split** | R2, R3, R5b | Sun 1 | `eval/dev/`: 40 golden cases, 16 students, 22 quiz pairs, 15 card queries; with hashes | Lets everyone tune and test without touching held-out data |
 | **Misconception catalogue fields** | R3 + R2 | Mon 2 | `content/dataset-v0.10.0/misconceptions.jsonl`, mapped to the guide's hand-off: id, chapter, concept, probe, tell-tale sign | Their diagnosis rules are written from it, not from the simulator |
 | **Teaching scenarios** | R2 | Mon 2 | 15–20 short student situations per chapter, from development cases only | R2 and R5 write the 45 section queries from them, before tuning retrieval |
-| **Labelled leak examples** | R4 | Tue 3 | `eval/dev/leak_examples.jsonl`: at least 40 turns labelled leak / not leak, covering every answer kind | R4's CI gate needs detector precision and recall ≥ 0.9 |
+| **Labelled leak examples** | R4 | Tue 3 | `eval/fixtures/leak_examples.jsonl`: at least 40 turns labelled leak / not leak, covering every answer kind | R4's CI gate needs detector precision and recall ≥ 0.9 |
 | **Eval command, metric names, CI threshold** | R6 | Wed 4 | `tutor eval` or `python -m eval.run --config …`; names in the harness README | The guide's R5 → R6 hand-off: `eval-gate` and Grafana panels |
 | **Simulator and harness** | R3, R5b | Wed 4 | `src/tutor_eval/` and `eval/` | R3's Reflexion loop needs an evaluator; R5b builds the judge and metrics on it |
 | **Pre-registration** | R2 for approval | Thu 5 | `eval/PREREGISTRATION.md` | R1 and R5 are one person, so someone else approves |

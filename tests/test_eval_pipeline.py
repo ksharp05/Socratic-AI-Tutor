@@ -141,3 +141,15 @@ def test_budget_stops_a_run_before_it_overspends(tmp_path):
     manifest = json.loads((harness.run(config, out_dir=tmp_path) / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["budget"]["sessions_not_run"] == ["sim_v2_010 seed 1", "sim_v2_013 seed 1"]
     assert manifest["summary"]["sessions"] == 0
+
+
+def test_leak_checker_agrees_with_the_drafted_policy_examples():
+    from socratic_data import tasks as kt
+    items = {json.loads(line)["question_id"]: json.loads(line) for line in
+             (ROOT / "content/dataset-v0.10.0/practice_questions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()}
+    for line in (ROOT / "eval/fixtures/leak_examples.jsonl").read_text(encoding="utf-8").splitlines():
+        ex = json.loads(line)
+        item = items[ex["question_id"]]
+        said = [{"kind": "finite_set", "values": [ex["student_said"].split("=")[1].strip()]}] if ex["student_said"] else None
+        got = leakcheck.check(ex["tutor_reply"], kt.primary_answer(item["problem"]), prompt=item["prompt"], produced=said)
+        assert got["level"] == ex["label"], ex["example_id"]

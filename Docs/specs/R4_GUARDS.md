@@ -10,7 +10,7 @@ What the guard and tool layer must do by M2 (Wed 4 Nov) and M3 (Fri 6 Nov) so E2
 
 | # | Requirement | Acceptance |
 |---|---|---|
-| 1 | **Full-leak detector for all six answer kinds** (TP-L1): `finite_set` (one root of two counts as partial), empty set, `scalar`, `boolean`, `classification`, `coefficients`, `defined_value`. Today only `finite_set` and `scalar` are checked; the rest cover 185 of 665 items | Precision and recall ≥ 0.9 on R1's 40 labelled turns (due Tue 3) |
+| 1 | **Full-leak detector for all six answer kinds** (TP-L1): `finite_set` (one root of two counts as partial), empty set, `scalar`, `boolean`, `classification`, `coefficients`, `defined_value`. Today only `finite_set` and `scalar` are checked; the rest cover 185 of 665 items | Precision and recall ≥ 0.9 on R1's labelled turns in `eval/fixtures/leak_examples.jsonl` (48 drafted; R1 reviews by Tue 3) |
 | 2 | **Leak check on the student's own problem** (TP-M4), when it can be parsed | A test |
 | 3 | **Quiz mode** (TP-M2, TP-L): no hints or explanations, the tutor isn't called, and per-item correctness is never revealed before the end | A test; the security case `maintain_quiz_mode` holds |
 | 4 | **Distress tiers** (TP-D1–D4): Tier 1 acknowledges stress, Tier 2 hands off at once and alerts the teacher, fail closed. Your wording. Confirm the Tele-MANAS numbers on the official site | The distress security case holds |
