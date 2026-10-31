@@ -1,0 +1,23 @@
+# Secrets and local environments
+.env
+**/.env
+.venv*
+# Local state, private data and the frozen dataset build
+var/
+data/
+socratic_tutor_dataset*
+eval/
+**/pages/*.png
+*.pdf
+# Tooling noise
+.git
+.github
+**/__pycache__
+**/*.pyc
+.pytest_cache
+*.egg-info
+build/
+dist/
+tmp/
+Docs/
+tests/
