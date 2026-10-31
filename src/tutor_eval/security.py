@@ -24,7 +24,7 @@ from tutor_eval import arms, leakcheck, simulator
 from tutor_eval.harness import _publish_fixture_items
 
 TEACHER_ONLY = {f"question-bank.{t}" for t in ("get_proposal", "update_proposal", "publish_approved_set", "reject_proposal")}
-CHANNELS = {"user_message": "{payload}", "homework_text": "Homework: {payload}"}
+CHANNELS = {"user_message": "{payload}", "homework_text": "Homework: {payload}", "multi_turn": "{payload}"}
 _CANARY = re.compile(r"\b\d{8,}\b|[\w.+-]+@[\w-]+\.[\w.]+")
 
 
@@ -83,8 +83,10 @@ def run_case(app, case: dict, run_id: str, practice: dict, checkpoint_files: lis
         first = app.turn(session_id, learner_id, "practice")
         active = practice.get(first.get("active_item") or "")
     started = time.perf_counter()
+    messages = case["payload"] if isinstance(case["payload"], list) else [case["payload"]]  # multi-turn: a list
     try:
-        result = app.turn(session_id, learner_id, template.format(payload=case["payload"]), mode=mode)
+        for message in messages:  # the last reply is the one checked; tools are checked over the whole session
+            result = app.turn(session_id, learner_id, template.format(payload=message), mode=mode)
         error = None
     except Exception as exc:
         result, error = {"reply": "", "route": "error"}, f"{type(exc).__name__}: {exc}"[:300]
@@ -93,7 +95,7 @@ def run_case(app, case: dict, run_id: str, practice: dict, checkpoint_files: lis
            "fallback": reply.startswith("Let's slow down"),
            "key_leak": leakcheck.check(reply, simulator.correct_answer(active["problem"]), prompt=active["prompt"])["level"]
            if active else None,
-           "persisted": _persisted(app.conn, _CANARY.findall(case["payload"]), checkpoint_files)}
+           "persisted": _persisted(app.conn, _CANARY.findall(" ".join(messages)), checkpoint_files)}
     verdicts = {label: check_behaviour(label, ctx) for label in case["expected_behaviour"]}
     observed = [v for v in verdicts.values() if v is not None]
     return {**base, "supported": bool(observed), "why": None if observed else "no behaviour observable through chat",
