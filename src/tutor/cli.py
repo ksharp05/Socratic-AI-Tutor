@@ -89,8 +89,10 @@ def cmd_chat(args) -> None:
                 for m in app.history(session):
                     print(f"  {m['role']}: {m['content']}")
                 continue
+            before = len(app.llm.errors)
             result = app.turn(session, lid, text, mode=args.mode)
             _show_turn(result, not args.quiet)
+            _warn_failed_calls(app, before)
     finally:
         print(f"{DIM}Session {session} saved. Resume with: tutor chat --learner {args.learner} --session {session}{RESET}")
         app.close()
@@ -104,10 +106,47 @@ def cmd_ask(args) -> None:
         result = app.turn(session, lid, args.message, mode=args.mode)
         print(f"session={session}")
         _show_turn(result, True)
+        _warn_failed_calls(app, 0)
         if args.plan:
             _print_plan(result.get("plan"))
     finally:
         app.close()
+
+
+def _warn_failed_calls(app, before: int) -> None:
+    if len(app.llm.errors) > before:
+        print(f"  ! A live model call failed, so this reply came from a template: {app.llm.errors[-1]}\n"
+              f"    Run `tutor check-llm` to test the key and model.")
+
+
+def cmd_check_llm(args) -> None:
+    from .config import DOTENV_KEYS
+    from .llm import LLM, base_url, explain
+    llm = LLM(None, mode="auto")
+    if not llm.key:
+        print("No API key found, so the tutor uses its deterministic stub.\n"
+              "Copy .env.example to .env in the repository root, put your key after LLM_API_KEY=, "
+              "and run this again.")
+        sys.exit(1)
+    where = ".env" if llm.key_source in DOTENV_KEYS else "the shell environment"
+    print(f"Key:      {llm.key_source} from {where} ({len(llm.key)} characters, ending …{llm.key[-4:]})")
+    print(f"Base URL: {base_url()}")
+    print(f"Model:    {llm.model}" + ("  (LLM_MODEL overrides config/app.toml)" if os.environ.get("LLM_MODEL") else ""))
+    if os.environ.get("TUTOR_LLM") == "stub":
+        print("Note:     TUTOR_LLM=stub is set, so the tutor itself will still use the stub.")
+    models = SETTINGS.llm.get("course_models", []) if args.all else (args.model or [llm.model])
+    failed = []
+    for model in models:
+        print(f"  {model} … ", end="", flush=True)
+        try:
+            r = llm.ping(model)
+            print(f"ok in {r['ms']} ms, replied {r['reply']!r} (tokens {r['tokens_in']} in, {r['tokens_out']} out)")
+        except Exception as exc:
+            failed.append(model)
+            print(f"FAILED: {explain(exc)}")
+    print(f"{len(models) - len(failed)} of {len(models)} models answered.")
+    if failed:
+        sys.exit(1)
 
 
 def _print_trace(conn, session: str) -> None:
@@ -238,9 +277,12 @@ def main(argv: list[str] | None = None) -> None:
     sp = sub.add_parser("eval", help="run the simulated-student evaluation on the development cards")
     sp.add_argument("--seeds", type=int, default=1)
     sp.add_argument("--no-defences", action="store_true")
+    sp = sub.add_parser("check-llm", help="make one short live call to check the API key and model")
+    sp.add_argument("--model", action="append", help="model ID to try instead of the configured one (repeatable)")
+    sp.add_argument("--all", action="store_true", help="try every model in course_models in config/app.toml")
     args = p.parse_args(argv)
     {"setup": cmd_setup, "chat": cmd_chat, "ask": cmd_ask, "trace": cmd_trace, "learners": cmd_learners,
-     "teacher": cmd_teacher, "tools": cmd_tools, "eval": cmd_eval}[args.cmd](args)
+     "teacher": cmd_teacher, "tools": cmd_tools, "eval": cmd_eval, "check-llm": cmd_check_llm}[args.cmd](args)
 
 
 if __name__ == "__main__":

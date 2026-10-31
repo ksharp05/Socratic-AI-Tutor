@@ -16,6 +16,10 @@ Every decision that changes the plan, newest first, recorded on the day it is ma
 
 The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions). Record each one here once the team settles it.
 
+**Raised 31 Oct, from the faculty's list of models for the course keys** (in `course_models` in `config/app.toml`):
+- **Two plan models are not on the list.** `openai/gpt-4.1`, the supervisor and planner model, needs a replacement chosen by R3. `meta-llama/llama-guard-4-12b`, the safety classifier, needs a replacement chosen by R4. The plan's other models are on the list: `gpt-4.1-mini`, `gemini-3.1-flash-lite` and `llama-3.3-70b-instruct`. First run `tutor check-llm --all` to confirm what the keys reach.
+- **Keys are personal.** The faculty asks that no one share their key. [09 · Delivery](plan/09-delivery.md) stores one member's key as a GitHub secret for the `live-eval` workflow. Ask the faculty whether that is allowed, or run live evaluations locally.
+
 ---
 
 ### D-1 · 2026-10-30 · The Lead also holds R1 and R5

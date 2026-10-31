@@ -177,7 +177,7 @@ It prints and saves a report to `var\reports\`. The report covers:
 pytest -q
 ```
 
-25 tests:
+30 tests:
 - **one or more per MCP tool;**
 - **permission hooks:** wrong role, another learner;
 - **end-to-end flows:**
@@ -190,18 +190,28 @@ pytest -q
   - quiz replan;
   - edit invalidation;
   - stop and resume.
+- **live-model setup:** reading `.env`, `tutor check-llm`, and failed calls, against a local fake server, so no key is needed.
 
 ## Using a real model
 
-The POC runs with a deterministic stub by default. To use the faculty-provided key, copy `.env.example` to `.env` in the repository root and fill it in:
+The POC runs with a deterministic stub until you add a key. **Each member uses their own course key**: an OpenRouter key from the faculty, valid until 16 Nov 2026. Usage is tracked per key, so never share yours or paste it into chat, an issue or a pull request.
 
-```
-LLM_API_KEY=<the provided key>
-LLM_BASE_URL=https://openrouter.ai/api/v1     # change if the faculty endpoint is different
-LLM_MODEL=openai/gpt-4.1-mini
-```
+1. Copy the template to `.env` in the repository root. Git ignores `.env`.
 
-The diagnostician and tutor then call the model with the six-slot prompts in `src/tutor/prompts.py`. Code still makes every decision:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Open `.env` and put your key after `LLM_API_KEY=`, on the same line, with no quotes. `OPENROUTER_API_KEY`, the name used in the faculty email, also works.
+3. Check the key:
+
+   ```bash
+   tutor check-llm
+   ```
+
+   **Expect** `1 of 1 models answered`. If it fails, the line says why: the key was rejected, the key cannot reach that model, a rate limit, or no network.
+
+`tutor chat` then shows `llm=openai/gpt-4.1-mini via https://openrouter.ai/api/v1` on its first line. The diagnostician and tutor call the model with the six-slot prompts in `src/tutor/prompts.py`. Code still makes every decision:
 - grading;
 - keys;
 - mastery;
@@ -209,7 +219,29 @@ The diagnostician and tutor then call the model with the six-slot prompts in `sr
 - permissions;
 - leak and citation checks.
 
-If a model call fails, the template is used and the failure is recorded in the trace. To force the stub, set `TUTOR_LLM=stub`.
+If a model call fails, the reply comes from a template. A `!` line under the reply says why, the trace records the failure, and `tutor eval` counts failed calls in its report. To force the stub, set `TUTOR_LLM=stub`; the tests always do.
+
+**Models.** In `config/app.toml`:
+- `specialist_model` is the model the POC uses;
+- `course_models` lists the 25 models the course keys allow.
+
+Change models there rather than in `.env`, so each run's config hash records them. To try other models:
+
+```bash
+tutor check-llm --model google/gemini-3.1-flash-lite --model meta-llama/llama-3.3-70b-instruct
+```
+
+```bash
+tutor check-llm --all
+```
+
+`--all` makes one short call to each course model.
+
+Two of the plan's models are not on the course list:
+- `openai/gpt-4.1`, the supervisor;
+- `meta-llama/llama-guard-4-12b`, the safety classifier.
+
+Replacing them is an open question in [DECISIONS.md](../DECISIONS.md#still-open).
 
 ## What is real and what is still a stand-in
 

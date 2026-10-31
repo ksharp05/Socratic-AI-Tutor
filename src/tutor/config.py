@@ -14,18 +14,32 @@ EVAL_DIR = ROOT / "eval" / "poc"
 VAR_DIR = Path(os.environ.get("TUTOR_VAR_DIR", ROOT / "var"))
 
 
-def _load_dotenv() -> None:
-    env = ROOT / ".env"
-    if not env.exists():
-        return
-    for line in env.read_text(encoding="utf-8").splitlines():
+def _load_dotenv(path: Path = ROOT / ".env") -> set[str]:
+    """Sets the variables in .env that the shell has not set already, and returns their names.
+
+    Blank values are skipped, so an empty `LLM_API_KEY=` never hides a key set in the shell.
+    utf-8-sig also reads files that Windows editors save with a byte-order mark.
+    """
+    loaded: set[str] = set()
+    if not path.exists():
+        return loaded
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
         line = line.strip()
-        if line and not line.startswith("#") and "=" in line:
-            key, _, value = line.partition("=")
-            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key, value = key.strip().removeprefix("export ").strip(), value.strip()
+        if value[:1] in ('"', "'"):
+            value = value[1:].split(value[0], 1)[0]
+        else:
+            value = value.split(" #", 1)[0].strip()
+        if value and key not in os.environ:
+            os.environ[key] = value
+            loaded.add(key)
+    return loaded
 
 
-_load_dotenv()
+DOTENV_KEYS = _load_dotenv()
 
 
 @dataclass(frozen=True)

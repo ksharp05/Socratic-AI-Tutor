@@ -7,11 +7,27 @@ version = "0.10.0"
 build = "socratic_tutor_dataset_v2/builds/v0.10.0"
 
 [llm]
-# Used only when LLM_API_KEY (or OPENROUTER_API_KEY) is set; otherwise the deterministic stub runs.
+# Used only when LLM_API_KEY (or OPENROUTER_API_KEY) is set in .env; otherwise the deterministic stub runs.
+# Check a key with `tutor check-llm`. Change models here rather than in .env, so the config hash
+# recorded in each run says which model was used.
 base_url = "https://openrouter.ai/api/v1"
 specialist_model = "openai/gpt-4.1-mini"
 temperature = 0.2
 timeout_s = 60
+# Models the course keys allow (faculty email of 31 Oct 2026; keys are valid until 16 Nov 2026).
+# `tutor check-llm --all` calls each one once. openai/gpt-4.1 and meta-llama/llama-guard-4-12b,
+# which the plan uses, are not on this list.
+course_models = [
+    "openai/gpt-6-luna", "openai/gpt-5-mini", "openai/gpt-5-nano", "openai/gpt-5.4-nano",
+    "openai/gpt-4.1-mini", "openai/gpt-4.1-nano", "openai/gpt-4o-mini", "openai/gpt-oss-120b",
+    "anthropic/claude-haiku-5.5", "anthropic/claude-3-haiku",
+    "google/gemini-3.1-flash-lite", "google/gemma-4-31b-it",
+    "qwen/qwen3.7-plus", "qwen/qwen3.6-plus", "qwen/qwen3.8-27b", "qwen/qwen3.5-35b-a3b", "qwen/qwen3.5-9b",
+    "deepseek/deepseek-v4-flash", "deepseek/deepseek-chat",
+    "z-ai/glm-5.3", "z-ai/glm-5.3-flash",
+    "meta-llama/llama-3.3-70b-instruct", "meta-llama/llama-3.1-70b-instruct", "meta-llama/llama-3.1-8b-instruct",
+    "amazon/nova-lite-v1",
+]
 
 [learner_model]
 p_init = 0.25

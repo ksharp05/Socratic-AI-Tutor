@@ -103,7 +103,9 @@ def main(seeds: int = 1, defences: bool = True) -> list[dict]:
                 results.append(run_card(app, card, card["seed"] + s, pairs))
     finally:
         app.close()
-    report = _report(results, defences, app.llm.label)
+    failed = len(app.llm.errors)
+    report = _report(results, defences, app.llm.label + (f"; {failed} live calls failed and used templates "
+                                                          f"(run `tutor check-llm`)" if failed else ""))
     out = db_path("reports").parent / "reports"
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"poc_eval_{time.strftime('%Y%m%d_%H%M%S')}.md"

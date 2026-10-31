@@ -27,7 +27,7 @@ We are building it as Project 3 of the Agentic AI Capstone. It is an NCERT tutor
 |---|---|---|
 | [Socratic Tutor — Agentic AI Architecture Guide](Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct) | The architecture, the six team roles, the hand-offs between them, and who owns which folder | Reference |
 | [Project plan](Docs/plan/README.md) (24 Oct) | Builds on the guide with a dated schedule, design decisions, evaluation design, security and privacy, risks and viva preparation | Proposed |
-| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 25 tests pass** |
+| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 30 tests pass** |
 | [Lead roadmap](Docs/LEAD_ROADMAP.md) (30 Oct) | The schedule from 30 Oct, what each role delivers at each milestone, and who owns which file | **Current** |
 
 | Key date | |
@@ -56,7 +56,7 @@ tutor setup
 tutor chat --learner A
 ```
 
-Things to try, and how to use a real model: [Docs/poc/README.md](Docs/poc/README.md).
+To use a live model, put your own course key in `.env` and run `tutor check-llm`. The steps are in [Using a real model](Docs/poc/README.md#using-a-real-model); things to try are in the same guide.
 
 ## Repository structure
 

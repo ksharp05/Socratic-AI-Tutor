@@ -13,6 +13,16 @@ Every member adds an entry for each day they work, newest first. The course guid
 
 ---
 
+### 2026-10-31 · ksharp05 (Lead, R1, R5)
+- **Work:** set up live model access with the course keys:
+  - a `.env` template;
+  - `tutor check-llm`, which tests a key against one model or every course model;
+  - a warning, and an eval report count, when a live call fails and a template is used;
+  - the course model list in `config/app.toml`;
+  - 5 tests using a local fake server.
+- **AI-assisted:** code, tests and docs written with Claude Code, then reviewed and tested.
+- **Decisions:** none. Two open questions added to [DECISIONS.md](DECISIONS.md#still-open): the plan models the course keys don't reach, and whether one key may be a GitHub secret.
+
 ### 2026-10-30 · ksharp05 (Lead, R1, R5)
 - **Work:** pushed the proof of concept to branch `poc/walking-skeleton`; wrote the [lead roadmap](LEAD_ROADMAP.md), the contributing guide and the pull request template; added the tutor-visible dataset content.
 - **AI-assisted:** written with Claude Code, then reviewed and tested.

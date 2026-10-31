@@ -131,7 +131,7 @@ Each line is a deliverable, followed (after →) by **the evidence to ask for**.
 - [ ] Create the milestone issues → issues exist
 
 **Everyone:**
-- [ ] Install and run the POC ([Docs/poc/README.md](poc/README.md)) → screenshot of `pytest -q` showing 25 passed
+- [ ] Install and run the POC ([Docs/poc/README.md](poc/README.md)) → screenshot of `pytest -q` showing 30 passed, and of `tutor check-llm` passing with their own key
 - [ ] Read the POC code for their box ([who owns which file](#who-owns-which-file)) and its row in [10 · Proof of concept](plan/10-proof-of-concept.md#what-each-box-looks-like-in-the-poc) → can explain it at Sunday's walkthrough
 - [ ] First entry in [Docs/CONTRIBUTIONS.md](CONTRIBUTIONS.md) → entry merged
 
