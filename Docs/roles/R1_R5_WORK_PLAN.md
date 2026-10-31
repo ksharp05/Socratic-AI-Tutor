@@ -186,11 +186,20 @@ Collected on 31 Oct. Each line is something I will adopt; the link is where it c
 
 ## 9. Next steps (Sat 31 Oct and Sun 1 Nov)
 
-1. Write `Docs/policy/TEACHING_POLICY.md` v0 from section 5.
-2. Write the freeze script, which reads the build and writes nothing inside it:
-   - choose and log a sampling seed;
-   - pick 60 held-out golden cases stratified over 25 concepts and 12 families, keeping the other 390 as a reserve, and 40 development golden cases from the 160;
-   - write per-record hash lists (the build's `content_sha256` values) and `eval/dev/`.
-3. **Run the freeze myself** and record it in `Docs/EXPERIMENT_LOG.md`. It is a human-only task, so it counts only when the named person does it.
-4. Bring sections 6 and 4 to the meeting, and record the answers in `Docs/DECISIONS.md`.
-5. Mon 2: one hour trying promptfoo against the POC; decide whether it runs E2 (section 7).
+1. **Review [teaching policy v0](../policy/TEACHING_POLICY.md)**, answer its open questions, and send v1 to R3 and R4 on Sun 1.
+2. **Run the held-out freeze yourself** before the meeting. It is a human-only task, so it counts only when the named person runs it. Pick the seed yourself, and keep `--private-out` outside the repository.
+
+   ```bash
+   python -m tutor_eval.freeze --build "D:/Work/IITB/Socratic Tutor/socratic_tutor_dataset_v2/builds/v0.10.0" --seed <your seed> --private-out "D:/Work/IITB/Socratic Tutor/heldout_frozen" --dry-run
+   ```
+
+   The dry run verifies the build and prints the coverage: 12 of 12 families and 25 of 25 concepts in the 60 held-out golden cases. Then run the same command without `--dry-run`, and add `--log Docs/EXPERIMENT_LOG.md`.
+
+   The command writes three things:
+   - `eval/dev/`;
+   - `eval/HELDOUT_MANIFEST.json`, which holds hashes only;
+   - the log entry.
+
+   The held-out IDs go outside git. Commit `eval/dev/`, the manifest and the log on a branch.
+3. Bring sections 6 and 4 to the meeting, and record the answers in `Docs/DECISIONS.md`.
+4. Mon 2: one hour trying promptfoo against the POC; decide whether it runs E2 (section 7).
