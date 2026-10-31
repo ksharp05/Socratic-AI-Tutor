@@ -103,6 +103,8 @@ Proposed on 31 Oct; the team confirms it on Sun 1 Nov (D-3).
 
 ### Your own roles: Lead, R1 and R5
 
+The day-by-day plan, with what Lakshya hands over and needs from each person, is in [roles/R1_R5_WORK_PLAN.md](roles/R1_R5_WORK_PLAN.md).
+
 **R5 fits.** You generated the held-out cases and the attacks, and R5 is the role that holds them.
 
 **But you also wrote the POC's diagnosis rules, guards and agents**, and the plan says R1 never writes attacks. So these hand-offs are needed to keep the separation rules intact:

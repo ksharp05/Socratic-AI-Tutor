@@ -18,6 +18,7 @@ Every member adds an entry for each day they work, newest first. The course guid
   - Merged the proof of concept, roadmap and live-model setup into `main`.
   - Updated the [lead roadmap](LEAD_ROADMAP.md): team names, what we found on 31 Oct (the NCERT files and the course keys), re-dated milestones, and an R5b role for the sixth member.
   - Recorded the role names as [D-2](DECISIONS.md).
+  - Wrote the [R1 and R5 work plan](roles/R1_R5_WORK_PLAN.md): deliverables by day, hand-offs, inputs needed, decisions for the meeting and outside research. Fixed the vendored kernel's line endings so its hashes match, and git-ignored `eval/private/`.
   - Set up live model access with the course keys: a `.env` template; `tutor check-llm`, which tests a key against one model or every course model; a warning, and an eval report count, when a live call fails and a template is used; the course model list in `config/app.toml`; 5 tests using a local fake server.
 - **AI-assisted:** code, tests and docs written with Claude Code, then reviewed and tested.
 - **Decisions:**

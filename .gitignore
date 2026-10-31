@@ -18,3 +18,5 @@ dist/
 data/ncert/
 **/pages/*.png
 socratic_tutor_dataset*/
+# Held-out evaluation files never enter git, even by accident (R5 keeps them outside the repo)
+eval/private/
