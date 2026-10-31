@@ -4,16 +4,16 @@
 
 ## Roles
 
-Each role gets a name at kickoff on Sun 25 Oct.
+Names proposed in the team group on 31 Oct ([D-2](../DECISIONS.md)); confirmed at the meeting on Sun 1 Nov. The [lead roadmap](../LEAD_ROADMAP.md#team) has the current table, including the proposed sixth role, R5b.
 
 | Role | Name | Owns (code and documents) | Never does |
 |---|---|---|---|
-| **R1** Domain and product lead | ksharp05 (also Lead and R5) | Teaching and mode policy; definition of an answer leak; policy for what happens after the last hint; review of the misconception catalogue (with the teacher); demo script; held-out policy check; lesson review; judge labels; slides | Write attacks |
-| **R2** Knowledge and memory engineer | _TBD_ | `tutor/retrieval/`, the ingest job, section labels (with R5), `tutor/memory/` (mastery model, store, summarisation, forget-me), memory policy | — |
-| **R3** Agents and orchestration engineer | _TBD_ | `tutor/graph/`, agents and prompts, planner, self-correction loop, C0 and C1 baselines, Reflexion code, diagnosis rules (with R2) | **Read `eval/private/`, or look at held-out results before the freeze** |
-| **R4** Tools, control and security engineer | _TBD_ | `tutor/mcp_servers/`, hooks, guardrails, approval gate, answer adapter, threat model | **See R5's new attacks before E2** |
-| **R5** Evaluation and red-team engineer | ksharp05 (also Lead and R1) | `eval/` (harness, simulator engine and rules, judge, scorers, configurations, pre-registration), the held-out freeze, new attacks, results tables | **Edit prompts, agents or guards** |
-| **R6** Deployment and operations engineer | _TBD_ | Compose, Dockerfiles, API, UI, authentication, Prometheus and Grafana, alerting, CI, README, clean-machine test, demo recording | — |
+| **R1** Domain and product lead | Lakshya Yadav (ksharp05; also Lead and R5), with everyone contributing | Teaching and mode policy; definition of an answer leak; policy for what happens after the last hint; review of the misconception catalogue (with the teacher); demo script; held-out policy check; lesson review; judge labels; slides | Write attacks |
+| **R2** Knowledge and memory engineer | Rizwan Farooq | `tutor/retrieval/`, the ingest job, section labels (with R5), `tutor/memory/` (mastery model, store, summarisation, forget-me), memory policy | — |
+| **R3** Agents and orchestration engineer | Poonam Ramnaresh Prajapati | `tutor/graph/`, agents and prompts, planner, self-correction loop, C0 and C1 baselines, Reflexion code, diagnosis rules (with R2) | **Read `eval/private/`, or look at held-out results before the freeze** |
+| **R4** Tools, control and security engineer | Swati Smita Biswal | `tutor/mcp_servers/`, hooks, guardrails, approval gate, answer adapter, threat model | **See R5's new attacks before E2** |
+| **R5** Evaluation and red-team engineer | Lakshya Yadav (ksharp05; also Lead and R1) | `eval/` (harness, simulator engine and rules, judge, scorers, configurations, pre-registration), the held-out freeze, new attacks, results tables | **Edit prompts, agents or guards** |
+| **R6** Deployment and operations engineer | Shivam Srivastava or Sharath S Nadig (to confirm which) | Compose, Dockerfiles, API, UI, authentication, Prometheus and Grafana, alerting, CI, README, clean-machine test, demo recording | — |
 
 ## Separation rules
 

@@ -184,18 +184,18 @@ Day-by-day tasks for each role are in [08 · Schedule](08-schedule.md).
 
 | Role | Name | Owns |
 |---|---|---|
-| **R1** Domain and product lead | ksharp05 (also Lead and R5) | Teaching policy; misconceptions and rubric (with the teacher); held-out policy check; lesson review; demo script; slides |
-| **R2** Knowledge and memory engineer | _TBD_ | NCERT ingestion; hybrid retrieval; learner model and memory; memory policy |
-| **R3** Agents and orchestration engineer | _TBD_ | LangGraph graph; planner; four specialists; baselines; Reflexion loop |
-| **R4** Tools, control and security engineer | _TBD_ | Four MCP servers; hooks; guardrails; approval gate; answer adapter; threat model |
-| **R5** Evaluation and red-team engineer | ksharp05 (also Lead and R1) | Held-out sets; attacks; harness; simulated students; judge calibration; experiments; report tables |
-| **R6** Deployment and operations engineer | _TBD_ | Docker Compose; API; UI; auth; Prometheus and Grafana; alerts; CI; README; recording |
+| **R1** Domain and product lead | Lakshya (also Lead and R5) | Teaching policy; misconceptions and rubric (with the teacher); held-out policy check; lesson review; demo script; slides |
+| **R2** Knowledge and memory engineer | Rizwan | NCERT ingestion; hybrid retrieval; learner model and memory; memory policy |
+| **R3** Agents and orchestration engineer | Poonam | LangGraph graph; planner; four specialists; baselines; Reflexion loop |
+| **R4** Tools, control and security engineer | Swati | Four MCP servers; hooks; guardrails; approval gate; answer adapter; threat model |
+| **R5** Evaluation and red-team engineer | Lakshya (also Lead and R1) | Held-out sets; attacks; harness; simulated students; judge calibration; experiments; report tables |
+| **R6** Deployment and operations engineer | Shivam or Sharath (to confirm) | Docker Compose; API; UI; auth; Prometheus and Grafana; alerts; CI; README; recording |
 
 Two separations keep the results honest:
 - R3, who tunes the agents, never sees the held-out cases.
 - R4, who builds the defences, never sees R5's new attacks before the security experiment.
 
-Details: [07 · Team and roles](07-team-and-roles.md).
+The sixth member is proposed as R5b, evaluation engineer ([lead roadmap](../LEAD_ROADMAP.md#team)). Details: [07 · Team and roles](07-team-and-roles.md).
 
 ## How to read this plan
 

@@ -28,13 +28,28 @@ We are building it as Project 3 of the Agentic AI Capstone. It is an NCERT tutor
 | [Socratic Tutor — Agentic AI Architecture Guide](Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct) | The architecture, the six team roles, the hand-offs between them, and who owns which folder | Reference |
 | [Project plan](Docs/plan/README.md) (24 Oct) | Builds on the guide with a dated schedule, design decisions, evaluation design, security and privacy, risks and viva preparation | Proposed |
 | [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 30 tests pass** |
-| [Lead roadmap](Docs/LEAD_ROADMAP.md) (30 Oct) | The schedule from 30 Oct, what each role delivers at each milestone, and who owns which file | **Current** |
+| [Lead roadmap](Docs/LEAD_ROADMAP.md) (31 Oct) | The team, what we found on 31 Oct, the schedule to the viva, what each role delivers at each milestone, and who owns which file | **Current** (dates confirmed at the 1 Nov meeting) |
 
 | Key date | |
 |---|---|
-| Integration days | Sun 1, Mon 2, Wed 4 and Sun 8 November 2026 |
-| Submission | Thursday 12 November 2026, end of day |
+| Team meeting | Sunday 1 November 2026 |
+| Milestones (proposed) | M1 Mon 2, M2 Wed 4, M3 Fri 6, human day Sat 7, M4 Mon 9 November |
+| Content freeze | Wednesday 11 November, 9 pm |
+| Submission | Thursday 12 November 2026, end of day (our target: 6 pm) |
 | Review, demo and viva | Sunday 15 November 2026 |
+
+## Team
+
+| Role | Name |
+|---|---|
+| Lead, R1 Domain and product, R5 Evaluation and red team | Lakshya |
+| R2 Knowledge and memory | Rizwan |
+| R3 Agents and orchestration | Poonam |
+| R4 Tools, control and security | Swati |
+| R6 Deployment and operations | Shivam or Sharath (to confirm) |
+| R5b Evaluation engineer (proposed) | The other of Shivam and Sharath |
+
+What each role owns and never does: [Lead roadmap · Team](Docs/LEAD_ROADMAP.md#team).
 
 ## Quick start
 
