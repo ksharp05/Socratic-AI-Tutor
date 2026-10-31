@@ -7,6 +7,7 @@ purpose = "Pipeline smoke test on the two POC development cards"
 arm = "c2"          # c0 | c1 | c2 | memory_off | direct_answers (see src/tutor_eval/arms.py)
 defences = true
 llm = "stub"        # "stub" forces templates; leave it out to use the live model when a key is set
+voice = "template"  # "llm" phrases the opener and beliefs with meta-llama/llama-3.3-70b-instruct (needs a key)
 seeds = [1]
 max_turns = 8
 turn_timeout_s = 120

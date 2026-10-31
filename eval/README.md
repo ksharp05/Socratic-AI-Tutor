@@ -40,6 +40,7 @@ Run every command from the repository root, with the environment active.
 | File | Role |
 |---|---|
 | `src/tutor_eval/simulator.py` | The simulated student. It answers with the dataset kernel and its own buggy rules, never with tutor code. **Every one of the 30 misconceptions has a rule.** On an item of its concept that its rule doesn't fit, the student gives a generic wrong answer. Transition rules 1–3 and the parameters are in the [pre-registration](PREREGISTRATION.md) |
+| Simulator voice | `voice = "template"` (default, offline) or `"llm"` in a run config: Llama phrases the opener and beliefs; answers stay exact; fallbacks are counted in the manifest. `eval/configs/dev_live.toml` tries it with a key |
 | `src/tutor_eval/validate_sim.py` | Simulator validation on the 16 development cards: expression before tutoring, persistence without help, clearing only when named and targeted, no card text in messages. `python -m tutor_eval.validate_sim` (after the freeze) |
 | `src/tutor_eval/harness.py` | Runs the sessions: pre-quiz, up to 8 tutor turns, post-quiz. Checks every tutor turn for leaks against the problem on screen, the student's own problem and the post-quiz items. Counts failures and timeouts (over 120 s), and writes the manifest with config, code and data hashes |
 | `src/tutor_eval/leakcheck.py` | The policy's leak definition as code: full or partial, for all six answer kinds. It is separate from R4's guard; it measures and never blocks |

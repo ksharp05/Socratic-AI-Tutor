@@ -93,7 +93,8 @@ def _quiz(student: simulator.Student, items: list[dict]) -> list[dict]:
 
 
 def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id: str, catalogue: dict,
-                practice: dict) -> dict:
+                practice: dict, voice: simulator.Voice | None = None) -> dict:
+    voice = voice or simulator.Voice()
     student = simulator.Student(card, catalogue, seed)
     learner_id = f"sim-{card['student_id']}-s{seed}"
     session_id = f"{run_id}-{card['student_id']}-s{seed}"
@@ -110,7 +111,7 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
         problems[own["question_id"]] = {"prompt": own["prompt"], "problem": own["problem"], "own": True,
                                         "expected": own.get("answer") or simulator.correct_answer(own["problem"]),
                                         "produced": [first["typed"]], "solved": False, "hints": 0, "attempts": 1}
-        message = student.opener(own["prompt"], first)
+        message = voice.say(student.opener(own["prompt"], first), student, keep=[first["text"]])
     else:
         message = "Can you give me a practice question?"
 
@@ -183,7 +184,7 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
                         student.learn(p["problem"]["concept_ids"])  # rule 2
                 message, last_was_wrong_answer = given["text"], not ok
         elif result.get("route") == "diagnose" and not probe_replied:
-            message, probe_replied = student.belief(), True
+            message, probe_replied = voice.say(student.belief(), student, keep=[], last_tutor=reply), True
         else:
             message = "practice"
 
@@ -239,6 +240,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                         db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"))
     catalogue = {m["misconception_id"]: m for m in _rows(ROOT / "content" / "dataset-v0.10.0" / "misconceptions.jsonl")}
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
+    voice = simulator.Voice(cfg["run"].get("voice", "template"))
 
     sessions = []
     try:
@@ -246,7 +248,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
             for card in data["students"]:
                 pair_ids = data["assignments"].get(card["student_id"]) or list(data["pairs"])
                 pairs = [data["pairs"][p] for p in pair_ids if p in data["pairs"]]
-                sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice))
+                sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
                 print(f"  {card['student_id']} seed {seed}: {len(sessions[-1]['turns'])} turns")
     finally:
         app.close()
@@ -262,7 +264,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                         ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor_eval/simulator.py",
                          "tutor_eval/leakcheck.py", "tutor_eval/harness.py")},
         "simulator": {"slip": simulator.SLIP, "guess": simulator.GUESS, "learn": simulator.LEARN,
-                      "p_clear": simulator.P_CLEAR, "voice": "template", "targeting": "code_proxy",
+                      "p_clear": simulator.P_CLEAR, "voice": voice.kind, "voice_model": voice.model if voice.client else None,
+                      "voice_counts": voice.counts, "targeting": "code_proxy",
                       "rules": sorted(simulator.RULES)},
         "tutor_llm": app.llm.label, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")

@@ -1,0 +1,20 @@
+# Development run with live models (needs a course key in .env): the tutor on its configured model, and the
+# simulated student's opener and beliefs phrased by Llama. Use it to check the LLM voice and cost before the freeze.
+# Never a result.
+
+[run]
+name = "dev_live"
+purpose = "Live-model development run: tutor and LLM student voice on the two POC development cards"
+arm = "c2"
+defences = true
+voice = "llm"
+seeds = [1]
+max_turns = 8
+turn_timeout_s = 120
+
+[data]
+students = "eval/poc/students.json"
+quiz_pairs = "eval/poc/quiz_pairs.json"
+
+[cost]  # USD per million tokens (input, output), OpenRouter prices checked 24 Oct 2026
+"openai/gpt-4.1-mini" = [0.40, 1.60]

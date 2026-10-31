@@ -46,7 +46,7 @@ All held-out sets were frozen by `python -m tutor_eval.freeze`; the manifest has
 **Models, with the OpenRouter access date recorded at freeze:**
 - **Tutor:** `openai/gpt-4.1-mini` at the configured temperatures.
 - **Judge:** `google/gemini-3.1-flash-lite`, temperature 0.
-- **Simulator voice:** templates in this draft. If the LLM voice (`meta-llama/llama-3.3-70b-instruct`, temperature 0.7) is ready and validated before the freeze, the frozen version says so.
+- **Simulator voice:** `meta-llama/llama-3.3-70b-instruct`, temperature 0.7, for the opener and stated beliefs only. Answers, "hint" and "practice" stay exactly as the rules produce them. The card is re-injected on every message. A reply that drops a required value or shows card text falls back to the template, and the run manifest counts every fallback. If the voice isn't checked on `eval/configs/dev_live.toml` before the freeze, templates are used and the frozen version says so.
 
 ## 4. The simulated student
 

@@ -322,6 +322,56 @@ class Student:
         return f"I thought {rule[0].lower()}{rule[1:]}"
 
 
+VOICE_MODEL, VOICE_TEMPERATURE = "meta-llama/llama-3.3-70b-instruct", 0.7
+VOICE_SYSTEM = """You play a Class 10 student in India talking to a maths tutor. Rewrite the student's planned message
+in your own words, as this student would type it: short, informal, simple English. Rules:
+- Keep every mathematical value and answer exactly as written in the planned message.
+- Keep the student's belief: do not correct it and do not become more confident or more correct.
+- Never mention misconception IDs, cards, mastery numbers or that you are simulated.
+- Output only the student's message."""
+
+
+class Voice:
+    """How the student phrases its free-text messages (the opener and its stated belief).
+
+    Answers, "hint" and "practice" stay exactly as the rules produce them, so the tutor and the graders read the
+    same thing. With an LLM voice the card is re-injected on every message, which limits persona drift, and a
+    reply that drops a required value or shows card text falls back to the template; every fallback is counted.
+    """
+
+    def __init__(self, kind: str = "template", client=None, model: str = VOICE_MODEL):
+        self.kind, self.client, self.model = kind, client, model
+        self.counts = {"llm": 0, "template": 0, "fallback": 0}
+        if kind == "llm" and client is None:
+            from tutor.llm import api_key, base_url
+            key, _ = api_key()
+            if key:
+                from langchain_openai import ChatOpenAI
+                self.client = ChatOpenAI(model=model, api_key=key, base_url=base_url(), temperature=VOICE_TEMPERATURE,
+                                         timeout=60, max_retries=2)
+            else:
+                self.kind = "template (llm requested, no API key)"
+
+    def say(self, planned: str, student: "Student", keep: list[str], last_tutor: str = "") -> str:
+        if self.client is None or not self.kind.startswith("llm"):
+            self.counts["template"] += 1
+            return planned
+        beliefs = "; ".join(student.catalogue[m]["incorrect_rule"] for m in student.active if m in student.catalogue)
+        persona = ", ".join(f"{k}: {v}" for k, v in student.persona.items() if k != "provenance")
+        user = (f"Your style: {persona or 'plain'}.\nWhat you believe (keep believing it): {beliefs or 'nothing in particular'}.\n"
+                f"The tutor just said: {last_tutor or '(nothing yet)'}\nPlanned message: {planned}")
+        try:
+            text = str(self.client.invoke([("system", VOICE_SYSTEM), ("user", user)]).content).strip()
+        except Exception:
+            text = ""
+        leaked = any(m in text for m in student.seeded) or "simulat" in text.lower()
+        if not text or leaked or any(k not in text for k in keep):
+            self.counts["fallback"] += 1
+            return planned
+        self.counts["llm"] += 1
+        return text
+
+
 def expression_rate(card: dict, catalogue: dict, problems: list[dict], runs: int = 20) -> dict:
     """Validation (before any tutoring): how often each seeded misconception shows up on the problems it applies to."""
     shown: dict[str, list[bool]] = {m: [] for m in card["hidden_card"]["seeded_misconception_ids"]}

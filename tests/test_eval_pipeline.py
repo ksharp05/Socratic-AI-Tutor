@@ -109,3 +109,26 @@ def test_simulator_validation_on_the_poc_cards():
 def test_every_misconception_has_a_rule():
     catalogue = [json.loads(line) for line in (ROOT / "content/dataset-v0.10.0/misconceptions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
     assert {m["misconception_id"] for m in catalogue} == set(simulator.RULES)
+
+
+def test_llm_voice_keeps_values_and_falls_back_safely():
+    card = {"student_id": "t2", "hidden_card": {"seeded_misconception_ids": ["qe_m05"], "true_mastery_by_concept": {},
+                                                 "persona": {"communication_style": "brief"}}}
+    student = simulator.Student(card, {"qe_m05": {"concept_id": "qe03", "incorrect_rule": "Roots are positive."}}, seed=1)
+
+    class Fake:
+        def __init__(self, reply):
+            self.reply, self.prompts = reply, []
+
+        def invoke(self, messages):
+            self.prompts.append(messages[-1][1])
+            return type("R", (), {"content": self.reply})()
+
+    good = simulator.Voice("llm", client=Fake("hmm i got x = 3, thats right na?"))
+    assert good.say("I got x = 3. Is that right?", student, keep=["x = 3"]) == "hmm i got x = 3, thats right na?"
+    assert "Roots are positive." in good.client.prompts[0]  # the card is re-injected on every message
+    dropped = simulator.Voice("llm", client=Fake("is that right?"))
+    assert dropped.say("I got x = 3. Is that right?", student, keep=["x = 3"]) == "I got x = 3. Is that right?"
+    leaky = simulator.Voice("llm", client=Fake("my qe_m05 says x = 3"))
+    assert leaky.say("I got x = 3.", student, keep=["x = 3"]) == "I got x = 3."
+    assert dropped.counts["fallback"] == leaky.counts["fallback"] == 1
