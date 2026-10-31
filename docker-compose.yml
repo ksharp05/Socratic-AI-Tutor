@@ -1,0 +1,96 @@
+# Socratic Tutor stack (R6). See Docs/deploy/README.md.
+#   docker compose up --build --wait                 # api + ui
+#   docker compose --profile ops up --build --wait   # also prometheus + grafana
+# The tutor uses the deterministic stub unless TUTOR_LLM=auto is set (in .env or the shell) with a key.
+name: socratic-tutor
+
+services:
+  api:
+    build:
+      context: .
+      target: api
+    image: socratic-tutor-api:dev
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      TUTOR_LLM: ${TUTOR_LLM:-stub}
+      TUTOR_API_TOKENS: ${TUTOR_API_TOKENS:-}
+      TUTOR_ENV: ${TUTOR_ENV:-development}  # set to production to refuse the public dev tokens
+      TUTOR_VAR_DIR: /app/var
+    ports:
+      - "8000:8000"
+    volumes:
+      - tutor-var:/app/var
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 40s
+      retries: 5
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      target: ui
+    image: socratic-tutor-ui:dev
+    environment:
+      TUTOR_API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    restart: unless-stopped
+
+  prometheus:
+    profiles: ["ops"]
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:9090/-/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    profiles: ["ops"]
+    image: grafana/grafana:12.1.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./ops/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  tutor-var:
+  prometheus-data:
+  grafana-data:
