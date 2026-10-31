@@ -159,17 +159,17 @@ A test stops a turn halfway and resumes it from its checkpoint (`test_stop_and_r
 tutor eval
 ```
 
-Runs the two **development** cards (`sim_v2_010` with `qe_m04`, `sim_v2_013` with `qe_m05`). Each card goes through:
+Runs the two **development** cards (`sim_v2_010` with `qe_m04` and `qe_m01`, `sim_v2_013` with `qe_m05`) through the evaluation harness. Each card goes through:
 1. a pre-quiz;
-2. a 6-turn tutoring session played by a code-owned student;
-3. a post-quiz.
+2. up to 8 turns with the tutor, played by the simulated student in `src/tutor_eval/simulator.py`;
+3. a post-quiz, graded by the dataset's own maths code.
 
-It prints and saves a report to `var\reports\`. The report covers:
-- the seeded misconceptions against what was diagnosed;
-- what was cleared;
-- pre and post scores;
-- leaks, turns, tool calls and latency;
-- the full transcripts.
+It prints a summary and saves `var/runs/<run_id>/`:
+- `report.md`: diagnosis, leaks, quiz scores, task success, tool calls, latency, cost and every transcript;
+- `manifest.json`: config, code and data hashes;
+- `sessions.jsonl`: every turn.
+
+The whole pipeline (judge, kappa, security runner, comparison tables) is described in [eval/README.md](../../eval/README.md).
 
 **These numbers are a smoke test, not a result.**
 
@@ -179,7 +179,7 @@ It prints and saves a report to `var\reports\`. The report covers:
 pytest -q
 ```
 
-30 tests:
+54 tests:
 - **one or more per MCP tool;**
 - **permission hooks:** wrong role, another learner;
 - **end-to-end flows:**
@@ -192,6 +192,8 @@ pytest -q
   - quiz replan;
   - edit invalidation;
   - stop and resume.
+- **held-out freeze:** on a synthetic build, so CI never needs the private data;
+- **evaluation pipeline:** the leak checker, simulator rules, the harness end to end, judge parsing, kappa and the security runner;
 - **live-model setup:** reading `.env`, `tutor check-llm`, and failed calls, against a local fake server, so no key is needed.
 
 ## Using a real model

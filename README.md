@@ -27,7 +27,7 @@ We are building it as Project 3 of the Agentic AI Capstone. It is an NCERT tutor
 |---|---|---|
 | [Socratic Tutor — Agentic AI Architecture Guide](Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct) | The architecture, the six team roles, the hand-offs between them, and who owns which folder | Reference |
 | [Project plan](Docs/plan/README.md) (24 Oct) | Builds on the guide with a dated schedule, design decisions, evaluation design, security and privacy, risks and viva preparation | Proposed |
-| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 30 tests pass** |
+| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 54 tests pass** |
 | [Lead roadmap](Docs/LEAD_ROADMAP.md) (31 Oct) | The team, what we found on 31 Oct, the schedule to the viva, what each role delivers at each milestone, and who owns which file | **Current** (dates confirmed at the 1 Nov meeting) |
 
 | Key date | |

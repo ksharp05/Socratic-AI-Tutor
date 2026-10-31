@@ -4,7 +4,7 @@ How we work in parallel without breaking `main`. The dates and what each role de
 
 ## Set up
 
-Follow the [setup guide](Docs/SETUP.md): it ends with `pytest -q` showing 30 passed and `tutor check-llm` passing with your own course key.
+Follow the [setup guide](Docs/SETUP.md): it ends with `pytest -q` showing every test passed and `tutor check-llm` passing with your own course key.
 
 ## Branches and pull requests
 

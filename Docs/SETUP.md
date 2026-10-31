@@ -2,11 +2,11 @@
 
 Follow these steps in order. In about 45 minutes you will have the Socratic Tutor running on your own laptop, with the tests passing and your own API key checked. Steps 1 to 6 need no API key.
 
-Checked on 31 Oct 2026 on a fresh clone of `main` (Windows 11, Python 3.12.10): install took about 1.5 minutes, 30 tests passed, and the evaluation ran. The live-model check in Step 7 uses the same code path, tested against a stand-in server.
+Checked on 31 Oct 2026 on a fresh clone of `main` (Windows 11, Python 3.12.10): install took about 1.5 minutes, every test passed, and the evaluation ran. The live-model check in Step 7 uses the same code path, tested against a stand-in server.
 
 **Post these three things in the team group when you finish:**
 
-1. **Screenshot 1:** `pytest -q` ending in **30 passed** (Step 5).
+1. **Screenshot 1:** `pytest -q` ending in **54 passed** (Step 5).
 2. **Screenshot 2:** `tutor check-llm` ending in **1 of 1 models answered** (Step 7).
 3. **Your GitHub username**, if you haven't sent it yet (Step 1).
 
@@ -24,7 +24,7 @@ Checked on 31 Oct 2026 on a fresh clone of `main` (Windows 11, Python 3.12.10): 
 | 2 | Install Git and Python 3.12 | 10 min | `git --version` and `python --version` both answer |
 | 3 | Clone the repository | 2 min | A folder named `Socratic-AI-Tutor` |
 | 4 | Create the virtual environment and install | 5 min | `(.venv)` at the start of your prompt |
-| 5 | Run the tests | 1 min | **30 passed**: take screenshot 1 |
+| 5 | Run the tests | 1 min | **54 passed**: take screenshot 1 |
 | 6 | Try the tutor (no key needed) | 10 min | Students A and B get different replies |
 | 7 | Add your own API key and check it | 5 min | **1 of 1 models answered**: take screenshot 2 |
 | 8 | Run the simulated-student evaluation | 2 min | A report in `var/reports/` |
@@ -252,12 +252,12 @@ pytest -q
 
 ```text
 ..............................                                           [100%]
-30 passed in 8.31s
+54 passed in 9.56s
 ```
 
-Each dot is one passing test. An `F` or `E` means a failure: scroll up for the red text, and post it in the group.
+Each dot is one passing test. A copy cloned before the evaluation pipeline was merged shows 30; run `git pull` and reinstall. An `F` or `E` means a failure: scroll up for the red text, and post it in the group.
 
-**Take screenshot 1 now,** showing the command and the `30 passed` line:
+**Take screenshot 1 now,** showing the command and the `54 passed` line:
 
 - **Windows:** press Windows + Shift + S, then drag over the terminal. The picture is copied, so you can paste it straight into WhatsApp Web or Desktop.
 - **macOS:** press Cmd + Shift + 4, then drag. The file lands on your Desktop.
@@ -440,42 +440,46 @@ The first line now ends with `llm=openai/gpt-4.1-mini via https://openrouter.ai/
 
 ## Step 8: Run the simulated-student evaluation
 
-This is signature challenge B in miniature. Two simulated students, each with a known misconception, take a pre-quiz, a 6-turn tutoring session and a post-quiz. The tutor must find each misconception without being told.
+This is signature challenge B in miniature. Two simulated students, each with a planted misconception, take a pre-quiz, up to 8 turns with the tutor, and a post-quiz. The tutor must find each misconception without being told. Code checks every tutor turn for answer leaks.
 
 ```bash
 tutor eval
 ```
 
-It takes a few seconds without a key, or about a minute with one. It prints a report and saves it.
+It takes a few seconds without a key, or about a minute with one. It prints a summary and saves a full report.
 
-**Expected** without a key. With a key, the `LLM:` part names the model, and the numbers can differ:
+**Expected** without a key. With a key, the tutor line names the model, and the numbers can differ:
 
 ```text
-# POC evaluation (smoke test, not a result)
+# Run dev_smoke-20261031-200323
 
-Config sha256 `0ac032ceecda` · defences on · LLM: stub (no API key set; deterministic templates)
+- **Data:** development only. A development run: not a result.
+- **Tutor:** arm `c2`, defences on, stub (no API key set; deterministic templates)
+- **Gate:** pass
 
-| Student    | Seeded         | Diagnosed | Hit | Cleared | Pre | Post | Gain | Leaks | Turns | Tool calls |
-| sim_v2_010 | qe_m04, qe_m01 | qe_m04    | yes | qe_m04  | 2/3 | 1/3  | -1   | 0     | 6     | 37         |
-| sim_v2_013 | qe_m05         | qe_m05    | yes | qe_m05  | 1/3 | 2/3  | +1   | 0     | 6     | 37         |
+| Measure | Value |
+|---|---|
+| Sessions / turns | 2 / 16 |
+| Failures / timeouts (counted, never dropped) | 0 / 0 |
+| Diagnosis recall / precision / macro-F1 | 0.333 / 0.5 / 0.222 |
+| Full / partial leak turns | 0 / 0 |
+| Quiz pre → post (mean of 3 items) | 0 → 1 |
 ```
 
-The printed table also has Seed and Median turn ms columns; they are left out above to fit.
+The printed summary has a few more rows: task success, tool calls, latency and cost.
 
 **How to read it:**
 
-| Column | Meaning |
+| Row | Meaning |
 | --- | --- |
-| Seeded | The misconceptions the simulated student was given |
-| Diagnosed, Hit | What the tutor found, and whether it matched |
-| Cleared | Misconceptions the student no longer shows by the end |
-| Pre, Post, Gain | Quiz scores before and after the session |
-| Leaks | Times the tutor gave away an answer. Must be 0 |
-| Tool calls | MCP tool calls in the session, every one checked by the permission hooks |
+| Diagnosis recall / precision / macro-F1 | How many planted misconceptions the tutor named, and how often what it named was right |
+| Full / partial leak turns | Turns that gave an answer away, by the teaching policy's definition. Must be 0 |
+| Quiz pre → post | Correct quiz items before and after the session, graded by the dataset's own maths code |
+| Gate | The thresholds CI checks: no leaks, no failures, every session run |
 
-Below the table are the full transcripts. The last line gives the report's location: `var/reports/poc_eval_<date>_<time>.md`, plus a `.json` with the raw results. Open the `.md` in VS Code or any text editor.
+The last line gives the full report's location: `var/runs/<run_id>/report.md`, with every transcript. Next to it are `manifest.json` (config, code and data hashes) and `sessions.jsonl` (every turn). Open the `.md` in VS Code or any text editor. `eval/README.md` explains the whole evaluation pipeline.
 
-**These numbers are a smoke test, not results.** There are two development students and one run, and the gain can go either way. Real results come from the full experiments after M3, on held-out data with three repeats.
+**These numbers are a smoke test, not results.** There are two development students and one run. Real results come from the full experiments after M3, on held-out data with three repeats.
 
 ## Step 9: Read your part
 
@@ -511,7 +515,7 @@ Open the project in VS Code with `code .`, or browse the files on GitHub.
 
 Post one message in the WhatsApp group with:
 
-1. **Screenshot 1:** `30 passed`.
+1. **Screenshot 1:** `54 passed`.
 2. **Screenshot 2:** `1 of 1 models answered`.
 3. **Your GitHub username**, if you haven't sent it.
 4. **One line:** "I'm R\_, I own \_\_, and my first deliverable is \_\_ by \_\_."
@@ -559,7 +563,7 @@ Find the message you see in the first column. If nothing here matches, post the 
 | `running scripts is disabled on this system` | PowerShell blocks the activate script by default | The `Set-ExecutionPolicy` command in Step 4b, or use Command Prompt and `.venv\Scripts\activate.bat` |
 | `tutor` or `pytest` is not recognized, or `command not found` | The environment isn't active in this terminal | Activate it (Step 4b) and check for `(.venv)`. Or run `python -m tutor ...` and `python -m pytest -q` |
 | `pip install` times out, or shows SSL or proxy errors | Campus or office networks often block or slow PyPI | Try again on another network, such as a phone hotspot, or add `--default-timeout=100` to the command |
-| Fewer than 30 tests, or an `F` or `E` | An older copy, or a failed install | Run `git pull`, then `pip install -e ".[dev]"` and `pytest -q` again. Still failing? Post the red text |
+| Fewer than 54 tests, or an `F` or `E` | An older copy, or a failed install | Run `git pull`, then `pip install -e ".[dev]"` and `pytest -q` again. Still failing? Post the red text |
 | `No API key found` | No `.env` file, an empty key line, or on Windows the file was saved as `.env.txt` | Run `Get-ChildItem -Force .env*` (Windows) or `ls -a` (macOS, Linux). Rename a `.env.txt` with `Rename-Item .env.txt .env`, then redo Step 7b |
 | `FAILED: the key was rejected` (401) | The key in `.env` is incomplete or has extra characters | Paste the whole key again straight after `LLM_API_KEY=`, with no spaces or quotes. Keys work until 16 Nov 2026 |
 | `FAILED: this key cannot reach this model` (404), or `may not use this model` (403) | The model isn't on the course list, often from an `LLM_MODEL` line in `.env` | Keep the `LLM_MODEL` line in `.env` commented out with `#`. Models are set in `config/app.toml` |

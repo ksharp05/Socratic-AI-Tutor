@@ -37,7 +37,7 @@ Proposed in the team group on 31 Oct ([D-2](DECISIONS.md)); confirmed at the mee
 
 | Done | Behind the plan |
 |---|---|
-| • Plan on `main` (24 Oct)<br/>• **Proof of concept v0 on `main`** (31 Oct): every box of the architecture at a basic level, 30 passing tests, simulated-student smoke test ([how to run it](poc/README.md))<br/>• **Live model ready:** each member puts their own course key in `.env` and runs `tutor check-llm` ([how](poc/README.md#using-a-real-model))<br/>• All tutor-visible data in `content/dataset-v0.10.0/`<br/>• Roles proposed (above)<br/>• NCERT files checked against our dataset ([findings](#what-we-found-on-31-oct)) | • Held-out freeze and hashes (R5)<br/>• Teaching policy (R1)<br/>• Spikes S1–S6<br/>• Compose skeleton (R6). CI exists but has not run on GitHub yet<br/>• The team build: due to start 26 Oct, it starts Mon 2 Nov |
+| • Plan on `main` (24 Oct)<br/>• **Proof of concept v0 on `main`** (31 Oct): every box of the architecture at a basic level, 54 passing tests, the evaluation pipeline, simulated-student smoke test ([how to run it](poc/README.md))<br/>• **Live model ready:** each member puts their own course key in `.env` and runs `tutor check-llm` ([how](poc/README.md#using-a-real-model))<br/>• All tutor-visible data in `content/dataset-v0.10.0/`<br/>• Roles proposed (above)<br/>• NCERT files checked against our dataset ([findings](#what-we-found-on-31-oct)) | • Held-out freeze and hashes (R5)<br/>• Teaching policy (R1)<br/>• Spikes S1–S6<br/>• Compose skeleton (R6). CI exists but has not run on GitHub yet<br/>• The team build: due to start 26 Oct, it starts Mon 2 Nov |
 
 **What this means:** the POC replaces Phase 1. Nobody rebuilds the skeleton. Each role **takes over its box in the POC and replaces the stand-in** with the real version (the "Planned" column of [What is real and what is still a stand-in](poc/README.md#what-is-real-and-what-is-still-a-stand-in)).
 
@@ -183,7 +183,7 @@ Each line is a deliverable, followed (after →) by **the evidence to ask for**.
 - [ ] Create the milestone issues → issues exist
 
 **Everyone:**
-- [ ] Install and run the POC with the [setup guide](SETUP.md) → screenshot of `pytest -q` showing 30 passed, and of `tutor check-llm` passing with their own key
+- [ ] Install and run the POC with the [setup guide](SETUP.md) → screenshot of `pytest -q` showing every test passed, and of `tutor check-llm` passing with their own key
 - [ ] Read the POC code for their box ([who owns which file](#who-owns-which-file)) and its row in [10 · Proof of concept](plan/10-proof-of-concept.md#what-each-box-looks-like-in-the-poc) → can explain it at Monday's walkthrough
 - [ ] First entry in [Docs/CONTRIBUTIONS.md](CONTRIBUTIONS.md) → entry merged
 

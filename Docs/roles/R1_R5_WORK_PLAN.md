@@ -6,6 +6,12 @@ What Lakshya delivers as R1 (domain and product) and R5 (evaluation and red team
 - **Dates:** follow the roadmap. Where the plan's older dates differ, the roadmap wins.
 - **Other roles:** each one can copy this layout for its own plan in `Docs/roles/`.
 
+## Progress (31 Oct)
+
+| Done on this branch | Still to do |
+|---|---|
+| • [Teaching policy v0](../policy/TEACHING_POLICY.md)<br/>• Freeze script (`python -m tutor_eval.freeze`) and `Docs/EXPERIMENT_LOG.md`<br/>• **Evaluation pipeline** ([eval/README.md](../../eval/README.md)): simulator with rules for 23 of 30 misconceptions, harness with run manifests, policy leak checker, metrics and tables, judge runner, kappa tools, security runner<br/>• [Pre-registration draft](../../eval/PREREGISTRATION.md) for R2; [rater guide](../../eval/judge_calibration/RATER_GUIDE.md)<br/>• CI gates: the simulated-student smoke run and the security cases | • **Run the freeze** (you, before the meeting)<br/>• Policy v1 to R3 and R4<br/>• Simulator rules for the last 7 misconceptions; validation on all 16 development cards<br/>• The LLM voice for the simulator<br/>• At least 10 new attacks, kept outside the repository<br/>• The arms and switches other roles own: `c0`, `c1` (R3), per-layer defences and injection hooks (R4), `memory_off` (R2) |
+
 ## 1. What I own
 
 | Role | Deliverables | Not mine (hand-offs in [D-1](../DECISIONS.md)) |
