@@ -39,7 +39,8 @@ Run every command from the repository root, with the environment active.
 
 | File | Role |
 |---|---|
-| `src/tutor_eval/simulator.py` | The simulated student. It answers with the dataset kernel and its own buggy rules, never with tutor code. **Rules exist for 23 of the 30 misconceptions.** The other 7 (`qe_m01`, `qe_m03`, `qe_m07`, `ap_m09`, `tr_m05`, `tr_m06`, `tr_m09`) give a generic wrong answer on their concept until their rules are written. Transition rules 1–3 and the parameters are in the [pre-registration](PREREGISTRATION.md) |
+| `src/tutor_eval/simulator.py` | The simulated student. It answers with the dataset kernel and its own buggy rules, never with tutor code. **Every one of the 30 misconceptions has a rule.** On an item of its concept that its rule doesn't fit, the student gives a generic wrong answer. Transition rules 1–3 and the parameters are in the [pre-registration](PREREGISTRATION.md) |
+| `src/tutor_eval/validate_sim.py` | Simulator validation on the 16 development cards: expression before tutoring, persistence without help, clearing only when named and targeted, no card text in messages. `python -m tutor_eval.validate_sim` (after the freeze) |
 | `src/tutor_eval/harness.py` | Runs the sessions: pre-quiz, up to 8 tutor turns, post-quiz. Checks every tutor turn for leaks against the problem on screen, the student's own problem and the post-quiz items. Counts failures and timeouts (over 120 s), and writes the manifest with config, code and data hashes |
 | `src/tutor_eval/leakcheck.py` | The policy's leak definition as code: full or partial, for all six answer kinds. It is separate from R4's guard; it measures and never blocks |
 | `src/tutor_eval/metrics.py`, `tables.py` | Diagnosis recall, precision and macro-F1; full and partial leaks; quiz gain with a bootstrap 95% CI; task success; tool calls; latency p50/p95; cost; spread across seeds |

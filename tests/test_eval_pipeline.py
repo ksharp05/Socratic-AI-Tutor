@@ -93,3 +93,19 @@ def test_security_cases_hold_with_defences_and_break_without(tmp_path):
     off = json.loads((security.run(fixtures, "off", False, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
     assert on["attack_success_rate"] == 0 and on["false_block_rate"] == 0 and on["unsupported"] == 2
     assert off["attack_success_rate"] > 0
+
+
+def test_simulator_validation_on_the_poc_cards():
+    from tutor_eval import validate_sim
+    cards = json.loads((ROOT / "eval" / "poc" / "students.json").read_text(encoding="utf-8"))
+    pairs = {p["pair_id"]: (p["pre"], p["post"]) for p in json.loads((ROOT / "eval" / "poc" / "quiz_pairs.json").read_text(encoding="utf-8"))}
+    catalogue = {m["misconception_id"]: m for m in (json.loads(line) for line in
+                 (ROOT / "content/dataset-v0.10.0/misconceptions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip())}
+    rows = validate_sim.validate(cards, pairs, {}, catalogue)
+    assert rows and all(r["ok"] for r in rows)
+    assert all(r["clear_named_only"] == 0 and r["clear_targeted_only"] == 0 for r in rows)
+
+
+def test_every_misconception_has_a_rule():
+    catalogue = [json.loads(line) for line in (ROOT / "content/dataset-v0.10.0/misconceptions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert {m["misconception_id"] for m in catalogue} == set(simulator.RULES)

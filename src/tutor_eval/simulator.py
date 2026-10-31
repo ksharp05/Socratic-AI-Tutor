@@ -170,12 +170,53 @@ def _tr_m10(t, g):  # one matching substitution proves an identity
         return {"kind": "boolean", "value": True}
 
 
-RULES = {"qe_m02": _qe_m02, "qe_m04": _qe_m04, "qe_m05": _qe_m05, "qe_m06": _qe_m06, "qe_m08": _qe_m08,
+def _qe_m01(t, g):  # any equation that shows x squared is quadratic
+    if t == "quadratic_degree":
+        return {"kind": "classification", "value": "quadratic"}
+    if t == "quadratic_coefficients" and kt.polynomial_coefficients(g)[0] == 0:  # misses that the x² terms cancel
+        a, b, c = kt.polynomial_coefficients(g)
+        return {"kind": "coefficients", "values": [mk.canonical(g["p"] * g["r"]), mk.canonical(b), mk.canonical(c)]}
+
+
+def _qe_m03(t, g):  # the quadratic formula still applies when a = 0, so it is still "quadratic"
+    if t == "quadratic_degree" and kt.polynomial_coefficients(g)[0] == 0:
+        return {"kind": "classification", "value": "quadratic"}
+
+
+def _qe_m07(t, g):  # the discriminant is a root: one value, so a "repeated" root
+    if t == "quadratic_classify" and g["b"] ** 2 - 4 * g["a"] * g["c"] != 0:
+        return {"kind": "classification", "value": "repeated_real"}
+
+
+def _ap_m09(t, g):  # the middle of three AP terms is their geometric mean
+    if t == "ap_mean" and g["left"] * g["right"] >= 0:
+        return mk.scalar(sp.sqrt(g["left"] * g["right"]))
+
+
+def _tr_m05(t, g):  # sin²θ read as the sine of θ², so the square is dropped
+    if t == "trig_square_value" and (value := kt.standard_ratio(g["ratio"], g["angle_degrees"])) is not None:
+        return mk.scalar(g["factor"] * value)
+
+
+def _tr_m06(t, g):  # the angle is taken as radians, as software would
+    if t == "trig_standard_value":
+        value = float(sp.N(getattr(sp, g["ratio"])(g["angle_degrees"]) * g.get("coefficient", 1)))
+        return {"kind": "defined_value", "defined": True, "value": mk.canonical(sp.Rational(str(round(value, 4))))}
+
+
+def _tr_m09(t, g):  # squaring a sum gives only the sum of the squares
+    if t == "trig_identity_truth" and g["identity_id"] == "false_square_expansion":
+        return {"kind": "boolean", "value": True}
+
+
+RULES = {"qe_m01": _qe_m01, "qe_m03": _qe_m03, "qe_m07": _qe_m07, "ap_m09": _ap_m09, "tr_m05": _tr_m05,
+         "tr_m06": _tr_m06, "tr_m09": _tr_m09, "qe_m02": _qe_m02, "qe_m04": _qe_m04, "qe_m05": _qe_m05, "qe_m06": _qe_m06, "qe_m08": _qe_m08,
          "qe_m09": _qe_m09, "qe_m10": _qe_m10, "ap_m01": _ap_m01, "ap_m02": _ap_m02, "ap_m03": _ap_m03,
          "ap_m04": _ap_m04, "ap_m05": _ap_m05, "ap_m06": _ap_m06, "ap_m07": _ap_m07, "ap_m08": _ap_m08,
          "ap_m10": _ap_m10, "tr_m01": _tr_m01, "tr_m02": _tr_m02, "tr_m03": _tr_m03, "tr_m04": _tr_m04,
          "tr_m07": _tr_m07, "tr_m08": _tr_m08, "tr_m10": _tr_m10}
-# No rule yet, so a generic wrong answer stands in on their concept: qe_m01, qe_m03, qe_m07, ap_m09, tr_m05, tr_m06, tr_m09.
+# Every misconception has a rule. Where a rule doesn't apply to a problem on its own concept, the student gives a
+# generic wrong answer there instead (logged as "<id>:generic").
 
 
 def generic_wrong(answer: dict) -> dict:
@@ -250,7 +291,8 @@ class Student:
             buggy = rule(problem["task_type"], problem["givens"]) if rule else None
             if buggy is not None and not mk.answers_equivalent(buggy, right):
                 return {"typed": buggy, "text": render(buggy), "rule": m}
-            if rule is None and self.catalogue.get(m, {}).get("concept_id") in problem["concept_ids"]:
+            if buggy is None and self.catalogue.get(m, {}).get("concept_id") in problem["concept_ids"]:
+                # the rule doesn't fit this task type, but the item is on the misconception's concept
                 wrong = generic_wrong(right)
                 return {"typed": wrong, "text": render(wrong), "rule": f"{m}:generic"}
         m = statistics.fmean([self.mastery.get(c, 0.5) for c in problem["concept_ids"]] or [0.5])

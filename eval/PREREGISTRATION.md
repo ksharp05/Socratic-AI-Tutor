@@ -57,7 +57,8 @@ Code: `src/tutor_eval/simulator.py` (hash recorded at freeze).
 **Answering:**
 - If an active misconception has a rule for the problem, the student gives that rule's wrong answer.
 - Otherwise the student is correct with probability m(1 − S) + (1 − m)G, where m is the mean mastery of the problem's concepts.
-- Rules exist for 23 of the 30 misconceptions. The other 7 give a generic wrong answer on their concept.
+- Every one of the 30 misconceptions has a rule. On an item of its concept that its rule doesn't fit, the student gives a generic wrong answer.
+- When two seeded misconceptions apply to the same item, the one listed first on the card shows.
 
 **Transition rules:**
 1. **A misconception clears** at the end of a session with probability 0.7, but only if:
@@ -80,6 +81,8 @@ Quizzes are graded by the dataset kernel, never by tutor code.
 - Each seeded misconception shows on at least 80% of the items its rule applies to, before tutoring.
 - Without tutoring, it does not clear.
 - No card text appears in the student's messages.
+
+**Result on 31 Oct** (`python -m tutor_eval.validate_sim`, development records): all 24 card and misconception pairs passed. Five can't show in quiz scores, because another misconception on the same card claims the only item they apply to: `sim_v2_002` `ap_m05`, `sim_v2_004` `qe_m01`, `sim_v2_006` `tr_m08`, `sim_v2_010` `qe_m04`, `sim_v2_016` `qe_m06`. Their diagnosis is still measured in the session. To be re-run on `eval/dev/` after the freeze, and on the held-out cards' rules only through this same code.
 
 ## 5. Metrics
 
