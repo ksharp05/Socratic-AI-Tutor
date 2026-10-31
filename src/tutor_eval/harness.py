@@ -239,8 +239,15 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
     run_dir.mkdir(parents=True, exist_ok=True)
     rel = run_dir.relative_to(VAR_DIR) if run_dir.is_relative_to(VAR_DIR) else None
     db_name = str(rel / "tutor.db") if rel else str(run_dir / "tutor.db")
-    app = arms.make_app(cfg["run"]["arm"], defences=cfg["run"]["defences"], llm_mode=cfg["run"].get("llm"),
-                        db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"))
+    retrieval = dict(SETTINGS.raw.get("retrieval", {}))
+    if cfg["run"].get("retrieval_mode"):  # a run may pick the retrieval backend; the manifest records it
+        SETTINGS.raw.setdefault("retrieval", {})["mode"] = cfg["run"]["retrieval_mode"]
+    try:
+        app = arms.make_app(cfg["run"]["arm"], defences=cfg["run"]["defences"], llm_mode=cfg["run"].get("llm"),
+                            db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"))
+    finally:
+        SETTINGS.raw["retrieval"] = retrieval
+    retrieval_mode = cfg["run"].get("retrieval_mode") or retrieval.get("mode", "poc_cards")
     catalogue = {m["misconception_id"]: m for m in _rows(ROOT / "content" / "dataset-v0.10.0" / "misconceptions.jsonl")}
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
     voice = simulator.Voice(cfg["run"].get("voice", "template"))
@@ -279,7 +286,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                       "p_clear": simulator.P_CLEAR, "voice": voice.kind, "voice_model": voice.model if voice.client else None,
                       "voice_counts": voice.counts, "targeting": "code_proxy",
                       "rules": sorted(simulator.RULES)},
-        "tutor_llm": app.llm.label, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
+        "tutor_llm": app.llm.label, "retrieval_mode": retrieval_mode, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")
                                              .read_text(encoding="utf-8"))["payload_sha256"],
         "budget": {**budget, "tutor_usd_spent": round(spent_usd, 5), "tutor_llm_calls": calls,

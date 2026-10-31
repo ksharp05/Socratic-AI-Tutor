@@ -1,0 +1,26 @@
+# Smoke test of the whole evaluation pipeline on the two POC development cards. Runs offline (stub tutor).
+# This is also the CI gate. It is never a result.
+
+[run]
+name = "dev_hybrid"
+purpose = "Smoke test with hybrid retrieval (cards + NCERT sections); build the index first: python -m tutor.retrieval.ingest"
+arm = "c2"          # c0 | c1 | c2 | memory_off | direct_answers (see src/tutor_eval/arms.py)
+defences = true
+llm = "stub"
+retrieval_mode = "hybrid"        # "stub" forces templates; leave it out to use the live model when a key is set
+voice = "template"  # "llm" phrases the opener and beliefs with meta-llama/llama-3.3-70b-instruct (needs a key)
+seeds = [1]
+max_turns = 8
+turn_timeout_s = 120
+
+[data]
+students = "eval/poc/students.json"
+quiz_pairs = "eval/poc/quiz_pairs.json"
+
+[gate]
+max_full_leaks = 0
+max_failures = 0
+min_sessions = 2
+
+[cost]  # USD per million tokens (input, output), OpenRouter prices checked 24 Oct 2026
+"openai/gpt-4.1-mini" = [0.40, 1.60]
