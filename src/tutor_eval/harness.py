@@ -111,7 +111,9 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
         problems[own["question_id"]] = {"prompt": own["prompt"], "problem": own["problem"], "own": True,
                                         "expected": own.get("answer") or simulator.correct_answer(own["problem"]),
                                         "produced": [first["typed"]], "solved": False, "hints": 0, "attempts": 1}
-        message = voice.say(student.opener(own["prompt"], first), student, keep=[first["text"]])
+        equation = re.search(r"[-\d(][\d()*^+\-/x .]*=\s*-?\d+", own["prompt"])  # the voice must keep it
+        message = voice.say(student.opener(own["prompt"], first), student,
+                            keep=[first["text"]] + ([equation.group(0).strip()] if equation else []))
     else:
         message = "Can you give me a practice question?"
 

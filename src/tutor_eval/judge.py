@@ -98,6 +98,8 @@ def judge_run(run_dir: Path, model: str = MODEL, limit: int | None = None, clien
             record = {"session": session["session"], "turn": turn["index"], "model": model}
             try:
                 reply = client.invoke([("system", SYSTEM), ("user", build_prompt(turn, candidates))])
+                usage = getattr(reply, "usage_metadata", None) or {}
+                record.update({"tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens")})
                 record.update(parse(str(reply.content), candidates))
                 labelled += 1
             except Exception as exc:  # an unparseable or failed judgement is counted, never dropped
