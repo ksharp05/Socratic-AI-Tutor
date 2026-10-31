@@ -65,6 +65,28 @@ The evaluation never writes the system it measures, because separation rule 3 an
 | Judge | A calibrated "targets *m*" label replaces the code proxy in rule 1(b) | R5 + raters | `judge.jsonl` |
 | Cost | `usage.cost` from OpenRouter, so cost is measured, not estimated from token prices | R3 (`llm.py`) | A `cost_usd` field in the `llm` trace event |
 
+## API use
+
+Only three things call a model, and each needs a key in `.env`: the tutor (`llm` not `"stub"`), the student's LLM voice (`voice = "llm"`) and the judge. Tests, CI, `tutor eval` and `dev_smoke.toml` never call a model.
+
+**Estimate per 8-turn session**, from the POC's route mix and OpenRouter prices of 24 Oct:
+
+| Part | Calls | Cost (USD) |
+|---|---|---|
+| Tutor, `gpt-4.1-mini` | about 3 | 0.0016 |
+| Judge, `gemini-3.1-flash-lite` | about 8 (one per turn) | 0.0045 |
+| Student voice, `llama-3.3-70b` | 2 | 0.0001 |
+| **Total** | **about 13** | **about 0.006** |
+
+**All planned experiments**, about 700 sessions plus E2: roughly **USD 5 and 9,000 calls**, if every turn is judged. These are estimates; spike S6 measures the real cost.
+
+**Rules:**
+- **Live runs need a budget.** Every live config has a `[budget]` (`max_usd`, `max_llm_calls`). The harness stops before the next session once a limit is reached, and lists the skipped sessions in the manifest.
+- **Develop offline first.** Use `llm = "stub"` and `voice = "template"` until the code works. Go live only to measure something.
+- **Judge a sample, not everything.** Use `--limit` while developing; judge whole runs only for reported experiments.
+- **One small live check before a big run.** Run `dev_live.toml` (2 sessions, capped at USD 0.10), and look at the cost per session in its report.
+- **Keys are personal and expire on 16 Nov.** Each person spends their own; tell the Lead before any run over USD 1.
+
 ## Rules
 
 - **Development data only, until the pre-registration is frozen.** The harness refuses held-out data unless `--heldout` is given and `eval/PREREGISTRATION.md` says `**Status:** frozen`.

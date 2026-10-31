@@ -203,6 +203,7 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
             "tool_calls": sum(1 for r in rows if r["kind"] == "tool"),
             "denied_tool_calls": sum(1 for r in rows if r["kind"] == "tool" and r["outcome"] == "denied"),
             "llm_errors": sum(1 for r in rows if r["kind"] == "llm" and r["outcome"] == "error"),
+            "llm_calls": sum(1 for r in rows if r["kind"] == "llm"),
             "tokens_in": tokens_in, "tokens_out": tokens_out}
 
 
@@ -242,18 +243,27 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
     voice = simulator.Voice(cfg["run"].get("voice", "template"))
 
-    sessions = []
+    prices = {**PRICES_DEFAULT, **{k: tuple(v) for k, v in cfg.get("cost", {}).items()}}
+    in_p, out_p = prices.get(app.llm.model, (0.0, 0.0)) if app.llm.enabled else (0.0, 0.0)
+    budget = cfg.get("budget", {})  # live runs stop before they overspend; skipped sessions are counted
+    planned = [(seed, card) for seed in cfg["run"]["seeds"] for card in data["students"]]
+    sessions, spent_usd, calls, skipped = [], 0.0, 0, []
     try:
-        for seed in cfg["run"]["seeds"]:
-            for card in data["students"]:
-                pair_ids = data["assignments"].get(card["student_id"]) or list(data["pairs"])
-                pairs = [data["pairs"][p] for p in pair_ids if p in data["pairs"]]
-                sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
-                print(f"  {card['student_id']} seed {seed}: {len(sessions[-1]['turns'])} turns")
+        for seed, card in planned:
+            if (budget.get("max_usd") is not None and spent_usd >= budget["max_usd"]) or                (budget.get("max_llm_calls") is not None and calls >= budget["max_llm_calls"]):
+                skipped.append(f"{card['student_id']} seed {seed}")
+                continue
+            pair_ids = data["assignments"].get(card["student_id"]) or list(data["pairs"])
+            pairs = [data["pairs"][p] for p in pair_ids if p in data["pairs"]]
+            sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
+            s = sessions[-1]
+            spent_usd += (s["tokens_in"] * in_p + s["tokens_out"] * out_p) / 1e6
+            calls += s["llm_calls"]
+            print(f"  {card['student_id']} seed {seed}: {len(s['turns'])} turns, {s['llm_calls']} model calls")
     finally:
         app.close()
-
-    prices = {**PRICES_DEFAULT, **{k: tuple(v) for k, v in cfg.get("cost", {}).items()}}
+    if skipped:
+        print(f"  Budget reached: {len(skipped)} planned sessions not run (recorded in the manifest).")
     summary = metrics.summarize(sessions, catalogue, prices.get(app.llm.model) if app.llm.enabled else (0.0, 0.0))
     gate = metrics.check_gate(summary, cfg.get("gate", {}))
     manifest = {
@@ -270,6 +280,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "tutor_llm": app.llm.label, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")
                                              .read_text(encoding="utf-8"))["payload_sha256"],
+        "budget": {**budget, "tutor_usd_spent": round(spent_usd, 5), "tutor_llm_calls": calls,
+                   "voice_llm_calls": voice.counts["llm"] + voice.counts["fallback"], "sessions_not_run": skipped},
         "summary": summary, "gate": gate,
     }
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, default=str) + "\n", encoding="utf-8")

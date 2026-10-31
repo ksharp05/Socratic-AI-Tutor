@@ -132,3 +132,12 @@ def test_llm_voice_keeps_values_and_falls_back_safely():
     leaky = simulator.Voice("llm", client=Fake("my qe_m05 says x = 3"))
     assert leaky.say("I got x = 3.", student, keep=["x = 3"]) == "I got x = 3."
     assert dropped.counts["fallback"] == leaky.counts["fallback"] == 1
+
+
+def test_budget_stops_a_run_before_it_overspends(tmp_path):
+    config = tmp_path / "capped.toml"
+    config.write_text((ROOT / "eval" / "configs" / "dev_smoke.toml").read_text(encoding="utf-8").replace(
+        "[gate]", "[budget]\nmax_llm_calls = 0\n\n[gate]"), encoding="utf-8")
+    manifest = json.loads((harness.run(config, out_dir=tmp_path) / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["budget"]["sessions_not_run"] == ["sim_v2_010 seed 1", "sim_v2_013 seed 1"]
+    assert manifest["summary"]["sessions"] == 0
