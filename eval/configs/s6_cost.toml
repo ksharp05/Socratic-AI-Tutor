@@ -1,0 +1,24 @@
+# Development run with live models (needs a course key in .env): the tutor on its configured model, and the
+# simulated student's opener and beliefs phrased by Llama. Use it to check the LLM voice and cost before the freeze.
+# Never a result.
+
+[run]
+name = "s6_cost"
+purpose = "Spike S6: measured cost and calls of live 8-turn development sessions (POC cards, 3 seeds)"
+arm = "c2"
+defences = true
+voice = "llm"
+seeds = [1, 2, 3]
+max_turns = 8
+turn_timeout_s = 120
+
+[data]
+students = "eval/poc/students.json"
+quiz_pairs = "eval/poc/quiz_pairs.json"
+
+[budget]  # the run stops before starting a session once either limit is reached
+max_usd = 0.15
+max_llm_calls = 40
+
+[cost]  # USD per million tokens (input, output), OpenRouter prices checked 24 Oct 2026
+"openai/gpt-4.1-mini" = [0.40, 1.60]
