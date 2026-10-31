@@ -20,3 +20,12 @@ jobs:
       - run: pytest -q
         env:
           TUTOR_LLM: stub
+      # Evaluation gate (R5): the pipeline runs end to end on development data, offline.
+      - name: Eval gate - simulated students
+        run: python -m tutor_eval.harness --config eval/configs/dev_smoke.toml
+        env:
+          TUTOR_LLM: stub
+      - name: Eval gate - security cases
+        run: python -m tutor_eval.security --cases eval/fixtures/security_smoke.jsonl --name ci_security --gate
+        env:
+          TUTOR_LLM: stub
