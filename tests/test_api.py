@@ -142,3 +142,12 @@ def test_metrics_expose_counters(client):
     assert 'tutor_turns_total{mode="practice",route="diagnose"}' in text
     assert 'tutor_api_denied_total{status="403"}' in text
     assert 'outcome="ok"' in text
+
+
+def test_production_refuses_the_public_dev_tokens(monkeypatch):
+    from tutor_api import auth
+    monkeypatch.delenv("TUTOR_API_TOKENS", raising=False)
+    monkeypatch.setenv("TUTOR_ENV", "production")
+    import pytest
+    with pytest.raises(RuntimeError, match="production"):
+        auth.load_tokens()

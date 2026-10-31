@@ -82,6 +82,8 @@ TUTOR_API_TOKENS="k3x9...:student:L-A,p2q8...:student:L-B,z7m1...:teacher:T-001"
   - a student continues another learner's session;
   - a teacher calls `/chat`.
 
+**Production:** set `TUTOR_ENV=production`, and the API refuses to start without `TUTOR_API_TOKENS`. It never falls back to the public development tokens above. Use long random tokens, keep them in `.env`, and never commit them.
+
 ## Endpoints
 
 | Method and path | Who | What |

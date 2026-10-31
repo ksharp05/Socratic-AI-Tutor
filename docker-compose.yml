@@ -16,6 +16,7 @@ services:
     environment:
       TUTOR_LLM: ${TUTOR_LLM:-stub}
       TUTOR_API_TOKENS: ${TUTOR_API_TOKENS:-}
+      TUTOR_ENV: ${TUTOR_ENV:-development}  # set to production to refuse the public dev tokens
       TUTOR_VAR_DIR: /app/var
     ports:
       - "8000:8000"

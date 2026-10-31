@@ -50,6 +50,8 @@ def load_tokens(spec: str | None = None) -> dict[str, Principal]:
     if spec is None:
         spec = os.environ.get("TUTOR_API_TOKENS")
         if not spec:
+            if os.environ.get("TUTOR_ENV") == "production":  # never fall back to public tokens outside development
+                raise RuntimeError("TUTOR_ENV=production needs TUTOR_API_TOKENS; refusing the public development tokens")
             log.warning("TUTOR_API_TOKENS is not set: using the public development tokens (see Docs/deploy/README.md)")
             spec = DEV_TOKENS
     return parse_tokens(spec)
