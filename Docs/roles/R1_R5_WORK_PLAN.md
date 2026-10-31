@@ -5,6 +5,7 @@ What Lakshya delivers as R1 (domain and product) and R5 (evaluation and red team
 - **Status:** draft of 31 Oct 2026, built from the course guides, the [plan](../plan/README.md), the [lead roadmap](../LEAD_ROADMAP.md) and the dataset itself.
 - **Dates:** follow the roadmap. Where the plan's older dates differ, the roadmap wins.
 - **Other roles:** each one can copy this layout for its own plan in `Docs/roles/`.
+- **Plan to submission and what Lakshya must provide:** [PLAN_AND_REQUIREMENTS.md](PLAN_AND_REQUIREMENTS.md).
 
 ## Progress (31 Oct)
 
