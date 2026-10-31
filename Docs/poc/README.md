@@ -17,6 +17,8 @@ Scope: Quadratic Equations, concepts `qe01`–`qe05`, misconceptions `qe_m04` an
 
 ## Install (once, about 3 minutes)
 
+First time? The [setup guide](../SETUP.md) has every step for Windows, macOS and Linux, with expected output and troubleshooting.
+
 You need Python 3.12 or newer. From the repository root:
 
 ```bash

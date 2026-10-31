@@ -4,7 +4,7 @@ How we work in parallel without breaking `main`. The dates and what each role de
 
 ## Set up
 
-Follow **Install** in [Docs/poc/README.md](Docs/poc/README.md), then check that `pytest -q` shows 30 passed. To use a live model, add your own course key to `.env` and run `tutor check-llm` ([Using a real model](Docs/poc/README.md#using-a-real-model)).
+Follow the [setup guide](Docs/SETUP.md): it ends with `pytest -q` showing 30 passed and `tutor check-llm` passing with your own course key.
 
 ## Branches and pull requests
 
