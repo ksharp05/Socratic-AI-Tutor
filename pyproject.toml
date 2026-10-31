@@ -19,6 +19,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest==9.1.1", "pytest-asyncio==1.4.0"]
+# Hybrid retrieval: dense vectors on CPU (ONNX). Without it, hybrid mode runs on BM25 alone.
+# Ingestion also needs poppler's `pdftotext` on PATH (Docs/spikes/S3.md).
+retrieval = ["fastembed==0.9.1"]
+# Spike S3 only: the pure-Python extractor compared with pdftotext.
+spike = ["pypdf==6.21.4"]
 
 [project.scripts]
 tutor = "tutor.cli:main"

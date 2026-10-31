@@ -47,3 +47,16 @@ concepts = ["qe01", "qe02", "qe03", "qe04", "qe05"]
 practice_task_type = "quadratic_solve"
 practice_items = 10
 dev_students = ["sim_v2_010", "sim_v2_013"]
+
+[retrieval]
+# "poc_cards": BM25 over the 5 POC cards (the POC behaviour). "hybrid": BM25 over the 25 dataset cards
+# + BM25 over NCERT section chunks (+ dense vectors), fused with RRF. Build the section index first with
+# `python -m tutor.retrieval.ingest`; without it, hybrid serves cards only and says so.
+mode = "poc_cards"
+cards = "content/dataset-v0.10.0/corpus.jsonl"
+index_dir = "data/ncert/index"
+dense = true
+dense_model = "BAAI/bge-small-en-v1.5"
+model_cache = "data/models"
+rrf_k = 60
+depth = 20

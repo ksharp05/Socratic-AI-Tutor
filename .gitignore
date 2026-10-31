@@ -20,3 +20,6 @@ data/ncert/
 socratic_tutor_dataset*/
 # Held-out evaluation files never enter git, even by accident (R5 keeps them outside the repo)
 eval/private/
+
+# Embedding model cache for hybrid retrieval (downloaded by `python -m tutor.retrieval.ingest`)
+data/models/
