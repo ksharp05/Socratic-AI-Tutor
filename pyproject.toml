@@ -23,6 +23,11 @@ dev = ["pytest==9.1.1", "pytest-asyncio==1.4.0"]
 api = ["fastapi==0.162.0", "uvicorn==0.54.0", "prometheus-client==0.26.0", "httpx==0.28.1"]
 # Streamlit UI (R6): streamlit run ui/app.py. Not needed for the tests or CI.
 ui = ["streamlit==1.66.1", "requests==2.34.2"]
+# Hybrid retrieval: dense vectors on CPU (ONNX). Without it, hybrid mode runs on BM25 alone.
+# Ingestion also needs poppler's `pdftotext` on PATH (Docs/spikes/S3.md).
+retrieval = ["fastembed==0.9.1"]
+# Spike S3 only: the pure-Python extractor compared with pdftotext.
+spike = ["pypdf==6.21.4"]
 
 [project.scripts]
 tutor = "tutor.cli:main"
