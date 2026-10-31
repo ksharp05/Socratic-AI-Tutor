@@ -75,11 +75,15 @@ tutor chat --learner A
 
 To use a live model, put your own course key in `.env` and run `tutor check-llm`. The steps are in [Using a real model](Docs/poc/README.md#using-a-real-model); things to try are in the same guide.
 
+**API, web UI and Docker:** run `uvicorn tutor_api.main:app` and `streamlit run ui/app.py`, or `docker compose up --build --wait`. Tokens, endpoints and what is still untested are in the [deployment guide](Docs/deploy/README.md).
+
 ## Repository structure
 
 | Path | What it holds |
 |---|---|
 | `src/tutor/` | The tutor: graphs, agents, MCP servers, hooks, guardrails, learner model |
+| `src/tutor_api/`, `ui/` | The HTTP API (FastAPI) and the Streamlit UI |
+| `docker-compose.yml`, `Dockerfile`, `ops/` | Containers, plus Prometheus and Grafana (profile `ops`) |
 | `src/tutor_eval/` | Evaluation: the simulated student and the evaluation run |
 | `src/socratic_data/` | The dataset's maths kernel, vendored unchanged |
 | `content/` | Tutor-visible content: the POC slice and all of dataset v0.10.0's tutor-visible files |
