@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutor Control Panel</title>
+<style>
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef1f5; --text: #17202b; --muted: #5b6676;
+  --border: #d9dee6; --accent: #2f5bd3; --accent-text: #ffffff; --ok: #1d7a46; --ok-bg: #e3f4ea;
+  --warn: #9a5b00; --warn-bg: #fff1d6; --bad: #b42318; --bad-bg: #fde8e6; --code-bg: #0f1724; --code-text: #e6edf6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --surface: #171e27; --surface-2: #202935; --text: #e6ebf2; --muted: #9aa6b6;
+    --border: #2c3644; --accent: #6d8ff0; --accent-text: #0b1020; --ok: #5fd08f; --ok-bg: #133325;
+    --warn: #f0b552; --warn-bg: #3a2a0c; --bad: #ff8a80; --bad-bg: #3b1513; --code-bg: #0a0f16; --code-text: #e6edf6;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { padding: 18px 16px 8px; max-width: 1180px; margin: 0 auto; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0; font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
+.chip.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
+.chip.warn { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
+nav { max-width: 1180px; margin: 8px auto 0; padding: 0 16px; display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+nav button { background: none; border: none; padding: 9px 12px; color: var(--muted); font: inherit; cursor: pointer; border-bottom: 2px solid transparent; }
+nav button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+main { max-width: 1180px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+.card h2 { font-size: 15px; margin: 0 0 4px; }
+.card p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+label { display: block; font-size: 12px; color: var(--muted); margin: 8px 0 3px; }
+input[type=text], input[type=number], select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); color: var(--text); font: inherit; }
+textarea { min-height: 64px; resize: vertical; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.btn { border: 1px solid var(--border); background: var(--surface-2); color: var(--text); padding: 7px 12px; border-radius: 7px; font: inherit; font-size: 14px; cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+.btn.danger { background: var(--bad); color: #fff; border-color: transparent; }
+.btn:disabled { opacity: .55; cursor: wait; }
+.check { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.tag { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+.tag.live { background: var(--warn-bg); color: var(--warn); }
+.out { position: sticky; top: 12px; align-self: start; }
+.out-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cmd { font: 12px/1.4 ui-monospace, Consolas, monospace; color: var(--muted); word-break: break-all; margin: 4px 0 8px; }
+pre.term { background: var(--code-bg); color: var(--code-text); padding: 12px; border-radius: 8px; overflow: auto; max-height: 70vh; font: 12.5px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; margin: 0; }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.badge.ok { background: var(--ok-bg); color: var(--ok); } .badge.bad { background: var(--bad-bg); color: var(--bad); }
+.report { max-height: 72vh; overflow: auto; font-size: 14px; }
+.report table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.report th, .report td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+.report code { background: var(--surface-2); padding: 0 4px; border-radius: 4px; }
+.report h1 { font-size: 18px; } .report h2 { font-size: 16px; } .report h3 { font-size: 14px; }
+.runs { list-style: none; padding: 0; margin: 0; max-height: 50vh; overflow: auto; }
+.runs li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.runs a { color: var(--accent); cursor: pointer; text-decoration: underline; word-break: break-all; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+a { color: var(--accent); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Socratic Tutor · control panel</h1>
+  <p class="sub">Runs the project's commands for you, on this computer only. Everything uses the offline stub model unless a button says <b>live</b>.</p>
+  <div class="chips" id="chips"><span class="chip">Checking…</span></div>
+</header>
+<nav role="tablist">
+  <button role="tab" data-tab="freeze" aria-selected="true">1 · Held-out freeze</button>
+  <button role="tab" data-tab="tutor">2 · Try the tutor</button>
+  <button role="tab" data-tab="eval">3 · Evaluation and tests</button>
+  <button role="tab" data-tab="results">4 · Results</button>
+</nav>
+<main>
+  <section>
+    <div data-panel="freeze">
+      <div class="card">
+        <h2>Step 1 · Dry run <span class="tag">writes nothing</span></h2>
+        <p>Checks the dataset build and shows what the freeze would pick. Choose any whole number as the seed and note it down; it goes in the log.</p>
+        <label for="seed">Seed (a whole number you choose, e.g. 20261101)</label>
+        <input id="seed" type="number" min="0" step="1" placeholder="e.g. 20261101">
+        <label for="build">Dataset build folder</label>
+        <input id="build" type="text">
+        <label for="private">Private output folder (outside the repository)</label>
+        <input id="private" type="text">
+        <div class="row"><button class="btn primary" data-act="freeze_dry">Run the dry run</button></div>
+        <p class="hint">Look for 12 of 12 families and 25 of 25 concepts in the output.</p>
+      </div>
+      <div class="card">
+        <h2>Step 2 · Real freeze <span class="tag">runs once</span></h2>
+        <p>Writes <code>eval/dev/</code>, <code>eval/HELDOUT_MANIFEST.json</code> and the log entry, and the held-out IDs to the private folder. It refuses to run twice. Uses the same seed and folders as the dry run.</p>
+        <label for="confirm">Type FREEZE to confirm</label>
+        <input id="confirm" type="text" autocomplete="off">
+        <div class="row"><button class="btn danger" data-act="freeze_real">Run the real freeze</button></div>
+      </div>
+    </div>
+
+    <div data-panel="tutor" hidden>
+      <div class="card">
+        <h2>Chat in the browser</h2>
+        <p>Starts the API and the Streamlit UI. Sign in there with <code>dev-student-a</code>, <code>dev-student-b</code> or <code>dev-teacher</code>.</p>
+        <div class="row">
+          <button class="btn primary" data-act="start_api">Start API</button>
+          <button class="btn primary" data-act="start_ui">Start UI</button>
+          <a href="http://localhost:8501" target="_blank" rel="noopener">Open the UI ↗</a>
+          <a href="http://localhost:8000/docs" target="_blank" rel="noopener">API docs ↗</a>
+        </div>
+        <div class="row"><button class="btn" data-act="stop_api">Stop API</button><button class="btn" data-act="stop_ui">Stop UI</button></div>
+      </div>
+      <div class="card">
+        <h2>Ask one question</h2>
+        <p>Same as <code>tutor ask</code>. Shows the reply, the route, the checks, the tools and the study plan.</p>
+        <label for="learner">Learner</label>
+        <select id="learner"><option value="A">Student A (weak on factorising)</option><option value="B">Student B (strong)</option></select>
+        <label for="mode">Mode</label>
+        <select id="mode"><option>practice</option><option>quiz</option></select>
+        <label for="message">Message</label>
+        <textarea id="message">I solved x² = 5x by dividing both sides by x and got x = 5. Why is there another answer?</textarea>
+        <label for="session">Session ID (optional, to continue a conversation)</label>
+        <input id="session" type="text" placeholder="leave empty for a new session">
+        <div class="row"><button class="btn primary" data-act="ask">Ask</button><button class="btn" data-act="trace">Show trace of this session</button></div>
+      </div>
+      <div class="card">
+        <h2>Teacher and state</h2>
+        <label for="concept">Concept for a question set</label>
+        <select id="concept"><option>qe04</option><option>qe01</option><option>qe02</option><option>qe03</option><option>qe05</option></select>
+        <div class="row"><button class="btn" data-act="teacher_propose">Propose a set</button><button class="btn" data-act="teacher_pending">Pending sets</button></div>
+        <label for="setid">Set ID to approve</label>
+        <input id="setid" type="text" placeholder="set-1a2b3c4d">
+        <div class="row"><button class="btn" data-act="teacher_approve">Approve</button></div>
+        <div class="row"><button class="btn" data-act="learners">Learners and alerts</button><button class="btn" data-act="tools">MCP tools</button><button class="btn" data-act="setup">Reset demo state</button></div>
+      </div>
+    </div>
+
+    <div data-panel="eval" hidden>
+      <div class="card">
+        <h2>Simulated-student evaluation</h2>
+        <p>The smoke run on the development cards. Saves a report you can open in Results.</p>
+        <label for="seeds">Seeds</label>
+        <select id="seeds"><option>1</option><option>2</option><option>3</option></select>
+        <label class="check"><input id="defences" type="checkbox" checked> Defences on</label>
+        <div class="row"><button class="btn primary" data-act="eval">Run the evaluation</button></div>
+      </div>
+      <div class="card">
+        <h2>Checks</h2>
+        <div class="row">
+          <button class="btn" data-act="security">Security gate</button>
+          <button class="btn" data-act="validate_sim">Validate the simulator</button>
+          <button class="btn" data-act="tests">All tests (about a minute)</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Check the API key <span class="tag live">live · 1 call</span></h2>
+        <p>Makes one short call with the key in <code>.env</code>. The key is never shown.</p>
+        <label class="check"><input id="allowlive" type="checkbox"> Allow one live API call</label>
+        <div class="row"><button class="btn" data-act="check_llm">Check the key</button></div>
+      </div>
+    </div>
+
+    <div data-panel="results" hidden>
+      <div class="card">
+        <h2>Evaluation runs</h2>
+        <p>Newest first. Click one to read its report.</p>
+        <div class="row"><button class="btn" data-act="runs">Refresh</button></div>
+        <ul class="runs" id="runs"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="out card" aria-live="polite">
+    <div class="out-head"><h2 id="out-title">Output</h2><span id="out-badge"></span></div>
+    <div class="cmd" id="out-cmd">Pick an action on the left.</div>
+    <pre class="term" id="out-text"></pre>
+    <div class="report" id="out-report" hidden></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+const TOKEN = "__PANEL_TOKEN__";
+const $ = (id) => document.getElementById(id);
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+
+async function api(action, params = {}) {
+  const r = await fetch("/api", { method: "POST", headers: { "Content-Type": "application/json", "X-Panel-Token": TOKEN },
+                                  body: JSON.stringify({ action, params }) });
+  const data = await r.json().catch(() => ({ error: "Bad response" }));
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+function params(act) {
+  const v = (id) => $(id).value.trim();
+  switch (act) {
+    case "freeze_dry": return { seed: v("seed"), build: v("build"), private_out: v("private") };
+    case "freeze_real": return { seed: v("seed"), build: v("build"), private_out: v("private"), confirm: v("confirm") };
+    case "ask": return { learner: v("learner"), mode: v("mode"), message: v("message"), session: v("session") };
+    case "trace": return { session: v("session") };
+    case "teacher_propose": return { concept: v("concept") };
+    case "teacher_approve": return { set_id: v("setid") };
+    case "eval": return { seeds: v("seeds"), defences: $("defences").checked };
+    case "check_llm": return { confirm: $("allowlive").checked };
+    default: return {};
+  }
+}
+
+function show(title, result) {
+  $("out-title").textContent = title;
+  $("out-report").hidden = true; $("out-text").hidden = false;
+  $("out-cmd").textContent = result.command ? "$ " + result.command + (result.seconds ? `   (${result.seconds} s)` : "") : "";
+  const ok = result.code === 0;
+  $("out-badge").innerHTML = result.code === undefined ? "" : `<span class="badge ${ok ? "ok" : "bad"}">${ok ? "done" : "exit " + result.code}</span>`;
+  $("out-text").textContent = result.output || "(no output)";
+  // pick up IDs the tutor printed so the next action can use them
+  const sess = (result.output || "").match(/\bs-[A-Za-z0-9-]+/); if (sess && !$("session").value) $("session").value = sess[0];
+  const set = (result.output || "").match(/\bset-[0-9a-f]{4,32}\b/); if (set) $("setid").value = set[0];
+  if (/runs[\\/]/.test(result.output || "")) loadRuns();
+}
+
+function showError(title, err) {
+  $("out-title").textContent = title; $("out-cmd").textContent = "";
+  $("out-badge").innerHTML = `<span class="badge bad">not run</span>`;
+  $("out-report").hidden = true; $("out-text").hidden = false; $("out-text").textContent = err.message;
+}
+
+document.querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", async () => {
+  const act = b.dataset.act, title = b.textContent.trim();
+  if (act === "runs") return loadRuns();
+  if (act === "setup" && !confirm("Reset all demo state (learners, sessions, approvals)?")) return;
+  document.querySelectorAll("[data-act]").forEach((x) => x.disabled = true);
+  $("out-title").textContent = title; $("out-cmd").textContent = "Running…"; $("out-badge").innerHTML = "";
+  $("out-text").textContent = ""; $("out-report").hidden = true; $("out-text").hidden = false;
+  try { show(title, await api(act, params(act))); } catch (e) { showError(title, e); }
+  finally { document.querySelectorAll("[data-act]").forEach((x) => x.disabled = false); refresh(); }
+}));
+
+async function loadRuns() {
+  try {
+    const { runs } = await api("runs");
+    $("runs").innerHTML = runs.length ? "" : "<li>No runs yet. Run the evaluation first.</li>";
+    for (const r of runs) {
+      const li = document.createElement("li");
+      const a = document.createElement(r.report ? "a" : "span"); a.textContent = r.id;
+      if (r.report) a.addEventListener("click", () => openReport(r.id));
+      const when = document.createElement("span"); when.textContent = r.when; when.style.color = "var(--muted)";
+      li.append(a, when); $("runs").append(li);
+    }
+  } catch (e) { showError("Runs", e); }
+}
+
+async function openReport(id) {
+  try {
+    const { markdown } = await api("report", { run_id: id });
+    $("out-title").textContent = "Report"; $("out-cmd").textContent = "var/runs/" + id + "/report.md"; $("out-badge").innerHTML = "";
+    if (window.marked) {
+      const html = marked.parse(markdown.replace(/</g, "&lt;"));  // report text is shown, never run
+      $("out-report").innerHTML = html; $("out-report").hidden = false; $("out-text").hidden = true;
+    } else { $("out-text").textContent = markdown; }
+  } catch (e) { showError("Report", e); }
+}
+
+async function refresh() {
+  try {
+    const s = await api("status");
+    const chip = (ok, yes, no) => `<span class="chip ${ok ? "ok" : "warn"}">${ok ? yes : no}</span>`;
+    $("chips").innerHTML = `<span class="chip">branch ${s.branch}</span>` +
+      chip(s.venv, "environment ready", "no .venv") + chip(s.key, "API key set", "no API key") +
+      chip(s.manifest, "held-out frozen", "freeze not run yet") + chip(s.api, "API running", "API stopped") +
+      chip(s.ui, "UI running", "UI stopped") + `<span class="chip">${s.runs} eval runs</span>`;
+    if (!$("build").value) $("build").value = store.get("build") || s.default_build;
+    if (!$("private").value) $("private").value = store.get("private") || s.default_private;
+  } catch (e) { $("chips").innerHTML = `<span class="chip warn">panel not reachable: ${e.message}</span>`; }
+}
+
+function tab(name) {
+  document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === name));
+  document.querySelectorAll("[data-panel]").forEach((p) => p.hidden = p.dataset.panel !== name);
+  store.set("tab", name); if (name === "results") loadRuns();
+}
+document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => tab(b.dataset.tab)));
+["build", "private"].forEach((id) => $(id).addEventListener("change", () => store.set(id, $(id).value)));
+tab(store.get("tab") || "freeze");
+refresh();
+</script>
+</body>
+</html>
