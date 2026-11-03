@@ -72,3 +72,5 @@ Two new offline end-to-end tests first demonstrated that the mounted beta accept
 The complete canonical working-tree selection subsequently passed **248 offline tests**. The updated beta script passed `node --check`; a visual browser walkthrough of this change remains outstanding.
 
 After strengthening the revoked-answer test to assert no checked-answer observation is written, both canonical and team working trees passed **248 offline tests**. Full local output was retained in `Directions/git_delivery/m2_mount_canonical_tests.log` and `m2_mount_team_tests.log`.
+
+A later assistant-operated browser check used a localhost-only synthetic fixture: no approval blocked practice, a synthetic teacher publication enabled it, and an edit changed the active question to an unavailable message without a score. A narrow in-app browser layout was inspected. The server was stopped; this did not use a provider or establish human review or cross-browser accessibility.
