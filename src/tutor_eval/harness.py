@@ -281,7 +281,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
                         ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor_eval/simulator.py",
-                         "tutor_eval/leakcheck.py", "tutor_eval/harness.py")},
+                         "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py",
+                         "tutor_eval/single_agent.py")},
         "simulator": {"slip": simulator.SLIP, "guess": simulator.GUESS, "learn": simulator.LEARN,
                       "p_clear": simulator.P_CLEAR, "voice": voice.kind, "voice_model": voice.model if voice.client else None,
                       "voice_counts": voice.counts, "targeting": "code_proxy",

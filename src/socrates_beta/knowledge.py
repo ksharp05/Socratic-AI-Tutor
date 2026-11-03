@@ -30,7 +30,7 @@ class DatasetRegistry:
     def _write(self,data):
         temp=self.path.with_suffix('.tmp');temp.write_text(json.dumps(data,indent=2),encoding='utf-8');os.replace(temp,self.path)
     def entries(self):return read_json(self.path)
-    def register(self,dataset_id,index: Path,*,title,activate=False,provenance=None):
+    def register(self,dataset_id,index: Path,*,title,activate=False,provenance=None,expected_sha256=None):
         if not SAFE_ID.fullmatch(dataset_id):raise ValueError('Use a dataset id with lowercase letters, numbers and hyphens')
         index=Path(index).resolve(strict=True)
         with database(index.as_uri()+'?mode=ro',uri=True) as c:
@@ -46,6 +46,9 @@ class DatasetRegistry:
                 if not pid or not isinstance(page,int) or page<1 or not re.fullmatch('[0-9a-f]{64}',h) or status!='pending':
                     raise ValueError('Unanchored or unreviewed-status-misrepresented passage')
         digest=sha256(index)
+        if expected_sha256 is not None:
+            if not re.fullmatch(r'[0-9a-f]{64}',expected_sha256):raise ValueError('Expected SHA-256 must be 64 lowercase hexadecimal characters')
+            if digest!=expected_sha256:raise ValueError('Index SHA-256 does not match the expected value')
         with self.lock:
             data=self.entries();previous=data['datasets'].get(dataset_id)
             if previous and previous['sha256']!=digest:raise ValueError('Dataset versions are immutable; choose a new id')

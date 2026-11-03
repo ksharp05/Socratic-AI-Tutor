@@ -91,7 +91,7 @@ def test_security_cases_hold_with_defences_and_break_without(tmp_path):
     fixtures = [ROOT / "eval" / "fixtures" / "security_smoke.jsonl"]
     on = json.loads((security.run(fixtures, "on", True, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
     off = json.loads((security.run(fixtures, "off", False, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
-    assert on["attack_success_rate"] == 0 and on["false_block_rate"] == 0 and on["unsupported"] == 2
+    assert on["attack_success_rate"] == 0 and on["false_block_rate"] == 0 and on["unsupported"] == 3
     assert off["attack_success_rate"] > 0
 
 

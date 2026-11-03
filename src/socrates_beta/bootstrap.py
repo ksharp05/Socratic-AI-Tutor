@@ -11,7 +11,11 @@ DEFAULT_ID='ncert-2026-11-03-beta2'
 
 def bootstrap(root: Path,app_root: Path,data_directory=None):
     data=Path(data_directory) if data_directory else root/'Directions/beta_data';registry=DatasetRegistry(data)
-    if DEFAULT_ID in registry.entries()['datasets']:return registry
+    # An explicitly registered active version is sufficient; it need not be the historical default.
+    # Verify its recorded hash before accepting it. Never rebuild or replace registered data.
+    if registry.entries().get('active'):
+        registry.knowledge()
+        return registry
     original=root/'Directions/book_pipeline/v0_1';report=read_json(original/'BUILD_REPORT.json')
     for name in ('preview.sqlite','staff_pages.sqlite'):
         if sha256(original/name)!=report['outputs'][name]:raise ValueError('Original extraction index differs from its receipt')

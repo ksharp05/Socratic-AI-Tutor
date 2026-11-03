@@ -42,14 +42,14 @@ This uses a labelled, source-backed fallback; it does not reproduce the live mod
 ## B. First-time setup for a team member
 
 1. Install Git and Python 3.12, and get access to the repository. In PowerShell, check `git --version` and `py -3.12 --version`.
-2. Clone the milestone branch into a new folder. Run this from the parent folder where you want the new checkout:
+2. Clone the branch containing this guide into a new folder. The `milestone-2` branch is currently local and must be published before another machine can clone it. Once published, run this from the parent folder where you want the new checkout:
 
    ```powershell
-   git clone --branch milestone-1 https://github.com/ksharp05/Socratic-AI-Tutor.git
+   git clone --branch milestone-2 https://github.com/ksharp05/Socratic-AI-Tutor.git
    Set-Location -LiteralPath '.\Socratic-AI-Tutor'
    ```
 
-   If you already have a checkout, fetch and switch to `milestone-1` instead; do not clone over your existing files.
+   If you already have a checkout, fetch and switch to `milestone-2` instead; do not clone over your existing files.
 3. Create a project environment and install the application and beta dependencies:
 
    ```powershell
@@ -57,8 +57,17 @@ This uses a labelled, source-backed fallback; it does not reproduce the live mod
    .\.venv\Scripts\python.exe -m pip install -e '.[dev,api]' -r requirements-beta.txt
    ```
 
-4. **Obtain compatible local data.** The Git clone does not include `Directions/`, the source PDFs, the extracted indexes or private evaluation data. Coordinate access to an appropriately authorized dataset and its provenance with the data owner; consult the [source catalogue](datasets/NCERT_CATALOGUE.md) and NCERT publisher terms. A copied `registry.json` contains absolute paths, so copying the dataset directory alone to another computer is not a verified portable installation. A fresh-machine data package and relocation procedure have not yet been validated. Until the data owner supplies a compatible setup, the beta cannot be assumed to start on a fresh clone.
-5. Configure the data location. `config/beta/local.example.json` is used automatically when `config/beta/local.json` is absent. Its defaults use this checkout as the application root and `Directions/beta_data` relative to the source workspace. If the data lives in another folder, set that folder for the current PowerShell session:
+4. **Obtain compatible local data.** The Git clone does not include `Directions/`, the source PDFs, the extracted indexes or private evaluation data. Obtain an appropriately authorized, compatible prepared index and its independently supplied SHA-256 from the data owner; consult the [source catalogue](datasets/NCERT_CATALOGUE.md) and publisher terms before transferring data. Do not copy an existing `registry.json`: it contains absolute paths. With an authorized prepared index stored at a stable local path, register it in the new checkout:
+
+   ```powershell
+   .\socrates.ps1 register-index --file 'C:\path\to\authorized\knowledge.sqlite' `
+     --id 'local-ncert-beta' --title 'Local NCERT beta' --activate `
+     --expected-sha256 '<trusted-lowercase-sha256>'
+   .\socrates.ps1 datasets
+   ```
+
+   Replace the placeholders. Get the trusted expected hash separately from the index file; calculating a hash from an untrusted file and comparing it to itself does not verify provenance. Registration checks the hash, schema, search index and pending-review labels, then records the index's path; keep that file at that path. Do not copy source data into Git. A relocated copy of the current beta index was tested in an isolated workspace **on the original computer**, including health and retrieval checks in the three maths chapters. A second-machine, fresh-clone and Docker acceptance is still outstanding.
+5. Configure the data location (set this before the registration command if the data workspace is separate from the checkout). `config/beta/local.example.json` is used automatically when `config/beta/local.json` is absent. Its defaults use this checkout as the application root and `Directions/beta_data` relative to the source workspace. If the data lives in another folder, set that folder for the current PowerShell session:
 
    ```powershell
    $env:SOCRATES_SOURCE_WORKSPACE = 'C:\path\to\workspace-containing-Directions'

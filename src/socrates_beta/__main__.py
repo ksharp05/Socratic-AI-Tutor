@@ -16,17 +16,18 @@ def main():
     sub.add_parser('init');sub.add_parser('datasets')
     a=sub.add_parser('activate');a.add_argument('dataset_id')
     q=sub.add_parser('import');q.add_argument('--file',type=Path,required=True);q.add_argument('--id',required=True);q.add_argument('--title',required=True);q.add_argument('--base');q.add_argument('--activate',action='store_true')
-    q=sub.add_parser('register-index');q.add_argument('--file',type=Path,required=True);q.add_argument('--id',required=True);q.add_argument('--title',required=True);q.add_argument('--activate',action='store_true')
+    q=sub.add_parser('register-index');q.add_argument('--file',type=Path,required=True);q.add_argument('--id',required=True);q.add_argument('--title',required=True);q.add_argument('--activate',action='store_true');q.add_argument('--expected-sha256')
     args=p.parse_args()
     if not args.config.exists():args.config=code_root/'config/beta/local.example.json'
     settings=json.loads(args.config.read_text(encoding='utf-8-sig'))
     app_root=Path(settings['app_root']);settings['app_root']=str(app_root if app_root.is_absolute() else (code_root/app_root).resolve())
     data=Path(settings.get('data_directory','Directions/beta_data'));data=data if data.is_absolute() else root/data
-    registry=bootstrap(root,Path(settings['app_root']),data)
+    # A prepared index must be registerable on a new machine without the old source archive.
+    registry=DatasetRegistry(data) if args.command=='register-index' else bootstrap(root,Path(settings['app_root']),data)
     if args.command in ('init','datasets'):print(json.dumps(registry.public(),indent=2));return
     if args.command=='activate':registry.activate(args.dataset_id);print('Active dataset:',args.dataset_id);return
     if args.command=='register-index':
-        print(json.dumps(registry.register(args.id,args.file,title=args.title,activate=args.activate),indent=2));return
+        print(json.dumps(registry.register(args.id,args.file,title=args.title,activate=args.activate,expected_sha256=args.expected_sha256),indent=2));return
     if args.command=='import':
         if not SAFE_ID.fullmatch(args.id):raise ValueError('Invalid dataset id')
         folder=data/'datasets'/args.id
