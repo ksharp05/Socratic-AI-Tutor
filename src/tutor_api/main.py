@@ -31,7 +31,7 @@ from .metrics import Metrics
 
 SESSION_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,64}$")
 RESERVED_PREFIXES = ("qs-",)  # approval-graph threads share the checkpointer
-ERROR_STATUS = {"NOT_FOUND": 404, "INVALID_INPUT": 422, "FORBIDDEN": 403, "BUDGET": 429}
+ERROR_STATUS = {"NOT_FOUND": 404, "INVALID_INPUT": 422, "FORBIDDEN": 403, "BUDGET": 429, "BUSY": 503}
 
 
 # ---------------------------------------------------------------------- request bodies

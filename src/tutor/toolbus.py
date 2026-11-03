@@ -12,9 +12,11 @@ import logging
 import sqlite3
 import threading
 import time
+from pathlib import Path
 from dataclasses import dataclass, field
 
 from fastmcp import Client
+from filelock import FileLock, Timeout
 
 from . import store
 from .mcp_servers import learner_store, math_tools, question_bank, textbook_kb
@@ -56,6 +58,13 @@ class CallContext:
 class ToolBus:
     def __init__(self, conn: sqlite3.Connection, extra_items: list[dict] | None = None, *, allow_dev_fixtures: bool = False):
         self.conn = conn
+        db_file = conn.execute("PRAGMA database_list").fetchone()[2]
+        if not db_file:
+            raise ValueError("A file-backed tutor database is required for publication locking")
+        # This lock is shared by cooperating processes using the same local database.
+        # It is acquired on the calling thread, never on the MCP event-loop thread.
+        self.publication_lock = FileLock(str(Path(db_file).resolve()) + ".publication.lock",
+                                         timeout=30, preserve_lock_file=True, fallback_to_soft=False)
         self.servers = {"textbook-kb": textbook_kb.build(), "math-tools": math_tools.build(conn, extra_items),
                         "learner-store": learner_store.build(conn), "question-bank": question_bank.build(conn, allow_dev_fixtures=allow_dev_fixtures)}
         self._loop = asyncio.new_event_loop()
@@ -89,6 +98,15 @@ class ToolBus:
         return out
 
     def call(self, ctx: CallContext, role: str, server: str, tool: str, args: dict) -> dict:
+        if server == "question-bank" and tool in {"update_proposal", "publish_approved_set", "reject_proposal"}:
+            try:
+                with self.publication_lock:
+                    return self._call_unlocked(ctx, role, server, tool, args)
+            except Timeout as exc:
+                raise ToolCallError("BUSY", "publication is busy; please retry") from exc
+        return self._call_unlocked(ctx, role, server, tool, args)
+
+    def _call_unlocked(self, ctx: CallContext, role: str, server: str, tool: str, args: dict) -> dict:
         scrubbed = {k: (f"<{len(str(v))} chars>" if k in _SCRUB else v) for k, v in args.items()}
         # ---- pre-tool hook ----
         denial = None

@@ -13,6 +13,7 @@ import uuid
 from typing import Annotated, Any, TypedDict
 
 from langgraph.checkpoint.sqlite import SqliteSaver
+from filelock import Timeout
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
@@ -121,6 +122,30 @@ class TutorApp:
         rows = [s for s in snapshot.get("styles", []) if s["misconception_id"] == mid and s["successes"] > s["failures"]]
         return max(rows, key=lambda s: s["successes"])["style"] if rows else None
 
+    def _publication_unavailable(self, state: TutorState, *, include_completed: bool = False) -> bool:
+        """Fail closed if a referenced question no longer has its approved version."""
+        referenced = []
+        if state.get("active_item"):
+            referenced.append(state["active_item"])
+        quiz = state.get("quiz") or {}
+        items = quiz.get("items", [])
+        referenced.extend(items if include_completed else items[quiz.get("index", 0):])
+        if include_completed and state.get("grade"):
+            referenced.append(state["grade"])
+        if not referenced:
+            return False
+        try:
+            visible = self._call(state, "input_guard", "question_setter", "question-bank", "list_published", {})["items"]
+            valid = {(i["question_id"], i["set_id"], i["set_payload_sha256"]) for i in visible}
+            revoked = any((i.get("question_id"), i.get("set_id"), i.get("set_payload_sha256")) not in valid
+                          for i in referenced)
+        except Exception as exc:
+            revoked = True
+            self._note(state, "input_guard", "publication_check_failed", {"error_type": type(exc).__name__})
+        if revoked:
+            self._note(state, "input_guard", "question_publication_unavailable")
+        return revoked
+
     # ------------------------------------------------------------------ session graph nodes
     def _input_guard(self, state: TutorState) -> dict:
         screen = state.get("screen") or {}
@@ -146,27 +171,7 @@ class TutorApp:
             own_problem = own_problem or not simple_answer
         if PRACTICE_REQUEST.search(state["incoming"]) or QUIZ_REQUEST.search(state["incoming"]) or state["session"].get("mode") == "quiz":
             own_problem = False
-        # A set can be edited after a learner starts it. Re-check the exact
-        # approved set version before continuing an active question or quiz.
-        pending_items = []
-        if state.get("active_item"):
-            pending_items.append(state["active_item"])
-        quiz = state.get("quiz") or {}
-        if quiz.get("index", 0) < len(quiz.get("items", [])):
-            pending_items.extend(quiz["items"][quiz.get("index", 0):])
-        revoked = False
-        if pending_items:
-            try:
-                visible = self._call(state, "input_guard", "question_setter", "question-bank", "list_published", {})["items"]
-                valid = {(i["question_id"], i["set_id"], i["set_payload_sha256"]) for i in visible}
-                revoked = any((i.get("question_id"), i.get("set_id"), i.get("set_payload_sha256")) not in valid
-                              for i in pending_items)
-            except Exception as exc:
-                # A missing or unverifiable approval must never become access.
-                revoked = True
-                self._note(state, "input_guard", "publication_check_failed", {"error_type": type(exc).__name__})
-            if revoked:
-                self._note(state, "input_guard", "question_publication_unavailable")
+        revoked = self._publication_unavailable(state)
         self._note(state, "input_guard", "screened", {k: v for k, v in screen.items() if k != "text"})
         if own_problem:
             self._note(state, "input_guard", "unverified_problem_deterministic_only")
@@ -361,6 +366,7 @@ class TutorApp:
         result = self._call(state, "grade", "grader", "math-tools", "check_equivalence",
                             {"question_ref": item["question_id"], "response": text})
         update: dict[str, Any] = {"grade": {**result, "question_id": item["question_id"], "concept_ids": item["concept_ids"],
+                                            "set_id": item["set_id"], "set_payload_sha256": item["set_payload_sha256"],
                                             "kind": item["kind"]}}
         if not result["scorable"]:
             update["draft"] = {"text": f"I couldn't read that as an answer ({result['reason']}). "
@@ -606,6 +612,13 @@ class TutorApp:
 
     # ------------------------------------------------------------------ public API: student turns
     def turn(self, session_id: str, learner_id: str, text: str, mode: str = "practice") -> dict:
+        try:
+            with self.bus.publication_lock:
+                return self._turn_locked(session_id, learner_id, text, mode)
+        except Timeout as exc:
+            raise ToolCallError("BUSY", "publication is busy; please retry") from exc
+
+    def _turn_locked(self, session_id: str, learner_id: str, text: str, mode: str) -> dict:
         screen = guards.screen_input(text) if self.defences else {"text": text}
         config = {"configurable": {"thread_id": session_id}}
         state = self.graph.invoke({"incoming": screen["text"], "screen": screen,
@@ -619,13 +632,25 @@ class TutorApp:
                 "active_item": (state.get("active_item") or {}).get("question_id")}
 
     def resume(self, session_id: str) -> dict | None:
-        """Finish a turn that was interrupted mid-run (e.g. the process was killed) from its last checkpoint."""
-        config = {"configurable": {"thread_id": session_id}}
-        snap = self.graph.get_state(config)
-        if not snap.next:
-            return None
-        state = self.graph.invoke(None, config)
-        return {"reply": state["messages"][-1]["content"], "resumed_from": list(snap.next)}
+        """Resume a checkpoint only while its referenced question approvals remain valid."""
+        try:
+            with self.bus.publication_lock:
+                config = {"configurable": {"thread_id": session_id}}
+                snap = self.graph.get_state(config)
+                if not snap.next:
+                    return None
+                if self._publication_unavailable(snap.values, include_completed=True):
+                    text = "This question is no longer available or cannot be verified. Please request a new practice question or quiz."
+                    # Mark the interrupted graph complete without executing its pending nodes.
+                    self.graph.update_state(config, {"active_item": None, "quiz": None, "grade": None,
+                                                    "route": "question_revoked", "draft": None,
+                                                    "messages": [{"role": "tutor", "content": text, "kind": "info"}]},
+                                            as_node="respond")
+                    return {"reply": text, "resumed_from": list(snap.next), "revoked": True}
+                state = self.graph.invoke(None, config)
+                return {"reply": state["messages"][-1]["content"], "resumed_from": list(snap.next)}
+        except Timeout as exc:
+            raise ToolCallError("BUSY", "publication is busy; please retry") from exc
 
     def history(self, session_id: str) -> list[dict]:
         snap = self.graph.get_state({"configurable": {"thread_id": session_id}})

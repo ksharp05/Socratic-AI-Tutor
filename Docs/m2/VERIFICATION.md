@@ -20,4 +20,12 @@ Raw local results and machine-specific state remain under ignored `Directions/`;
 **Subsequent finding:** a later run on documentation checkpoint `2bd4102` failed one quiz schema test because an ordinary question contained the word “values.” The test was corrected to check nested field names; see [work log](WORK_LOG.md). That failure and the fix must remain visible in release evidence.
 
 
-**Later working-tree verification:** The publication-integrity changes passed 230 offline tests across all four project test directories. The change and its limits, including a remaining teacher-edit/learner-turn race, are described in [publication integrity](PUBLICATION_INTEGRITY.md). This later run did not test a live provider or a fresh machine.
+**Later working-tree verification:** The publication-integrity changes passed 230 offline tests across all four project test directories. The change and its limits, including the original teacher-edit/learner-turn race, are described in [publication integrity](PUBLICATION_INTEGRITY.md). This later run did not test a live provider or a fresh machine.
+
+
+**Concurrency follow-up:** The original race was reproduced and addressed for cooperating processes sharing one local SQLite path. Cross-process lock contention and interrupted-turn revalidation passed on this Windows machine. This does not establish multi-host or network-filesystem behavior; see [publication integrity](PUBLICATION_INTEGRITY.md).
+
+The final concurrency working tree passed **238 offline tests** across the four project suites on this Windows machine. This later result does not replace the recorded historical checkpoint above.
+
+
+**Canonical workspace verification:** After restoring missing tracked application files, development fixtures, UI files and the public practice slice, all **238 offline tests** passed when run from `D:\Work\IITB\Socratic Tutor` with its `.venv_app` interpreter. `tutor.cmd --help` also starts in stub mode. The first collection attempt exposed missing modules and API packages; a subsequent run exposed older local source revisions and missing support files. Those failures were recorded in the session output and fixed before the passing run. The necessary app packages were installed offline from hash-verified files already installed on this machine. This is still not a fresh installation, Docker verification, live-provider test, independent evaluation or educator review.

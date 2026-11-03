@@ -14,7 +14,15 @@ The working-tree run of all four offline suites on this machine passed **230 tes
 
 ## Limits and release work
 
-- The turn-level validation is a check before processing, not a transaction spanning a complete learner turn. A simultaneous edit after that check could still race with grading or responding; coordinate or serialize teacher updates and learner actions before claiming strict immediate revocation under concurrency.
+- Learner `turn` and `resume`, and question-bank edit/publish/reject calls through `ToolBus`, now take the same file lock for the canonical SQLite database path. A turn that acquires the lock first completes before an edit can commit; an edit that completes first is observed by the next turn. A two-app threading test and a separate-process lock contention test exercised this behavior on Windows. The 30-second timeout returns a retryable busy error. This is coarse-grained: a slow model call can delay other turns or edits.
+- This guarantee requires every participant to use the application lock and the same canonical database path on a filesystem with functioning OS locks. Raw SQL, direct graph invocation, independently served MCP tools, hard-link aliases, and filesystems or hosts without reliable shared locking are outside the tested boundary. POSIX, network filesystems and multi-host deployment were not tested. Streaming currently computes a complete response before the stream begins, so content already generated or delivered is not withdrawn.
+- An interrupted turn is revalidated before resuming. If approval is unavailable, the remaining graph is cancelled and a replacement message is recorded. Any grading or learner-state writes completed before the interruption cannot be rolled back merely by cancelling the remainder. Older session records without publication provenance fail closed.
 - Publication verification assumes the application database and its approval secret are trusted. It detects the tested stale or corrupted payload cases, not a privileged attacker able to rewrite all database records and application state. The existing published row is replaced on reapproval; it is not an immutable approval history.
 - The checks do not establish the educational quality or human approval of a question, prove all mathematical answers correct, or verify the live integrated teacher/learner journey.
 - Docker/fresh-machine verification, a bounded explicitly authorized live-model test, independent evaluation and educational review remain outstanding; see [the verification snapshot](VERIFICATION.md) and [requirements matrix](REQUIREMENT_MATRIX.md).
+
+## Follow-up verification — 4 November
+
+A new offline test reproduced each race for both C1 and C2 before the change. The application now serializes cooperating processes without holding an SQLite transaction across model calls or blocking the MCP event-loop thread. Separate tests cover cross-process lock contention and an interrupted correct grade whose active question has already been cleared. Docker, a fresh dependency installation and other operating systems have not been tested.
+
+The final working-tree run passed **238 offline tests** across all four suites, including both same-app and separate-app contention and the separate-process lock check. It used existing local environments and did not exercise Docker or a live provider.

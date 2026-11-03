@@ -51,3 +51,15 @@ Raw development artifacts are retained under the ignored local `Directions/git_d
 ## Publication integrity audit — 4 November
 
 Synthetic tests exposed three defects: an edited set remained visible, development-only unapproved rows were served by the normal tutor, and a corrupted proposal could be republished with a stale digest. These are now guarded with digest checks, explicit fixture opt-in and atomic publication/edit transactions. A further test showed that a learner could continue a stale active question or quiz; both C1 and C2 now recheck set provenance on later turns and fail closed on check failure. The current working tree passed **230 offline tests** across all four project suites. Evaluation manifests mark unapproved fixture use. [Design, evidence and remaining race](PUBLICATION_INTEGRITY.md). This is not human review, live-provider evidence or a fresh-machine run.
+
+
+## Learner-turn publication race — 4 November
+
+Regression tests reproduced teacher edits completing after a learner turn had checked approval, and resuming an interrupted turn after its set was edited. A file-backed lock now serializes cooperating local application processes at learner-turn and question-publication boundaries, while interrupted turns revalidate referenced content before resuming. A separate subprocess test verified lock contention on Windows. The full four-suite run before the final resume-after-grade test passed 235 tests; that extra test passed separately. This is not proof of locking on other hosts, direct SQL writes, Docker or remote filesystems. See [publication integrity](PUBLICATION_INTEGRITY.md).
+
+The final working-tree selection, including same-instance contention tests, passed **238 tests** across all four suites. The canonical app environment received `filelock==4.2.6` offline from hash-checked files already installed in the local checkout.
+
+
+## Canonical workspace repair — 4 November
+
+Direct testing exposed missing tracked application modules, development fixtures, UI files and the public practice slice, plus older source revisions and missing API packages. Missing files were restored without overwriting local files; four source files exactly matching an older tracked revision were advanced, and the CLI's two existing local adaptations were retained. The workspace's dataset paths and separate project configuration were preserved. Filelock, FastAPI, Prometheus client and annotated-doc were installed into `.venv_app` offline from already-installed, hash-verified local package files. The initial collection and subsequent test run failed; after these repairs, **238 tests passed** across all four suites from the canonical directory and `tutor.cmd --help` succeeded in stub mode. Source datasets and held-out cases were not edited.
