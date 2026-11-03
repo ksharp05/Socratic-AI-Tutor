@@ -19,3 +19,7 @@ On recovery of a ledger-backed completed quiz, the current learner state and pla
 ## Evidence and open work
 
 Offline synthetic tests cover ordinary subsequent turns, interruption and recovery after another session changes both mastery and plan, transaction rollback and retry, concurrent application from two connections, changed payload and learner/role boundaries, and a pre-upgrade completed checkpoint. They use the stub model, synthetic learners and synthetic teacher approval. They do not establish educator review, live-model quality, a full beta-to-graph learner journey, or independent evaluation. See [requirement matrix](REQUIREMENT_MATRIX.md) and [beta assessment integrity](BETA_QUIZ_INTEGRITY.md).
+
+## Unreadable answers during a graph quiz
+
+A response the deterministic checker cannot score leaves the current quiz question open. No quiz result is appended and no quiz mastery or plan update is applied. The learner is asked to enter the answer in the expected format. Regression tests exercise both the first and final quiz question and then submit a scorable answer. This does not mean the parser understands every mathematically valid notation: an unsupported response can still require reformatting.

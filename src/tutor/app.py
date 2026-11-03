@@ -414,6 +414,9 @@ class TutorApp:
         current = quiz["items"][quiz["index"]]
         result = self._call(state, "quiz_answer", "grader", "math-tools", "check_equivalence",
                             {"question_ref": current["question_id"], "response": state["messages"][-1]["content"]})
+        if not result.get("scorable"):
+            return {"quiz": quiz, "draft": {"text": "I could not read that answer. Please enter it in the expected format; this question has not been scored.",
+                                            "citations": [], "kind": "info"}}
         quiz["results"].append({"question_id": current["question_id"], "correct": bool(result["correct"]),
                                 "scorable": result["scorable"], "concept_ids": current["concept_ids"], "kind": current["kind"]})
         quiz["index"] += 1

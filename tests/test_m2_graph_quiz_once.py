@@ -173,3 +173,42 @@ def test_finished_legacy_checkpoint_fails_closed_without_false_success(tmp_path)
         assert app.conn.execute('SELECT COUNT(*) FROM applied_quizzes').fetchone()[0]==0
         assert app.conn.execute('SELECT COUNT(*) FROM mastery').fetchone()[0]==0
     finally:app.close()
+
+
+def test_unparseable_quiz_answer_does_not_advance_or_change_learner(tmp_path):
+    app=setup_app(tmp_path)
+    try:
+        session='invalid-quiz-answer'
+        app.turn(session,'learner','start a quiz',mode='quiz')
+        config={'configurable':{'thread_id':session}}
+        before=app.graph.get_state(config).values['quiz']
+        plan_before=app.conn.execute('SELECT plan_json FROM plans WHERE learner_id=?',('learner',)).fetchone()[0]
+        events_before=app.conn.execute('SELECT COUNT(*) FROM learner_events').fetchone()[0]
+        result=app.turn(session,'learner','banana',mode='quiz')
+        after=app.graph.get_state(config).values['quiz']
+        assert result['route']=='quiz_answer'
+        assert 'could not read' in result['reply'].lower()
+        assert after['index']==before['index'] and after['results']==before['results']
+        assert app.conn.execute('SELECT plan_json FROM plans WHERE learner_id=?',('learner',)).fetchone()[0]==plan_before
+        assert app.conn.execute('SELECT COUNT(*) FROM learner_events').fetchone()[0]==events_before
+        app.turn(session,'learner','no real roots',mode='quiz')
+        assert app.graph.get_state(config).values['quiz']['index']==1
+    finally:app.close()
+
+
+def test_unparseable_final_quiz_answer_does_not_complete_or_commit(tmp_path):
+    app=setup_app(tmp_path)
+    try:
+        session='invalid-final-answer'
+        app.turn(session,'learner','start a quiz',mode='quiz')
+        for _ in range(2):app.turn(session,'learner','no real roots',mode='quiz')
+        result=app.turn(session,'learner','banana',mode='quiz')
+        quiz=app.graph.get_state({'configurable':{'thread_id':session}}).values['quiz']
+        assert 'could not read' in result['reply'].lower()
+        assert quiz['index']==2 and len(quiz['results'])==2
+        assert app.conn.execute('SELECT COUNT(*) FROM applied_quizzes').fetchone()[0]==0
+        assert app.conn.execute('SELECT COUNT(*) FROM mastery').fetchone()[0]==0
+        result=app.turn(session,'learner','no real roots',mode='quiz')
+        assert 'Quiz finished:' in result['reply']
+        assert app.conn.execute('SELECT COUNT(*) FROM applied_quizzes').fetchone()[0]==1
+    finally:app.close()
