@@ -19,6 +19,10 @@ We are building it as Project 3 of the Agentic AI Capstone. It is an NCERT tutor
 
 **Scope:** Class 10 Maths in English. Chapters: Quadratic Equations, Arithmetic Progressions, and Introduction to Trigonometry.
 
+## Dataset
+
+See the [dataset report](Docs/datasets/DATASET_REPORT.md) and [NCERT source catalogue](Docs/datasets/NCERT_CATALOGUE.md) for current coverage, access, and review limits.
+
 ## Project status
 
 **Building.** Every box of the architecture exists in a basic form. Each role now replaces the stand-in in its own box with the real version.

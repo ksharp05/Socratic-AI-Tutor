@@ -1,11 +1,11 @@
 # Socrates beta: use, extend and test
 
-Implemented in `D:\Work\IITB\Socratic Tutor`, 3 November 2026. This is a local, anonymous-browser beta with actual textbook retrieval, a configured language model and code-checked Class 10 maths practice. It is ready for supervised beta trials, not certified flawless teaching or public school deployment.
+Implemented in `<project-checkout>`, 3 November 2026. This is a local, anonymous-browser beta with actual textbook retrieval, a configured language model and code-checked Class 10 maths practice. It is ready for supervised beta trials, not certified flawless teaching or public school deployment.
 
 ## Start
 
 ```powershell
-Set-Location -LiteralPath 'D:\Work\IITB\Socratic Tutor'
+Set-Location -LiteralPath '<project-checkout>'
 .\socrates.ps1 serve --live
 ```
 
@@ -71,25 +71,25 @@ Unresolved publisher defects, raw formula/table/diagram extraction and source-se
 
 ## Shared application integration
 
-The Main API now has an optional mount implemented in `D:\Work\IITB\Socratic Tutor Main\src\tutor_api\beta.py`. Enable it by setting `TUTOR_BETA_CONFIG` to this workspace's `config/beta/local.json` before creating the Main API; optionally set `TUTOR_BETA_LIVE=1`. The same beta app appears at `/beta/`. The original bearer-token student/teacher routes remain unchanged and their existing 13 API tests pass. The mount is explicitly local, retains the beta's anonymous-browser boundary and is not a public deployment configuration.
+The Main API now has an optional mount implemented in `src/tutor_api/beta.py`. Enable it by setting `TUTOR_BETA_CONFIG` to this workspace's `config/beta/local.json` before creating the Main API; optionally set `TUTOR_BETA_LIVE=1`. The same beta app appears at `/beta/`. The original bearer-token student/teacher routes remain unchanged and their existing 13 API tests pass. The mount is explicitly local, retains the beta's anonymous-browser boundary and is not a public deployment configuration.
 
 The beta uses a signed, HttpOnly, SameSite browser cookie for ownership. It checks session/card ownership, Origin/Host, closed request schemas and idempotency IDs. SQLite state is private under `Directions/beta_data/`; normal chat keeps no raw provider audit. The local evaluation harness can explicitly audit model output into its ignored run folder. Browser cookies last 30 days; server history remains locally until cleared. No external teacher notifications are sent. No real learner study was conducted; browser acceptance used an assistant-operated anonymous test profile.
 
 ## Validation and reproduction
 
 ```powershell
-$env:PYTHONPATH = 'D:\Work\IITB\Socratic Tutor\src'
-& 'D:\Work\IITB\Socratic Tutor Main\.venv\Scripts\python.exe' -m pytest `
+$env:PYTHONPATH = '<project-checkout>\src'
+& '.\.venv\Scripts\python.exe' -m pytest `
   tests_beta tests_book_pipeline -q --basetemp Directions\beta_data\pytest_tmp
 
 # This makes real provider calls and records every outcome in a fresh private run directory.
-& 'D:\Work\IITB\Socratic Tutor Main\.venv\Scripts\python.exe' scripts\beta\evaluate.py
-& 'D:\Work\IITB\Socratic Tutor Main\.venv\Scripts\python.exe' scripts\beta\render_results.py
+& '.\.venv\Scripts\python.exe' scripts\beta\evaluate.py
+& '.\.venv\Scripts\python.exe' scripts\beta\render_results.py
 ```
 
 The cases are `Docs/beta/DEVELOPMENT_CASES.json`; their bytes are frozen into every run. Each run pins dataset hash and runtime source hashes. All runs and any raw development audits stay under `Directions/beta_data/evaluation_runs/`. Results used during fixes are development evidence, not an independent final test. No held-out evaluation files were read. Format repairs consume actual additional model calls and are reported.
 
-See `VALIDATION.json` for final test/acceptance counts, `EVALUATION_RESULTS.json` for recorded results, `QUESTIONS_TO_TRY.md` for the strongest/weakest questions and interpretation, and `performance.png` / `performance.svg` for the graph. `question_results.csv` is the tabular export. The graph measures declared technical task completion and latency, not factual accuracy, teaching quality or learning gains. The chemistry description guard's false-positive diagnosis is preserved in the run history.
+See `EVALUATION_RESULTS.json` for recorded results, `QUESTIONS_TO_TRY.md` for the strongest/weakest questions and interpretation, and `performance.png` / `performance.svg` for the graph. `question_results.csv` is the tabular export. The graph measures declared technical task completion and latency, not factual accuracy, teaching quality or learning gains. The chemistry description guard's false-positive diagnosis is preserved in the run history.
 
 ## Beta testing next
 
@@ -97,4 +97,4 @@ Use the supplied questions to check reproducibility, then collect a fresh, separ
 
 ## Shared-checkout setup
 
-`Directions/` is intentionally ignored and must be acquired locally. Copy `config/beta/local.example.json` to `config/beta/local.json`, set `app_root` to the team checkout if needed, and set `SOCRATES_SOURCE_WORKSPACE` to the directory containing the acquired `Directions/` collections. The default assumes that directory is the checkout itself. In the original D: workspace, set it to `D:\Work\IITB\Socratic Tutor`; the team checkout and canonical workspace then use the same private source collection. No credentials or textbook PDFs are included in Git.
+`Directions/` is intentionally ignored and must be acquired locally. Copy `config/beta/local.example.json` to `config/beta/local.json`, set `app_root` to the team checkout if needed, and set `SOCRATES_SOURCE_WORKSPACE` to the directory containing the acquired `Directions/` collections. The default assumes that directory is the checkout itself. Set it to the folder containing your local source collection if that folder differs from the checkout. No credentials or textbook PDFs are included in Git.

@@ -1,22 +1,22 @@
 # File index and snapshot schemas
 
-Source root: `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2`. Output root: `D:\Work\IITB\Socratic Tutor\Docs\dataset_integration_v0_2`. Source files remain unchanged.
+Source root: `Directions\socratic_tutor_dataset_expanded_v0_2`. Output root: `Docs\dataset_integration_v0_2`. Source files remain unchanged.
 
 The JSON schemas describe observed field shapes. They are not independently authored domain truth or an approval mechanism. `audit.py` separately checks provenance, joins, source status and public-prompt mathematics.
 
 | Collection | Exact source path | Rows | Example ID | Access |
 |---|---|---:|---|---|
-| problems | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\dev\problem_variants.jsonl` | 232 | `SYN-P-Q01-01` | engineering_review_only |
-| dialogues | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\dev\dialogues_synthetic.jsonl` | 928 | `SYN-DLG-Q01-01-SELF_REPAIR` | engineering_review_only |
-| tutor_contexts | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\dev\tutor_turn_contexts_unreviewed.jsonl` | 5568 | `SYN-TURN-00001` | engineering_review_only |
-| messages | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\dev\contextual_learner_messages.jsonl` | 2400 | `SYN-MSG-01-001` | engineering_review_only |
-| preferences | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\critic_only\response_preference_pairs.jsonl` | 464 | `SYN-PAIR-0001` | critic_only |
-| security | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\dev\security_attack_control_pairs.jsonl` | 360 | `SYN-SEC-0001` | engineering_review_only |
-| references | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\review\reference_answers_dev_only.jsonl` | 232 | `SYN-P-Q01-01` | restricted_verifier_only |
-| retrieval | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\review\retrieval_candidates_unlabelled.jsonl` | 87 | `RET-CAND-001` | engineering_review_only |
-| glossary | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\review\glossary_unreviewed.jsonl` | 90 | `G-001` | engineering_review_only |
-| seed_misconceptions | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\parent_seed_v0_1\dev\misconceptions.jsonl` | 30 | `Q01` | engineering_review_only |
-| quarantine | `D:\Work\IITB\Socratic Tutor\Directions\socratic_tutor_dataset_expanded_v0_2\quarantine\T08_curriculum_unconfirmed_dialogues.jsonl` | 32 | `SYN-DLG-T08-01-SELF_REPAIR` | quarantine_only |
+| problems | `Directions\socratic_tutor_dataset_expanded_v0_2\dev\problem_variants.jsonl` | 232 | `SYN-P-Q01-01` | engineering_review_only |
+| dialogues | `Directions\socratic_tutor_dataset_expanded_v0_2\dev\dialogues_synthetic.jsonl` | 928 | `SYN-DLG-Q01-01-SELF_REPAIR` | engineering_review_only |
+| tutor_contexts | `Directions\socratic_tutor_dataset_expanded_v0_2\dev\tutor_turn_contexts_unreviewed.jsonl` | 5568 | `SYN-TURN-00001` | engineering_review_only |
+| messages | `Directions\socratic_tutor_dataset_expanded_v0_2\dev\contextual_learner_messages.jsonl` | 2400 | `SYN-MSG-01-001` | engineering_review_only |
+| preferences | `Directions\socratic_tutor_dataset_expanded_v0_2\critic_only\response_preference_pairs.jsonl` | 464 | `SYN-PAIR-0001` | critic_only |
+| security | `Directions\socratic_tutor_dataset_expanded_v0_2\dev\security_attack_control_pairs.jsonl` | 360 | `SYN-SEC-0001` | engineering_review_only |
+| references | `Directions\socratic_tutor_dataset_expanded_v0_2\review\reference_answers_dev_only.jsonl` | 232 | `SYN-P-Q01-01` | restricted_verifier_only |
+| retrieval | `Directions\socratic_tutor_dataset_expanded_v0_2\review\retrieval_candidates_unlabelled.jsonl` | 87 | `RET-CAND-001` | engineering_review_only |
+| glossary | `Directions\socratic_tutor_dataset_expanded_v0_2\review\glossary_unreviewed.jsonl` | 90 | `G-001` | engineering_review_only |
+| seed_misconceptions | `Directions\socratic_tutor_dataset_expanded_v0_2\parent_seed_v0_1\dev\misconceptions.jsonl` | 30 | `Q01` | engineering_review_only |
+| quarantine | `Directions\socratic_tutor_dataset_expanded_v0_2\quarantine\T08_curriculum_unconfirmed_dialogues.jsonl` | 32 | `SYN-DLG-T08-01-SELF_REPAIR` | quarantine_only |
 
 ## Typed fields and joins
 
@@ -31,7 +31,7 @@ All files use JSON objects, UTF-8 and stable string IDs. Status, scope, split an
 
 ## Derived paths
 
-- Metadata-only message derivative: `D:\Work\IITB\Socratic Tutor\Directions\_integration_work\2fb0ffbb67ae8e5c\derived_v0_2_1`. Its receipt binds each original/revised row and lists the only changed field.
+- Metadata-only message derivative: `Directions\_integration_work\2fb0ffbb67ae8e5c\derived_v0_2_1`. Its receipt binds each original/revised row and lists the only changed field.
 - Corrected inventory: `corrected/intent_catalogue_v0_2_audit.csv`.
 - Review queue: `03_REVIEW_QUEUE.csv`; blinded rater views: `review_views/rater_A.csv` and `rater_B.csv`. Routing is kept under the ignored Directions work area.
 - `approved_export_manifest.json` intentionally lists zero approved examples. A future runtime projection contains only example ID, chapter and reviewed messages, protected by a server-pinned manifest.
@@ -40,12 +40,12 @@ All files use JSON objects, UTF-8 and stable string IDs. Status, scope, split an
 
 | Component | Exact current entry point |
 |---|---|
-| Team application | `D:\Work\IITB\Socratic Tutor Main\src\tutor\app.py` (`TutorApp`, `TutorState`, planner, tutor, grader, quiz, buffered output guard) |
-| Model provider | `D:\Work\IITB\Socratic Tutor Main\src\tutor\llm.py` (`LLM._chat`, `complete`; configured model `openai/gpt-4.1-mini`) |
-| Configuration | `D:\Work\IITB\Socratic Tutor Main\src\tutor\config.py` and `config/app.toml`; credential values never exported |
-| Tools and state | `D:\Work\IITB\Socratic Tutor Main\src\tutor\toolbus.py`, `store.py`, `mathcore.py` |
-| Knowledge content | `D:\Work\IITB\Socratic Tutor Main\content\poc`; full public candidate copies in `content/dataset-v0.10.0/` |
-| HTTP and UI | `D:\Work\IITB\Socratic Tutor Main\src\tutor_api\main.py`; `D:\Work\IITB\Socratic Tutor Main\ui\app.py` (role/token UI, streaming chat) |
-| Isolated candidate | `D:\Work\IITB\Socratic Tutor\src\v02_integration\runtime.py` (`ContextualPreviewTutor`) |
+| Team application | `src\tutor\app.py` (`TutorApp`, `TutorState`, planner, tutor, grader, quiz, buffered output guard) |
+| Model provider | `src\tutor\llm.py` (`LLM._chat`, `complete`; configured model `openai/gpt-4.1-mini`) |
+| Configuration | `src\tutor\config.py` and `config/app.toml`; credential values never exported |
+| Tools and state | `src\tutor\toolbus.py`, `store.py`, `mathcore.py` |
+| Knowledge content | `content\poc`; full public candidate copies in `content/dataset-v0.10.0/` |
+| HTTP and UI | `src\tutor_api\main.py`; `ui\app.py` (role/token UI, streaming chat) |
+| Isolated candidate | `src\v02_integration\runtime.py` (`ContextualPreviewTutor`) |
 
 HTTP/UI enablement was not performed. The live probe calls the graph directly in isolated development state. Existing API authentication remains the team component and is not replaced by this adapter.

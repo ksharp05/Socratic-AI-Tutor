@@ -55,5 +55,5 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
   - R2 approves the pre-registration wording. R6 spot-checks 20 held-out cases against the teaching policy. R4 or R6 is the second judge rater.
   - Held-out files stay out of git; only their hashes are committed.
   - Drafting help: R3 checks which models the keys reach, R6 drafts the demo script, and R2 drafts the slides.
-- **Evidence:** [separation rules](plan/07-team-and-roles.md#separation-rules); [lead roadmap](LEAD_ROADMAP.md#your-own-roles-lead-r1-and-r5).
+- **Evidence:** [separation rules](plan/07-team-and-roles.md#separation-rules); [lead roadmap](LEAD_ROADMAP.md#team).
 - **Decided by:** ksharp05. The team confirms the other names and these hand-offs at the next stand-up. The evaluation report states the arrangement.
