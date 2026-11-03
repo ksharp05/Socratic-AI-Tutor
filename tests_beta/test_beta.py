@@ -282,9 +282,19 @@ def test_chapter_labels_come_from_source_headers():
     assert chapter_title('CHAPTER TWO\nMOTION IN A STRAIGHT LINE\n2.1 Introduction')=='MOTION IN A STRAIGHT LINE'
 
 
-def test_shared_main_api_mount_is_opt_in_and_same_origin(monkeypatch):
+def test_shared_main_api_mount_is_opt_in_and_same_origin(monkeypatch,tmp_path,registry):
     from tutor_api.main import create_app as main_app
-    monkeypatch.setenv('TUTOR_BETA_CONFIG',str(SOURCE_ROOT/'config/beta/local.json'))
+    # Keep browser state in the test directory and bind the existing read-only index
+    # to the checkout under test, not to another machine's app-root configuration.
+    entry=registry.entries()['datasets'][registry.entries()['active']]
+    local=DatasetRegistry(tmp_path/'beta-data')
+    local.register('mount-fixture',Path(entry['path']),title='Development index',activate=True,
+                   expected_sha256=entry['sha256'])
+    config=tmp_path/'beta.json'
+    config.write_text(json.dumps({'app_root':str(APP),'data_directory':str(tmp_path/'beta-data')}),encoding='utf-8')
+    monkeypatch.setenv('TUTOR_BETA_CONFIG',str(config))
+    monkeypatch.setenv('TUTOR_BETA_WORKSPACE',str(ROOT))
+    monkeypatch.delenv('TUTOR_BETA_LIVE',raising=False)
     api=main_app(tutor=object(),tokens='tok-a:student:L-A')
     client=TestClient(api,base_url='http://127.0.0.1')
     try:

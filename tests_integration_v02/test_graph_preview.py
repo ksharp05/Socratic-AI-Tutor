@@ -10,7 +10,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 ROOT=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path(__file__).resolve().parents[1])).resolve()
-TEAM=ROOT.parent/'Socratic Tutor Main'
+CODE_ROOT=Path(__file__).resolve().parents[1]
+TEAM=CODE_ROOT if (CODE_ROOT/'src/tutor/app.py').is_file() else Path(os.environ.get('SOCRATES_TEAM_APP_ROOT',str(ROOT.parent/'Socratic Tutor Main'))).resolve()
 sys.path.insert(0,str(TEAM/'src'))
 from tutor import config,store
 from tutor.seed import seed_learner,DEMO_LEARNERS

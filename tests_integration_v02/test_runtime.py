@@ -1,7 +1,9 @@
-import copy,json,sqlite3,tempfile,unittest,sys,inspect
+import copy,json,sqlite3,tempfile,unittest,sys,inspect,os
 from pathlib import Path
 from types import SimpleNamespace
-sys.path.insert(0,r'D:\Work\IITB\Socratic Tutor Main\src')
+CODE_ROOT=Path(__file__).resolve().parents[1]
+TEAM=CODE_ROOT if (CODE_ROOT/'src/tutor/app.py').is_file() else Path(os.environ.get('SOCRATES_TEAM_APP_ROOT',str(CODE_ROOT.parent/'Socratic Tutor Main'))).resolve()
+sys.path.insert(0,str(TEAM/'src'))
 from v02_integration.runtime import ContextualPreviewTutor,ambiguity,normalize_math_input,normalize_tutor_presentation
 from tutor import store
 
@@ -24,7 +26,7 @@ class ContextualRuntime(unittest.TestCase):
   raise AssertionError('Unexpected tool')
  def test_loaded_parent_is_the_current_team_checkout(self):
   from tutor.app import TutorApp
-  self.assertEqual(Path(inspect.getfile(TutorApp)).resolve(),Path(r'D:\Work\IITB\Socratic Tutor Main\src\tutor\app.py'))
+  self.assertEqual(Path(inspect.getfile(TutorApp)).resolve(),(TEAM/'src/tutor/app.py').resolve())
  def test_contextual_model_path_contains_latest_turn_but_no_private_state(self):
   self.state['private_answer']='MUST_NOT_APPEAR';self.state['hidden_simulator_card']={'true_mastery':1}
   result=self.app._generate_checked(self.state,self.update)
