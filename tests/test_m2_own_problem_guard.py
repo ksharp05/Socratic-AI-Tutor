@@ -76,3 +76,10 @@ def test_old_session_recovers_unverified_homework_boundary(tmp_path):
         assert app._input_guard(state)['unverified_own_problem'] is True
     finally:
         app.close()
+
+
+def test_prompt_example_does_not_supply_demo_problem_answers():
+    from tutor.prompts import TUTOR
+    example = TUTOR['examples'].lower().replace(' ', '')
+    assert 'x^2=5x' not in example and 'x=0' not in example and 'x=5' not in example
+    assert example.count('?') == 1

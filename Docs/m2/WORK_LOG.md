@@ -28,6 +28,13 @@ The following local **development** checks were collected on a working tree base
 - Teacher alert details are returned by the learner-overview API only to an authenticated teacher; an individual student can still retrieve their own learner model but receives an empty alert list. The new tables are added to an existing SQLite database without resetting learner rows. No external delivery or acknowledgement exists.
 - The detected own-homework path now returns a fixed question instead of raw retrieved passages or a generated answer; old stored sessions recover the detection flag from earlier redacted student messages. The detector is heuristic, so unrecognized phrasings remain a safety risk. No live hint for the unregistered example is claimed.
 
+## Bounded synthetic quadratic probe — 4 November
+
+- Removed a few-shot tutor example that contained the assessed `x² = 5x` question and its answers. The replacement is a generic question and the prompt version changed.
+- Added `scripts/m2/quadratic_probe.py`, which creates an isolated synthetic development question and defaults to a fake model. The fake-model path produced a source-linked question through the graph and code-owned leak guard. This is not human approval or a real-model result.
+- The optional live mode is explicitly unexecuted pending authorization of source-passage transfer. It is limited to one generation attempt, disables retries on the actual configured synchronous client, and withholds responses that fail its conservative display screen. Details and limitations: [quadratic probe](QUADRATIC_PROBE.md).
+- **214 offline tests passed** on the current working tree after these changes. The last clean-checkout commit `f99504a` passed 211 tests; the new prompt and probe are later uncommitted work until checkpointed and rechecked.
+
 ## Open acceptance gates
 
 - Real-model, cited active-problem hint and end-to-end trace: not run. Automatic approval review rejected the probe because it could transmit local textbook excerpts to the provider absent explicit approval for that transfer.
