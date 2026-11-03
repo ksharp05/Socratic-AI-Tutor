@@ -265,8 +265,17 @@ def test_api_quiz_has_no_hints_or_flashcards(client):
     a=client.post('/api/practice',json={'session_id':s['id'],'mode':'quiz'},headers=HEADERS).json()
     assert client.post('/api/practice/'+a['id']+'/hint',json={},headers=HEADERS).status_code==400
     assert client.get('/api/cards').status_code==400
-    text=json.dumps(a)
-    assert 'values' not in text and 'grading_reference' not in text and 'hint_stages' not in text
+    def nested_keys(value):
+        if isinstance(value, dict):
+            return set(value) | set().union(*(nested_keys(v) for v in value.values()))
+        if isinstance(value, list):
+            return set().union(*(nested_keys(v) for v in value))
+        return set()
+    prohibited = {'values', 'grading_reference', 'hint_stages', 'answer_key', 'expected_answer', 'solution'}
+    assert not (nested_keys(a) & prohibited)
+    # Normal language may contain "values"; an actual nested answer field must be detected.
+    assert not (nested_keys({'prompt':'Do these values form an AP?'}) & prohibited)
+    assert nested_keys({'payload':{'values':['hidden']}}) & prohibited == {'values'}
 
 
 def test_api_forget_removes_only_this_profile(client):

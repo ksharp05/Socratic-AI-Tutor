@@ -16,3 +16,5 @@
 A clean-clone Docker demonstration is still blocked by the absence of Docker on the current machine. The live-model probe remains unexecuted: automatic approval review rejected an earlier attempt because local textbook excerpts might be transmitted without explicit approval of that transfer. The [probe specification](QUADRATIC_PROBE.md) describes the proposed payload and its one-call limit. Human teacher review, independent evaluation and course participation clarification also remain outstanding.
 
 Raw local results and machine-specific state remain under ignored `Directions/`; no source PDFs, derived index, credentials, private learner data or held-out material are part of this snapshot.
+
+**Subsequent finding:** a later run on documentation checkpoint `2bd4102` failed one quiz schema test because an ordinary question contained the word “values.” The test was corrected to check nested field names; see [work log](WORK_LOG.md). That failure and the fix must remain visible in release evidence.

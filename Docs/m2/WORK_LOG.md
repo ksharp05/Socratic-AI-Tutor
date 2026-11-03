@@ -35,6 +35,10 @@ The following local **development** checks were collected on a working tree base
 - The optional live mode is explicitly unexecuted pending authorization of source-passage transfer. It is limited to one generation attempt, disables retries on the actual configured synchronous client, and withholds responses that fail its conservative display screen. Details and limitations: [quadratic probe](QUADRATIC_PROBE.md).
 - **214 offline tests passed** on the current working tree after these changes. The last clean-checkout commit `f99504a` passed 211 tests; the new prompt and probe are later uncommitted work until checkpointed and rechecked.
 
+## Quiz-test reliability — 4 November
+
+An exact-checkout rerun at `2bd4102` produced 213 passes and one failure: the quiz privacy assertion matched the ordinary word “values” inside a public problem statement. The check was corrected to inspect nested JSON field names instead of arbitrary prompt text, with a control showing that a real nested `values` field is still detected. This avoids a false failure; it is a schema check, not proof that all possible answer leakage is prevented.
+
 ## Open acceptance gates
 
 - Real-model, cited active-problem hint and end-to-end trace: not run. Automatic approval review rejected the probe because it could transmit local textbook excerpts to the provider absent explicit approval for that transfer.
