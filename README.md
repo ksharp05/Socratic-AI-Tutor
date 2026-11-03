@@ -57,6 +57,8 @@ What each role owns and never does: [Lead roadmap · Team](Docs/LEAD_ROADMAP.md#
 
 ## Quick start
 
+**Running the browser beta:** see the [beta run guide](Docs/RUN_GUIDE.md) for setup, data access, live and offline modes, and troubleshooting.
+
 **New to the project?** Follow the step-by-step [setup guide](Docs/SETUP.md): access, install, tests, your API key, and troubleshooting for Windows, macOS and Linux. The short version:
 
 ```bash
