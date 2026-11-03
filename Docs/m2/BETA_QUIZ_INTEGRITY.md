@@ -1,0 +1,18 @@
+# Beta quiz integrity and study-plan evidence
+
+Date: 4 November 2026. These are local engineering checks with synthetic profiles, not an independent evaluation or evidence of learning.
+
+## Behavior
+
+- Starting or completing an assessment, checking an answer, and recording its observation use serialized SQLite transactions. A failed save rolls back its observation. Concurrent retries with the same request ID return the recorded response rather than grading twice.
+- While a quiz or diagnostic is open, another conversation in the same browser profile cannot grade practice, request hints, open source excerpts or cards, review or create cards, or open the development-results report. Other practice is shown as paused and can resume after the check is left or completed. Chat is isolated from the active check.
+- Quiz and diagnostic observations are written only when the check completes. Leaving early does not reveal a partial score, and previously saved partial responses cannot be replayed after leaving. Older partial observations remain stored; study views exclude observations associated with open, abandoned, or revoked checks. Legacy rows without assessment IDs are matched using session, mode and assessment time windows; unusual clock changes or overlapping old records can make that historical association ambiguous.
+- Chat, assessment actions, study views and protected source/card operations for a browser profile use shared local lock stripes. Cooperating processes using the same canonical SQLite path serialize these operations; a busy request returns a retryable error. A slow language call can delay another action for that profile, and unrelated profiles may occasionally share a stripe. Direct database writes, unrelated app versions, other hosts and network filesystems are outside this tested boundary.
+- A recognized distress phrase receives immediate generic guidance without waiting for a model, database, session lookup or lock. The beta labels this message as not saved; no teacher notification or human acknowledgement is implied. Detection is phrase-based and not comprehensive.
+- The beta study plan returns a deterministic revision and a plain-language reason for its leading recommendation. A mounted API test with two synthetic browser profiles and teacher-published development questions checks that an unfinished quiz changes neither plan, while a completed quiz changes the matching profile's plan and leaves the other unchanged. Each checked answer is stored once with all its associated concepts; the plan states that a question may involve multiple concepts and does not diagnose the cause of a mistake. This is based on checked answers, not inferred mastery; beta state remains separate from the authenticated graph learner model and trace.
+
+## Verification
+
+Tests exercise concurrent service instances and a separate lock-holding process, duplicate request IDs, transaction rollback, early exit, old saved quizzes, cross-session card and quiz isolation, urgent-response availability during a blocked database write, and profile-specific planning. Model-dependent behavior uses local synthetic stand-ins only. The browser JavaScript receives a syntax check; cross-browser and accessibility validation remain outstanding. Actual educator approval, independent held-out evaluation, live-model testing and a fresh Compose run remain open.
+
+A later assistant-operated localhost browser walkthrough confirmed that a completed synthetic quiz changed the displayed plan and explanation, and that earlier practice shows a pause message while another conversation has an active check. The server was stopped. This is a narrow visual check, not cross-browser or accessibility certification.

@@ -4,3 +4,4 @@ uvicorn==0.54.0
 pydantic==2.14.2
 langchain-openai==1.7.2
 sympy==1.14.0
+filelock==4.2.6

@@ -9,7 +9,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel,ConfigDict,Field
 from . import __version__
 from .bootstrap import bootstrap
-from .repository import Repository
+from .repository import Repository,BetaBusy
 from .ports import Scope
 from .dialogue import DialogueService
 from .maths import CheckedMaths,AssessmentService
@@ -84,7 +84,6 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         cookie=request.cookies.get('socrates_beta_profile','');parts=cookie.split('.')
         valid=len(parts)==2 and len(parts[0])==32 and hmac.compare_digest(sign(parts[0]),cookie)
         request.state.owner=parts[0] if valid else uuid.uuid4().hex
-        repo.profile(request.state.owner)
         try:response=await call_next(request)
         except Exception:return JSONResponse({'detail':'The beta could not complete this request. Please try again.'},status_code=500)
         if not valid:response.set_cookie('socrates_beta_profile',sign(request.state.owner),httponly=True,samesite='strict',max_age=30*86400)
@@ -95,6 +94,8 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     if tutor_provider is not None:
         @app.exception_handler(ApprovalUnavailable)
         async def approval_unavailable(request,exc):return JSONResponse({'detail':str(exc)},status_code=503)
+    @app.exception_handler(BetaBusy)
+    async def beta_busy(request,exc):return JSONResponse({'detail':str(exc)},status_code=503)
     @app.exception_handler(KeyError)
     async def missing(request,exc):return JSONResponse({'detail':'The requested item is not available for this browser profile.'},status_code=404)
     @app.exception_handler(ValueError)
@@ -128,20 +129,22 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     def sessions(request:Request):return [session_public(s) for s in repo.sessions(owner(request))]
     @app.get('/api/sessions/{sid}')
     def session(sid:str,request:Request):
-        s=repo.session(sid,owner(request));active=repo.active_assessment(sid,owner(request))
-        return {**session_public(s),'turns':[{'user':t['user_text'],'result':t['result'],'created':t['created']} for t in repo.history(sid)],
-                'assessment':assess.public(active) if active else None}
+        with repo.owner_guard(owner(request)):
+            s=repo.session(sid,owner(request));active=repo.active_assessment(sid,owner(request))
+            check=repo.open_check(owner(request))
+            paused=bool(check and (not active or active['id']!=check['id']))
+            return {**session_public(s),'turns':[{'user':t['user_text'],'result':t['result'],'created':t['created']} for t in repo.history(sid)],
+                    'assessment':assess.public(active) if active and not paused else None,'assessment_paused':paused}
     @app.post('/api/chat')
     def chat(body:ChatIn,request:Request):
         return dialogue.turn(owner(request),body.session_id,body.text,body.request_id)
     @app.post('/api/practice')
     def practice(body:StartIn,request:Request):
         s=repo.session(body.session_id,owner(request))
-        with dialogue.session_lock(s['id']):return assess.start(s,body.mode,body.concept,body.question_id)
+        return assess.start(s,body.mode,body.concept,body.question_id)
     @app.post('/api/practice/{aid}/submit')
     def submit(aid:str,body:SubmitIn,request:Request):
-        a=repo.assessment(aid,owner(request))
-        with dialogue.session_lock(a['session_id']):return assess.submit(owner(request),aid,body.answer,body.request_id)
+        return assess.submit(owner(request),aid,body.answer,body.request_id)
     @app.post('/api/practice/{aid}/hint')
     def hint(aid:str,request:Request):return assess.hint(owner(request),aid)
     @app.post('/api/practice/{aid}/leave')
@@ -157,31 +160,42 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     def dashboard(request:Request):return study.dashboard(owner(request))
     @app.get('/api/cards')
     def cards(request:Request):
-        if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before reviewing cards')
-        return repo.cards(owner(request))
+        with repo.owner_guard(owner(request)):
+            if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before reviewing cards')
+            return repo.cards(owner(request))
     @app.get('/api/source')
     def source(request:Request,session_id:str,passage_id:str):
-        s=repo.session(session_id,owner(request))
-        if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before opening source help')
-        allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
-        if passage_id not in allowed:raise KeyError('Source not cited in this session')
-        p=registry.knowledge(s['dataset']).passage(passage_id)
-        if not p:raise KeyError('Source not found')
-        return {**dialogue.citation(p),'text':p['text']}
+        with repo.owner_guard(owner(request)):
+            s=repo.session(session_id,owner(request))
+            if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before opening source help')
+            allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
+            if passage_id not in allowed:raise KeyError('Source not cited in this session')
+            p=registry.knowledge(s['dataset']).passage(passage_id)
+            if not p:raise KeyError('Source not found')
+            return {**dialogue.citation(p),'text':p['text']}
     @app.post('/api/cards')
     def card(body:CardIn,request:Request):
-        s=repo.session(body.session_id,owner(request));allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
-        if body.passage_id not in allowed:raise ValueError('Save a source cited in this conversation first')
-        p=registry.knowledge(s['dataset']).passage(body.passage_id)
-        if not p:raise KeyError('Source not found')
-        return repo.add_card(owner(request),s['dataset'],p)
+        with repo.owner_guard(owner(request)):
+            if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before saving source cards')
+            s=repo.session(body.session_id,owner(request));allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
+            if body.passage_id not in allowed:raise ValueError('Save a source cited in this conversation first')
+            p=registry.knowledge(s['dataset']).passage(body.passage_id)
+            if not p:raise KeyError('Source not found')
+            return repo.add_card(owner(request),s['dataset'],p)
     @app.post('/api/cards/{cid}/review')
-    def review(cid:str,body:ReviewIn,request:Request):return repo.review_card(owner(request),cid,body.rating)
+    def review(cid:str,body:ReviewIn,request:Request):
+        with repo.owner_guard(owner(request)):
+            if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before reviewing cards')
+            return repo.review_card(owner(request),cid,body.rating)
     @app.get('/api/evidence')
-    def evidence():
-        path=ROOT/'Docs/beta/EVALUATION_RESULTS.json'
-        return json.loads(path.read_text(encoding='utf-8')) if path.exists() else {'available':False}
+    def evidence(request:Request):
+        with repo.owner_guard(owner(request)):
+            if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before viewing development results')
+            path=ROOT/'Docs/beta/EVALUATION_RESULTS.json'
+            return json.loads(path.read_text(encoding='utf-8')) if path.exists() else {'available':False}
     @app.post('/api/forget')
-    def forget(request:Request):repo.forget(owner(request));return {'deleted':True}
+    def forget(request:Request):
+        with repo.owner_guard(owner(request)):
+            repo.forget(owner(request));return {'deleted':True}
     app.mount('/assets',StaticFiles(directory=Path(__file__).with_name('static')),name='assets')
     return app

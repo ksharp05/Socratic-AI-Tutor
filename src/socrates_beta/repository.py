@@ -1,7 +1,12 @@
 from __future__ import annotations
-import json,sqlite3,time,uuid
+import hashlib,json,sqlite3,time,uuid
 from contextlib import contextmanager
 from pathlib import Path
+from filelock import FileLock,Timeout
+
+
+class BetaBusy(Exception):
+    """The browser profile is processing another request."""
 
 
 class Repository:
@@ -34,6 +39,35 @@ class Repository:
             with c: yield c
         finally:c.close()
 
+    @contextmanager
+    def owner_guard(self, owner, *, timeout=30):
+        # Fixed lock stripes avoid persistent per-profile filenames. Other
+        # profiles can occasionally share a stripe; no model data enters it.
+        stripe=hashlib.sha256(owner.encode('utf-8')).hexdigest()[:2]
+        directory=Path(str(self.path.resolve())+'.profile-locks')
+        directory.mkdir(parents=True,exist_ok=True)
+        try:
+            with FileLock(str(directory/(stripe+'.lock')),timeout=timeout,
+                          preserve_lock_file=True,fallback_to_soft=False):
+                yield
+        except Timeout as exc:
+            raise BetaBusy('Another request is still running. Please try again.') from exc
+
+    @contextmanager
+    def transaction(self):
+        """Serialize assessment state transitions and commit their observations together."""
+        with self.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            yield conn
+
+    @contextmanager
+    def _using(self, conn):
+        if conn is not None:
+            yield conn
+        else:
+            with self.connect() as own:
+                yield own
+
     @staticmethod
     def decode(row):
         if row is None:return None
@@ -44,15 +78,18 @@ class Repository:
 
     def profile(self,owner):
         with self.connect() as c:
-            c.execute('INSERT OR IGNORE INTO profiles VALUES (?,?,?)',(owner,'{}',time.time()))
-            return self.decode(c.execute('SELECT * FROM profiles WHERE id=?',(owner,)).fetchone())
+            row=c.execute('SELECT * FROM profiles WHERE id=?',(owner,)).fetchone()
+            if row is None:
+                c.execute('INSERT OR IGNORE INTO profiles VALUES (?,?,?)',(owner,'{}',time.time()))
+                row=c.execute('SELECT * FROM profiles WHERE id=?',(owner,)).fetchone()
+            return self.decode(row)
 
     def preferences(self,owner,prefs):
         self.profile(owner)
         with self.connect() as c:c.execute('UPDATE profiles SET preferences=? WHERE id=?',(json.dumps(prefs),owner))
 
-    def session(self,sid,owner):
-        with self.connect() as c:r=c.execute('SELECT * FROM sessions WHERE id=? AND owner=?',(sid,owner)).fetchone()
+    def session(self,sid,owner,*,conn=None):
+        with self._using(conn) as c:r=c.execute('SELECT * FROM sessions WHERE id=? AND owner=?',(sid,owner)).fetchone()
         if r is None:raise KeyError('Session not found')
         return self.decode(r)
 
@@ -80,28 +117,33 @@ class Repository:
               (sid,key,text,json.dumps(result),now))
             c.execute('UPDATE sessions SET state=?,updated=? WHERE id=?',(json.dumps(state),now,sid))
 
-    def observe(self,owner,sid,node,kind,value):
-        with self.connect() as c:c.execute('INSERT INTO observations(owner,session_id,node,kind,value,created) VALUES (?,?,?,?,?,?)',
+    def observe(self,owner,sid,node,kind,value,*,conn=None):
+        with self._using(conn) as c:c.execute('INSERT INTO observations(owner,session_id,node,kind,value,created) VALUES (?,?,?,?,?,?)',
           (owner,sid,node,kind,json.dumps(value),time.time()))
 
     def observations(self,owner):
         with self.connect() as c:return [self.decode(r) for r in c.execute('SELECT * FROM observations WHERE owner=? ORDER BY id',(owner,))]
 
-    def assessment(self,aid,owner):
-        with self.connect() as c:r=c.execute('SELECT * FROM assessments WHERE id=? AND owner=?',(aid,owner)).fetchone()
+    def assessment(self,aid,owner,*,conn=None):
+        with self._using(conn) as c:r=c.execute('SELECT * FROM assessments WHERE id=? AND owner=?',(aid,owner)).fetchone()
         if r is None:raise KeyError('Assessment not found')
         return self.decode(r)
 
-    def active_assessment(self,sid,owner):
-        with self.connect() as c:rows=c.execute('SELECT * FROM assessments WHERE session_id=? AND owner=? ORDER BY created DESC',(sid,owner)).fetchall()
+    def assessments(self,owner):
+        with self.connect() as c:
+            rows=c.execute('SELECT * FROM assessments WHERE owner=? ORDER BY created,id',(owner,)).fetchall()
+        return [self.decode(row) for row in rows]
+
+    def active_assessment(self,sid,owner,*,conn=None):
+        with self._using(conn) as c:rows=c.execute('SELECT * FROM assessments WHERE session_id=? AND owner=? ORDER BY created DESC',(sid,owner)).fetchall()
         return next((self.decode(r) for r in rows if not json.loads(r['state']).get('complete')),None)
 
-    def open_check(self,owner):
-        with self.connect() as c:rows=c.execute("SELECT * FROM assessments WHERE owner=? AND mode IN ('quiz','diagnostic') ORDER BY created DESC",(owner,)).fetchall()
+    def open_check(self,owner,*,conn=None):
+        with self._using(conn) as c:rows=c.execute("SELECT * FROM assessments WHERE owner=? AND mode IN ('quiz','diagnostic') ORDER BY created DESC",(owner,)).fetchall()
         return next((self.decode(r) for r in rows if not json.loads(r['state']).get('complete')),None)
 
-    def save_assessment(self,record):
-        with self.connect() as c:c.execute('INSERT INTO assessments VALUES (?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',
+    def save_assessment(self,record,*,conn=None):
+        with self._using(conn) as c:c.execute('INSERT INTO assessments VALUES (?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',
             (record['id'],record['session_id'],record['owner'],record['mode'],json.dumps(record['state']),record['created'],time.time()))
 
     def cards(self,owner):

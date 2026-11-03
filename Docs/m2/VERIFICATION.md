@@ -37,3 +37,9 @@ The strengthened final selection passed **248 tests in each of the canonical wor
 
 
 **Later browser check:** An assistant-operated in-app browser inspected the mounted beta on a temporary localhost server with a synthetic passage, synthetic teacher identity and stub model. The practice screen showed the no-approval message, opened a question after synthetic publication, and displayed a revocation message without a score after the set was edited. The displayed narrow layout was inspected; this is not cross-browser accessibility testing or a real educator review. The temporary server was stopped.
+
+
+**Beta quiz and planning follow-up:** The canonical working tree passed **267 offline tests** after fixing cross-session quiz access, duplicate grading, partial observation writes, early-exit score exposure and urgent-response delays. A synthetic two-profile check showed that one completed quiz changes only that profile's beta plan revision and reason. The result is not evidence that the beta and graph share learner state or a graph trace. [Details](BETA_QUIZ_INTEGRITY.md). Full local test output is retained under `Directions/git_delivery/m2_quiz_atomic_canonical_tests.log`.
+
+
+**Final quiz-integrity verification:** Both the canonical workspace and team working tree passed **269 offline tests**. The synthetic mounted API check covered two browser profiles, teacher-published questions and quiz-driven plan changes; an assistant-operated localhost browser also inspected the updated plan and paused-practice screens. Full logs are retained under ignored `Directions/git_delivery/` as `m2_quiz_final_canonical_tests.log` and `m2_quiz_final_team_tests.log`. A subsequent wording-only JavaScript change passed `node --check`. This does not establish shared beta/graph learner identity, human teaching review, independent evaluation, a live-model result or fresh Compose operation.

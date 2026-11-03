@@ -84,44 +84,71 @@ class CheckedMaths:
 
 
 class AssessmentService:
-    def __init__(self,repo,maths):self.repo,self.maths=repo,maths;self.lock=threading.RLock()
+    def __init__(self,repo,maths):
+        self.repo,self.maths=repo,maths
+        self.lock=threading.RLock()
+
     def start(self,session,mode='practice',concept=None,question_id=None):
-        with self.lock:return self._start(session,mode,concept,question_id)
+        with self.repo.owner_guard(session['owner']), self.lock:
+            return self._start(session,mode,concept,question_id)
+
     def _eligible(self,scope,concept):return self.maths.eligible(scope,concept)
     def _bind_publication(self,record,eligible):pass
+    def _guard_assessment(self,record,conn):return None
+
     def _start(self,session,mode='practice',concept=None,question_id=None):
         from .ports import Scope
         if mode not in ('practice','quiz','diagnostic'):raise ValueError('Unknown mode')
-        if self.repo.active_assessment(session['id'],session['owner']) or self.repo.open_check(session['owner']):raise ValueError('Finish or leave the current practice first')
-        eligible=self._eligible(Scope(**session['scope']),concept)
-        if not eligible:raise ValueError('Checked practice is available for the three Class 10 maths chapters; this topic is not yet covered')
-        aid=uuid.uuid4().hex
-        # Deterministic per-run ordering with unique public items; no benchmark material is read.
-        import hashlib
-        eligible.sort(key=lambda q:hashlib.sha256((aid+q['question_id']).encode()).digest())
-        ids=[x['question_id'] for x in eligible]
-        if question_id:
-            if mode!='practice' or question_id not in ids:raise ValueError('Requested public item is not available for this practice scope')
-            ids.remove(question_id);ids.insert(0,question_id)
-        limit=1 if mode=='practice' else min(5,len(ids))
-        record={'id':aid,'session_id':session['id'],'owner':session['owner'],'mode':mode,'created':time.time(),
-          'state':{'queue':ids,'index':0,'limit':limit,'complete':False,'hint_stage':0,'submissions':[],
-                   'concept':concept,'next_target':None,'used':[]}}
-        self._bind_publication(record,eligible)
-        self.repo.save_assessment(record);return self.public(record)
-    def public(self,a):
+        with self.repo.transaction() as conn:
+            session=self.repo.session(session['id'],session['owner'],conn=conn)
+            if (self.repo.active_assessment(session['id'],session['owner'],conn=conn)
+                    or self.repo.open_check(session['owner'],conn=conn)):
+                raise ValueError('Finish or leave the current practice first')
+            eligible=self._eligible(Scope(**session['scope']),concept)
+            if not eligible:raise ValueError('Checked practice is available for the three Class 10 maths chapters; this topic is not yet covered')
+            aid=uuid.uuid4().hex
+            # Deterministic per-run ordering with unique public items; no benchmark material is read.
+            import hashlib
+            eligible.sort(key=lambda q:hashlib.sha256((aid+q['question_id']).encode()).digest())
+            ids=[x['question_id'] for x in eligible]
+            if question_id:
+                if mode!='practice' or question_id not in ids:raise ValueError('Requested public item is not available for this practice scope')
+                ids.remove(question_id);ids.insert(0,question_id)
+            limit=1 if mode=='practice' else min(5,len(ids))
+            record={'id':aid,'session_id':session['id'],'owner':session['owner'],'mode':mode,'created':time.time(),
+              'state':{'queue':ids,'index':0,'limit':limit,'complete':False,'hint_stage':0,'submissions':[],
+                       'concept':concept,'next_target':None,'used':[]}}
+            self._bind_publication(record,eligible)
+            self.repo.save_assessment(record,conn=conn)
+            return self.public(record,conn=conn)
+
+    def public(self,a,*,conn=None):
         state=a['state'];done=state['complete']
         result={'id':a['id'],'mode':a['mode'],'complete':done,'position':min(state['index']+1,state['limit']),'total':state['limit'],
                 'hint_stage':state['hint_stage'],'item':None if done else self.maths.public_item(state['queue'][state['index']])}
-        if done:
+        if done and not state.get('left_early'):
             counted=[s for s in state['submissions'] if s.get('counted')]
             result['summary']={'correct':sum(s['grade']['status']=='correct' for s in counted),
                 'scored':sum(s['grade']['scorable'] for s in counted),'submitted':len(counted),
                 'reasoning_assessed':False,'recommended_concept':state.get('next_target')}
         return result
+
+    def _ensure_no_other_check(self,owner,aid,conn):
+        active=self.repo.open_check(owner,conn=conn)
+        if active and active['id']!=aid:
+            raise ValueError('Finish or leave the current check before returning to other practice.')
+
     def submit(self,owner,aid,text,request_id):
-        with self.lock:
-            a=self.repo.assessment(aid,owner);s=a['state']
+        with self.repo.owner_guard(owner):
+            return self._submit(owner,aid,text,request_id)
+
+    def _submit(self,owner,aid,text,request_id):
+        with self.lock, self.repo.transaction() as conn:
+            a=self.repo.assessment(aid,owner,conn=conn);s=a['state']
+            revoked=self._guard_assessment(a,conn)
+            if revoked:return {'status':'question_revoked','message':revoked['message'],'assessment':revoked}
+            self._ensure_no_other_check(owner,aid,conn)
+            if s.get('left_early'):raise ValueError('This check was left early.')
             prior=next((v for v in s['submissions'] if v['request_id']==request_id),None)
             if prior:
                 import hashlib
@@ -129,10 +156,14 @@ class AssessmentService:
                 return prior['response']
             if s['complete']:raise ValueError('This check is complete')
             qid=s['queue'][s['index']];grade=self.maths.grade(qid,text)
-            if grade['status']=='unverified':return {'message':'This answer could not be verified; try a supported exact form.','status':'unverified','assessment':self.public(a)}
-            if grade['status']=='invalid_response':return {'message':'I could not parse that answer. Use the format shown below the question.','status':'invalid_response','assessment':self.public(a)}
-            node=self.maths.items[qid]['problem']['concept_ids'][0]
-            self.repo.observe(owner,a['session_id'],node,'checked_answer',{'status':grade['status'],'question_id':qid,'mode':a['mode']})
+            if grade['status']=='unverified':return {'message':'This answer could not be verified; try a supported exact form.','status':'unverified','assessment':self.public(a,conn=conn)}
+            if grade['status']=='invalid_response':return {'message':'I could not parse that answer. Use the format shown below the question.','status':'invalid_response','assessment':self.public(a,conn=conn)}
+            concepts=list(self.maths.items[qid]['problem']['concept_ids'])
+            node=s.get('concept') if s.get('concept') in concepts else concepts[0]
+            if a['mode']=='practice':
+                self.repo.observe(owner,a['session_id'],node,'checked_answer',
+                    {'status':grade['status'],'question_id':qid,'concept_ids':concepts,
+                     'mode':a['mode'],'assessment_id':aid},conn=conn)
             if a['mode']=='practice':
                 if grade['correct']:s['complete']=True
                 else:s['hint_stage']=min(3,s['hint_stage']+1)
@@ -145,24 +176,55 @@ class AssessmentService:
                 s['used'].append(qid);s['index']+=1
                 if s['index']>=s['limit']:s['complete']=True
                 elif a['mode']=='diagnostic':
-                    # Branch to another public item exercising the observed concept after a miss.
                     remaining=s['queue'][s['index']:]
                     target=[q for q in remaining if node in self.maths.items[q]['problem']['concept_ids']]
                     if not grade['correct'] and target:
                         chosen=target[0];s['queue'].remove(chosen);s['queue'].insert(s['index'],chosen)
             import hashlib
-            entry={'answer_sha256':hashlib.sha256(text.encode()).hexdigest(),'request_id':request_id,'question_id':qid,'grade':grade,'counted':bool(a['mode']!='practice' or grade['correct'])}
+            entry={'answer_sha256':hashlib.sha256(text.encode()).hexdigest(),'request_id':request_id,'question_id':qid,'grade':grade,
+                   'counted':bool(a['mode']!='practice' or grade['correct']),'observation_recorded':a['mode']=='practice'}
             s['submissions'].append(entry)
-            response={'message':message,'status':status,'verification':'code_checked','reasoning_assessed':False,'assessment':self.public(a)}
+            # Do not reveal intermediate quiz/diagnostic outcomes through the
+            # dashboard or learning map. Commit all observations on completion.
+            # Older entries without this flag were recorded by earlier builds.
+            if a['mode']!='practice' and s['complete']:
+                for completed in s['submissions']:
+                    if completed.get('observation_recorded') is False:
+                        completed_qid=completed['question_id']
+                        completed_concepts=list(self.maths.items[completed_qid]['problem']['concept_ids'])
+                        completed_node=s.get('concept') if s.get('concept') in completed_concepts else completed_concepts[0]
+                        self.repo.observe(owner,a['session_id'],completed_node,'checked_answer',
+                            {'status':completed['grade']['status'],'question_id':completed_qid,
+                             'concept_ids':completed_concepts,'mode':a['mode'],'assessment_id':aid},conn=conn)
+                        completed['observation_recorded']=True
+            response={'message':message,'status':status,'verification':'code_checked','reasoning_assessed':False,'assessment':self.public(a,conn=conn)}
             entry['response']=response
-            self.repo.save_assessment(a);return response
+            self.repo.save_assessment(a,conn=conn)
+            return response
+
     def hint(self,owner,aid):
-        with self.lock:
-            a=self.repo.assessment(aid,owner);s=a['state']
+        with self.repo.owner_guard(owner):
+            return self._hint(owner,aid)
+
+    def _hint(self,owner,aid):
+        with self.lock, self.repo.transaction() as conn:
+            a=self.repo.assessment(aid,owner,conn=conn);s=a['state']
+            revoked=self._guard_assessment(a,conn)
+            if revoked:return {'status':'question_revoked','hint':revoked['message'],'stage':0,'assessment':revoked}
+            self._ensure_no_other_check(owner,aid,conn)
             if a['mode']!='practice' or s['complete']:raise ValueError('Hints are available during active practice only')
-            s['hint_stage']=min(3,s['hint_stage']+1);self.repo.save_assessment(a)
+            s['hint_stage']=min(3,s['hint_stage']+1);self.repo.save_assessment(a,conn=conn)
             return {'hint':self.maths.hint(s['queue'][s['index']],s['hint_stage']),'stage':s['hint_stage']}
+
     def leave(self,owner,aid):
-        with self.lock:
-            a=self.repo.assessment(aid,owner);a['state']['complete']=True;a['state']['left_early']=True;self.repo.save_assessment(a)
-            result=self.public(a);result['left_early']=True;return result
+        with self.repo.owner_guard(owner):
+            return self._leave(owner,aid)
+
+    def _leave(self,owner,aid):
+        with self.lock, self.repo.transaction() as conn:
+            a=self.repo.assessment(aid,owner,conn=conn)
+            if a['state']['complete'] and not a['state'].get('left_early'):
+                raise ValueError('This check is already complete.')
+            a['state']['complete']=True;a['state']['left_early']=True
+            self.repo.save_assessment(a,conn=conn)
+            result=self.public(a,conn=conn);result['left_early']=True;return result

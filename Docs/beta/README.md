@@ -75,6 +75,8 @@ The Main API now has an optional mount implemented in `src/tutor_api/beta.py`. E
 
 Mounted beta practice, quizzes and diagnostics use only current teacher-published question sets and cancel a check if its approval changes. The standalone beta remains a development preview without teacher publication checks. The mounted beta uses the running API checkout for its maths adapter; anonymous beta state remains separate from authenticated graph learner state. See [the mounted approval workflow](../m2/MOUNTED_BETA_APPROVAL.md).
 
+Quiz observations are withheld until the check is complete, and other-session practice, source cards and development results are paused during a check. The beta plan reports a reason based on completed checked answers. Recognized urgent messages receive immediate guidance but are not saved or sent to a teacher. These mechanisms and their limits are described in [beta quiz integrity](../m2/BETA_QUIZ_INTEGRITY.md).
+
 The beta uses a signed, HttpOnly, SameSite browser cookie for ownership. It checks session/card ownership, Origin/Host, closed request schemas and idempotency IDs. SQLite state is private under `Directions/beta_data/`; normal chat keeps no raw provider audit. The local evaluation harness can explicitly audit model output into its ignored run folder. Browser cookies last 30 days; server history remains locally until cleared. No external teacher notifications are sent. No real learner study was conducted; browser acceptance used an assistant-operated anonymous test profile.
 
 ## Validation and reproduction

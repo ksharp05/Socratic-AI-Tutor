@@ -63,43 +63,42 @@ class ApprovedAssessmentService(AssessmentService):
         selected = set(state.get('queue', [])[:state.get('limit', 0)]) | set(state.get('used', []))
         return bool(selected) and all(qid in versions and tuple(versions[qid]) in visible.get(qid, []) for qid in selected)
 
-    def _cancel(self, record):
+    def _cancel(self, record, *, conn=None):
         state = record['state']
         state.update(complete=True, approval_revoked=True)
-        self.repo.save_assessment(record)
+        self.repo.save_assessment(record, conn=conn)
         return {'id':record['id'], 'mode':record['mode'], 'complete':True, 'revoked':True,
                 'position':min(state['index']+1,state['limit']), 'total':state['limit'],
                 'hint_stage':state['hint_stage'], 'item':None,
                 'message':'This question set is no longer available. Please start a new practice or check.'}
 
     def start(self, session, mode='practice', concept=None, question_id=None):
-        with self.lock, self._published() as visible:
+        with self.repo.owner_guard(session['owner']), self.lock, self._published() as visible:
             self._available = visible
             if not visible:
                 raise ValueError('No teacher-approved practice is available for this topic yet.')
             return self._start(session, mode, concept, question_id)
 
-    def public(self, record):
+    def public(self, record, *, conn=None):
         with self.lock:
             if record['state'].get('approval_revoked'):
-                return self._cancel(record)
+                return self._cancel(record, conn=conn)
             if record['state'].get('left_early'):
-                return super().public(record)
+                return super().public(record, conn=conn)
             with self._published() as visible:
-                return super().public(record) if self._valid(record, visible) else self._cancel(record)
+                return super().public(record, conn=conn) if self._valid(record, visible) else self._cancel(record, conn=conn)
+
+    def _guard_assessment(self, record, conn):
+        if record['state'].get('approval_revoked') or not self._valid(record, self._available):
+            return self._cancel(record, conn=conn)
+        return None
 
     def submit(self, owner, aid, text, request_id):
-        with self.lock, self._published() as visible:
-            record = self.repo.assessment(aid, owner)
-            if record['state'].get('approval_revoked') or not self._valid(record, visible):
-                result = self._cancel(record)
-                return {'status':'question_revoked', 'message':result['message'], 'assessment':result}
-            return super().submit(owner, aid, text, request_id)
+        with self.repo.owner_guard(owner), self.lock, self._published() as visible:
+            self._available = visible
+            return self._submit(owner, aid, text, request_id)
 
     def hint(self, owner, aid):
-        with self.lock, self._published() as visible:
-            record = self.repo.assessment(aid, owner)
-            if record['state'].get('approval_revoked') or not self._valid(record, visible):
-                result = self._cancel(record)
-                return {'status':'question_revoked', 'hint':result['message'], 'stage':0, 'assessment':result}
-            return super().hint(owner, aid)
+        with self.repo.owner_guard(owner), self.lock, self._published() as visible:
+            self._available = visible
+            return self._hint(owner, aid)

@@ -18,11 +18,15 @@ def mounted(tmp_path, monkeypatch):
     index = tmp_path / 'fixture.sqlite'
     with sqlite3.connect(index) as conn:
         conn.executescript(SCHEMA)
-        insert_passage(conn, {'id':'fixture:math', 'source_id':'fixture:page', 'book':'fixture',
+        insert_passage(conn, {'id':'fixture:math', 'source_id':'fixture:page', 'book':'jemh1',
             'subject':'Mathematics', 'title':'Quadratics', 'page':1, 'unit_file_index':4,
             'kind':'fixture', 'text':'A quadratic equation has degree two.',
             'source_sha256':'a'*64, 'source_url':'https://example.org/fixture',
             'human_review_status':'pending'}, [10])
+        conn.execute('CREATE TABLE concepts(id TEXT PRIMARY KEY,title TEXT,description TEXT,prerequisites TEXT,unit INTEGER,passage_ids TEXT)')
+        conn.executemany('INSERT INTO concepts VALUES (?,?,?,?,?,?)',[
+            ('qe01','Quadratic basics','Synthetic concept','[]',4,'["fixture:math"]'),
+            ('qe04','Factoring quadratics','Synthetic concept','[]',4,'["fixture:math"]')])
     data = tmp_path / 'data'
     DatasetRegistry(data).register('synthetic-fixture', index, title='Synthetic', activate=True)
     config = tmp_path / 'beta.json'
@@ -41,7 +45,7 @@ def mounted(tmp_path, monkeypatch):
 
 def session(client):
     response = client.post('/beta/api/sessions', headers={'X-Socrates-Request':'1'},
-                           json={'grade':10,'subject':'Mathematics','book':'fixture','unit':4})
+                           json={'grade':10,'subject':'Mathematics','book':'jemh1','unit':4})
     assert response.status_code == 200, response.text
     return response.json()['id']
 
@@ -231,3 +235,95 @@ def test_unavailable_tutor_provider_is_reported_without_exposing_details(mounted
     assert response.status_code == 503
     assert 'unavailable' in response.json()['detail'].lower()
     assert 'internal provider detail' not in response.text
+
+
+def test_mounted_quiz_hides_dashboard_results_and_saved_card_contents(mounted):
+    client, _ = mounted
+    learner={'X-Socrates-Request':'1'}
+    sid=session(client)
+    chat=client.post('/beta/api/chat',headers=learner,
+        json={'session_id':sid,'text':'What is a quadratic?','request_id':'chat-00001'})
+    assert chat.status_code==200 and chat.json()['citations']
+    passage=chat.json()['citations'][0]['id']
+    card=client.post('/beta/api/cards',headers=learner,json={'session_id':sid,'passage_id':passage})
+    assert card.status_code==200
+    approve(client)
+    quiz=client.post('/beta/api/practice',headers=learner,json={'session_id':sid,'mode':'quiz'}).json()
+    before=client.get('/beta/api/dashboard').json()['checked_answers']
+    result=client.post(f"/beta/api/practice/{quiz['id']}/submit",headers=learner,
+        json={'answer':'x = 1','request_id':'quiz-00001'})
+    assert result.status_code==200 and result.json()['status']=='recorded'
+    assert client.get('/beta/api/dashboard').json()['checked_answers']==before
+    assert client.get('/beta/api/bootstrap').json()['dashboard']['checked_answers']==before
+    assert client.post('/beta/api/cards',headers=learner,json={'session_id':sid,'passage_id':passage}).status_code==400
+    assert client.post(f"/beta/api/cards/{card.json()['id']}/review",headers=learner,json={'rating':'good'}).status_code==400
+    assert client.get('/beta/api/evidence').status_code==400
+
+
+def test_mounted_other_session_practice_is_hidden_during_quiz_and_resumes(mounted):
+    client, _=mounted;headers={'X-Socrates-Request':'1'}
+    one=session(client);two=session(client);approve(client)
+    practice=client.post('/beta/api/practice',headers=headers,json={'session_id':one,'mode':'practice'}).json()
+    quiz=client.post('/beta/api/practice',headers=headers,json={'session_id':two,'mode':'quiz'}).json()
+    paused=client.get(f'/beta/api/sessions/{one}').json()
+    assert paused['assessment_paused'] is True and paused['assessment'] is None
+    assert client.post(f"/beta/api/practice/{practice['id']}/hint",headers=headers,json={}).status_code==400
+    assert client.post(f"/beta/api/practice/{quiz['id']}/leave",headers=headers,json={}).status_code==200
+    resumed=client.get(f'/beta/api/sessions/{one}').json()
+    assert resumed['assessment_paused'] is False and resumed['assessment']['id']==practice['id']
+    assert client.post(f"/beta/api/practice/{practice['id']}/hint",headers=headers,json={}).status_code==200
+
+
+def test_urgent_mounted_chat_is_not_delayed_by_active_write(mounted):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+
+    client,_=mounted;headers={'X-Socrates-Request':'1'};sid=session(client)
+    beta=next(route.app for route in client.app.routes if getattr(route,'name',None)=='socrates-beta')
+    repo=beta.state.services['repo']
+    owner=client.cookies.get('socrates_beta_profile').split('.')[0]
+    entered,release=Event(),Event()
+    def hold_write():
+        with repo.owner_guard(owner),repo.transaction():
+            entered.set()
+            if not release.wait(10):raise RuntimeError('test did not release write')
+    try:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            busy=pool.submit(hold_write)
+            assert entered.wait(10)
+            urgent=pool.submit(client.post,'/beta/api/chat',headers=headers,
+                json={'session_id':sid,'text':'I want to die','request_id':'urgent-0001'})
+            try:
+                result=urgent.result(timeout=1)
+                assert result.status_code==200 and result.json()['move']=='human_help'
+                assert result.json()['persistence']=='not_saved_urgent'
+            finally:release.set()
+            busy.result(timeout=10)
+    finally:release.set()
+
+
+def test_mounted_two_profiles_replan_after_completed_approved_quiz(mounted):
+    first, _=mounted
+    headers={'X-Socrates-Request':'1'}
+    sid=session(first);approve(first)
+    with TestClient(first.app,base_url='http://localhost') as second:
+        session(second)
+        params={'grade':10,'subject':'Mathematics','book':'jemh1'}
+        before_a=first.get('/beta/api/plan',params=params).json()
+        before_b=second.get('/beta/api/plan',params=params).json()
+        assert before_a['days'][0]['node']['id']==before_b['days'][0]['node']['id']=='qe01'
+        quiz=first.post('/beta/api/practice',headers=headers,json={'session_id':sid,'mode':'quiz'}).json()
+        assert quiz['total']==3
+        for i in range(quiz['total']):
+            response=first.post(f"/beta/api/practice/{quiz['id']}/submit",headers=headers,
+                json={'answer':'x = 999999999','request_id':f'answer-{i:04}'})
+            assert response.status_code==200, response.text
+            if i<quiz['total']-1:
+                assert first.get('/beta/api/plan',params=params).json()['revision']==before_a['revision']
+        assert response.json()['assessment']['summary']['correct']==0
+        after=first.get('/beta/api/plan',params=params).json()
+        other=second.get('/beta/api/plan',params=params).json()
+        assert after['days'][0]['node']['id']=='qe04' and after['revision']!=before_a['revision']
+        assert after['evidence']['count']==3 and 'involving' in after['replan_reason'].lower()
+        assert other['revision']==before_b['revision'] and other['days'][0]['node']['id']=='qe01'
+        assert first.get('/beta/api/dashboard').json()['checked_answers']==3

@@ -21,6 +21,7 @@ and classroom-supervised methods instead. Do not make practical tasting instruct
 Avoid the words correct and incorrect even as conversational modifiers; give the source-backed distinction instead. Never claim that this conversation proves learning or mastery.
 '''
 DISTRESS=re.compile(r'\b(kill myself|end my life|want to die|hurt myself|self[- ]harm|suicid\w*|no reason to live|jeena nahi|mar jana)\b',re.I)
+DISTRESS_REPLY='Your safety comes first. Please contact a trusted adult nearby now. If you are in immediate danger, contact your local emergency service. Can you reach someone who can stay with you?'
 ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)',re.I)
 SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.t (?:know|understand|get)|no idea|not sure|still unclear)\b",re.I)
 
@@ -41,7 +42,15 @@ class DialogueService:
     def session_lock(self,sid):
         with self.guard:return self.locks.setdefault(sid,threading.RLock())
     def turn(self,owner,sid,message,request_id):
-        with self.session_lock(sid):return self._turn(owner,sid,message,request_id)
+        if DISTRESS.search(message):
+            # Give immediate support without waiting for a provider, database,
+            # profile lock, or session lookup. No notification is implied.
+            return {'reply':DISTRESS_REPLY,'citations':[],'move':'human_help',
+                    'provider_status':'not_called','validation_error':None,
+                    'verification':'not_assessed','format_repaired':False,'repair_reason':None,
+                    'dataset_id':None,'latency_ms':0,'retrieval':{'hits':0,'ids':[]},
+                    'human_review_status':'pending','persistence':'not_saved_urgent'}
+        with self.repo.owner_guard(owner), self.session_lock(sid):return self._turn(owner,sid,message,request_id)
     def _turn(self,owner,sid,message,request_id):
         start=time.monotonic();session=self.repo.session(sid,owner);state=session['state'];scope=Scope(**session['scope'])
         history=self.repo.history(sid)
@@ -56,9 +65,9 @@ class DialogueService:
         for t in history[-6:]:recent.extend([{'role':'user','text':t['user_text']},{'role':'assistant','text':t['result']['reply']}])
         assessment=self.repo.active_assessment(sid,owner) or self.repo.open_check(owner)
         if DISTRESS.search(message):
-            reply='Your safety comes first. Please contact a trusted adult nearby now. If you are in immediate danger, contact your local emergency service. Can you reach someone who can stay with you?';move='human_help'
+            reply=DISTRESS_REPLY;move='human_help'
         elif assessment:
-            reply='Recorded. Continue the current question in the practice panel.';move='assessment_isolation'
+            reply="Your check is active. Please answer in the practice panel; I haven't checked this message.";move='assessment_isolation'
         elif ACCESS.search(message):
             reply='I can help with the textbook, but a chat message cannot change access or reveal private material. Which concept would you like to explore?';move='access_boundary'
         elif re.fullmatch(r'(hi|hello|hey|thanks|thank you|bye)[!. ]*',message,re.I):
