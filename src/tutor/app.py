@@ -35,6 +35,7 @@ PRACTICE_REQUEST = re.compile(r"^/practice\b|\b(practice|another (one|question)|
 QUIZ_REQUEST = re.compile(r"^/quiz\b|\b(start|take) (a |the )?quiz\b", re.I)
 HINT_REQUEST = re.compile(r"\b(hint|help|stuck|don'?t know|idk|no idea)\b", re.I)
 ANSWER_LIKE = re.compile(r"(\b[a-z]\s*=\s*[-+]?\s*[\d(√s])|^[\s{(]*[-+]?\s*[\d√]|\bno real roots?\b", re.I)
+STUCK_SIGNAL = re.compile(r"\b(stuck|no idea|don'?t know|idk)\b", re.I)
 GUESS_BY_KIND = {"finite_set": 0.05, "scalar": 0.05, "boolean": 0.5}
 
 
@@ -42,6 +43,7 @@ class TutorState(TypedDict, total=False):
     messages: Annotated[list[dict], operator.add]
     incoming: str
     screen: dict
+    unverified_own_problem: bool
     session: dict
     learner: dict
     plan: dict
@@ -125,10 +127,31 @@ class TutorApp:
             notes.append("Personal details were removed from your message before anything stored or processed it.")
         if screen.get("injection"):
             notes.append("I ignored instructions inside the text you pasted; I only treat it as maths to discuss.")
+        # The existing checker can protect registered practice items, but does not
+        # have a verified key for arbitrary learner-supplied homework. Keep that
+        # distinction across follow-ups until a new registered practice/quiz starts.
+        own_problem = bool(state.get("unverified_own_problem"))
+        if self.defences and "unverified_own_problem" not in state and not state.get("active_item") and not state.get("quiz"):
+            # Older persisted sessions predate this field; recover the boundary
+            # from their already-redacted student messages before any model call.
+            own_problem = any(guards.unverified_own_problem(m.get("content", ""))
+                              for m in state.get("messages", []) if m.get("role") == "student")
+        if self.defences and not state.get("quiz") and screen.get("unverified_own_problem"):
+            # A plain numeric assignment while a registered item is active is an
+            # answer attempt; an additional equation is still unverified homework.
+            simple_answer = bool(state.get("active_item") and re.fullmatch(
+                r"\s*[a-z]\s*=\s*[-+]?\s*\d+(?:\s*/\s*\d+)?\s*", state["incoming"], re.I))
+            own_problem = own_problem or not simple_answer
+        if PRACTICE_REQUEST.search(state["incoming"]) or QUIZ_REQUEST.search(state["incoming"]) or state["session"].get("mode") == "quiz":
+            own_problem = False
         self._note(state, "input_guard", "screened", {k: v for k, v in screen.items() if k != "text"})
+        if own_problem:
+            self._note(state, "input_guard", "unverified_problem_deterministic_only")
+            if self.llm.enabled:
+                notes.append("For this unverified problem I can offer general guidance; automatic answer checking is not available here.")
         return {"messages": [{"role": "student", "content": state["incoming"]}], "incoming": "",
                 "draft": None, "checks": {}, "revision_count": 0, "grade": None, "retrieved": [], "notes": notes,
-                "diagnosis": None}
+                "diagnosis": None, "unverified_own_problem": own_problem}
 
     def _load_learner(self, state: TutorState) -> dict:
         lid = state["session"]["learner_id"]
@@ -185,7 +208,7 @@ class TutorApp:
         mid = state["focus_misconception"]
         mis = self.misconceptions[mid]
         evidence = ["keywords in the student's message"]
-        if self.llm.enabled:
+        if self.llm.enabled and not state.get("unverified_own_problem"):
             catalogue = "\n".join(f"{m}: {v['incorrect_rule']}" for m, v in self.misconceptions.items())
             system, user = prompts.render(prompts.DIAGNOSTICIAN, catalogue=catalogue, message=state["messages"][-1]["content"])
             raw = self.llm.complete(session_id=state["session"]["session_id"], node="diagnose", role="diagnostician",
@@ -216,7 +239,16 @@ class TutorApp:
         mid = state.get("focus_misconception")
         strict = state.get("revision_count", 0) > 0
         stage = state.get("hint_stage", 0)
-        if item and not extension:
+        if state.get("unverified_own_problem") and not item:
+            # Never return a whole retrieved passage or model-generated solution for
+            # an unverified learner problem. A generic question does not expose a key.
+            query = (self.concepts[self.misconceptions[mid]["concept_id"]]["title"]
+                     if mid else state["messages"][-1]["content"])
+            passages = self._passages_for(state, "tutor", query)
+            cite = f" [{passages[0]['passage_id']}]" if passages else ""
+            text = f"What first step could you try, and what assumption would it require?{cite}"
+            style = "unverified_problem_fallback"
+        elif item and not extension:
             passages = []
             for pid in item.get("supporting_passage_ids", [])[:1]:
                 passages.append(self._call(state, "tutor", "tutor", "textbook-kb", "get_section", {"passage_id": pid}))
@@ -245,7 +277,7 @@ class TutorApp:
                 text = f"{step} Try a value that makes one factor zero and check the original equation.{cite} What do you notice?"
             else:
                 text = f"{step} {concept['hint']}{cite} What would you check next?"
-            if self.llm.enabled and not strict:
+            if self.llm.enabled and not strict and not state.get("unverified_own_problem"):
                 passages_txt = "\n".join(f"[{p['passage_id']}] {p['text']}" for p in passages)
                 system, user = prompts.render(prompts.TUTOR, learner=json.dumps(snapshot["mastery"]),
                                               misconception=f"{mid}: {mis['incorrect_rule']}", move=f"{style}: {step}",
@@ -381,6 +413,8 @@ class TutorApp:
         if not self.defences or draft["kind"] in ("question", "handoff"):
             return {"checks": {"skipped": True}}
         checks: dict[str, Any] = {}
+        if state.get("unverified_own_problem"):
+            checks["unverified_problem"] = "deterministic_only_not_answer_checked"
         refs = []
         if state.get("active_item"):
             refs.append(state["active_item"]["question_id"])
@@ -448,6 +482,8 @@ class TutorApp:
                 mastery[cid] = after
                 call("update_mastery", {"learner_id": lid, "concept_id": cid, "p_mastery": after,
                                         "evidence_ref": f"{g['question_id']}:{'correct' if g['correct'] else 'incorrect'}"})
+                if g["correct"] and store.resolve_stuck_concept(self.conn, lid, cid):
+                    self._note(state, "update_memory", "stuck_episode_closed", {"concept_id": cid})
                 if not g["correct"] and plan and cid in plan.get("mastered", []):
                     replan_reason = f"contradiction: failed {cid}, which the plan assumed was mastered"
             focus = state.get("focus_misconception")
@@ -463,6 +499,24 @@ class TutorApp:
         if quiz_done:
             score = sum(r["correct"] for r in quiz["results"])
             replan_reason = f"after quiz: scored {score}/{len(quiz['results'])}"
+        # An explicit self-reported stuck signal on a registered problem counts
+        # once per distinct session. Infer the concept only when unambiguous.
+        item = state.get("active_item") or {}
+        message = (state.get("messages") or [{}])[-1].get("content", "")
+        if draft.get("kind") == "hint" and STUCK_SIGNAL.search(message) and item.get("concept_ids"):
+            candidates = set(item["concept_ids"])
+            focus = state.get("focus_misconception")
+            if focus in self.misconceptions and self.misconceptions[focus]["concept_id"] in candidates:
+                candidates = {self.misconceptions[focus]["concept_id"]}
+            elif len(candidates) > 1:
+                candidates = {self.misconceptions[mid]["concept_id"] for mid, observed in snapshot["misconceptions"].items()
+                              if mid in self.misconceptions and observed["status"] in ("suspected", "confirmed", "addressed")
+                              and self.misconceptions[mid]["concept_id"] in candidates}
+            if len(candidates) == 1:
+                concept = next(iter(candidates))
+                created = store.record_stuck_session(self.conn, lid, concept, state["session"]["session_id"])
+                self._note(state, "update_memory", "stuck_signal_recorded",
+                           {"concept_id": concept, "local_teacher_event_created": created})
         fresh = call("read_learner", {"learner_id": lid})
         update: dict[str, Any] = {"learner": fresh, "resolve_progress": progress}
         if replan_reason:

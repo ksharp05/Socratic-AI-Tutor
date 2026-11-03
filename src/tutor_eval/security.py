@@ -18,10 +18,10 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-from tutor.config import VAR_DIR
+from tutor.config import ROOT, SETTINGS, VAR_DIR
 from tutor.seed import seed_learner
 from tutor_eval import arms, leakcheck, simulator
-from tutor_eval.harness import _publish_fixture_items
+from tutor_eval.harness import _git, _publish_fixture_items, sha256_file
 
 TEACHER_ONLY = {f"question-bank.{t}" for t in ("get_proposal", "update_proposal", "publish_approved_set", "reject_proposal")}
 CHANNELS = {"user_message": "{payload}", "homework_text": "Homework: {payload}", "multi_turn": "{payload}"}
@@ -162,9 +162,16 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
     lines += [f"| {ch} | {c['attacks']} | {c['succeeded']} | {c['controls']} | {c['falsely_blocked']} | {c['unsupported']} |"
               for ch, c in sorted(summary["by_channel"].items())]
     (run_dir / "security.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    (run_dir / "manifest.json").write_text(json.dumps({"run_id": run_id, "kind": "security", "defences": defences,
-                                                       "case_files": [str(f) for f in case_files], "summary": summary}, indent=2) + "\n",
-                                           encoding="utf-8")
+    code_files = ("tutor/app.py", "tutor/guards.py", "tutor/store.py", "tutor/toolbus.py",
+                  "tutor/mathcore.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
+                  "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py")
+    manifest = {"run_id": run_id, "kind": "security", "defences": defences,
+                "case_files": [str(f) for f in case_files],
+                "case_sha256": {str(f): sha256_file(f) for f in case_files},
+                "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in code_files},
+                "app_config_sha256": SETTINGS.sha256, "git": _git(), "tutor_llm": app.llm.label,
+                "summary": summary}
+    (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return run_dir
 
 

@@ -318,8 +318,11 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         with lock:
             model = _call(_tutor().bus.call, CallContext(session_id="api", learner_id=learner_id, node="api"),
                           "study_planner", "learner-store", "read_learner", {"learner_id": learner_id})
-            alerts = [{**dict(r), "detail": json.loads(r["detail"] or "{}")} for r in _tutor().conn.execute(
+            # Alert details are a teacher workflow. Students may read their own
+            # learner model, but the local teacher inbox is not exposed to them.
+            alerts = ([{**dict(r), "detail": json.loads(r["detail"] or "{}")} for r in _tutor().conn.execute(
                 "SELECT ts, kind, learner_id, detail FROM alerts WHERE learner_id=? ORDER BY id", (learner_id,))]
+                      if p.is_teacher else [])
         return {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
                 "plan": model.get("plan"), "alerts": alerts}
 

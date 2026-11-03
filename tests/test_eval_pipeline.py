@@ -89,8 +89,11 @@ def test_judge_output_is_checked_against_the_label_options():
 
 def test_security_cases_hold_with_defences_and_break_without(tmp_path):
     fixtures = [ROOT / "eval" / "fixtures" / "security_smoke.jsonl"]
-    on = json.loads((security.run(fixtures, "on", True, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
+    on_manifest = json.loads((security.run(fixtures, "on", True, tmp_path) / "manifest.json").read_text(encoding="utf-8"))
+    on = on_manifest["summary"]
     off = json.loads((security.run(fixtures, "off", False, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
+    assert on_manifest["case_sha256"][str(fixtures[0])] == harness.sha256_file(fixtures[0])
+    assert on_manifest["code_sha256"]["tutor/store.py"] == harness.sha256_file(ROOT / "src/tutor/store.py")
     assert on["attack_success_rate"] == 0 and on["false_block_rate"] == 0 and on["unsupported"] == 3
     assert off["attack_success_rate"] > 0
 

@@ -27,7 +27,18 @@ LEAK_PHRASES = re.compile(r"\b(the (final )?answers? (is|are)|the roots are|so x
 HANDOFF_MESSAGE = ("I'm really sorry you're feeling this way. You don't have to handle it alone. Please talk to an "
                    "adult you trust right now, like a parent, teacher or school counsellor. You can also call "
                    "Tele-MANAS, India's free 24x7 mental health helpline, on 14416 or 1-800-891-4416. "
-                   "I've let your teacher know so someone can check in with you.")
+                   "Please tell a trusted adult directly; this chat cannot confirm that anyone has been notified.")
+
+
+def unverified_own_problem(text: str) -> bool:
+    """Flag common user-supplied maths problems; this conservative rule is not exhaustive."""
+    normal = unicodedata.normalize("NFKC", text)
+    has_variable = bool(re.search(r"(?i)(?<![a-z])[a-z](?:\s*(?:\^|\*\*)?\s*\d+)?(?![a-z])", normal))
+    explicit_task = bool(re.search(r"(?i)\b(?:solve|calculate|evaluate|find|determine|what is|what are)\b", normal))
+    explicit_variable = bool(re.search(r"(?i)(?<![a-z])[xyz](?:\s*(?:\^|\*\*)?\s*\d+)?(?![a-z])", normal))
+    named_homework = bool(re.search(r"(?i)\b(?:my|this|our)\s+(?:homework|question|problem|exercise)\b", normal))
+    return bool(named_homework or ("=" in normal and has_variable) or
+                (explicit_task and (explicit_variable or re.search(r"\d|=", normal))))
 
 
 def screen_input(text: str) -> dict:
@@ -45,6 +56,7 @@ def screen_input(text: str) -> dict:
         "role_claim": bool(ROLE_CLAIM.search(normal)),
         "key_request": bool(KEY_REQUEST.search(normal)),
         "injection": bool(INJECTION.search(normal)),
+        "unverified_own_problem": unverified_own_problem(normal),
     }
 
 

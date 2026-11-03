@@ -59,7 +59,7 @@ class ContextualPreviewTutor(TutorApp):
 
  def _generate_checked(self,state,update,*,incorrect_attempt=False):
   item=update.get('active_item') or state.get('active_item')
-  if not item or state['session'].get('mode','practice')!='practice' or state.get('quiz') or not self.llm.enabled:return update
+  if not item or state['session'].get('mode','practice')!='practice' or state.get('quiz') or state.get('unverified_own_problem') or not self.llm.enabled:return update
   refs=[]
   for pid in item.get('supporting_passage_ids',[])[:1]:
    try:refs.append(self._call(state,'v02_context','tutor','textbook-kb','get_section',{'passage_id':pid}))
