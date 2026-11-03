@@ -47,3 +47,7 @@ An exact-checkout rerun at `2bd4102` produced 213 passes and one failure: the qu
 - Human educational review, independent final evaluation and course participation approval: remain external requirements.
 
 Raw development artifacts are retained under the ignored local `Directions/git_delivery/` workspace. Do not commit protected source text, session state, keys or held-out content.
+
+## Publication integrity audit — 4 November
+
+Synthetic tests exposed three defects: an edited set remained visible, development-only unapproved rows were served by the normal tutor, and a corrupted proposal could be republished with a stale digest. These are now guarded with digest checks, explicit fixture opt-in and atomic publication/edit transactions. A further test showed that a learner could continue a stale active question or quiz; both C1 and C2 now recheck set provenance on later turns and fail closed on check failure. The current working tree passed **230 offline tests** across all four project suites. Evaluation manifests mark unapproved fixture use. [Design, evidence and remaining race](PUBLICATION_INTEGRITY.md). This is not human review, live-provider evidence or a fresh-machine run.

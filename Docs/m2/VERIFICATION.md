@@ -18,3 +18,6 @@ A clean-clone Docker demonstration is still blocked by the absence of Docker on 
 Raw local results and machine-specific state remain under ignored `Directions/`; no source PDFs, derived index, credentials, private learner data or held-out material are part of this snapshot.
 
 **Subsequent finding:** a later run on documentation checkpoint `2bd4102` failed one quiz schema test because an ordinary question contained the word “values.” The test was corrected to check nested field names; see [work log](WORK_LOG.md). That failure and the fix must remain visible in release evidence.
+
+
+**Later working-tree verification:** The publication-integrity changes passed 230 offline tests across all four project test directories. The change and its limits, including a remaining teacher-edit/learner-turn race, are described in [publication integrity](PUBLICATION_INTEGRITY.md). This later run did not test a live provider or a fresh machine.

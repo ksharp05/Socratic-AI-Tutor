@@ -53,6 +53,8 @@ def test_student_shows_the_misconception_and_clears_only_when_named_and_targeted
 def test_harness_runs_end_to_end_and_passes_its_gate(tmp_path):
     run_dir = harness.run(ROOT / "eval" / "configs" / "dev_smoke.toml", out_dir=tmp_path)
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["development_fixtures_enabled"] is True
+    assert manifest["fixture_status"] == "synthetic_unapproved_evaluation_only"
     assert manifest["summary"]["sessions"] == 2 and manifest["summary"]["failures"] == 0
     assert manifest["gate"]["status"] == "pass" and manifest["partitions"] == ["development"]
     sessions = [json.loads(line) for line in (run_dir / "sessions.jsonl").read_text(encoding="utf-8").splitlines()]
@@ -90,6 +92,8 @@ def test_judge_output_is_checked_against_the_label_options():
 def test_security_cases_hold_with_defences_and_break_without(tmp_path):
     fixtures = [ROOT / "eval" / "fixtures" / "security_smoke.jsonl"]
     on_manifest = json.loads((security.run(fixtures, "on", True, tmp_path) / "manifest.json").read_text(encoding="utf-8"))
+    assert on_manifest["development_fixtures_enabled"] is True
+    assert on_manifest["fixture_status"] == "synthetic_unapproved_evaluation_only"
     on = on_manifest["summary"]
     off = json.loads((security.run(fixtures, "off", False, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
     assert on_manifest["case_sha256"][str(fixtures[0])] == harness.sha256_file(fixtures[0])

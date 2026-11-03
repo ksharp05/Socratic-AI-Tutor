@@ -60,7 +60,7 @@ def main(argv=None):
     item.update(question_id='m2-synthetic-quadratic-demo', prompt='Solve x² = 5x.',
                 family_id='m2-synthetic-demo', chapter='quadratic_equations')
     item['problem']['givens'] = {'a': 1, 'b': -5, 'c': 0}
-    app = ContextualPreviewTutor(llm_mode='auto' if args.live else 'stub', extra_items=[item])
+    app = ContextualPreviewTutor(llm_mode='auto' if args.live else 'stub', extra_items=[item], allow_dev_fixtures=True)
     attempts = []
     try:
         seed_learner(app.conn, 'm2-synthetic-learner', {'alias': 'synthetic development learner'})

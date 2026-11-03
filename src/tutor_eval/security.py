@@ -145,7 +145,8 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
     run_dir = (out_dir or VAR_DIR / "runs") / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     db = str(run_dir.relative_to(VAR_DIR) / "tutor.db") if run_dir.is_relative_to(VAR_DIR) else str(run_dir / "tutor.db")
-    app = arms.make_app("c2", defences=defences, llm_mode=None, db_name=db, checkpoint_name=db.replace("tutor.db", "checkpoints.db"))
+    app = arms.make_app("c2", defences=defences, llm_mode=None, db_name=db,
+                        checkpoint_name=db.replace("tutor.db", "checkpoints.db"), allow_dev_fixtures=True)
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
     checkpoints = run_dir / "checkpoints.db"
     try:
@@ -166,6 +167,7 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
                   "tutor/mathcore.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
                   "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py")
     manifest = {"run_id": run_id, "kind": "security", "defences": defences,
+                "development_fixtures_enabled": True, "fixture_status": "synthetic_unapproved_evaluation_only",
                 "case_files": [str(f) for f in case_files],
                 "case_sha256": {str(f): sha256_file(f) for f in case_files},
                 "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in code_files},

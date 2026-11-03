@@ -244,7 +244,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         SETTINGS.raw.setdefault("retrieval", {})["mode"] = cfg["run"]["retrieval_mode"]
     try:
         app = arms.make_app(cfg["run"]["arm"], defences=cfg["run"]["defences"], llm_mode=cfg["run"].get("llm"),
-                            db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"))
+                            db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"),
+                            allow_dev_fixtures=True)
     finally:
         SETTINGS.raw["retrieval"] = retrieval
     retrieval_mode = cfg["run"].get("retrieval_mode") or retrieval.get("mode", "poc_cards")
@@ -290,6 +291,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                       "p_clear": simulator.P_CLEAR, "voice": voice.kind, "voice_model": voice.model if voice.client else None,
                       "voice_counts": voice.counts, "targeting": "code_proxy",
                       "rules": sorted(simulator.RULES)},
+        "development_fixtures_enabled": True,
+        "fixture_status": "synthetic_unapproved_evaluation_only",
         "tutor_llm": app.llm.label, "retrieval_mode": retrieval_mode, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")
                                              .read_text(encoding="utf-8"))["payload_sha256"],

@@ -16,13 +16,16 @@ from __future__ import annotations
 OWNERS = {"c2": "R3", "c1": "R3", "c0": "R3", "memory_off": "R2", "direct_answers": "R3 + R4"}
 
 
-def make_app(arm: str, *, defences: bool, llm_mode: str | None, db_name: str, checkpoint_name: str):
+def make_app(arm: str, *, defences: bool, llm_mode: str | None, db_name: str, checkpoint_name: str,
+             allow_dev_fixtures: bool = False):
     if arm == "c2":
         from tutor.app import TutorApp
-        return TutorApp(defences=defences, llm_mode=llm_mode, db_name=db_name, checkpoint_name=checkpoint_name)
+        return TutorApp(defences=defences, llm_mode=llm_mode, db_name=db_name, checkpoint_name=checkpoint_name,
+                        allow_dev_fixtures=allow_dev_fixtures)
     if arm == "c1":
         from tutor_eval.single_agent import SingleAgentTutor
-        return SingleAgentTutor(defences=defences, llm_mode=llm_mode, db_name=db_name, checkpoint_name=checkpoint_name)
+        return SingleAgentTutor(defences=defences, llm_mode=llm_mode, db_name=db_name, checkpoint_name=checkpoint_name,
+                        allow_dev_fixtures=allow_dev_fixtures)
     if arm in OWNERS:
         raise SystemExit(f"Arm '{arm}' is not built yet. Its owner is {OWNERS[arm]}; the contract is in "
                          f"src/tutor_eval/arms.py and eval/README.md.")

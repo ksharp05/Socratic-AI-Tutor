@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from contextlib import contextmanager
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
@@ -14,13 +15,14 @@ from ..store import dumps, now
 from . import READ, WRITE
 
 ITEM_FIELDS = ("question_id", "prompt", "problem", "answer_contract", "hint_stages", "difficulty")
+DEV_FIXTURE_LABELS = {"eval_fixture_unapproved", "development_fixture_not_human_approved"}
 
 
 def payload_hash(payload: dict) -> str:
     return hashlib.sha256(dumps(payload).encode("utf-8")).hexdigest()
 
 
-def build(conn: sqlite3.Connection) -> FastMCP:
+def build(conn: sqlite3.Connection, *, allow_dev_fixtures: bool = False) -> FastMCP:
     pool = {q["question_id"]: q for q in load("practice")}
 
     def _proposal(set_id: str) -> sqlite3.Row:
@@ -36,17 +38,52 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         return {"set_id": set_id, "concept_id": concept_id, "revision": revision,
                 "items": [{k: pool[q][k] for k in ITEM_FIELDS} for q in question_ids]}
 
+    @contextmanager
+    def _atomic_write():
+        # Separate connections/processes cannot edit a proposal between digest
+        # verification and publication; the DB write is all-or-nothing.
+        conn.execute("BEGIN IMMEDIATE")
+        try:
+            yield
+            conn.execute("COMMIT")
+        except BaseException:
+            if conn.in_transaction:
+                conn.execute("ROLLBACK")
+            raise
+
+    def _verified_payload(raw: str, digest: str) -> dict | None:
+        try:
+            payload = json.loads(raw)
+            return payload if isinstance(payload, dict) and payload_hash(payload) == digest else None
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return None
+
     mcp = FastMCP("question-bank")
 
     @mcp.tool(annotations=READ)
     def list_published(concept_id: str | None = None) -> dict:
         """List items in teacher-approved (published) sets."""
         items = []
-        for row in conn.execute("SELECT * FROM published ORDER BY published_at"):
-            payload = json.loads(row["payload_json"])
+        rows = conn.execute("SELECT p.*, q.status AS proposal_status, q.payload_sha256 AS proposal_hash, "
+                            "q.payload_json AS proposal_payload FROM published p "
+                            "LEFT JOIN proposals q ON q.set_id=p.set_id ORDER BY p.published_at")
+        for row in rows:
+            if row["label"] == "teacher_approved":
+                # An edit/rejection revokes visibility of the old publication,
+                # while preserving that old row for audit until reapproval.
+                if row["proposal_status"] != "published" or row["proposal_hash"] != row["payload_sha256"]:
+                    continue
+                payload = _verified_payload(row["payload_json"], row["payload_sha256"])
+                if payload is None or _verified_payload(row["proposal_payload"], row["proposal_hash"]) is None:
+                    continue
+            elif allow_dev_fixtures and row["label"] in DEV_FIXTURE_LABELS:
+                payload = json.loads(row["payload_json"])
+            else:
+                continue
             for item in payload["items"]:
                 if concept_id is None or concept_id in item["problem"]["concept_ids"]:
-                    items.append({**item, "set_id": row["set_id"], "label": row["label"]})
+                    items.append({**item, "set_id": row["set_id"], "set_payload_sha256": row["payload_sha256"],
+                                  "label": row["label"]})
         return {"items": items}
 
     @mcp.tool(annotations=READ)
@@ -74,31 +111,38 @@ def build(conn: sqlite3.Connection) -> FastMCP:
     @mcp.tool(annotations=WRITE)
     def update_proposal(set_id: str, question_ids: list[str], thread_id: str) -> dict:
         """Edit a proposal. Any edit changes the payload hash, so earlier approvals stop working."""
-        row = _proposal(set_id)
-        revision = row["revision"] + 1
-        payload = _payload(set_id, row["concept_id"], question_ids, revision)
-        sha = payload_hash(payload)
-        conn.execute("UPDATE proposals SET payload_json=?, payload_sha256=?, status='pending', revision=?, "
-                     "thread_id=?, updated_at=? WHERE set_id=?", (dumps(payload), sha, revision, thread_id, now(), set_id))
+        with _atomic_write():
+            row = _proposal(set_id)
+            revision = row["revision"] + 1
+            payload = _payload(set_id, row["concept_id"], question_ids, revision)
+            sha = payload_hash(payload)
+            conn.execute("UPDATE proposals SET payload_json=?, payload_sha256=?, status='pending', revision=?, "
+                         "thread_id=?, updated_at=? WHERE set_id=?", (dumps(payload), sha, revision, thread_id, now(), set_id))
         return {"set_id": set_id, "payload_sha256": sha, "revision": revision}
 
     @mcp.tool(annotations=WRITE)
     def publish_approved_set(set_id: str, approval_token: str, teacher_id: str) -> dict:
         """Publish a set. The token must match the CURRENT payload hash and the approving teacher."""
-        row = _proposal(set_id)
-        if not approval_token_valid(approval_token, row["payload_sha256"], teacher_id):
-            raise ToolError("FORBIDDEN: approval token does not match the current payload (it was edited after "
-                            "approval, or the token is not from this teacher)")
-        conn.execute("INSERT OR REPLACE INTO published VALUES (?,?,?,?,?,?)",
-                     (set_id, row["payload_json"], row["payload_sha256"], teacher_id, "teacher_approved", now()))
-        conn.execute("UPDATE proposals SET status='published', updated_at=? WHERE set_id=?", (now(), set_id))
+        with _atomic_write():
+            row = _proposal(set_id)
+            if row["status"] not in ("pending", "published"):
+                raise ToolError("FORBIDDEN: this proposal is not eligible for publication")
+            if _verified_payload(row["payload_json"], row["payload_sha256"]) is None:
+                raise ToolError("FORBIDDEN: stored proposal does not match its payload digest")
+            if not approval_token_valid(approval_token, row["payload_sha256"], teacher_id):
+                raise ToolError("FORBIDDEN: approval token does not match the current payload (it was edited after "
+                                "approval, or the token is not from this teacher)")
+            conn.execute("INSERT OR REPLACE INTO published VALUES (?,?,?,?,?,?)",
+                         (set_id, row["payload_json"], row["payload_sha256"], teacher_id, "teacher_approved", now()))
+            conn.execute("UPDATE proposals SET status='published', updated_at=? WHERE set_id=?", (now(), set_id))
         return {"published": True, "set_id": set_id, "payload_sha256": row["payload_sha256"]}
 
     @mcp.tool(annotations=WRITE)
     def reject_proposal(set_id: str, reason: str) -> dict:
         """Reject a proposal and store the reason."""
-        _proposal(set_id)
-        conn.execute("UPDATE proposals SET status='rejected', reason=?, updated_at=? WHERE set_id=?", (reason, now(), set_id))
+        with _atomic_write():
+            _proposal(set_id)
+            conn.execute("UPDATE proposals SET status='rejected', reason=?, updated_at=? WHERE set_id=?", (reason, now(), set_id))
         return {"rejected": True, "set_id": set_id}
 
     return mcp

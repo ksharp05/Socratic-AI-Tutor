@@ -44,6 +44,7 @@ class TutorState(TypedDict, total=False):
     incoming: str
     screen: dict
     unverified_own_problem: bool
+    question_revoked: bool
     session: dict
     learner: dict
     plan: dict
@@ -78,9 +79,10 @@ class ApprovalState(TypedDict, total=False):
 
 class TutorApp:
     def __init__(self, *, defences: bool = True, llm_mode: str | None = None, extra_items: list[dict] | None = None,
-                 db_name: str = "tutor.db", checkpoint_name: str = "checkpoints.db"):
+                 db_name: str = "tutor.db", checkpoint_name: str = "checkpoints.db",
+                 allow_dev_fixtures: bool = False):
         self.conn = store.connect(db_path(db_name))
-        self.bus = ToolBus(self.conn, extra_items)
+        self.bus = ToolBus(self.conn, extra_items, allow_dev_fixtures=allow_dev_fixtures)
         self.llm = LLM(self.conn, llm_mode)
         self.defences = defences
         self.misconceptions = {m["misconception_id"]: m for m in load("misconceptions")}
@@ -144,6 +146,27 @@ class TutorApp:
             own_problem = own_problem or not simple_answer
         if PRACTICE_REQUEST.search(state["incoming"]) or QUIZ_REQUEST.search(state["incoming"]) or state["session"].get("mode") == "quiz":
             own_problem = False
+        # A set can be edited after a learner starts it. Re-check the exact
+        # approved set version before continuing an active question or quiz.
+        pending_items = []
+        if state.get("active_item"):
+            pending_items.append(state["active_item"])
+        quiz = state.get("quiz") or {}
+        if quiz.get("index", 0) < len(quiz.get("items", [])):
+            pending_items.extend(quiz["items"][quiz.get("index", 0):])
+        revoked = False
+        if pending_items:
+            try:
+                visible = self._call(state, "input_guard", "question_setter", "question-bank", "list_published", {})["items"]
+                valid = {(i["question_id"], i["set_id"], i["set_payload_sha256"]) for i in visible}
+                revoked = any((i.get("question_id"), i.get("set_id"), i.get("set_payload_sha256")) not in valid
+                              for i in pending_items)
+            except Exception as exc:
+                # A missing or unverifiable approval must never become access.
+                revoked = True
+                self._note(state, "input_guard", "publication_check_failed", {"error_type": type(exc).__name__})
+            if revoked:
+                self._note(state, "input_guard", "question_publication_unavailable")
         self._note(state, "input_guard", "screened", {k: v for k, v in screen.items() if k != "text"})
         if own_problem:
             self._note(state, "input_guard", "unverified_problem_deterministic_only")
@@ -151,7 +174,7 @@ class TutorApp:
                 notes.append("For this unverified problem I can offer general guidance; automatic answer checking is not available here.")
         return {"messages": [{"role": "student", "content": state["incoming"]}], "incoming": "",
                 "draft": None, "checks": {}, "revision_count": 0, "grade": None, "retrieved": [], "notes": notes,
-                "diagnosis": None, "unverified_own_problem": own_problem}
+                "diagnosis": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
 
     def _load_learner(self, state: TutorState) -> dict:
         lid = state["session"]["learner_id"]
@@ -174,6 +197,8 @@ class TutorApp:
             route = "handoff"
         elif screen.get("role_claim") or screen.get("key_request"):
             route = "refuse"
+        elif state.get("question_revoked"):
+            route = "question_revoked"
         elif quiz and quiz.get("index", 0) < len(quiz.get("items", [])):
             route = "quiz_answer"
         elif QUIZ_REQUEST.search(text) or (mode == "quiz" and not quiz):
@@ -321,6 +346,7 @@ class TutorApp:
         item = fresh[0]
         self._call(state, "set_question", "question_setter", "math-tools", "solve", {"question_ref": item["question_id"]})
         active = {"question_id": item["question_id"], "prompt": item["prompt"],
+                  "set_id": item["set_id"], "set_payload_sha256": item["set_payload_sha256"],
                   "concept_ids": item["problem"]["concept_ids"], "kind": item["answer_contract"]["allowed_kinds"][0],
                   "hint_stages": item["hint_stages"], "hint_stage": 0, "attempts": 0,
                   "supporting_passage_ids": [f"normalized:{c}" for c in item["problem"]["concept_ids"] if f"normalized:{c}" in self.cards]}
@@ -368,6 +394,7 @@ class TutorApp:
         for it in items:
             self._call(state, "quiz_start", "question_setter", "math-tools", "solve", {"question_ref": it["question_id"]})
         quiz = {"items": [{"question_id": i["question_id"], "prompt": i["prompt"], "concept_ids": i["problem"]["concept_ids"],
+                           "set_id": i["set_id"], "set_payload_sha256": i["set_payload_sha256"],
                            "kind": i["answer_contract"]["allowed_kinds"][0]} for i in items], "index": 0, "results": []}
         return {"quiz": quiz, "active_item": None,
                 "draft": {"text": f"Quiz mode: {len(items)} questions, no hints.\nQ1: {items[0]['prompt']}",
@@ -401,6 +428,12 @@ class TutorApp:
             text += "What part are you stuck on?"
         self._note(state, "refuse", "role_or_key_request_refused")
         return {"draft": {"text": text, "citations": [], "kind": "refusal"}}
+
+    def _question_revoked(self, state: TutorState) -> dict:
+        """Stop a stale or unverifiable question without scoring or showing its content again."""
+        return {"active_item": None, "quiz": None,
+                "draft": {"text": "This question is no longer available or cannot be verified. Please request a new practice question or quiz.",
+                          "citations": [], "kind": "info"}}
 
     def _handoff(self, state: TutorState) -> dict:
         store.alert(self.conn, "distress_handoff", state["session"]["learner_id"],
@@ -549,6 +582,7 @@ class TutorApp:
         g.add_node("quiz_answer", self._quiz_answer)
         g.add_node("refuse", self._refuse)
         g.add_node("handoff", self._handoff)
+        g.add_node("question_revoked", self._question_revoked)
         g.add_node("output_guard", self._output_guard)
         g.add_node("retry", self._retry)
         g.add_node("fallback", self._fallback)
@@ -558,7 +592,7 @@ class TutorApp:
         g.add_edge("input_guard", "load_learner")
         g.add_edge("load_learner", "planner")
         specialists = ["diagnose", "tutor", "tutor_extension", "set_question", "grade", "quiz_start", "quiz_answer",
-                       "refuse", "handoff"]
+                       "refuse", "handoff", "question_revoked"]
         g.add_conditional_edges("planner", lambda s: s["route"], {n: n for n in specialists})
         for n in specialists:
             g.add_edge(n, "output_guard")

@@ -46,6 +46,7 @@ class SingleAgentTutor(TutorApp):
             'quiz_answer': self._quiz_answer,
             'refuse': self._refuse,
             'handoff': self._handoff,
+            'question_revoked': self._question_revoked,
         }
         self._note(local, 'single_agent', 'selected_action', {'route': route})
         return {**selection, **actions[route](local)}

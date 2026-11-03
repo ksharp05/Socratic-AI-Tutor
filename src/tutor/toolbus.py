@@ -54,10 +54,10 @@ class CallContext:
 
 
 class ToolBus:
-    def __init__(self, conn: sqlite3.Connection, extra_items: list[dict] | None = None):
+    def __init__(self, conn: sqlite3.Connection, extra_items: list[dict] | None = None, *, allow_dev_fixtures: bool = False):
         self.conn = conn
         self.servers = {"textbook-kb": textbook_kb.build(), "math-tools": math_tools.build(conn, extra_items),
-                        "learner-store": learner_store.build(conn), "question-bank": question_bank.build(conn)}
+                        "learner-store": learner_store.build(conn), "question-bank": question_bank.build(conn, allow_dev_fixtures=allow_dev_fixtures)}
         self._loop = asyncio.new_event_loop()
         self._thread = threading.Thread(target=self._loop.run_forever, daemon=True)
         self._thread.start()
