@@ -6,12 +6,16 @@ Publishing a question set changes what every student sees, so that write sits be
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import sqlite3
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 
+from .. import learner, store
+from ..config import SETTINGS
 from ..setup_content import load
 from ..store import dumps, now
 from . import READ, WRITE
@@ -33,9 +37,7 @@ def build(conn: sqlite3.Connection) -> FastMCP:
 
     mcp = FastMCP("learner-store")
 
-    @mcp.tool(annotations=READ)
-    def read_learner(learner_id: str) -> dict:
-        """Read one learner's model: mastery, misconceptions, explanation styles that worked, and plan."""
+    def _snapshot(learner_id: str) -> dict:
         _exists(learner_id)
         mastery = {r["concept_id"]: r["p"] for r in
                    conn.execute("SELECT concept_id, p FROM mastery WHERE learner_id=?", (learner_id,))}
@@ -46,6 +48,11 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         plan_row = conn.execute("SELECT plan_json FROM plans WHERE learner_id=?", (learner_id,)).fetchone()
         return {"learner_id": learner_id, "mastery": mastery, "misconceptions": mis, "styles": styles,
                 "plan": json.loads(plan_row["plan_json"]) if plan_row else None}
+
+    @mcp.tool(annotations=READ)
+    def read_learner(learner_id: str) -> dict:
+        """Read one learner's model: mastery, misconceptions, explanation styles that worked, and plan."""
+        return _snapshot(learner_id)
 
     @mcp.tool(annotations=WRITE)
     def update_mastery(learner_id: str, concept_id: str, p_mastery: float, evidence_ref: str) -> dict:
@@ -94,5 +101,67 @@ def build(conn: sqlite3.Connection) -> FastMCP:
                      (learner_id, dumps(plan), int(plan.get("version", 1)), now()))
         _event(learner_id, "plan", {"version": plan.get("version"), "reason": plan.get("replan_reason")})
         return {"ok": True}
+
+    @mcp.tool(annotations=WRITE)
+    def apply_quiz(learner_id: str, quiz_id: str, results: list[dict]) -> dict:
+        """Atomically apply a quiz and replan once; repeated identical applications are no-ops."""
+        if not re.fullmatch(r"[0-9a-f]{32}", quiz_id) or not 1 <= len(results) <= 20:
+            raise ToolError("INVALID_INPUT: invalid quiz identifier or result count")
+        normalized = []
+        for result in results:
+            if not isinstance(result, dict):
+                raise ToolError("INVALID_INPUT: invalid quiz result")
+            qid, correct, scorable = result.get("question_id"), result.get("correct"), result.get("scorable")
+            kind, ids = result.get("kind"), result.get("concept_ids")
+            if (not isinstance(qid, str) or not 1 <= len(qid) <= 128 or type(correct) is not bool
+                    or type(scorable) is not bool or (correct and not scorable)
+                    or not isinstance(kind, str) or not 1 <= len(kind) <= 40
+                    or not isinstance(ids, list) or not 1 <= len(ids) <= 25
+                    or any(not isinstance(cid, str) or not 1 <= len(cid) <= 64 for cid in ids)
+                    or len(set(ids)) != len(ids)):
+                raise ToolError("INVALID_INPUT: invalid quiz result fields")
+            normalized.append({"question_id": qid, "correct": correct, "scorable": scorable,
+                               "kind": kind, "concept_ids": ids})
+        digest = hashlib.sha256(dumps(normalized).encode("utf-8")).hexdigest()
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            _exists(learner_id)
+            existing = conn.execute("SELECT learner_id,payload_sha256 FROM applied_quizzes WHERE quiz_id=?",
+                                    (quiz_id,)).fetchone()
+            if existing:
+                if existing["learner_id"] != learner_id or existing["payload_sha256"] != digest:
+                    raise ToolError("FORBIDDEN: quiz identifier already binds different results")
+                conn.execute("COMMIT")
+                return {"applied": False, "quiz_id": quiz_id, "resolved_concepts": []}
+            snapshot = _snapshot(learner_id)
+            mastery = dict(snapshot["mastery"])
+            resolved = []
+            for result in normalized:
+                if not result["scorable"]:
+                    continue
+                for cid in result["concept_ids"]:
+                    if cid not in concepts:
+                        continue
+                    before = mastery.get(cid, SETTINGS.learner_model["p_init"])
+                    after = learner.bkt_update(before, result["correct"], learner.GUESS_BY_KIND.get(result["kind"]))
+                    mastery[cid] = after
+                    conn.execute("INSERT OR REPLACE INTO mastery VALUES (?,?,?,?)", (learner_id,cid,after,now()))
+                    _event(learner_id,"mastery",{"concept_id":cid,"p":after,
+                           "evidence":f"{result['question_id']}:{'correct' if result['correct'] else 'incorrect'}"})
+                    if result["correct"] and store._resolve_stuck_concept_locked(conn,learner_id,cid):
+                        resolved.append(cid)
+            fresh = _snapshot(learner_id)
+            score = sum(result["correct"] for result in normalized)
+            reason = f"after quiz: scored {score}/{len(normalized)}"
+            plan = learner.make_plan(fresh, previous=fresh.get("plan"), reason=reason)
+            conn.execute("INSERT OR REPLACE INTO plans VALUES (?,?,?,?)", (learner_id,dumps(plan),plan["version"],now()))
+            _event(learner_id,"plan",{"version":plan["version"],"reason":reason})
+            conn.execute("INSERT INTO applied_quizzes VALUES (?,?,?,?)", (quiz_id,learner_id,digest,now()))
+            conn.execute("COMMIT")
+            return {"applied": True, "quiz_id": quiz_id, "resolved_concepts": sorted(set(resolved))}
+        except BaseException:
+            if conn.in_transaction:
+                conn.execute("ROLLBACK")
+            raise
 
     return mcp

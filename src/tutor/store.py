@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS stuck_sessions (learner_id TEXT, concept_id TEXT, ses
   PRIMARY KEY (learner_id, concept_id, session_id));
 CREATE TABLE IF NOT EXISTS stuck_alert_state (learner_id TEXT, concept_id TEXT, opened_at REAL,
   PRIMARY KEY (learner_id, concept_id));
+CREATE TABLE IF NOT EXISTS applied_quizzes (quiz_id TEXT PRIMARY KEY, learner_id TEXT NOT NULL,
+  payload_sha256 TEXT NOT NULL, applied_at REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS trace_events (id INTEGER PRIMARY KEY AUTOINCREMENT, ts REAL, session_id TEXT,
   node TEXT, role TEXT, kind TEXT, name TEXT, args TEXT, outcome TEXT, latency_ms REAL, detail TEXT);
 """
@@ -92,21 +94,27 @@ def record_stuck_session(conn: sqlite3.Connection, learner_id: str, concept_id: 
         raise
 
 
+def _resolve_stuck_concept_locked(conn: sqlite3.Connection, learner_id: str, concept_id: str) -> bool:
+    """Resolve within an existing transaction; callers own commit and rollback."""
+    conn.execute("DELETE FROM stuck_sessions WHERE learner_id=? AND concept_id=?", (learner_id, concept_id))
+    closed = conn.execute("DELETE FROM stuck_alert_state WHERE learner_id=? AND concept_id=?",
+                          (learner_id, concept_id)).rowcount > 0
+    if closed:
+        rows = conn.execute("SELECT id,detail FROM alerts WHERE learner_id=? AND kind='stuck_concept'",
+                            (learner_id,)).fetchall()
+        for row in rows:
+            detail = json.loads(row["detail"] or "{}")
+            if detail.get("concept_id") == concept_id and not detail.get("resolved", False):
+                detail.update(resolved=True, resolution="checked_correct_attempt", resolved_at=now())
+                conn.execute("UPDATE alerts SET detail=? WHERE id=?", (dumps(detail), row["id"]))
+    return closed
+
+
 def resolve_stuck_concept(conn: sqlite3.Connection, learner_id: str, concept_id: str) -> bool:
     """Close the current signal episode after a checked correct attempt, without claiming mastery."""
     try:
         conn.execute("BEGIN IMMEDIATE")
-        conn.execute("DELETE FROM stuck_sessions WHERE learner_id=? AND concept_id=?", (learner_id, concept_id))
-        closed = conn.execute("DELETE FROM stuck_alert_state WHERE learner_id=? AND concept_id=?",
-                              (learner_id, concept_id)).rowcount > 0
-        if closed:
-            rows = conn.execute("SELECT id,detail FROM alerts WHERE learner_id=? AND kind='stuck_concept'",
-                                (learner_id,)).fetchall()
-            for row in rows:
-                detail = json.loads(row["detail"] or "{}")
-                if detail.get("concept_id") == concept_id and not detail.get("resolved", False):
-                    detail.update(resolved=True, resolution="checked_correct_attempt", resolved_at=now())
-                    conn.execute("UPDATE alerts SET detail=? WHERE id=?", (dumps(detail), row["id"]))
+        closed = _resolve_stuck_concept_locked(conn, learner_id, concept_id)
         conn.execute("COMMIT")
         return closed
     except Exception:

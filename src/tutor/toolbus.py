@@ -25,7 +25,7 @@ logging.getLogger("fastmcp").setLevel(logging.CRITICAL)
 
 PERMISSIONS: dict[str, set[tuple[str, str]]] = {
     "study_planner": {("learner-store", t) for t in
-                      ("read_learner", "update_mastery", "record_misconception", "record_explanation", "save_plan")},
+                      ("read_learner", "update_mastery", "record_misconception", "record_explanation", "save_plan", "apply_quiz")},
     "diagnostician": {("textbook-kb", "search"), ("learner-store", "read_learner"), ("math-tools", "diagnose_response")},
     "tutor": {("textbook-kb", "search"), ("textbook-kb", "get_section")},
     "grader": {("math-tools", "check_equivalence"), ("math-tools", "parse_answer"), ("math-tools", "diagnose_response")},
@@ -36,7 +36,7 @@ PERMISSIONS: dict[str, set[tuple[str, str]]] = {
                       ("get_proposal", "update_proposal", "publish_approved_set", "reject_proposal")}
                      | {("math-tools", "solve")},
 }
-_SCRUB = {"text", "response"}  # free text is logged by length only
+_SCRUB = {"text", "response", "results"}  # free text is logged by length only
 
 
 class ToolCallError(Exception):

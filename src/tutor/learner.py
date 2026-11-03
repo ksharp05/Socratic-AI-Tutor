@@ -5,6 +5,7 @@ from .config import SETTINGS
 from .setup_content import load
 
 LM = SETTINGS.learner_model
+GUESS_BY_KIND = {"finite_set": 0.05, "scalar": 0.05, "boolean": 0.5}
 
 
 def bkt_update(p: float, correct: bool, guess: float | None = None) -> float:

@@ -37,7 +37,7 @@ QUIZ_REQUEST = re.compile(r"^/quiz\b|\b(start|take) (a |the )?quiz\b", re.I)
 HINT_REQUEST = re.compile(r"\b(hint|help|stuck|don'?t know|idk|no idea)\b", re.I)
 ANSWER_LIKE = re.compile(r"(\b[a-z]\s*=\s*[-+]?\s*[\d(√s])|^[\s{(]*[-+]?\s*[\d√]|\bno real roots?\b", re.I)
 STUCK_SIGNAL = re.compile(r"\b(stuck|no idea|don'?t know|idk)\b", re.I)
-GUESS_BY_KIND = {"finite_set": 0.05, "scalar": 0.05, "boolean": 0.5}
+GUESS_BY_KIND = learner.GUESS_BY_KIND
 
 
 class TutorState(TypedDict, total=False):
@@ -399,7 +399,7 @@ class TutorApp:
             return {"draft": {"text": "There's no teacher-approved quiz yet.", "citations": [], "kind": "info"}}
         for it in items:
             self._call(state, "quiz_start", "question_setter", "math-tools", "solve", {"question_ref": it["question_id"]})
-        quiz = {"items": [{"question_id": i["question_id"], "prompt": i["prompt"], "concept_ids": i["problem"]["concept_ids"],
+        quiz = {"quiz_id": uuid.uuid4().hex, "items": [{"question_id": i["question_id"], "prompt": i["prompt"], "concept_ids": i["problem"]["concept_ids"],
                            "set_id": i["set_id"], "set_payload_sha256": i["set_payload_sha256"],
                            "kind": i["answer_contract"]["allowed_kinds"][0]} for i in items], "index": 0, "results": []}
         return {"quiz": quiz, "active_item": None,
@@ -408,6 +408,9 @@ class TutorApp:
 
     def _quiz_answer(self, state: TutorState) -> dict:
         quiz = json.loads(json.dumps(state["quiz"]))
+        if not quiz.get("quiz_id"):
+            # In-progress sessions created before the ledger receive a stable ID.
+            quiz["quiz_id"] = uuid.uuid5(uuid.NAMESPACE_URL, "legacy-quiz:" + state["session"]["session_id"]).hex
         current = quiz["items"][quiz["index"]]
         result = self._call(state, "quiz_answer", "grader", "math-tools", "check_equivalence",
                             {"question_ref": current["question_id"], "response": state["messages"][-1]["content"]})
@@ -509,8 +512,6 @@ class TutorApp:
             graded.append(grade)
         quiz = state.get("quiz")
         quiz_done = bool(quiz) and quiz["index"] >= len(quiz["items"])
-        if quiz_done:
-            graded += [r for r in quiz["results"] if r["scorable"]]
         mastery = dict(snapshot["mastery"])
         for g in graded:
             for cid in g["concept_ids"]:
@@ -535,9 +536,19 @@ class TutorApp:
                     if progress[focus] >= 2:
                         call("record_misconception", {"learner_id": lid, "misconception_id": focus, "status": "resolved",
                                                       "evidence_ref": "two later correct answers"})
+        quiz_application = None
         if quiz_done:
-            score = sum(r["correct"] for r in quiz["results"])
-            replan_reason = f"after quiz: scored {score}/{len(quiz['results'])}"
+            if quiz.get("quiz_id"):
+                quiz_application = call("apply_quiz", {"learner_id": lid, "quiz_id": quiz["quiz_id"],
+                                                       "results": quiz["results"]})
+                for concept in quiz_application.get("resolved_concepts", []):
+                    self._note(state, "update_memory", "stuck_episode_closed", {"concept_id": concept})
+                self._note(state, "update_memory", "quiz_applied" if quiz_application["applied"] else "quiz_already_applied",
+                           {"quiz_id": quiz["quiz_id"]})
+            else:
+                # A finished checkpoint from an older build cannot tell us if
+                # it already committed updates. Do not risk applying it twice.
+                self._note(state, "update_memory", "legacy_quiz_not_replayed")
         # An explicit self-reported stuck signal on a registered problem counts
         # once per distinct session. Infer the concept only when unambiguous.
         item = state.get("active_item") or {}
@@ -558,7 +569,19 @@ class TutorApp:
                            {"concept_id": concept, "local_teacher_event_created": created})
         fresh = call("read_learner", {"learner_id": lid})
         update: dict[str, Any] = {"learner": fresh, "resolve_progress": progress}
-        if replan_reason:
+        if quiz_done and quiz_application is not None:
+            current_plan = fresh.get("plan")
+            update["plan"] = current_plan
+            if current_plan and quiz_application["applied"]:
+                reason = current_plan.get("replan_reason")
+                update["notes"] = (state.get("notes") or []) + [f"Study plan updated (v{current_plan['version']}): {reason}."]
+                self._note(state, "update_memory", "replan", {"version": current_plan["version"], "reason": reason})
+            elif not quiz_application["applied"]:
+                update["notes"] = (state.get("notes") or []) + ["This quiz was already recorded; your current plan was preserved."]
+        elif quiz_done:
+            update["draft"] = {"text": "This older quiz could not be safely recorded. Please start a new quiz.", "citations": [], "kind": "info"}
+            update["notes"] = (state.get("notes") or []) + ["This older quiz could not be safely replayed. Please start a new quiz."]
+        elif replan_reason:
             new_plan = learner.make_plan(fresh, previous=plan, reason=replan_reason)
             call("save_plan", {"learner_id": lid, "plan": new_plan})
             update["plan"] = new_plan
