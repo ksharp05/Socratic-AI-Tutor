@@ -63,3 +63,12 @@ The final working-tree selection, including same-instance contention tests, pass
 ## Canonical workspace repair — 4 November
 
 Direct testing exposed missing tracked application modules, development fixtures, UI files and the public practice slice, plus older source revisions and missing API packages. Missing files were restored without overwriting local files; four source files exactly matching an older tracked revision were advanced, and the CLI's two existing local adaptations were retained. The workspace's dataset paths and separate project configuration were preserved. Filelock, FastAPI, Prometheus client and annotated-doc were installed into `.venv_app` offline from already-installed, hash-verified local package files. The initial collection and subsequent test run failed; after these repairs, **238 tests passed** across all four suites from the canonical directory and `tutor.cmd --help` succeeded in stub mode. Source datasets and held-out cases were not edited.
+
+
+## Mounted beta approval integration — 4 November
+
+Two new offline end-to-end tests first demonstrated that the mounted beta accepted unapproved practice and graded a question after its set was edited. Mounted assessments now use the capstone publication service, bind each selected question to the approved set and digest, check the source payload, and cancel safely on revocation or fail closed on service failure. Tests cover cached response replay, quizzes, payload mismatch, provider outage and an edit concurrent with grading. A shutdown test also exposed and fixed unclosed tutor database connections and its event-loop thread. The standalone preview remains explicitly unapproved development practice; anonymous beta and graph learner identities remain separate. [Details](MOUNTED_BETA_APPROVAL.md).
+
+The complete canonical working-tree selection subsequently passed **248 offline tests**. The updated beta script passed `node --check`; a visual browser walkthrough of this change remains outstanding.
+
+After strengthening the revoked-answer test to assert no checked-answer observation is written, both canonical and team working trees passed **248 offline tests**. Full local output was retained in `Directions/git_delivery/m2_mount_canonical_tests.log` and `m2_mount_team_tests.log`.

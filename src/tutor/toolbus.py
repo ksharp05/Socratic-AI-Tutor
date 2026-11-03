@@ -81,12 +81,18 @@ class ToolBus:
         return asyncio.run_coroutine_threadsafe(coro, self._loop).result(timeout=120)
 
     def close(self) -> None:
+        if not self._thread.is_alive():
+            return
         for client in self._clients.values():
             try:
                 self._run(client.__aexit__(None, None, None))
             except Exception:
                 pass
         self._loop.call_soon_threadsafe(self._loop.stop)
+        self._thread.join(timeout=5)
+        if self._thread.is_alive():
+            raise RuntimeError("Tool event loop did not shut down")
+        self._loop.close()
 
     def list_tools(self) -> dict[str, list[dict]]:
         out = {}

@@ -87,11 +87,13 @@ class AssessmentService:
     def __init__(self,repo,maths):self.repo,self.maths=repo,maths;self.lock=threading.RLock()
     def start(self,session,mode='practice',concept=None,question_id=None):
         with self.lock:return self._start(session,mode,concept,question_id)
+    def _eligible(self,scope,concept):return self.maths.eligible(scope,concept)
+    def _bind_publication(self,record,eligible):pass
     def _start(self,session,mode='practice',concept=None,question_id=None):
         from .ports import Scope
         if mode not in ('practice','quiz','diagnostic'):raise ValueError('Unknown mode')
         if self.repo.active_assessment(session['id'],session['owner']) or self.repo.open_check(session['owner']):raise ValueError('Finish or leave the current practice first')
-        eligible=self.maths.eligible(Scope(**session['scope']),concept)
+        eligible=self._eligible(Scope(**session['scope']),concept)
         if not eligible:raise ValueError('Checked practice is available for the three Class 10 maths chapters; this topic is not yet covered')
         aid=uuid.uuid4().hex
         # Deterministic per-run ordering with unique public items; no benchmark material is read.
@@ -105,6 +107,7 @@ class AssessmentService:
         record={'id':aid,'session_id':session['id'],'owner':session['owner'],'mode':mode,'created':time.time(),
           'state':{'queue':ids,'index':0,'limit':limit,'complete':False,'hint_stage':0,'submissions':[],
                    'concept':concept,'next_target':None,'used':[]}}
+        self._bind_publication(record,eligible)
         self.repo.save_assessment(record);return self.public(record)
     def public(self,a):
         state=a['state'];done=state['complete']

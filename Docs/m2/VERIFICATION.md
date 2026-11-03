@@ -29,3 +29,8 @@ The final concurrency working tree passed **238 offline tests** across the four 
 
 
 **Canonical workspace verification:** After restoring missing tracked application files, development fixtures, UI files and the public practice slice, all **238 offline tests** passed when run from `D:\Work\IITB\Socratic Tutor` with its `.venv_app` interpreter. `tutor.cmd --help` also starts in stub mode. The first collection attempt exposed missing modules and API packages; a subsequent run exposed older local source revisions and missing support files. Those failures were recorded in the session output and fixed before the passing run. The necessary app packages were installed offline from hash-verified files already installed on this machine. This is still not a fresh installation, Docker verification, live-provider test, independent evaluation or educator review.
+
+
+**Mounted beta integration:** The canonical working tree passed **248 offline tests** across all four suites after connecting mounted beta practice to teacher publication. Synthetic API tests covered approval, edits, quizzes, retries, service failures, mismatched payloads and concurrent grading; the beta JavaScript passed a syntax check. This is not a browser-visual review, actual teacher approval, a live-model test or evidence that beta and graph learner state are unified. See [mounted beta approval](MOUNTED_BETA_APPROVAL.md).
+
+The strengthened final selection passed **248 tests in each of the canonical workspace and team checkout**. Full local output is retained under the ignored `Directions/git_delivery/` directory as `m2_mount_canonical_tests.log` and `m2_mount_team_tests.log`. Both used existing environments, synthetic development inputs and stub mode.

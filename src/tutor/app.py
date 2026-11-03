@@ -762,4 +762,9 @@ class TutorApp:
             return {"published": False, "error": str(exc)}
 
     def close(self) -> None:
+        if getattr(self, "_closed", False):
+            return
         self.bus.close()
+        self.checkpointer.conn.close()
+        self.conn.close()
+        self._closed = True

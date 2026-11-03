@@ -328,7 +328,7 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
 
     if beta_config := os.environ.get('TUTOR_BETA_CONFIG'):
         from .beta import mount_beta
-        mount_beta(api, beta_config)
+        mount_beta(api, beta_config, tutor_provider=_tutor)
 
     return api
 

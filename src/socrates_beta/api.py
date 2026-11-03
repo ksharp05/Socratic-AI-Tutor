@@ -37,7 +37,7 @@ class PrefsIn(Closed):
     goal:str=Field(default='Understand the topic',max_length=160);minutes:int=Field(default=25,ge=10,le=120)
 
 
-def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False):
+def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False,tutor_provider=None):
     settings=json.loads(Path(config or ROOT/'config/beta/local.json').read_text(encoding='utf-8-sig')) if not isinstance(config,dict) else config
     data=Path(settings.get('data_directory','Directions/beta_data'))
     if not data.is_absolute():data=ROOT/data
@@ -50,7 +50,13 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         from .language import TeamLanguage
         language=TeamLanguage(app_root,settings.get('max_live_calls',60),audit_directory=settings.get('audit_directory'))
     maths=maths or CheckedMaths(app_root)
-    dialogue=DialogueService(repo,registry,language);assess=AssessmentService(repo,maths);study=StudyService(repo,registry)
+    dialogue=DialogueService(repo,registry,language)
+    if tutor_provider is not None:
+        from .approval import ApprovedAssessmentService,ApprovalUnavailable
+        assess=ApprovedAssessmentService(repo,maths,tutor_provider)
+    else:
+        assess=AssessmentService(repo,maths)
+    study=StudyService(repo,registry)
     app=FastAPI(title='Socrates beta',version=__version__,docs_url='/api/docs' if testing else None,redoc_url=None)
     app.state.services={'repo':repo,'registry':registry,'dialogue':dialogue,'assessment':assess,'study':study,'language':language,'maths':maths}
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['localhost','127.0.0.1']+(['testserver'] if testing else []))
@@ -86,6 +92,9 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         response.headers['X-Content-Type-Options']='nosniff'
         response.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"
         return response
+    if tutor_provider is not None:
+        @app.exception_handler(ApprovalUnavailable)
+        async def approval_unavailable(request,exc):return JSONResponse({'detail':str(exc)},status_code=503)
     @app.exception_handler(KeyError)
     async def missing(request,exc):return JSONResponse({'detail':'The requested item is not available for this browser profile.'},status_code=404)
     @app.exception_handler(ValueError)
@@ -97,12 +106,14 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         entry=registry.entries();k=registry.knowledge()
         return {'status':'ok','version':__version__,'dataset':entry['active'],'dataset_integrity':'verified',
            'language':language.health() if language and hasattr(language,'health') else {'mode':'live' if language else 'offline'},
-           'beta':True,'maths_practice_items':len(maths.items)}
+           'beta':True,'maths_practice_items':len(maths.items),
+           'assessment_policy':'teacher_published' if tutor_provider is not None else 'development_unapproved'}
     @app.get('/api/bootstrap')
     def initial(request:Request):
         entry=registry.public();k=registry.knowledge()
         return {'version':__version__,'library':entry,'catalogue':k.catalogue(),'profile':repo.profile(owner(request))['preferences'],
-          'dashboard':study.dashboard(owner(request)),'language':health()['language'],'beta':True}
+          'dashboard':study.dashboard(owner(request)),'language':health()['language'],
+          'assessment_policy':health()['assessment_policy'],'beta':True}
     @app.get('/api/library/{dataset_id}')
     def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
     @app.post('/api/preferences')
