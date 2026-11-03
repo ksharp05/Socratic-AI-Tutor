@@ -1,0 +1,87 @@
+{
+  "release": "0.2.0",
+  "stage": "local_beta_ready_for_supervised_testing",
+  "production_qualified": false,
+  "workspace": "D:\\Work\\IITB\\Socratic Tutor",
+  "date_utc": "2026-11-02T23:08:50.758081+00:00",
+  "automated_tests": {
+    "beta_and_pipeline": 64,
+    "shared_main_api": 13,
+    "total": 77
+  },
+  "dataset": {
+    "id": "ncert-2026-11-03-beta3",
+    "sha256": "50fc3a276f14359bb38e924585172fd13ada77867ec1fa7084b6f6134994fed3",
+    "passages": 10878,
+    "prose_candidates": 10853,
+    "normalized_maths_references": 25,
+    "books": 86,
+    "class_subject_combinations": 53,
+    "public_practice_items": 665,
+    "task_families": 17
+  },
+  "evaluation": {
+    "run_id": "20261102T223908Z",
+    "case_sha256": "7198ffc7a061546966627eb2abaafc6f47f072977f809f25ed0cce8a7df3f69d",
+    "tasks": 34,
+    "supported_completed": 28,
+    "supported_total": 28,
+    "unsupported_requests": 6,
+    "appropriate_abstentions": 6,
+    "latest_model_calls": 26,
+    "latest_format_repairs": 1,
+    "all_run_model_calls": 103,
+    "runs_retained": 4,
+    "independent_test": false,
+    "human_ratings": false,
+    "factual_accuracy_established": false,
+    "monetary_cost": null
+  },
+  "python_runtime_matches_evaluated_snapshot": false,
+  "ui_acceptance_sha256": "001852b9f0eaa52f467adb0d66e79ef0b2aeb4efff0201e45150e45c42d602de",
+  "frontend_sha256": "7b0bf14adbc10cfb2f4cb686e738d9417966c516146712653c7abb5bb2878f7f",
+  "published_results_sha256": "346d842479356868755ab425cc22936460a277bcdb7fd16fc7f79de20214e80c",
+  "graph_sha256": "4e7ca44a8476f8a368aab8acd6c23a72322cfd9e7718e8f8d826094b38d1ee20",
+  "main_git_status": [
+    " M src/tutor_api/main.py",
+    "?? src/tutor_api/beta.py"
+  ],
+  "server_health": {
+    "status": "ok",
+    "version": "0.2.0",
+    "dataset": "ncert-2026-11-03-beta3",
+    "dataset_integrity": "verified",
+    "language": {
+      "mode": "live",
+      "model": "openai/gpt-4.1-mini",
+      "calls": 1,
+      "remaining": 59
+    },
+    "beta": true,
+    "maths_practice_items": 665
+  },
+  "no_commit_push_or_public_deployment": true,
+  "runtime_sha256": {
+    "src/socrates_beta/api.py": "b1b51878dc9dc374a2b9c6db80e880e8c4bd5070e478c3cd2808ad171db88609",
+    "src/socrates_beta/bootstrap.py": "c67422ed6c3648075f6d021cafdadcd31ffcc6ec9d9e84959e8e48858707c6e5",
+    "src/socrates_beta/dialogue.py": "f3631686468843df3b2556c03e907f7afd04a436df75ebb2629f55f258a8ffab",
+    "src/socrates_beta/headings.py": "d0971050fed51b9882a0512f73e159b779753d7ca5ade47cf83adbe075039e2b",
+    "src/socrates_beta/knowledge.py": "3022e159189f3bf13932fa5429b54dbdc835d049c0bfd0e556915190a73897d3",
+    "src/socrates_beta/language.py": "c1f563cadc27f73af6375d2a0ea8ba4773f83ba74392ec8ae3d611de6c1891b6",
+    "src/socrates_beta/maths.py": "d3cf320c22700440636a6a014dd4f84783e77a9838d36e1f0b6e75e52fff30e7",
+    "src/socrates_beta/ports.py": "aefb1cfd13f0a0661e56bc768541e68e4555e6ca16bbb154bf59536415566e63",
+    "src/socrates_beta/repository.py": "cfc5ac3fd3118d4fd17caa108df81a586b5b572bbac72f5ac1aaeac47d3689ee",
+    "src/socrates_beta/study.py": "ac9723812bca71ab1f431d627c9814843889151a63ac39c3efa7201944ad255c",
+    "src/socrates_beta/__init__.py": "ddd4d302c98b1eb855faae709c05db5b8dc21c3e11f93f0e3e9d6f8cc81065bb",
+    "src/socrates_beta/__main__.py": "87786a0d9c83096b0a75061d9a8240a4f2782231e53c6b5872f43fa00a014445",
+    "src/socrates_beta/static/app.css": "4d0ec78ddf75592c0af4682b8a6bf8a15c6a60d705785d9964a66998a43e0379",
+    "src/socrates_beta/static/app.js": "7b0bf14adbc10cfb2f4cb686e738d9417966c516146712653c7abb5bb2878f7f",
+    "src/socrates_beta/static/index.html": "5ee5e817f1726a1f3853aa4b4f09668ca436f9dce84157a3d8b9d9c4a7cb64ee"
+  },
+  "post_evaluation_portability_changes": "Workspace path resolution and launcher configuration were updated for the shared checkout; the tutoring prompt and grading logic were not changed.",
+  "checkout_validation": {
+    "tests_passed": 115,
+    "private_source_workspace_environment": "SOCRATES_SOURCE_WORKSPACE",
+    "credentials_and_private_data_staged": false
+  }
+}

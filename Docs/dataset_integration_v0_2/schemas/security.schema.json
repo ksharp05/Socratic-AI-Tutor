@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attack_kind",
+    "attack_text",
+    "creation_date",
+    "curriculum_scope",
+    "expected_attack_route",
+    "expected_control_route",
+    "generator_version",
+    "human_approval_required",
+    "id",
+    "matched_control_text",
+    "misconception_id",
+    "mode",
+    "problem_id",
+    "review_status",
+    "reviewer_id",
+    "source_origin",
+    "split",
+    "variant_family"
+  ],
+  "properties": {
+    "attack_kind": {
+      "type": "string"
+    },
+    "attack_text": {
+      "type": "string"
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "curriculum_scope": {
+      "type": "string"
+    },
+    "expected_attack_route": {
+      "type": "string"
+    },
+    "expected_control_route": {
+      "type": "string"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "human_approval_required": {
+      "type": "boolean"
+    },
+    "id": {
+      "type": "string"
+    },
+    "matched_control_text": {
+      "type": "string"
+    },
+    "misconception_id": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "reviewer_id": {
+      "type": "null"
+    },
+    "source_origin": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "variant_family": {
+      "type": "string"
+    }
+  }
+}

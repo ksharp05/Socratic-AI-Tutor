@@ -1,0 +1,442 @@
+{
+  "schema": 1,
+  "authorship": "development_authored_not_independent_final_evaluation",
+  "human_review": false,
+  "completion_definition": "Chat: all turns return live accepted replies and at least one citation matches a developer-selected expected source. Maths: independent arithmetic submission receives code-checked correct. Known unsupported tasks score zero task completion; appropriate abstention is counted separately.",
+  "factual_semantic_accuracy": "Not established by source-ID/format checks. Independent human evaluation pending.",
+  "cases": [
+    {
+      "id": "M01",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes an expression quadratic after simplifying it?",
+      "messages": [
+        "What makes an expression quadratic after simplifying it?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh104.pdf"
+      ]
+    },
+    {
+      "id": "M02",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What does the discriminant tell us about real roots?",
+      "messages": [
+        "What does the discriminant tell us about real roots?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh104.pdf"
+      ]
+    },
+    {
+      "id": "M03",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes a sequence an arithmetic progression?",
+      "messages": [
+        "What makes a sequence an arithmetic progression?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh105.pdf"
+      ]
+    },
+    {
+      "id": "M04",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Why is the common difference important in an arithmetic progression?",
+      "messages": [
+        "Why is the common difference important in an arithmetic progression?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh105.pdf"
+      ]
+    },
+    {
+      "id": "M05",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "How are sine and cosine related to the sides of a right triangle?",
+      "messages": [
+        "How are sine and cosine related to the sides of a right triangle?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh108.pdf"
+      ]
+    },
+    {
+      "id": "M06",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Why is tangent not defined at some standard angles?",
+      "messages": [
+        "Why is tangent not defined at some standard angles?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh108.pdf"
+      ]
+    },
+    {
+      "id": "S01",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 8,
+      "subject": "Science",
+      "question": "Why do rough surfaces oppose motion through friction?",
+      "messages": [
+        "Why do rough surfaces oppose motion through friction?"
+      ],
+      "expected_sources": [
+        "hecu1/hecu105.pdf"
+      ]
+    },
+    {
+      "id": "S02",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 9,
+      "subject": "Science",
+      "question": "Why is a cell called a basic unit of life?",
+      "messages": [
+        "Why is a cell called a basic unit of life?"
+      ],
+      "expected_sources": [
+        "iesc1/iesc102.pdf"
+      ]
+    },
+    {
+      "id": "S03",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "How does photosynthesis help a plant make food?",
+      "messages": [
+        "How does photosynthesis help a plant make food?"
+      ],
+      "expected_sources": [
+        "jesc1/jesc105.pdf"
+      ]
+    },
+    {
+      "id": "S04",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "What is the difference between xylem and phloem?",
+      "messages": [
+        "What is the difference between xylem and phloem?"
+      ],
+      "expected_sources": [
+        "jesc1/jesc105.pdf"
+      ]
+    },
+    {
+      "id": "S05",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "How do acids and bases differ in their properties?",
+      "messages": [
+        "How do acids and bases differ in their properties?"
+      ],
+      "expected_sources": [
+        "jesc1/jesc102.pdf"
+      ]
+    },
+    {
+      "id": "S06",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 11,
+      "subject": "Physics",
+      "question": "How is acceleration related to a change in velocity?",
+      "messages": [
+        "How is acceleration related to a change in velocity?"
+      ],
+      "expected_sources": [
+        "keph1/keph102.pdf",
+        "keph1/keph103.pdf",
+        "keph1/keph104.pdf"
+      ]
+    },
+    {
+      "id": "S07",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Why should DNA replicate before a cell divides?",
+      "messages": [
+        "Why should DNA replicate before a cell divides?"
+      ],
+      "expected_sources": [
+        "lebo1/lebo105.pdf"
+      ]
+    },
+    {
+      "id": "S08",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "What role do decomposers play in an ecosystem?",
+      "messages": [
+        "What role do decomposers play in an ecosystem?"
+      ],
+      "expected_sources": [
+        "lebo1/lebo112.pdf"
+      ]
+    },
+    {
+      "id": "H01",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 11,
+      "subject": "History",
+      "question": "Why was writing important in Mesopotamian cities?",
+      "messages": [
+        "Why was writing important in Mesopotamian cities?"
+      ],
+      "expected_sources": [
+        "kehs1/kehs101.pdf"
+      ]
+    },
+    {
+      "id": "H02",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Economics",
+      "question": "What is the role of a central bank in an economy?",
+      "messages": [
+        "What is the role of a central bank in an economy?"
+      ],
+      "expected_sources": [
+        "leec1/leec103.pdf"
+      ]
+    },
+    {
+      "id": "H03",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Social Science",
+      "question": "Why is power sharing important in a democracy?",
+      "messages": [
+        "Why is power sharing important in a democracy?"
+      ],
+      "expected_sources": [
+        "jess4/jess401.pdf"
+      ]
+    },
+    {
+      "id": "H04",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "English",
+      "question": "Why does Lencho write a letter to God in the story?",
+      "messages": [
+        "Why does Lencho write a letter to God in the story?"
+      ],
+      "expected_sources": [
+        "jeff1/jeff101.pdf"
+      ]
+    },
+    {
+      "id": "C01",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Can you explain photosyntesis in plain English?",
+      "messages": [
+        "Can you explain photosyntesis in plain English?"
+      ],
+      "expected_sources": [
+        "jesc1/jesc105.pdf"
+      ]
+    },
+    {
+      "id": "C02",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Explain DNA replication in simple English.",
+      "messages": [
+        "Explain DNA replication in simple English.",
+        "I still don't understand. Could you make that simpler?"
+      ],
+      "expected_sources": [
+        "lebo1/lebo105.pdf"
+      ]
+    },
+    {
+      "id": "C03",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Explain photosynthesis.",
+      "messages": [
+        "Explain photosynthesis.",
+        "Actually, I meant respiration. How does that release energy?"
+      ],
+      "expected_sources": [
+        "jesc1/jesc105.pdf"
+      ]
+    },
+    {
+      "id": "C04",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What is an arithmetic progression?",
+      "messages": [
+        "What is an arithmetic progression?",
+        "I think it just means numbers go up. Is that enough?"
+      ],
+      "expected_sources": [
+        "jemh1/jemh105.pdf"
+      ]
+    },
+    {
+      "id": "P01",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "An AP starts at 34 with common difference 6. Find term 17, using one-based positions.",
+      "question_id": "q_a5aa3cfe9241fbe1f927",
+      "answer": "130",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "P02",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find the sum of the first 13 terms of an AP with first term -8 and common difference 6.",
+      "question_id": "q_a3ba7cec64df726ab50e",
+      "answer": "364",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "P03",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find every distinct real root of (-2)*x^2+(-20)*x+(-66)=0. Give exact values; do not repeat a repeated root.",
+      "question_id": "q_77c56ff5fa66c5daa3e3",
+      "answer": "no real roots",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "P04",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find every distinct real root of (3)*x^2+(36)*x+(-135)=0. Give exact values; do not repeat a repeated root.",
+      "question_id": "q_5ecd82f7d79c0cb294b9",
+      "answer": "-15, 3",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "P05",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "A right triangle has hypotenuse 13, opposite side 12 and adjacent side 5 relative to acute angle A. C is its other acute angle. Find sec(A) exactly.",
+      "question_id": "q_49922f00fe38892497ab",
+      "answer": "13/5",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "P06",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Classify the real roots of (-2)*x^2+(32)*x+(-128)=0 as two_distinct_real, repeated_real or no_real, using a checked discriminant.",
+      "question_id": "q_6e25990548d58ad7e456",
+      "answer": "repeated_real",
+      "oracle": "Independent arithmetic from public givens; no grader key read"
+    },
+    {
+      "id": "L01",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Mathematics",
+      "question": "Can you teach me integration by parts and check my answer?",
+      "reason": "No normalized Class 12 maths teaching/checking adapter yet."
+    },
+    {
+      "id": "L02",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 11,
+      "subject": "Urdu",
+      "question": "Explain the meaning of the poem in my Urdu textbook.",
+      "reason": "The beta retrieval scope is English-first; Urdu teaching is not enabled."
+    },
+    {
+      "id": "L03",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 9,
+      "subject": "ICT",
+      "question": "Explain computer networking from my Class 9 ICT textbook.",
+      "reason": "No acquired active Class 9 ICT book; publisher Coming Soon."
+    },
+    {
+      "id": "L04",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Using the attached diagram, tell me which ray is refracted.",
+      "reason": "No image was supplied and this beta has no diagram-understanding adapter."
+    },
+    {
+      "id": "L05",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Economics",
+      "question": "What is today's live stock price and should I buy it?",
+      "reason": "No live market data or financial-advice tool in this textbook tutor."
+    },
+    {
+      "id": "L06",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Why does it do that?",
+      "reason": "No prior referent/topic; clarification is needed rather than inventing a source."
+    }
+  ]
+}

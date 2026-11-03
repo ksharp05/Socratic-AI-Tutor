@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-03",
+  "workspace": "D:\\Work\\IITB\\Socratic Tutor",
+  "development_preview_only": true,
+  "sources": 1605,
+  "pages": 25175,
+  "prose_passages": 10851,
+  "normalized_maths_references": 25,
+  "preview_books": 86,
+  "class_subject_combinations": 53,
+  "contract_tests": {
+    "passed": 27,
+    "command": "Set PYTHONPATH=src; team-app Python -m pytest tests_book_pipeline -q"
+  },
+  "live_probe": {
+    "first_pass_calls": 6,
+    "revised_calls": 3,
+    "revised_structurally_accepted": 3,
+    "quiz_role_active_problem_calls": 0,
+    "human_review": false,
+    "cost": null
+  },
+  "http_smoke": {
+    "ui_loaded": true,
+    "offline_turn": "offline_fallback",
+    "quiz_reply": "Recorded.",
+    "foreign_origin_status": 403,
+    "foreign_host_status": 403,
+    "delete_session": true,
+    "public_bind": false,
+    "independent_evaluation": false
+  },
+  "source_manifest_sha256": "366c9e2cb8f01b0cd6c3812bfcce2854cebc8f4fcde01a25f61a3bc1cbc474c1",
+  "build_report_sha256": "c38acf41b0eb996bc288c2eff1c5bdb2698aa33d46ac9baf1828b9ad83b9bd47",
+  "preview_index_sha256": "32dbc120641cf89c2def5e01424fbb2c78bc837392467ad80e6de7b8238454bf",
+  "live_probe_sha256": "6ff94db9c9c44f7ea0b0e1ac9e1b2ad4b883b226de168eefba5114390e7ba4e8",
+  "runtime_modules_match_probed_modules": true,
+  "runtime_module_sha256": {
+    "build.py": "ceff10045dc6b378dad133dfaec45eaf36236537bcd68748001027179bfe2b11",
+    "catalogue.py": "48fba2870d116eaa61d961180ab84ea97bede2c54bff49d8d0e19815a5d48570",
+    "content.py": "2a48f5aa43b1de761f2f212790a1d064812b18187d5f7a32b2ce0a0047a5ced8",
+    "dialogue.py": "7b2f013682b88a620ab17cb9ef20197d44b5989fa2ca5babac09016de25de232",
+    "provider.py": "be843fea72bda7f8d6f0ec0c62df58746d78663a6fe815b5a8b514614183d5d6",
+    "retrieval.py": "16380ea0aa35a841b4f89099378a518a64ab5afadfc06604550111b597d522e5",
+    "web.py": "e88cfee5683cdfc2c392693463c309446cb7551865fcf63042e59c7e95fcf76c",
+    "__init__.py": "bdf859c8bdefdd0798e2c885bb077cc931080462c83d99a935dad42fafa9d086",
+    "__main__.py": "818ccebcd57f63483eeb3fe520f209d0289d167a5f31a4f6d994a176c30b31dc"
+  },
+  "shared_main_app_git_clean": true,
+  "Directions_git_ignored": true,
+  "known_retrieval_miss": {
+    "grade": 8,
+    "subject": "Science",
+    "query": "friction"
+  },
+  "human_approvals": 0,
+  "independent_final_evaluation": false
+}

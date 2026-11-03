@@ -1,0 +1,176 @@
+from __future__ import annotations
+import hashlib,hmac,json,secrets,time,uuid,os
+from pathlib import Path
+from typing import Literal
+from fastapi import FastAPI,HTTPException,Request
+from fastapi.responses import FileResponse,JSONResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from pydantic import BaseModel,ConfigDict,Field
+from . import __version__
+from .bootstrap import bootstrap
+from .repository import Repository
+from .ports import Scope
+from .dialogue import DialogueService
+from .maths import CheckedMaths,AssessmentService
+from .study import StudyService
+
+ROOT=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path(__file__).resolve().parents[2])).resolve()
+
+
+class Closed(BaseModel):model_config=ConfigDict(extra='forbid',strict=True)
+class SessionIn(Closed):
+    grade:int=Field(ge=8,le=12);subject:str=Field(min_length=1,max_length=80)
+    dataset_id:str|None=None;book:str|None=None;unit:int|None=Field(default=None,ge=1,le=99)
+    title:str=Field(default='A new idea',max_length=140)
+class ChatIn(Closed):
+    session_id:str=Field(min_length=20,max_length=64);text:str=Field(min_length=1,max_length=2000)
+    request_id:str=Field(min_length=8,max_length=80)
+class StartIn(Closed):
+    session_id:str;mode:Literal['practice','diagnostic','quiz']='practice';concept:str|None=None;question_id:str|None=None
+class SubmitIn(Closed):
+    answer:str=Field(min_length=1,max_length=512);request_id:str=Field(min_length=8,max_length=80)
+class CardIn(Closed):session_id:str;passage_id:str
+class ReviewIn(Closed):rating:Literal['again','hard','good','easy']
+class PrefsIn(Closed):
+    grade:int=Field(ge=8,le=12);subject:str=Field(min_length=1,max_length=80)
+    goal:str=Field(default='Understand the topic',max_length=160);minutes:int=Field(default=25,ge=10,le=120)
+
+
+def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False):
+    settings=json.loads(Path(config or ROOT/'config/beta/local.json').read_text(encoding='utf-8-sig')) if not isinstance(config,dict) else config
+    data=Path(settings.get('data_directory','Directions/beta_data'))
+    if not data.is_absolute():data=ROOT/data
+    data.mkdir(parents=True,exist_ok=True)
+    app_root=Path(settings.get('app_root',ROOT.with_name('Socratic Tutor Main')))
+    if not app_root.is_absolute():app_root=(Path(__file__).resolve().parents[2]/app_root).resolve()
+    registry=registry or bootstrap(ROOT,app_root,data)
+    repo=repository or Repository(data/'beta.sqlite')
+    if live and language is None:
+        from .language import TeamLanguage
+        language=TeamLanguage(app_root,settings.get('max_live_calls',60),audit_directory=settings.get('audit_directory'))
+    maths=maths or CheckedMaths(app_root)
+    dialogue=DialogueService(repo,registry,language);assess=AssessmentService(repo,maths);study=StudyService(repo,registry)
+    app=FastAPI(title='Socrates beta',version=__version__,docs_url='/api/docs' if testing else None,redoc_url=None)
+    app.state.services={'repo':repo,'registry':registry,'dialogue':dialogue,'assessment':assess,'study':study,'language':language,'maths':maths}
+    app.add_middleware(TrustedHostMiddleware,allowed_hosts=['localhost','127.0.0.1']+(['testserver'] if testing else []))
+    secret_path=data/'browser.secret'
+    if not secret_path.exists():
+        try:
+            with secret_path.open('xb') as f:f.write(secrets.token_bytes(32))
+        except FileExistsError:pass
+    secret=secret_path.read_bytes()
+    if len(secret)!=32:raise ValueError('Invalid browser ownership secret')
+    def sign(owner):return owner+'.'+hmac.new(secret,owner.encode(),hashlib.sha256).hexdigest()
+    def owner(request):return request.state.owner
+    def session_public(s):return {k:s[k] for k in ('id','dataset','scope','title','created','updated')}
+    def scoped(grade,subject,book=None,unit=None):
+        if not 8<=grade<=12 or not subject.strip():raise ValueError('Choose a class and subject')
+        return Scope(grade,subject,book,unit)
+    @app.middleware('http')
+    async def browser_boundary(request,call_next):
+        if request.method in ('POST','PUT','DELETE','PATCH'):
+            if request.headers.get('content-type','').split(';')[0]!='application/json' or request.headers.get('x-socrates-request')!='1':
+                return JSONResponse({'detail':'Expected a same-origin JSON request'},status_code=403)
+            origin=request.headers.get('origin')
+            if origin and origin!=f'{request.url.scheme}://{request.url.netloc}':
+                return JSONResponse({'detail':'Origin mismatch'},status_code=403)
+        cookie=request.cookies.get('socrates_beta_profile','');parts=cookie.split('.')
+        valid=len(parts)==2 and len(parts[0])==32 and hmac.compare_digest(sign(parts[0]),cookie)
+        request.state.owner=parts[0] if valid else uuid.uuid4().hex
+        repo.profile(request.state.owner)
+        try:response=await call_next(request)
+        except Exception:return JSONResponse({'detail':'The beta could not complete this request. Please try again.'},status_code=500)
+        if not valid:response.set_cookie('socrates_beta_profile',sign(request.state.owner),httponly=True,samesite='strict',max_age=30*86400)
+        response.headers['Cache-Control']='no-store'
+        response.headers['X-Content-Type-Options']='nosniff'
+        response.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"
+        return response
+    @app.exception_handler(KeyError)
+    async def missing(request,exc):return JSONResponse({'detail':'The requested item is not available for this browser profile.'},status_code=404)
+    @app.exception_handler(ValueError)
+    async def invalid(request,exc):return JSONResponse({'detail':str(exc)[:220]},status_code=400)
+    @app.get('/')
+    def index():return FileResponse(Path(__file__).with_name('static')/'index.html')
+    @app.get('/api/health')
+    def health():
+        entry=registry.entries();k=registry.knowledge()
+        return {'status':'ok','version':__version__,'dataset':entry['active'],'dataset_integrity':'verified',
+           'language':language.health() if language and hasattr(language,'health') else {'mode':'live' if language else 'offline'},
+           'beta':True,'maths_practice_items':len(maths.items)}
+    @app.get('/api/bootstrap')
+    def initial(request:Request):
+        entry=registry.public();k=registry.knowledge()
+        return {'version':__version__,'library':entry,'catalogue':k.catalogue(),'profile':repo.profile(owner(request))['preferences'],
+          'dashboard':study.dashboard(owner(request)),'language':health()['language'],'beta':True}
+    @app.get('/api/library/{dataset_id}')
+    def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
+    @app.post('/api/preferences')
+    def preferences(body:PrefsIn,request:Request):repo.preferences(owner(request),body.model_dump());return {'saved':True}
+    @app.post('/api/sessions')
+    def new_session(body:SessionIn,request:Request):
+        k=registry.knowledge(body.dataset_id);scope=Scope(body.grade,body.subject,body.book,body.unit)
+        supported=[s for s in k.catalogue() if s['grade']==scope.grade and s['subject'].casefold()==scope.subject.casefold() and (not scope.book or s['book']==scope.book)]
+        if not supported:raise ValueError('This dataset does not contain that class/subject/book combination')
+        return session_public(repo.create_session(owner(request),k.dataset_id,body.model_dump(include={'grade','subject','book','unit'}),body.title))
+    @app.get('/api/sessions')
+    def sessions(request:Request):return [session_public(s) for s in repo.sessions(owner(request))]
+    @app.get('/api/sessions/{sid}')
+    def session(sid:str,request:Request):
+        s=repo.session(sid,owner(request));active=repo.active_assessment(sid,owner(request))
+        return {**session_public(s),'turns':[{'user':t['user_text'],'result':t['result'],'created':t['created']} for t in repo.history(sid)],
+                'assessment':assess.public(active) if active else None}
+    @app.post('/api/chat')
+    def chat(body:ChatIn,request:Request):
+        return dialogue.turn(owner(request),body.session_id,body.text,body.request_id)
+    @app.post('/api/practice')
+    def practice(body:StartIn,request:Request):
+        s=repo.session(body.session_id,owner(request))
+        with dialogue.session_lock(s['id']):return assess.start(s,body.mode,body.concept,body.question_id)
+    @app.post('/api/practice/{aid}/submit')
+    def submit(aid:str,body:SubmitIn,request:Request):
+        a=repo.assessment(aid,owner(request))
+        with dialogue.session_lock(a['session_id']):return assess.submit(owner(request),aid,body.answer,body.request_id)
+    @app.post('/api/practice/{aid}/hint')
+    def hint(aid:str,request:Request):return assess.hint(owner(request),aid)
+    @app.post('/api/practice/{aid}/leave')
+    def leave(aid:str,request:Request):return assess.leave(owner(request),aid)
+    @app.get('/api/map')
+    def learning_map(request:Request,grade:int,subject:str,dataset_id:str|None=None,book:str|None=None,unit:int|None=None):
+        return study.map(owner(request),scoped(grade,subject,book,unit),dataset_id)
+    @app.get('/api/plan')
+    def plan(request:Request,grade:int,subject:str,dataset_id:str|None=None,book:str|None=None,minutes:int=25):
+        if not 10<=minutes<=120:raise ValueError('Choose 10–120 study minutes')
+        return study.plan(owner(request),scoped(grade,subject,book),dataset_id,minutes)
+    @app.get('/api/dashboard')
+    def dashboard(request:Request):return study.dashboard(owner(request))
+    @app.get('/api/cards')
+    def cards(request:Request):
+        if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before reviewing cards')
+        return repo.cards(owner(request))
+    @app.get('/api/source')
+    def source(request:Request,session_id:str,passage_id:str):
+        s=repo.session(session_id,owner(request))
+        if repo.open_check(owner(request)):raise ValueError('Finish or leave the current check before opening source help')
+        allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
+        if passage_id not in allowed:raise KeyError('Source not cited in this session')
+        p=registry.knowledge(s['dataset']).passage(passage_id)
+        if not p:raise KeyError('Source not found')
+        return {**dialogue.citation(p),'text':p['text']}
+    @app.post('/api/cards')
+    def card(body:CardIn,request:Request):
+        s=repo.session(body.session_id,owner(request));allowed={c['id'] for t in repo.history(s['id']) for c in t['result']['citations']}
+        if body.passage_id not in allowed:raise ValueError('Save a source cited in this conversation first')
+        p=registry.knowledge(s['dataset']).passage(body.passage_id)
+        if not p:raise KeyError('Source not found')
+        return repo.add_card(owner(request),s['dataset'],p)
+    @app.post('/api/cards/{cid}/review')
+    def review(cid:str,body:ReviewIn,request:Request):return repo.review_card(owner(request),cid,body.rating)
+    @app.get('/api/evidence')
+    def evidence():
+        path=ROOT/'Docs/beta/EVALUATION_RESULTS.json'
+        return json.loads(path.read_text(encoding='utf-8')) if path.exists() else {'available':False}
+    @app.post('/api/forget')
+    def forget(request:Request):repo.forget(owner(request));return {'deleted':True}
+    app.mount('/assets',StaticFiles(directory=Path(__file__).with_name('static')),name='assets')
+    return app

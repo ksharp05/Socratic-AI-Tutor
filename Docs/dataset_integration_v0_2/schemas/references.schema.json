@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "creation_date",
+    "curriculum_scope",
+    "expected_answer",
+    "facts",
+    "generator_version",
+    "math_check",
+    "math_check_passed",
+    "misconception_id",
+    "problem_id",
+    "review_status",
+    "reviewer_id",
+    "source_origin",
+    "split",
+    "student_incorrect_attempt",
+    "variant_family"
+  ],
+  "properties": {
+    "creation_date": {
+      "type": "string"
+    },
+    "curriculum_scope": {
+      "type": "string"
+    },
+    "expected_answer": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "D": {
+          "type": "integer"
+        },
+        "a": {
+          "type": "integer"
+        },
+        "adj": {
+          "type": "integer"
+        },
+        "angle": {
+          "type": "integer"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "area": {
+          "type": "integer"
+        },
+        "b": {
+          "type": "integer"
+        },
+        "c": {
+          "type": "integer"
+        },
+        "d": {
+          "type": "integer"
+        },
+        "first": {
+          "type": "integer"
+        },
+        "fn": {
+          "type": "string"
+        },
+        "hyp": {
+          "type": "integer"
+        },
+        "k": {
+          "type": "integer"
+        },
+        "last": {
+          "type": "integer"
+        },
+        "n": {
+          "type": "integer"
+        },
+        "nth": {
+          "type": "integer"
+        },
+        "opp": {
+          "type": "integer"
+        },
+        "q": {
+          "type": "integer"
+        },
+        "r": {
+          "type": "integer"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "sides": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "sum": {
+          "type": "integer"
+        },
+        "target": {
+          "type": "integer"
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "total": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "integer"
+        }
+      }
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "math_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "D": {
+          "type": "integer"
+        },
+        "a": {
+          "type": "integer"
+        },
+        "adj": {
+          "type": "integer"
+        },
+        "angle": {
+          "type": "integer"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "area": {
+          "type": "integer"
+        },
+        "b": {
+          "type": "integer"
+        },
+        "c": {
+          "type": "integer"
+        },
+        "d": {
+          "type": "integer"
+        },
+        "first": {
+          "type": "integer"
+        },
+        "fn": {
+          "type": "string"
+        },
+        "hyp": {
+          "type": "integer"
+        },
+        "k": {
+          "type": "integer"
+        },
+        "last": {
+          "type": "integer"
+        },
+        "n": {
+          "type": "integer"
+        },
+        "nth": {
+          "type": "integer"
+        },
+        "opp": {
+          "type": "integer"
+        },
+        "q": {
+          "type": "integer"
+        },
+        "r": {
+          "type": "integer"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "sides": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "sum": {
+          "type": "integer"
+        },
+        "target": {
+          "type": "integer"
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "total": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string"
+        },
+        "x": {
+          "type": "integer"
+        }
+      }
+    },
+    "math_check_passed": {
+      "type": "boolean"
+    },
+    "misconception_id": {
+      "type": "string"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "reviewer_id": {
+      "type": "null"
+    },
+    "source_origin": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "student_incorrect_attempt": {
+      "type": "string"
+    },
+    "variant_family": {
+      "type": "string"
+    }
+  }
+}

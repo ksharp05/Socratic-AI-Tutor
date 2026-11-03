@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chapter",
+    "counterexample_or_check",
+    "evidence_example",
+    "id",
+    "misconception",
+    "origin",
+    "problem_id",
+    "split",
+    "teacher_review_status"
+  ],
+  "properties": {
+    "chapter": {
+      "type": "string"
+    },
+    "counterexample_or_check": {
+      "type": "string"
+    },
+    "evidence_example": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "misconception": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "teacher_review_status": {
+      "type": "string"
+    }
+  }
+}

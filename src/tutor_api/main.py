@@ -323,6 +323,10 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         return {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
                 "plan": model.get("plan"), "alerts": alerts}
 
+    if beta_config := os.environ.get('TUTOR_BETA_CONFIG'):
+        from .beta import mount_beta
+        mount_beta(api, beta_config)
+
     return api
 
 

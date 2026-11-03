@@ -23,3 +23,9 @@ eval/private/
 
 # Embedding model cache for hybrid retrieval (downloaded by `python -m tutor.retrieval.ingest`)
 data/models/
+
+/Directions/
+
+/config/beta/local.json
+
+.venv_beta/

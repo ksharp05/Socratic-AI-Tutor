@@ -1,0 +1,4376 @@
+{
+  "date_local": "2026-11-03",
+  "timezone": "Asia/Calcutta",
+  "status": "available_source_acquisition_finished_with_explicit_publisher_gaps",
+  "collection_root": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03",
+  "scope": "active class 8-12 subject menus plus active common XI-XII menu; English for non-language subjects; all language-course titles and available-language fallbacks",
+  "catalogue_url": "https://ncert.nic.in/textbook.php",
+  "catalogue_sha256": "82d40340f020046aabf79b4bcb9950628c9a70d8a51190150f548871b3dda850",
+  "active_subject_groups_with_downloadable_titles": 79,
+  "active_subject_groups_including_coming_soon": 80,
+  "selected_unique_volumes": 145,
+  "official_archives_preserved": 145,
+  "new_archives_downloaded": 137,
+  "existing_math_archives_reused": 8,
+  "all_archives_zip_crc_checked": true,
+  "all_archives_current_sha256_verified": true,
+  "usable_pdf_assets": 1605,
+  "unique_usable_pdf_sha256": 1605,
+  "unusable_pdf_assets": 1,
+  "known_usable_source_pages": 25175,
+  "complete_corpus_page_total_known": false,
+  "books_with_all_retained_effective_PDFs_valid": 144,
+  "books_with_an_unusable_asset": 1,
+  "pypdf_bound_retained_and_Poppler_fallback_files": 3,
+  "official_individual_recovery_downloads_for_kuga1": 23,
+  "official_individual_recovery_files_validated": 22,
+  "gaps": [
+    {
+      "type": "not_yet_available",
+      "class": 9,
+      "subject": "ICT",
+      "finding": "The active publisher menu says Coming Soon and supplies no active book download."
+    },
+    {
+      "type": "damaged_publisher_asset",
+      "class": 11,
+      "subject": "Urdu",
+      "book_code": "kuga1",
+      "asset": "kuga104.pdf",
+      "finding": "Malformed in both official ZIP and direct individual download; both pypdf and Poppler fail. Other 21 chapters and prelims recovered from official URLs."
+    },
+    {
+      "type": "unresolved_publisher_count_and_edition_disagreement",
+      "class": 12,
+      "subject": "Urdu",
+      "book_code": "luga1",
+      "finding": "All 11 numbered archive PDFs retained. Catalogue parameter is 12; nominal chapter-12 URL returns 404. Older front matter and content page extents conflict, so full original-edition completeness is not certified."
+    }
+  ],
+  "catalogue_coverage_exceptions_documented": 10,
+  "excluded_translation_alternatives": 264,
+  "inactive_subject_branches_preserved_as_metadata_not_downloaded": 11,
+  "raw_source_archives_and_originals_modified": false,
+  "previous_math_reading_copies_unchanged": true,
+  "previous_nine_source_PDFs_unchanged": true,
+  "directions_git_ignored": true,
+  "tracked_source_collection_paths": 0,
+  "git_ignore_rule": ".gitignore:23:/Directions/\tDirections/ncert_all_subjects_8_12/2026-11-03/selection.json",
+  "tutor_or_knowledge_ingestion_changed": false,
+  "human_approval_claimed": false,
+  "per_class": [
+    {
+      "group": "8",
+      "volumes": 12,
+      "usable_pdf_assets": 143,
+      "known_usable_pages": 2760
+    },
+    {
+      "group": "9",
+      "volumes": 13,
+      "usable_pdf_assets": 153,
+      "known_usable_pages": 2920
+    },
+    {
+      "group": "10",
+      "volumes": 22,
+      "usable_pdf_assets": 265,
+      "known_usable_pages": 3015
+    },
+    {
+      "group": "11",
+      "volumes": 45,
+      "usable_pdf_assets": 504,
+      "known_usable_pages": 7805
+    },
+    {
+      "group": "12",
+      "volumes": 48,
+      "usable_pdf_assets": 454,
+      "known_usable_pages": 7751
+    },
+    {
+      "group": "Common XI-XII",
+      "volumes": 5,
+      "usable_pdf_assets": 86,
+      "known_usable_pages": 924
+    }
+  ],
+  "books": [
+    {
+      "book_code": "hhml1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Hindi",
+      "title": "Malhar",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 180,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hhml1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\hindi\\hhml1\\hhml1dd.zip",
+      "archive_sha256": "7b9778deec278c21b155e3464940987953eff35c5743c0411e4304ba338ca995",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\hindi\\hhml1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hepr1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "English",
+      "title": "Poorvi",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 268,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hepr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\english\\hepr1\\hepr1dd.zip",
+      "archive_sha256": "1a988018533118abdf3e8c3a3cb966bcfe74eb7db0b2233e54842d0720634cea",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\english\\hepr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hegp1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Mathematics",
+      "title": "Ganita Prakash Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 263,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hegp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_08\\hegp1\\hegp1dd.zip",
+      "archive_sha256": "5f63da510a0ad5488243c6df93349ad097d46e4292d0d9e2a413ff0c76c7d953",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\mathematics\\hegp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_08\\hegp1\\NCERT_Class_08_Ganita_Prakash_Part_I.pdf"
+    },
+    {
+      "book_code": "hegp2",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Mathematics",
+      "title": "Ganita Prakash Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 192,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hegp2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_08\\hegp2\\hegp2dd.zip",
+      "archive_sha256": "76ee69c039faefc50494322ee7a97c39c59671610e15dbca7064a3a619fe3221",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\mathematics\\hegp2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_08\\hegp2\\NCERT_Class_08_Ganita_Prakash_Part_II.pdf"
+    },
+    {
+      "book_code": "hees1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Social Science",
+      "title": "Exploring Society India and Beyond Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 229,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hees1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\social_science\\hees1\\hees1dd.zip",
+      "archive_sha256": "cc3fe53c1e253a84ad1abf809322e28e9af28eb6be6b00998182f6b1649d47a0",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\social_science\\hees1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hees2",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Social Science",
+      "title": "Exploring Society India and Beyond Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 276,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hees2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\social_science\\hees2\\hees2dd.zip",
+      "archive_sha256": "535a7425df45f7a24b8607b91a49ccf27678322242c99644e93b4c676848e99d",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\social_science\\hees2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "publisher_noncontiguous_filename_index",
+        "finding": "Prelims contents page 17 lists eight chapters. The ZIP has eight chapter PDFs named 01-07 and 09. The filename index is not a missing-chapter proof.",
+        "evidence": "hees2ps.pdf page 17; official ZIP member listing",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hsde1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Sanskrit",
+      "title": "Deepakam",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 196,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hsde1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\sanskrit\\hsde1\\hsde1dd.zip",
+      "archive_sha256": "a81520a3259b7fa36abeb03ba40501f82c5705058197eb14a46e46bbefcb82e3",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\sanskrit\\hsde1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hecu1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Science",
+      "title": "Curiosity",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 248,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hecu1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\science\\hecu1\\hecu1dd.zip",
+      "archive_sha256": "2e18be8f05f94cdc7b61e12e5f860d873187752657c1d4ffd274b27b36decd51",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\science\\hecu1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hekr1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Arts",
+      "title": "Kriti",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 19,
+      "observed_numbered_pdf_assets": 19,
+      "usable_pdf_assets": 20,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 232,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hekr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\arts\\hekr1\\hekr1dd.zip",
+      "archive_sha256": "25dd85d41c6e1e760913438e219a79f472f213f08728d59ee8ce4885db9f2dde",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\arts\\hekr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "heky1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Physical Education and Well Being",
+      "title": "Khel Yatra",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 264,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/heky1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\physical_education_and_well_being\\heky1\\heky1dd.zip",
+      "archive_sha256": "7420761025ceb5911ca73d1695065deaa454e01bb076d850d4390795a7dbba1c",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\physical_education_and_well_being\\heky1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hekb1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Vocational Education",
+      "title": "Kaushal Bodh",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 224,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hekb1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\vocational_education\\hekb1\\hekb1dd.zip",
+      "archive_sha256": "721829af0470666f680d36d3c209f50b47a17c4b3c3f67d102eee9a9efe77448",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\vocational_education\\hekb1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "extra_annexure_asset",
+        "finding": "The contents list six projects, Kaushal Mela planning and annexures. Eight numbered PDFs include an annexure beyond the catalogue parameter seven. Preserve all source assets.",
+        "evidence": "hekb1ps.pdf page 21; official ZIP member listing",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "hukl1",
+      "class_selector": 8,
+      "grades": [
+        8
+      ],
+      "subject": "Urdu",
+      "title": "Khayal",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 21,
+      "observed_numbered_pdf_assets": 21,
+      "usable_pdf_assets": 22,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 188,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/hukl1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\urdu\\hukl1\\hukl1dd.zip",
+      "archive_sha256": "9e120adb52e4b4288ab650b39153b929cf33e920dc0797a7522131ef576ae0a6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_08\\urdu\\hukl1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iebe1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "English",
+      "title": "Kaveri",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 296,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iebe1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\english\\iebe1\\iebe1dd.zip",
+      "archive_sha256": "149c5ca6c242ea81037effa5a42a9309c3e2e772c89d8100322fd3176adf43cd",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\english\\iebe1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "ihga1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Hindi",
+      "title": "Ganga",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 224,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/ihga1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\hindi\\ihga1\\ihga1dd.zip",
+      "archive_sha256": "2828e064b3cea5dfe7bce4e6804c97e191fd82a62ede499579901d29a00318a6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\hindi\\ihga1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "ihsh1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Sanskrit",
+      "title": "Sharada",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 224,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/ihsh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\sanskrit\\ihsh1\\ihsh1dd.zip",
+      "archive_sha256": "f461d5159722b8dbfd083f77560aa9281f00b98c4d406bff10561c92adc378d6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\sanskrit\\ihsh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "isanskritr21",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Sanskrit",
+      "title": "Risikulya(R2)",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 148,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/isanskritr21dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\sanskrit\\isanskritr21\\isanskritr21dd.zip",
+      "archive_sha256": "6913a14e9dcf33d27019aac1392fa082640f669f77db4c0c2092b47f40eabb32",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\sanskrit\\isanskritr21\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iemh1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Mathematics",
+      "title": "Ganita Manjari",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 220,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026",
+        "2000"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iemh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_09\\iemh1\\iemh1dd.zip",
+      "archive_sha256": "4f9e9d4b0921b6f7e4fff8058947704ec38368ec7718a1fd53d1cc38b10d098b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\mathematics\\iemh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_09\\iemh1\\NCERT_Class_09_Ganita_Manjari_Part_I.pdf"
+    },
+    {
+      "book_code": "iemh2",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Mathematics",
+      "title": "Ganita Manjari PART-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 184,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026",
+        "2000"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iemh2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_09\\iemh2\\iemh2dd.zip",
+      "archive_sha256": "0535828d77945da164da6133c50ba1cc02bd2913cb219f1d311f6001188639b1",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\mathematics\\iemh2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_09\\iemh2\\NCERT_Class_09_Ganita_Manjari_Part_II.pdf"
+    },
+    {
+      "book_code": "iesc1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Science",
+      "title": "Exploration",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 292,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iesc1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\science\\iesc1\\iesc1dd.zip",
+      "archive_sha256": "23feba457d99e33898e9ddd5c063fb05a7a9653fadf5c04529f75f3137d119ca",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\science\\iesc1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iest1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Social Science",
+      "title": "Understanding Society India and Beyond PART-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 244,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iest1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\social_science\\iest1\\iest1dd.zip",
+      "archive_sha256": "6b249098ea7a0f25c3fc5d7e4cd3535e83075ee7c0c01be071fe60f80008a9e2",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\social_science\\iest1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iest2",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Social Science",
+      "title": "Understanding Society India and Beyond PART-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 176,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iest2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\social_science\\iest2\\iest2dd.zip",
+      "archive_sha256": "bd83affe96c0765683a261383dc69089f366da916cbe9dcac3d6eb935972887f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\social_science\\iest2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iemr1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Arts",
+      "title": "Madhurima",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 17,
+      "observed_numbered_pdf_assets": 17,
+      "usable_pdf_assets": 19,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 244,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iemr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\arts\\iemr1\\iemr1dd.zip",
+      "archive_sha256": "e83187071dd75066e029a59b3cea2295854df0514ca2f0b59baaffb0277350aa",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\arts\\iemr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iuju1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Urdu",
+      "title": "Jamuna",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 15,
+      "observed_numbered_pdf_assets": 15,
+      "usable_pdf_assets": 16,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 192,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iuju1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\urdu\\iuju1\\iuju1dd.zip",
+      "archive_sha256": "bfa839baa1b0e92b47cb0de9c99e18c1d7a01a83e98825e59d19f0f5a7c7d56f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\urdu\\iuju1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iehp1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Physical Education and Well Being",
+      "title": "Khel Praveen",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 232,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iehp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\physical_education_and_well_being\\iehp1\\iehp1dd.zip",
+      "archive_sha256": "2c6916882b096f2a41dfabada42b0d6b7aee0656fa12bf392a05848b4b567c54",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\physical_education_and_well_being\\iehp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "iekv1",
+      "class_selector": 9,
+      "grades": [
+        9
+      ],
+      "subject": "Skill Education",
+      "title": "Kaushal Vikas",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 244,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/iekv1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\skill_education\\iekv1\\iekv1dd.zip",
+      "archive_sha256": "a1ff31dbf1973781ccbbbf7c127d5a7119500082e8c90de3ce6b8216eb9987e0",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_09\\skill_education\\iekv1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jemh1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Mathematics",
+      "title": "Mathematics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 18,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 276,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jemh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_10\\jemh1\\jemh1dd.zip",
+      "archive_sha256": "1a34c43291ff83cc61eb776cd6be0f35a46f71508940ba509a0550233dd4a54d",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\mathematics\\jemh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_10\\jemh1\\NCERT_Class_10_Mathematics.pdf"
+    },
+    {
+      "book_code": "jesc1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Science",
+      "title": "Science",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 15,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 232,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jesc1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\science\\jesc1\\jesc1dd.zip",
+      "archive_sha256": "7c2ece639794c91fa718039986171b9dd8843fd787007516a3d0e3c74959f63c",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\science\\jesc1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhks1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Hindi",
+      "title": "Kshitij-2",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 112,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhks1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhks1\\jhks1dd.zip",
+      "archive_sha256": "2eef855c655c6bc4b9783967634ceb44f27719b8d121128946c005a89afbd3e1",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhks1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhsp1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Hindi",
+      "title": "Sparsh",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 15,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 132,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhsp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhsp1\\jhsp1dd.zip",
+      "archive_sha256": "93d9f20500645baa7a776e9b8a64ca4804b00abd4a90a365663b5a267c4a84db",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhsp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhsy1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Hindi",
+      "title": "Sanchayan Bhag-2",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 60,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhsy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhsy1\\jhsy1dd.zip",
+      "archive_sha256": "cbad39548746a4090aada728cba3b56e820f4de6a304926f454bc55a6644497f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhsy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhkr1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Hindi",
+      "title": "Kritika",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 44,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhkr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhkr1\\jhkr1dd.zip",
+      "archive_sha256": "d0d54775885c680596172a3610cd3f1a059dc8d1ebcfe7ce88ced99cf5eceaf8",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\hindi\\jhkr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jess1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Social Science",
+      "title": "Contemporary India",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 100,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jess1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess1\\jess1dd.zip",
+      "archive_sha256": "4c01eb12ef73e06927a8dbd66bf7c65e5e0023adcaff4b567116e63cb79ac1a4",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jess2",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Social Science",
+      "title": "Understanding Economic Development",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 104,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jess2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess2\\jess2dd.zip",
+      "archive_sha256": "958af437185a6d54826e989b4f0ab68ea492936d50b9d37518fd86d3655f5fef",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jess3",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Social Science",
+      "title": "India and the Contemporary World-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 140,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jess3dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess3\\jess3dd.zip",
+      "archive_sha256": "a31b1fe76a0b6588fb681415acfcb7bf533033cc2184da737c81915fed11b2ab",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess3\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jess4",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Social Science",
+      "title": "Democratic Politics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 88,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jess4dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess4\\jess4dd.zip",
+      "archive_sha256": "e29bcee6ed4110c989221c7bd10e22583f3f45ba8eb1a4be9fd5a5344a55a275",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\social_science\\jess4\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jeff1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "English",
+      "title": "First Flight",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 152,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jeff1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jeff1\\jeff1dd.zip",
+      "archive_sha256": "6b1293ad270efa3fbd2ab46353eceb0a2cd04f9bd5af26884fb56a5b5b590a11",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jeff1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jefp1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "English",
+      "title": "Foot Prints Without feet Supp. Reader",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 84,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jefp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jefp1\\jefp1dd.zip",
+      "archive_sha256": "43986390b56238cae9709ff91acd0b0b28165d09c7fcd54255c8320a01fd74ec",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jefp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jewe2",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "English",
+      "title": "Words and Expressions  2",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 156,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jewe2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jewe2\\jewe2dd.zip",
+      "archive_sha256": "7a179a6ebf7f8eadb6593045f9a5761b04467e0ad31c94306b24a1d8766f662a",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\english\\jewe2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhsk1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Sanskrit",
+      "title": "Shemushi",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 108,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhsk1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jhsk1\\jhsk1dd.zip",
+      "archive_sha256": "ab9adcf5e1582204b264be8bbc5ae415e10a42f1914f9f00c7de7cdf325256bb",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jhsk1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jhva1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Sanskrit",
+      "title": "Vyakaranavithi",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 15,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 244,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jhva1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jhva1\\jhva1dd.zip",
+      "archive_sha256": "859960dd3c610951ba14dfaadfd2eb9a50382eb7d9542e3c5197e51d2ef46fae",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jhva1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jsab1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Sanskrit",
+      "title": "Abhyaswaan Bhav-II",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 16,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 128,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jsab1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jsab1\\jsab1dd.zip",
+      "archive_sha256": "3dc1fc1664ca4698bc4d58a72754e69e4aa49af84e7979752a0290516756ac08",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\sanskrit\\jsab1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "juge1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Urdu",
+      "title": "Gulzar-e-Urdu",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 112,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/juge1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\juge1\\juge1dd.zip",
+      "archive_sha256": "efdb8d9c41edfbc05b767c7b6e0c89534515991d0d2cdc70a3d2d0fc92ebd89a",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\juge1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "june1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Urdu",
+      "title": "Nawa-e-Urdu",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 15,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 180,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/june1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\june1\\june1dd.zip",
+      "archive_sha256": "5e5d098d0de3843f6502595905899b9815deb2d813f1f4aaaf08e452f9f6ecbe",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\june1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jujp1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Urdu",
+      "title": "Jaan Pahechan",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 22,
+      "observed_numbered_pdf_assets": 22,
+      "usable_pdf_assets": 23,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 127,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jujp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\jujp1\\jujp1dd.zip",
+      "archive_sha256": "94703e782f6d98f2c165736e2b2394517dbec565b40f24c014190a37d036e5b2",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\jujp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "judp1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Urdu",
+      "title": "Door-Paas",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 19,
+      "observed_numbered_pdf_assets": 19,
+      "usable_pdf_assets": 20,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 100,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/judp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\judp1\\judp1dd.zip",
+      "archive_sha256": "267edb6972730129731c80ea1691a73b13e9726cbf617776e5dcf38876c4eae6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\judp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jusr1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Urdu",
+      "title": "Sab Rang",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 100,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jusr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\jusr1\\jusr1dd.zip",
+      "archive_sha256": "82187d234edebdc3f7e460260d43e46e5f82cd68504136e3db0db5769f3d3585",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\urdu\\jusr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "jehp1",
+      "class_selector": 10,
+      "grades": [
+        10
+      ],
+      "subject": "Health and Physical Education",
+      "title": "Health and Physical Education",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 236,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/jehp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\health_and_physical_education\\jehp1\\jehp1dd.zip",
+      "archive_sha256": "e3e2c9c4d7f9b3fdde515972375c8654fbb69e7ce4694e3eb935361cad94099f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_10\\health_and_physical_education\\jehp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khsk1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sanskrit",
+      "title": "Bhaswati",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 112,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khsk1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sanskrit\\khsk1\\khsk1dd.zip",
+      "archive_sha256": "33f96a1e5e07385809c3cb0f9fd3201c9ab26508a08669a1e519882d1470cec3",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sanskrit\\khsk1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khsk2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sanskrit",
+      "title": "Shashwati",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 124,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khsk2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sanskrit\\khsk2\\khsk2dd.zip",
+      "archive_sha256": "a8e19474aabd434a286863323388eee94f373c1f607af988eb65fea2d950f0a2",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sanskrit\\khsk2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keac1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Accountancy",
+      "title": "Financial Accounting-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 288,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keac1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\accountancy\\keac1\\keac1dd.zip",
+      "archive_sha256": "9a4d7dfdf37bd2e935c04dcdf18548ed297f7e8d36c71beaf99acf331b67ab1b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\accountancy\\keac1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keac2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Accountancy",
+      "title": "Accountancy-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 2,
+      "observed_numbered_pdf_assets": 2,
+      "usable_pdf_assets": 3,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 124,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keac2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\accountancy\\keac2\\keac2dd.zip",
+      "archive_sha256": "67c7a51f8777d54913f6940ed78bbeedd701fb984139590e4a08bf0399251fd9",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\accountancy\\keac2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kech1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Chemistry",
+      "title": "Chemistry Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 252,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kech1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\chemistry\\kech1\\kech1dd.zip",
+      "archive_sha256": "8f9cf8d1147a217fc0f3f04394c599f5a9d54fb009531f2febe795c21171c188",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\chemistry\\kech1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kech2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Chemistry",
+      "title": "Chemistry Part II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 108,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kech2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\chemistry\\kech2\\kech2dd.zip",
+      "archive_sha256": "0f9c03d266e6d0a8f55938af39df0e599078e580b2cf1dd10de2aa656b42c676",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\chemistry\\kech2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kemh1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Mathematics",
+      "title": "Mathematics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 19,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 376,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kemh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_11\\kemh1\\kemh1dd.zip",
+      "archive_sha256": "5a27a29b7a1be7f59262b438701e86b058ebf2fa797528aaddb5031d313dbe8e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\mathematics\\kemh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_11\\kemh1\\NCERT_Class_11_Mathematics.pdf"
+    },
+    {
+      "book_code": "kebo1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Biology",
+      "title": "Biology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 19,
+      "observed_numbered_pdf_assets": 19,
+      "usable_pdf_assets": 20,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 264,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kebo1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\biology\\kebo1\\kebo1dd.zip",
+      "archive_sha256": "d84985a32fade9e79399c0ef56dfd5643f49ec40ce7ca02f436929b2b98d3c0e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\biology\\kebo1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kepy1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Psychology",
+      "title": "Introduction to Psychology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kepy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\psychology\\kepy1\\kepy1dd.zip",
+      "archive_sha256": "f5ddc39742d5045515b331233e2a3cef337cb58620405e626c3e0fab30284ae7",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\psychology\\kepy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kegy2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Geography",
+      "title": "Fundamental of Physical Geography",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 14,
+      "usable_pdf_assets": 16,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 136,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kegy2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy2\\kegy2dd.zip",
+      "archive_sha256": "6a336eb8256eb0b189a4794af3d58128d0586e303c3d16332aad0699a6525d04",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kegy3",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Geography",
+      "title": "Pratical Work in Geography",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 104,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kegy3dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy3\\kegy3dd.zip",
+      "archive_sha256": "bb52fc43ccbea3a56761a8e589de742987aec0a15195d8b8f7d62f51f33cbb6a",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy3\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kegy1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Geography",
+      "title": "India Physical Environment",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 84,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kegy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy1\\kegy1dd.zip",
+      "archive_sha256": "f4cf42aac0c57b48c6700549a2bac3c432955b0beee22d6d1521ce353529671e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\geography\\kegy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keph1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Physics",
+      "title": "Physics Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 184,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keph1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\physics\\keph1\\keph1dd.zip",
+      "archive_sha256": "a18dd2a7457faa460eaf3b906e59195df766193f18c20af2e393d6a569cff072",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\physics\\keph1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keph2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Physics",
+      "title": "Physics Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keph2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\physics\\keph2\\keph2dd.zip",
+      "archive_sha256": "964a56a3287b41e225a6970fac87573a3cac32e139899f6682b304ca0be0ecdf",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\physics\\keph2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khat1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Hindi",
+      "title": "Antra",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 172,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khat1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khat1\\khat1dd.zip",
+      "archive_sha256": "381257e70dee7820c203f0f8b7fea63bad73f4e8c41baec118a2d45c6c2f7fad",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khat1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khar1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Hindi",
+      "title": "Aroh",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khar1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khar1\\khar1dd.zip",
+      "archive_sha256": "ed8954e0337e6e36f5e41373def75b76e14b98286617360153a2790581f48fa3",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khar1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khvt1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Hindi",
+      "title": "Vitan",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 84,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khvt1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khvt1\\khvt1dd.zip",
+      "archive_sha256": "4ba1935c2f2232d6f1ab1770698905ec955210baeca80dce8eabd22897fb6ba4",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khvt1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khan1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Hindi",
+      "title": "Antral",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 2,
+      "observed_numbered_pdf_assets": 2,
+      "usable_pdf_assets": 3,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 72,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khan1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khan1\\khan1dd.zip",
+      "archive_sha256": "138400893d6012df4b3baa0fecd4c090a6d30ec5c5402ba9cb7eaa3c04f3b523",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\hindi\\khan1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kesy1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sociology",
+      "title": "Introducing Sociology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 112,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kesy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sociology\\kesy1\\kesy1dd.zip",
+      "archive_sha256": "f370242caf73d0424763c010e91160109d5d5ab56f5495625f82468c9f2e4fde",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sociology\\kesy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kesy2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sociology",
+      "title": "Understanding Society",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 116,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kesy2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sociology\\kesy2\\kesy2dd.zip",
+      "archive_sha256": "d7db42adf0dbf17bd58ad7a165623fa5810ed751a0ba653c1e8e66d2c932bcb6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sociology\\kesy2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keww1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "English",
+      "title": "Woven Words",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 27,
+      "observed_numbered_pdf_assets": 27,
+      "usable_pdf_assets": 28,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 208,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keww1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\keww1\\keww1dd.zip",
+      "archive_sha256": "e2f3452ba309530bff1e0e8a513e869b7586d65f605c189db4f0e7b90960beea",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\keww1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "section_encoded_filename_indices",
+        "finding": "The archive has 27 files in groups 01-08, 11-22 and 31-37 for stories, poetry and essays. Do not fetch gap indices as if this were one contiguous sequence.",
+        "evidence": "keww1ps.pdf pages 9-10; official ZIP members",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kehb1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "English",
+      "title": "Hornbill",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 14,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 112,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kehb1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\kehb1\\kehb1dd.zip",
+      "archive_sha256": "3172a2ae9fb014a406f9b2627fd54c68e9459d8a4e6877eac0ab112aa070c373",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\kehb1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "section_numbering_and_stale_parameter",
+        "finding": "Publisher navigation uses six reading files and six writing files; archive indices 01-06 and 11-16 match. Parameter 14 is not the active file count.",
+        "evidence": "official catalogue special keHB1 navigation loops; kehb1ps.pdf pages 11-12",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kesp1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "English",
+      "title": "Snapshots Suppl.Reader English",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 6,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 60,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kesp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\kesp1\\kesp1dd.zip",
+      "archive_sha256": "8b2d2f9a93cb446bfd518fbcb718ef678ab233c3cff57f20485b4592676d3780",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\english\\kesp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keps1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Political Science",
+      "title": "Political Theory",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 140,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keps1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\political_science\\keps1\\keps1dd.zip",
+      "archive_sha256": "7a589ee4836ef00f936c488b246c6cb4ca951810b8dd17e44cb1a91fd0a7ff96",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\political_science\\keps1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keps2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Political Science",
+      "title": "India Constitution at Work",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 256,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keps2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\political_science\\keps2\\keps2dd.zip",
+      "archive_sha256": "bdb9de9641f42536612c2d407e9e7475c10822c8644fb1b087ff9ff43d8299cd",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\political_science\\keps2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kehs1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "History",
+      "title": "Themes in World History",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 200,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kehs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\history\\kehs1\\kehs1dd.zip",
+      "archive_sha256": "163045124e6dd36a150cc5098f216afe26322a76220a5c42757e614303a66810",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\history\\kehs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keec1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Economics",
+      "title": "Indian Economic Development",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 176,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keec1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\economics\\keec1\\keec1dd.zip",
+      "archive_sha256": "f0d77faf3de059c07a0a83348732156fc6dbd9d85fcab10096d8ca67c09527bd",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\economics\\keec1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kest1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Economics",
+      "title": "Statistics for Economics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 132,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kest1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\economics\\kest1\\kest1dd.zip",
+      "archive_sha256": "cd5c757123a1682b0992195abaecec558bd52860531e516ce6bf8be9a4ebddb8",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\economics\\kest1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kebs1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Business Studies",
+      "title": "Business Studies",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 292,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kebs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\business_studies\\kebs1\\kebs1dd.zip",
+      "archive_sha256": "e7469832693cbb6ed7fab6f780b197e1b83d203e72043e5aa7d416a88474d0ef",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\business_studies\\kebs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kuna1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Urdu",
+      "title": "Nai Awaz",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 20,
+      "observed_numbered_pdf_assets": 20,
+      "usable_pdf_assets": 21,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 144,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kuna1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuna1\\kuna1dd.zip",
+      "archive_sha256": "aadf9f4cd1adab7c28985810bebec0d12f1f032a9babbbf14189c743468f4668",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuna1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kudh1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Urdu",
+      "title": "Dhanak",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 27,
+      "observed_numbered_pdf_assets": 27,
+      "usable_pdf_assets": 28,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 92,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kudh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kudh1\\kudh1dd.zip",
+      "archive_sha256": "d9c46dbd6ed4b87bc9294212127d21f376dae087c06e5a41ea0ab75213cbdce6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kudh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kuga1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Urdu",
+      "title": "Gulistan e Adab",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 22,
+      "observed_numbered_pdf_assets": 22,
+      "usable_pdf_assets": 22,
+      "unusable_pdf_assets": 1,
+      "known_usable_pages": 220,
+      "page_total_incomplete": true,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kuga1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuga1\\kuga1dd.zip",
+      "archive_sha256": "3cf1bb1580f348f95c594fda49ca586038b9bf5d7289ea325a0dde30c25933dd",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuga1\\volume_manifest.json",
+      "source_mode": "official_individual_PDF_recovery_of_defective_archive",
+      "coverage_resolution": {
+        "status": "partial_publisher_defect_after_official_recovery",
+        "finding": "Replaced the unusable ZIP as primary view with 22 direct chapter assets plus prelims. Twenty-one chapters and prelims parse; chapter 04 remains malformed at the official source and fails both pypdf and Poppler.",
+        "evidence": "official_member_recovery/*.receipt.json; volume_manifest.json",
+        "review_origin": "automated_source_integrity_checks"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kuku1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Urdu",
+      "title": "Khyabane Urdu",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 15,
+      "observed_numbered_pdf_assets": 15,
+      "usable_pdf_assets": 16,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 87,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kuku1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuku1\\kuku1dd.zip",
+      "archive_sha256": "2a5ab4e4681356e1554cc2c08c95bdd5e2eee8a82690a2fafc3577c14330f943",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\urdu\\kuku1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kehe1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Home Science",
+      "title": "Human Ecology and Family Sciences Part I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kehe1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\home_science\\kehe1\\kehe1dd.zip",
+      "archive_sha256": "8c6f47407a424bc09a324019817df74ef0e92d5c99b00b8c2d72005a3dd1288b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\home_science\\kehe1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kehe2",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Home Science",
+      "title": "Human Ecology and Family Sciences Part II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 84,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kehe2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\home_science\\kehe2\\kehe2dd.zip",
+      "archive_sha256": "34a1969d9774b0734bfb318928c3144b2e3bf57bb5120bda0995cb3c14943584",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\home_science\\kehe2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khsr1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Creative Writing and Translation",
+      "title": "Srijan",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 228,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khsr1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\creative_writing_and_translation\\khsr1\\khsr1dd.zip",
+      "archive_sha256": "be21f086e77347a01219b1e4b08b9d252f988182610de4dcb84e00ae0748c552",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\creative_writing_and_translation\\khsr1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kucw1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Creative Writing and Translation",
+      "title": "Takhleequi Jauhar",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 166,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kucw1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\creative_writing_and_translation\\kucw1\\kucw1dd.zip",
+      "archive_sha256": "430f4e683a111a983317c6e16660dc407cc29b180ccc7e2daa2093e51c95a0ed",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\creative_writing_and_translation\\kucw1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kefa1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Fine Art",
+      "title": "An Introduction to Indian Art Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 144,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kefa1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\fine_art\\kefa1\\kefa1dd.zip",
+      "archive_sha256": "067f95c241af7d8bb977f9ab1ad7599a711b0e30cbf28466ae6f7936a077c570",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\fine_art\\kefa1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keip1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Informatics Practices",
+      "title": "Informatics Practices",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 184,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keip1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\informatics_practices\\keip1\\keip1dd.zip",
+      "archive_sha256": "0c6e42a6998cfe24be0ee786ad2fba093c769ee0b81be7ff1f5ed944d475df56",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\informatics_practices\\keip1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kecs1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Computer Science",
+      "title": "Computer Science",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 264,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kecs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\computer_science\\kecs1\\kecs1dd.zip",
+      "archive_sha256": "50778d5b19245db8486fdce946ec9758eb7883a991e06006da0fd00234af59d8",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\computer_science\\kecs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kehp1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Health and Physical Education",
+      "title": "Health and Physical Education",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 348,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kehp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\health_and_physical_education\\kehp1\\kehp1dd.zip",
+      "archive_sha256": "00670c54e7bdc007d9ec26cfb998f59687f24226bb8433533319296e38d88235",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\health_and_physical_education\\kehp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kebt1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Biotechnology",
+      "title": "Biotechnology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 328,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kebt1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\biotechnology\\kebt1\\kebt1dd.zip",
+      "archive_sha256": "929e5d4d2cc81397b7ef4738e78278499bccca0946c0e5c91289d3780a06f9ac",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\biotechnology\\kebt1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khtp1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sangeet",
+      "title": "Tabla evam Pakhawaj",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "no_English_option_listed_collect_available_language_titles",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 136,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khtp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sangeet\\khtp1\\khtp1dd.zip",
+      "archive_sha256": "b91bf297ef0a74674c44a015d51c863a059c9edf4e1cfcd4db2459a4edce0952",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sangeet\\khtp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khgv1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Sangeet",
+      "title": "Hindustani Sangeet Gayan Evam Vadan",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "no_English_option_listed_collect_available_language_titles",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 252,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khgv1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sangeet\\khgv1\\khgv1dd.zip",
+      "archive_sha256": "b9d1240b2850eeb7232258568d5fbfcc14d9fe93815dc71e00349a1eabbf25c3",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\sangeet\\khgv1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "keks1",
+      "class_selector": 11,
+      "grades": [
+        11
+      ],
+      "subject": "Knowledge Traditions Practices of India",
+      "title": "Knowledge Traditions Practices of India",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 184,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/keks1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\knowledge_traditions_practices_of_india\\keks1\\keks1dd.zip",
+      "archive_sha256": "80007c6cc84eae107ca821ef0cc82cbf2319dfe539c8fb3d54c853e55419654e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_11\\knowledge_traditions_practices_of_india\\keks1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lemh1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Mathematics",
+      "title": "Mathematics Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 236,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lemh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_12\\lemh1\\lemh1dd.zip",
+      "archive_sha256": "9f62775a4e63f2badfdfbc9bbc19f237bc5a134cef70b6e82cd8a4e022b95ace",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\mathematics\\lemh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_12\\lemh1\\NCERT_Class_12_Mathematics_Part_I.pdf"
+    },
+    {
+      "book_code": "lemh2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Mathematics",
+      "title": "Mathematics Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 248,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lemh2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_12\\lemh2\\lemh2dd.zip",
+      "archive_sha256": "becbc8564a9406f565e838ef78fba76bb12565aa04a45d96b4b62a04ab3cdcf8",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\mathematics\\lemh2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_maths_8_12\\2026-11-03\\class_12\\lemh2\\NCERT_Class_12_Mathematics_Part_II.pdf"
+    },
+    {
+      "book_code": "leph1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Physics",
+      "title": "Physics Part-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 236,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leph1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\physics\\leph1\\leph1dd.zip",
+      "archive_sha256": "f104fb717047d5578e78e18a024f2fe2317430f7c15ba31d347fa833863b5421",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\physics\\leph1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leph2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Physics",
+      "title": "Physics Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 152,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leph2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\physics\\leph2\\leph2dd.zip",
+      "archive_sha256": "3755527c4d7977349e832cea350481804f89df691562fb87655799d9303bb126",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\physics\\leph2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leac1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Accountancy",
+      "title": "Accountancy-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 204,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leac1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leac1\\leac1dd.zip",
+      "archive_sha256": "b08f4386dec1c6cce3665fd0f61f1754b17c4e3fc0f4f15c5bc1d445ae7ddff4",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leac1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leac2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Accountancy",
+      "title": "Accountancy Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 296,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leac2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leac2\\leac2dd.zip",
+      "archive_sha256": "095d44911177e54187f6d777ae3d0087ab02db9ea346582c3e7aff2068d95868",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leac2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leca1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Accountancy",
+      "title": "Computerised Accounting System",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 136,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leca1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leca1\\leca1dd.zip",
+      "archive_sha256": "2c68f05f9ae149ef39914a135ed82d471d3eac526be3e5771a0604421dadaae9",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\accountancy\\leca1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhsk1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sanskrit",
+      "title": "Bhaswati",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 10,
+      "observed_numbered_pdf_assets": 10,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 104,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhsk1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sanskrit\\lhsk1\\lhsk1dd.zip",
+      "archive_sha256": "72844988aa05d1522454c268e61c77e47d747dcee2a347bcd401e2914128778f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sanskrit\\lhsk1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhsk2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sanskrit",
+      "title": "Shaswati",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 132,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhsk2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sanskrit\\lhsk2\\lhsk2dd.zip",
+      "archive_sha256": "f3084c5412c11c388b3606d7a66d969143d50cb0e661184010f4e696b62535da",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sanskrit\\lhsk2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhat1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Hindi",
+      "title": "Antra",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 21,
+      "observed_numbered_pdf_assets": 17,
+      "usable_pdf_assets": 18,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 156,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2025-26"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025-26"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhat1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhat1\\lhat1dd.zip",
+      "archive_sha256": "5b45e5d7dd5c95a88ca2b6951763347dae356b315c2c5ede37c2971f47c5d68d",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhat1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "publisher_navigation_overrides_parameter",
+        "finding": "Publisher navigation explicitly displays poetry 1-9 and stories 10-17. All 17 assets are present although the dropdown parameter says 21.",
+        "evidence": "official catalogue special lhat1 loops; official ZIP members",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhar1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Hindi",
+      "title": "Aroh",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 15,
+      "observed_numbered_pdf_assets": 15,
+      "usable_pdf_assets": 16,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 140,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhar1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhar1\\lhar1dd.zip",
+      "archive_sha256": "84329268aa333a79783903c522972043a3e7f0c839d156c1a6593c41134efe86",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhar1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhvt1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Hindi",
+      "title": "Vitan",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 68,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhvt1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhvt1\\lhvt1dd.zip",
+      "archive_sha256": "82d72ae081a5c11a84d6f7fc30a563fcf5aada15ff5e5bade445a3cd678bcb5f",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhvt1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lhan1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Hindi",
+      "title": "Antral Bhag 2",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 4,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 44,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lhan1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhan1\\lhan1dd.zip",
+      "archive_sha256": "2c9aab5e8c9bc6ca43c08998e980f6ff0f5bf26df06c9b53cdaaf189116c9ca2",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\hindi\\lhan1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lekl1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "English",
+      "title": "Kaliedoscope",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 21,
+      "observed_numbered_pdf_assets": 21,
+      "usable_pdf_assets": 22,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 248,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lekl1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\lekl1\\lekl1dd.zip",
+      "archive_sha256": "4830ad477c475bd73ac5aee744b252c9debd4e4bb19b9a69ebeda0c55c117789",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\lekl1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "section_encoded_filename_indices",
+        "finding": "Four literary sections use separate index ranges. The 21 numbered assets match the catalogue total; file IDs are not a contiguous chapter sequence.",
+        "evidence": "lekl1ps.pdf pages 9-10; official ZIP members",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lefl1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "English",
+      "title": "Flamingo",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 116,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lefl1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\lefl1\\lefl1dd.zip",
+      "archive_sha256": "4edae927da3acd70e228907d44a838f990858c9e7b34316eb9350f07de6eee29",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\lefl1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "section_encoded_filename_indices",
+        "finding": "Eight prose and five poetry entries in the contents correspond to 13 source files, indexed 01-08 and 11-15.",
+        "evidence": "lefl1ps.pdf page 13; official ZIP members",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "levt1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "English",
+      "title": "Vistas",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 80,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/levt1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\levt1\\levt1dd.zip",
+      "archive_sha256": "cc396ea54e2fa7467f8d3694cf510115e8b54ca87e4a1c7c33d593f907cf99ee",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\english\\levt1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lebo1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Biology",
+      "title": "Biology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 240,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lebo1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\biology\\lebo1\\lebo1dd.zip",
+      "archive_sha256": "ac5d6b9c58dda2ba54954951ffcf706efddd8719da21b79e64f6a37875b0e299",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\biology\\lebo1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lehs1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "History",
+      "title": "Themes in Indian History-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 128,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lehs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs1\\lehs1dd.zip",
+      "archive_sha256": "9bfb3f4bb1504da5a90278db8bc4393b6d05484505d32cf8b4a60618e53bbd62",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lehs2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "History",
+      "title": "Themes in Indian History-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 128,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lehs2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs2\\lehs2dd.zip",
+      "archive_sha256": "5644e2d294b06690a61536370e8ae46e416d275f81e66259911988171aed906b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lehs3",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "History",
+      "title": "Themes in Indian History-III",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 132,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lehs3dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs3\\lehs3dd.zip",
+      "archive_sha256": "aa2935b2eabc46f8d2a9e2ca3d8a8659551d8a607a16241c33f714240216b53e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\history\\lehs3\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "legy1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Geography",
+      "title": "Fundamentals of Human Geography",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 92,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/legy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy1\\legy1dd.zip",
+      "archive_sha256": "ad2b1f78c2c8038735ef506b3538b12980171973c4b41cd4760496b617c3fc4a",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "legy3",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Geography",
+      "title": "Practical Work in Geography Part II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 76,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/legy3dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy3\\legy3dd.zip",
+      "archive_sha256": "c49eb85b6e096b05b29b2986d6755fafbced81dafdc5b50c30fe33b2bb9729e2",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy3\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "legy2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Geography",
+      "title": "India -People And Economy",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 11,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 127,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/legy2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy2\\legy2dd.zip",
+      "archive_sha256": "e7a8a13e144b11331fb5ab59bf919a0f3c7aee3a8f9283e23bd11bb2e2dcf06b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\geography\\legy2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lepy1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Psychology",
+      "title": "Psychology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 160,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lepy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\psychology\\lepy1\\lepy1dd.zip",
+      "archive_sha256": "6e910c5bb6446caad8d3b4982538f42ab03e4bd7d6530f319e1cd3c88ec8574b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\psychology\\lepy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lesy1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sociology",
+      "title": "Indian Society",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 152,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lesy1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sociology\\lesy1\\lesy1dd.zip",
+      "archive_sha256": "61b493f71fcf90029ebfe8dc8b43945da4a97b51d635ef9f93890ed833d51e8a",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sociology\\lesy1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lesy2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sociology",
+      "title": "Social Change and Development in India",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 144,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lesy2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sociology\\lesy2\\lesy2dd.zip",
+      "archive_sha256": "081f5b3098047f34cdc4d40d12a3c6dc57472015fc57874f55247e1a3171b6d4",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sociology\\lesy2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lech1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Chemistry",
+      "title": "Chemistry-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 172,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lech1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\chemistry\\lech1\\lech1dd.zip",
+      "archive_sha256": "e6ce7720de2c388642ce8e7d62f25449ecc03f165090c6c3ddf331d339a17d22",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\chemistry\\lech1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lech2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Chemistry",
+      "title": "Chemistry-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lech2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\chemistry\\lech2\\lech2dd.zip",
+      "archive_sha256": "cbcf498736d13a99cdc06afecbeb2dced7ad238a6a297a75cc27613fe30baa96",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\chemistry\\lech2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leps1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Political Science",
+      "title": "Contemporary World Politics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 126,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leps1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\political_science\\leps1\\leps1dd.zip",
+      "archive_sha256": "d18c633d0dc2875a386eacc7993bfdb34d9e72f071fb4c1366fe5e58d350f678",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\political_science\\leps1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leps2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Political Science",
+      "title": "Politics in India Since Independence",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 172,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leps2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\political_science\\leps2\\leps2dd.zip",
+      "archive_sha256": "84d8f9f6d72a6ce5dc3aca086addd0426ee64a7be4d6835494efdd8f11426039",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\political_science\\leps2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leec2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Economics",
+      "title": "Introductory Microeconomics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 5,
+      "observed_numbered_pdf_assets": 5,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 100,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leec2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\economics\\leec2\\leec2dd.zip",
+      "archive_sha256": "b63622d317f99b442a57217d8e0a0a2f8475f755e9d78bcf6847f894b85d4197",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\economics\\leec2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leec1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Economics",
+      "title": "Introductory Macroeconomics",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 116,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leec1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\economics\\leec1\\leec1dd.zip",
+      "archive_sha256": "10ec76997e1be1d434931f288ec3bf5bd3ed57f19abc76cba208d1b0d471beb5",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\economics\\leec1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lebs1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Business Studies",
+      "title": "Business Studies-I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 9,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 224,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lebs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\business_studies\\lebs1\\lebs1dd.zip",
+      "archive_sha256": "7fe4dd7dfc0c8ee1b9f4e868823613b01aa9706a536cb8a8a4c3ea95639437cf",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\business_studies\\lebs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lebs2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Business Studies",
+      "title": "Business Studies-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 3,
+      "observed_numbered_pdf_assets": 3,
+      "usable_pdf_assets": 4,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 100,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lebs2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\business_studies\\lebs2\\lebs2dd.zip",
+      "archive_sha256": "3c1c521f07331d31b851e0395dd1d982fd742b944b5cd2aa83aa76255a955096",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\business_studies\\lebs2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lehe1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Home Science",
+      "title": "Human Ecology and Family Sciences Part I",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 176,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lehe1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\home_science\\lehe1\\lehe1dd.zip",
+      "archive_sha256": "c0f7aa5d9f6e5956a000370e219322fe543fe38dc5ebd9afed70a6752ea35d7b",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\home_science\\lehe1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lehe2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Home Science",
+      "title": "Human Ecology and Family Sciences Part II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 160,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lehe2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\home_science\\lehe2\\lehe2dd.zip",
+      "archive_sha256": "6f5e4ec99066e8a3ec68a74c4316aaa0dd569af5b77266100be8b86b71308d46",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\home_science\\lehe2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "luga1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Gulistan-e- Adab",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 12,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 135,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/luga1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luga1\\luga1dd.zip",
+      "archive_sha256": "e536b6fdfdd7ba0c3c880fe67e6eb5c1b121168461dda8d155d327cabe14ccb6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luga1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "publisher_count_and_edition_disagreement_unresolved",
+        "finding": "Eleven numbered PDF files are available in the ZIP. Nominal index 12 returns HTTP 404. The 2019-20 front matter and retained content have inconsistent page extents; full original-edition coverage is not certified.",
+        "evidence": "luga1ps.pdf pages 11-13; volume manifest; luga112.receipt.json",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "luku1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Khayaban-e-Urdu",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 6,
+      "observed_numbered_pdf_assets": 6,
+      "usable_pdf_assets": 7,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 144,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/luku1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luku1\\luku1dd.zip",
+      "archive_sha256": "88f5ee3316bcadb249d95eb7b66aeb724fbcfdea6ce097ec265edc5d4a02c617",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luku1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "luna1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Nai Awaz",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/luna1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luna1\\luna1dd.zip",
+      "archive_sha256": "ef302df71895f7bd12cf57ad2bb5ffa56c770f358d149814ba3b396dc49ee43d",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\luna1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "ludh1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Dhanak",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 95,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/ludh1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\ludh1\\ludh1dd.zip",
+      "archive_sha256": "05e70af306beab6f089c9a74d16ad0b12bf18a60f79e6fb9a16c4a2a3ea35998",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\urdu\\ludh1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "khsr2",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Creative Writing & Translation",
+      "title": "Srijan-II",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 208,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/khsr2dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\creative_writing_translation\\khsr2\\khsr2dd.zip",
+      "archive_sha256": "86f7950aee0a6c8b86b2690de70093d81ab36b8339746acf6a7366b86111c136",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\creative_writing_translation\\khsr2\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lucw1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Creative Writing & Translation",
+      "title": "Takhleequi Jauhar",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 11,
+      "observed_numbered_pdf_assets": 11,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 196,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lucw1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\creative_writing_translation\\lucw1\\lucw1dd.zip",
+      "archive_sha256": "88511d043357bfbc932a7defb91e489ea8dac5eeb7759ccf6c9b1463e3dd0df3",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\creative_writing_translation\\lucw1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lefa1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Fine Art",
+      "title": "An Introduction to Indian Art Part-II",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 8,
+      "observed_numbered_pdf_assets": 8,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 164,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lefa1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\fine_art\\lefa1\\lefa1dd.zip",
+      "archive_sha256": "d54c401d253d243a15ea8b6ef93736daa6fe3bcd2582fa2c85520f192fc5fa84",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\fine_art\\lefa1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lecs1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Computer Science",
+      "title": "Computer Science",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 260,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lecs1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\computer_science\\lecs1\\lecs1dd.zip",
+      "archive_sha256": "3cf1a3a9ea01c29d5fc97632c64117cd04c6f0b5d27e35c65a152babed174409",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\computer_science\\lecs1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "leip1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Informatics Practices",
+      "title": "Informatics Practices",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 220,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/leip1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\informatics_practices\\leip1\\leip1dd.zip",
+      "archive_sha256": "43206ec038a172096055ade5b8085dd6a48a01c3e7a5e8f3f4593db7fcdb9abd",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\informatics_practices\\leip1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lebt1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Biotechnology",
+      "title": "Biotechnology",
+      "language_catalogue_inferred": "English",
+      "selection_reason": "English_medium_non_language_subject",
+      "catalogue_chapter_parameter": 13,
+      "observed_numbered_pdf_assets": 13,
+      "usable_pdf_assets": 14,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 356,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2025-26"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025-26"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lebt1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\biotechnology\\lebt1\\lebt1dd.zip",
+      "archive_sha256": "051db31bcf61fcda865c1568b721e8f9b917463b8dc6337269d60d4cd78f200e",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\biotechnology\\lebt1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lstp1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sangeet",
+      "title": "Tabla evam Pakhawaj",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "no_English_option_listed_collect_available_language_titles",
+      "catalogue_chapter_parameter": 7,
+      "observed_numbered_pdf_assets": 7,
+      "usable_pdf_assets": 8,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 124,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2025-26"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025-26"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lstp1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sangeet\\lstp1\\lstp1dd.zip",
+      "archive_sha256": "c06fda46bbd5a4328bc078752dd95acea680dc4aaa1bf644c9c6fdc2e103d0ba",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sangeet\\lstp1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "lsgv1",
+      "class_selector": 12,
+      "grades": [
+        12
+      ],
+      "subject": "Sangeet",
+      "title": "Hindustani Sangeet Gayan Evam Vaadan",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "no_English_option_listed_collect_available_language_titles",
+      "catalogue_chapter_parameter": 9,
+      "observed_numbered_pdf_assets": 9,
+      "usable_pdf_assets": 10,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 200,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2025-26"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025-26"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/lsgv1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sangeet\\lsgv1\\lsgv1dd.zip",
+      "archive_sha256": "3456ffcab4132d6cd0717e52fa2a8bff1f3a3d98746e8d0b3a95bce9475470e5",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\class_12\\sangeet\\lsgv1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kham1",
+      "class_selector": 13,
+      "grades": [
+        11,
+        12
+      ],
+      "subject": "Hindi",
+      "title": "Abhivyakti Aur Madhyam",
+      "language_catalogue_inferred": "Hindi",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 16,
+      "observed_numbered_pdf_assets": 16,
+      "usable_pdf_assets": 17,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 220,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2025-26"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2025-26"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kham1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\hindi\\kham1\\kham1dd.zip",
+      "archive_sha256": "32a3d856bb76319001a308cc7d4d017d9b0cd8f386bcc259eec895d874f43581",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\hindi\\kham1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "klss1",
+      "class_selector": 13,
+      "grades": [
+        11,
+        12
+      ],
+      "subject": "Sanskrit",
+      "title": "Sanskrit Sahitya parichay",
+      "language_catalogue_inferred": "Sanskrit",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 12,
+      "observed_numbered_pdf_assets": 12,
+      "usable_pdf_assets": 13,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 176,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [
+        "Reprint 2026-27"
+      ],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2026-27"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/klss1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\sanskrit\\klss1\\klss1dd.zip",
+      "archive_sha256": "32d16ea1c8e0b23e59ac8c5fe56523b12628648c4faf5d04a02c53160e21b8e6",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\sanskrit\\klss1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kuza1",
+      "class_selector": 13,
+      "grades": [
+        11,
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Zuban-O-Adab ki Tareekh",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 23,
+      "observed_numbered_pdf_assets": 23,
+      "usable_pdf_assets": 28,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 237,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2019-20"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kuza1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\kuza1\\kuza1dd.zip",
+      "archive_sha256": "939e99c1792bd87c810d3f036fdb51998e01d3318598aa2fe3aab8d526ae696c",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\kuza1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "juuq1",
+      "class_selector": 13,
+      "grades": [
+        11,
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Urdu Qwaid aur Insha",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 24,
+      "observed_numbered_pdf_assets": 22,
+      "usable_pdf_assets": 23,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 135,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/juuq1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\juuq1\\juuq1dd.zip",
+      "archive_sha256": "1ab25bb21d236c0713ba9bec5c05d063fc3cf7638aa22405ce3d584d3db102ae",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\juuq1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": {
+        "status": "catalogue_count_conflict_documented",
+        "finding": "The ZIP contains 22 numbered PDFs and prelims. Source contents end at printed page 123; source physical page count is 12 prelims plus 123 text pages. Additional nominal indices 23 and 24 return HTTP 404. Retain this publisher count discrepancy.",
+        "evidence": "juuq1ps.pdf pages 11-12; individual URL receipts in official_member_recovery; source page counts",
+        "review_origin": "assistant_source_inspection"
+      },
+      "existing_math_reading_copy": null
+    },
+    {
+      "book_code": "kuiz1",
+      "class_selector": 13,
+      "grades": [
+        11,
+        12
+      ],
+      "subject": "Urdu",
+      "title": "Izhar Aur Zara-e-Izhar",
+      "language_catalogue_inferred": "Urdu",
+      "selection_reason": "language_subject_all_listed_titles",
+      "catalogue_chapter_parameter": 4,
+      "observed_numbered_pdf_assets": 4,
+      "usable_pdf_assets": 5,
+      "unusable_pdf_assets": 0,
+      "known_usable_pages": 156,
+      "page_total_incomplete": false,
+      "edition_markers_sampled": [],
+      "year_strings_in_sample_not_an_edition_certification": [
+        "2020-21"
+      ],
+      "archive_url": "https://ncert.nic.in/textbook/pdf/kuiz1dd.zip",
+      "archive_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\kuiz1\\kuiz1dd.zip",
+      "archive_sha256": "26ebb3b5645b611d73a17cea649ebcdad1b86a2b52d19ddc51d6765d21ba4c90",
+      "volume_manifest_path": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\ncert_all_subjects_8_12\\2026-11-03\\common_11_12\\urdu\\kuiz1\\volume_manifest.json",
+      "source_mode": "official_ZIP_members",
+      "coverage_resolution": null,
+      "existing_math_reading_copy": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PASS_for_available_source_acquisition_with_documented_publisher_gaps",
+  "selected_volumes": 145,
+  "volume_manifests_present": 145,
+  "valid_PDF_assets": 1605,
+  "unusable_publisher_assets": [
+    {
+      "book_code": "kuga1",
+      "filename": "kuga104.pdf",
+      "error": "PdfStreamError: Stream has ended unexpectedly"
+    }
+  ],
+  "known_source_pages": 25175,
+  "archive_hashes_checked": 145,
+  "current_source_file_hashes_checked": 1606,
+  "unique_usable_pdf_hashes": 1605,
+  "local_library_cards": 145,
+  "local_library_links_checked": 1903,
+  "all_local_links_exist": true,
+  "broken_chapter_not_linked_as_readable": true,
+  "previous_sources_unchanged": true,
+  "raw_sources_git_ignored": true,
+  "publisher_gaps_preserved": [
+    {
+      "type": "not_yet_available",
+      "class": 9,
+      "subject": "ICT",
+      "finding": "The active publisher menu says Coming Soon and supplies no active book download."
+    },
+    {
+      "type": "damaged_publisher_asset",
+      "class": 11,
+      "subject": "Urdu",
+      "book_code": "kuga1",
+      "asset": "kuga104.pdf",
+      "finding": "Malformed in both official ZIP and direct individual download; both pypdf and Poppler fail. Other 21 chapters and prelims recovered from official URLs."
+    },
+    {
+      "type": "unresolved_publisher_count_and_edition_disagreement",
+      "class": 12,
+      "subject": "Urdu",
+      "book_code": "luga1",
+      "finding": "All 11 numbered archive PDFs retained. Catalogue parameter is 12; nominal chapter-12 URL returns 404. Older front matter and content page extents conflict, so full original-edition completeness is not certified."
+    }
+  ]
+}

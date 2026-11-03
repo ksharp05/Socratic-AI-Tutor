@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chapter",
+    "gold_passage_ids",
+    "id",
+    "is_gold_label",
+    "label_status",
+    "origin",
+    "query",
+    "retrieval_target_type",
+    "split"
+  ],
+  "properties": {
+    "chapter": {
+      "type": "string"
+    },
+    "gold_passage_ids": {
+      "type": "null"
+    },
+    "id": {
+      "type": "string"
+    },
+    "is_gold_label": {
+      "type": "boolean"
+    },
+    "label_status": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "query": {
+      "type": "string"
+    },
+    "retrieval_target_type": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    }
+  }
+}

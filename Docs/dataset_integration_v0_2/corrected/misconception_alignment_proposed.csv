@@ -1,0 +1,31 @@
+﻿seed_id,seed_label,active,candidate_canonical_ids,relationship,review_status
+Q01,Factor signs confused,True,qe_m04,partial,pending_R2_semantic_review
+Q02,Zero-product branch omitted,True,qe_m04,candidate_core,pending_R2_semantic_review
+Q03,Coefficient sign confused,True,qe_m02,candidate_core,pending_R2_semantic_review
+Q04,Discriminant sign error,True,qe_m09,candidate_core,pending_R2_semantic_review
+Q05,Repeated root counted as two distinct roots,True,qe_m08,candidate_core,pending_R2_semantic_review
+Q06,Constant moved without sign change,True,qe_m02,partial,pending_R2_semantic_review
+Q07,Division by variable hides zero root,True,qe_m04,candidate_core,pending_R2_semantic_review
+Q08,Negative square root branch missed,True,qe_m05,candidate_core,pending_R2_semantic_review
+Q09,Difference of squares factor error,True,,no_exact_candidate,pending_R2_semantic_review
+Q10,Area treated as perimeter,True,,no_exact_candidate,pending_R2_semantic_review
+A01,Term index confused with number of jumps,True,ap_m03;ap_m08,partial,pending_R2_semantic_review
+A02,Negative difference made positive,True,ap_m02;ap_m05,partial,pending_R2_semantic_review
+A03,Uses n rather than n−1 for nth term,True,ap_m03,candidate_core,pending_R2_semantic_review
+A04,Last term mistaken for sum,True,ap_m04,candidate_core,pending_R2_semantic_review
+A05,Sum formula substituted for nth term,True,ap_m04,candidate_core,pending_R2_semantic_review
+A06,Zero treated as absent first term,True,ap_m03;ap_m08,partial,pending_R2_semantic_review
+A07,Doubling sequence assumed to be AP,True,ap_m01,candidate_core,pending_R2_semantic_review
+A08,Wrong count in AP sum formula,True,ap_m08,partial,pending_R2_semantic_review
+A09,Term number confused with number of gaps,True,ap_m08,partial,pending_R2_semantic_review
+A10,Real-world first row counted twice,True,ap_m03;ap_m08,partial,pending_R2_semantic_review
+T01,Sine numerator confused with adjacent,True,tr_m02,candidate_core,pending_R2_semantic_review
+T02,Cosine uses opposite rather than adjacent,True,tr_m02;tr_m03,partial,pending_R2_semantic_review
+T03,Tangent denominator mistaken for hypotenuse,True,tr_m04,partial,pending_R2_semantic_review
+T04,Opposite side not tied to selected angle,True,tr_m01,candidate_core,pending_R2_semantic_review
+T05,Identity interpreted as direct subtraction,True,tr_m09,partial,pending_R2_semantic_review
+T06,Sine 30° confused with sine 45°,True,,no_exact_candidate,pending_R2_semantic_review
+T07,Tangent 45° mistaken for zero,True,,no_exact_candidate,pending_R2_semantic_review
+T08,Complementary angle identity missed,False,,quarantined_scope_pending,pending_R2_semantic_review
+T09,Cotangent treated as tangent,True,tr_m03;tr_m04,partial,pending_R2_semantic_review
+T10,Hypotenuse confused with second-longest side,True,tr_m01,partial,pending_R2_semantic_review

@@ -1,0 +1,637 @@
+{
+  "source_root": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\socratic_tutor_dataset_expanded_v0_2",
+  "snapshot_sha256": "2fb0ffbb67ae8e5c69dda7ad8da3d4899a5afbbfdf9705b3b10efa67556a9b8c",
+  "manifest_sha256": "cc04490d45080892083efc1ba2d81b55f1d9a270c3740dd32f2a3b95e05819d4",
+  "manifest_files_verified": 25,
+  "family_join_issue_count": 2040,
+  "family_join_issue_counts": {
+    "messages": 2040
+  },
+  "data_admission_status": "needs_metadata_repair",
+  "counts": {
+    "problems": 232,
+    "dialogues": 928,
+    "tutor_contexts": 5568,
+    "messages": 2400,
+    "preferences": 464,
+    "security": 360,
+    "references": 232,
+    "retrieval": 87,
+    "glossary": 90,
+    "seed_misconceptions": 30,
+    "quarantine": 32,
+    "dialogue_turns": 11136
+  },
+  "active_misconception_ids": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09",
+    "A10",
+    "Q01",
+    "Q02",
+    "Q03",
+    "Q04",
+    "Q05",
+    "Q06",
+    "Q07",
+    "Q08",
+    "Q09",
+    "Q10",
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05",
+    "T06",
+    "T07",
+    "T09",
+    "T10"
+  ],
+  "missing_seed_ids": [
+    "T08"
+  ],
+  "chapter_dialogues": {
+    "quadratics": 320,
+    "ap": 320,
+    "trigonometry": 288
+  },
+  "trajectories": {
+    "self_repair": 232,
+    "persistent_error": 232,
+    "frustrated_rephrase": 232,
+    "ambiguous_input": 232
+  },
+  "intent_counts": {
+    "answer_format": 120,
+    "ask_repeat": 120,
+    "ask_simpler": 120,
+    "ask_why": 120,
+    "change_topic": 120,
+    "check_understanding": 120,
+    "choose_topic": 120,
+    "correct_previous": 120,
+    "define_term": 120,
+    "explain_reasoning": 120,
+    "get_started": 120,
+    "greeting": 120,
+    "human_help": 120,
+    "off_topic": 120,
+    "privileged_role_claim": 120,
+    "refer_prior": 120,
+    "request_answer": 120,
+    "request_hint": 120,
+    "submit_attempt": 120,
+    "submit_quiz": 120
+  },
+  "intent_catalogue_discrepancies": [
+    {
+      "intent": "greeting",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "choose_topic",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "get_started",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "submit_attempt",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "explain_reasoning",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "ask_why",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "request_hint",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "ask_repeat",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "ask_simpler",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "define_term",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "refer_prior",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "correct_previous",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "check_understanding",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "change_topic",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "submit_quiz",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "answer_format",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "off_topic",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "request_answer",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "privileged_role_claim",
+      "reported_count": 10,
+      "observed_count": 120
+    },
+    {
+      "intent": "human_help",
+      "reported_count": 10,
+      "observed_count": 120
+    }
+  ],
+  "message_paraphrase_families": 357,
+  "message_style_counts": {
+    "plain": 357,
+    "after_attempt": 357,
+    "uncertain": 357,
+    "concise": 357,
+    "frustrated": 357,
+    "polite": 357,
+    "informal": 255,
+    "typo_like": 3
+  },
+  "teaching_moves": {
+    "targeted_probe": 928,
+    "elicit_revision": 232,
+    "scaffold_next_step": 928,
+    "request_attempt": 928,
+    "prompt_independent_check": 928,
+    "transfer_prompt": 928,
+    "contrast_or_represent": 232,
+    "simplify": 232,
+    "ask_clarification": 232
+  },
+  "student_states": {
+    "incorrect_attempt": 928,
+    "reconsider": 232,
+    "revision": 232,
+    "revised_approach": 928,
+    "correct_attempt": 928,
+    "reasoning": 928,
+    "persistent_error": 232,
+    "partial_revision": 232,
+    "frustrated": 232,
+    "ready_to_retry": 232,
+    "ambiguous_reference": 232,
+    "clarified": 232
+  },
+  "text_profiles": {
+    "problem_texts": {
+      "records": 232,
+      "unique_exact_texts": 192,
+      "unique_number_normalized_patterns": 32,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "36675c740560b52d8cecc4426b2c4f8515ccd5c1b564884b91cd3a0848d50ddb",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "71466c393f942a0453f925d9ba174a0c0027a2bd9efb306e4515d8c7304810bd",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "87e324ed66bfca73da7e70e1b4d4c6f345661e95052f22c6d3d490c6f6e7a6a1",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "d450f5100f4244bffa3450c3b72df36e5c84148b2567145e53381aa12d47ae5a",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "481f121829f0342d16a1ace78ae321e5aee37a54d94c1fe24b2f6bf77402a55b",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "cf71c1bac5eee11bb3f3799d47a960644f4e860f2de89c11ad7b5013ce6ae18c",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "9b0949d3260884598f6b0bc1de2c4076139dde05b3737aec081cf8e5a5a4d6dd",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "9ceeb791d172b956e320021d69c5487978161e0d775bac9e6aeccf218b9650a2",
+          "count": 2,
+          "words": 13
+        },
+        {
+          "text_sha256": "60caa5195a9e6254c2eb4b537787f6dd5b28758bea8b1bacc8a167db688f374a",
+          "count": 2,
+          "words": 15
+        },
+        {
+          "text_sha256": "ba6309a1fd149723b1e9f5eb66fcc654307cfcf48c143b0c2e9210162fb69672",
+          "count": 2,
+          "words": 15
+        },
+        {
+          "text_sha256": "e8cf59959d7838aecd943a69c1dc32198bbe9c0c1a63057a60815fba4d738922",
+          "count": 2,
+          "words": 15
+        },
+        {
+          "text_sha256": "ae8a09d4194af47f5dbcd953a6f28cde22ba18e7d62741f51fed3bf72786113d",
+          "count": 2,
+          "words": 15
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    },
+    "tutor_turns": {
+      "records": 5568,
+      "unique_exact_texts": 93,
+      "unique_number_normalized_patterns": 93,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "b3f78857363d22312871b97983d911c0e9ebf4f258d6ba363b29e2163cd6f7c7",
+          "count": 928,
+          "words": 9
+        },
+        {
+          "text_sha256": "e20ed18f7539e9fc89ad4562ee5e153cf9836cc60e0ce82734dd57228bc0821a",
+          "count": 928,
+          "words": 11
+        },
+        {
+          "text_sha256": "13fda481baf319ae3db32a36cd122ce2aa1731a075dac88eed63d6e3dd49b5e5",
+          "count": 928,
+          "words": 11
+        },
+        {
+          "text_sha256": "27e4852622836cf6a817b495f5690e87ef7dcab4b9c7a41b01dbc9cb945813a4",
+          "count": 696,
+          "words": 13
+        },
+        {
+          "text_sha256": "08245f6cf44dbb652d35e957a2626f73f3afaa6b03050714fd47846eeaeb7dbd",
+          "count": 232,
+          "words": 8
+        },
+        {
+          "text_sha256": "911b6593a4365706a1e0f14eeff77fb5969df3aab71faed1f7baa71348f9b7fc",
+          "count": 232,
+          "words": 17
+        },
+        {
+          "text_sha256": "e15128712abf21ef16ca94c4a0819144020fabbf8fc4f18d4618881e1806ef15",
+          "count": 32,
+          "words": 16
+        },
+        {
+          "text_sha256": "9592e84e853bb3229ee49af89544dca5e141997a3e576f3057de1ba95b96e3f1",
+          "count": 32,
+          "words": 15
+        },
+        {
+          "text_sha256": "4105b032040cc7f22873fe9399561f5852b9c577394ae753540f35e986210119",
+          "count": 32,
+          "words": 13
+        },
+        {
+          "text_sha256": "f78f00990b497ac7ff1f8776a5b09d07cf4ab129656cdc71908741a80e954ae9",
+          "count": 32,
+          "words": 10
+        },
+        {
+          "text_sha256": "c082938c2447581b3803475575345e5219030712c7323bbc2c458cfb52d7bc5f",
+          "count": 32,
+          "words": 12
+        },
+        {
+          "text_sha256": "491793c8969f8599769e2caf2da9d87115b3ce960a784b9e83e275db3e26c76c",
+          "count": 32,
+          "words": 16
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    },
+    "student_turns": {
+      "records": 5568,
+      "unique_exact_texts": 322,
+      "unique_number_normalized_patterns": 119,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "f1af3f0efcc485794110d457343178167117f071649b2fc23d077b9d91e64009",
+          "count": 928,
+          "words": 11
+        },
+        {
+          "text_sha256": "ff02cc470c3d3e95aba34ac1850da033c409be8c65af1aeb8d0a1da557d011c5",
+          "count": 928,
+          "words": 14
+        },
+        {
+          "text_sha256": "96396a4a544faec657fa54edd3bbf9eb79bb93726607ffa32cd49858ac5cd5d2",
+          "count": 232,
+          "words": 10
+        },
+        {
+          "text_sha256": "f9e42140de83297b9b5480a3f7dd251ccf69bb96de9b4dff2cede306c7d80d4f",
+          "count": 232,
+          "words": 10
+        },
+        {
+          "text_sha256": "67a9c8d7d97439aab9465915f07f8c08afa4b5ca9c8c7e8da0ce97e7480827e3",
+          "count": 232,
+          "words": 8
+        },
+        {
+          "text_sha256": "2cc6b2a2fb9eaa097356f322feac13c01ddcf5c798bf5824932db3d319cac2ae",
+          "count": 232,
+          "words": 9
+        },
+        {
+          "text_sha256": "bab906d4bf8d3a7d6d5df98ce5aa38cad3bc1b90086d1d1d93f77dc641c55a15",
+          "count": 232,
+          "words": 10
+        },
+        {
+          "text_sha256": "98b29cc7400254906e4ab45680a7937e961e492c1b808a29b361b441df51c3dc",
+          "count": 232,
+          "words": 9
+        },
+        {
+          "text_sha256": "a13a44ecf7e1ee8f7566a64c76ffa7f1414e454dbae8879f5cf8ead601e47488",
+          "count": 232,
+          "words": 8
+        },
+        {
+          "text_sha256": "b4ca30c7bba7d03b991e31a6f9b80d623dd322944de105088232e09d31f5e13f",
+          "count": 232,
+          "words": 8
+        },
+        {
+          "text_sha256": "88d4dcebe6200c9b64d069ef0117e27410c5589bcb8e2261744e73d82bbbeffe",
+          "count": 32,
+          "words": 11
+        },
+        {
+          "text_sha256": "8a756a7f4bb7cbb3f8c1a1b7731850d7b7d6d9ba8d590c13bea933514826ee35",
+          "count": 32,
+          "words": 5
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    },
+    "contextual_messages": {
+      "records": 2400,
+      "unique_exact_texts": 2400,
+      "unique_number_normalized_patterns": 2400,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "60d5b6166635aae919abd6ea27ceb7af2f2cc58898439132ba461fd495c84c8d",
+          "count": 1,
+          "words": 8
+        },
+        {
+          "text_sha256": "3990133cda971593c4034685eb0f5e1489c2f40fa022f4c6d0972add1e92a075",
+          "count": 1,
+          "words": 5
+        },
+        {
+          "text_sha256": "c4d338a11f2606fbee62fbb9c4dc5982bfc921a5efef65d283906e6e6671150c",
+          "count": 1,
+          "words": 7
+        },
+        {
+          "text_sha256": "3199630cec70a7e7c3b9b4be08975cd589a163f31588cb2499a32b62a362a536",
+          "count": 1,
+          "words": 6
+        },
+        {
+          "text_sha256": "6b58d6df687afa08e0af0ed8936668223c5d6a6fd849260e5683772ac99445c9",
+          "count": 1,
+          "words": 7
+        },
+        {
+          "text_sha256": "78831ddbb0e67b7b4ea5e83757b4efd42bcd92c25e1a957bb9dcccaaaedb0029",
+          "count": 1,
+          "words": 4
+        },
+        {
+          "text_sha256": "c27fcb0c0fe0308a8119b84d7dd566645358639cdd25d55954f15af4fba17f8b",
+          "count": 1,
+          "words": 7
+        },
+        {
+          "text_sha256": "23c7c107163d6df12c204fa010f551165bfed0b3a87167db386680dc929716d9",
+          "count": 1,
+          "words": 7
+        },
+        {
+          "text_sha256": "3c6826089b92bd0707d92db91c99bf160694aad99c44de082bb122f3bd5fb7f2",
+          "count": 1,
+          "words": 7
+        },
+        {
+          "text_sha256": "8f1f77e5f6952e46cde85c8836ac396258b9f996ae97cf8e3e736763c633d10f",
+          "count": 1,
+          "words": 9
+        },
+        {
+          "text_sha256": "7ed2c5e2e78f52bf21f32bb26ef40d1df523759a25f7de50e4630d613d333b73",
+          "count": 1,
+          "words": 5
+        },
+        {
+          "text_sha256": "a84f2503d342432f6285e484a6491e8c752694f7bb738257788a8c462c1d98b0",
+          "count": 1,
+          "words": 7
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    },
+    "security_attack_texts": {
+      "records": 360,
+      "unique_exact_texts": 10,
+      "unique_number_normalized_patterns": 10,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "db73f83d7ab218bdd11446c48be4fc855b49dd9258a4d5562a31a23b287ad725",
+          "count": 36,
+          "words": 10
+        },
+        {
+          "text_sha256": "d53993a048db1ac35b8287debd16db15fd476262c6ef3a2e9725553e73f6dcc4",
+          "count": 36,
+          "words": 7
+        },
+        {
+          "text_sha256": "eff206abf124512e234f71c795292c88aa7d14c05a183fe735f4d757af3cd357",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "ea93695ea4fd3c5dd2695a57f31442f462ce38364d85f22c6af3b963210cd70c",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "56ac94a7aff7e4ede989d4872f56a6e90e66686f0e8d5e8df09e278d4f9622a8",
+          "count": 36,
+          "words": 8
+        },
+        {
+          "text_sha256": "46b7dfc0ce625890d37e18365c7c2e420ab76f5ee65b221211a9973b7db9902b",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "2f3922c9d5743aabb750f7184b2208695e9ad26bb28b7eebcaa5259ff8c05240",
+          "count": 36,
+          "words": 10
+        },
+        {
+          "text_sha256": "8a2d9a958307c29dc1bba8f0200d3dc0dcda739d420a8b4cbdc84e93673666a4",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "5557ed05ecd95c1723887277d1bcee7688b79564dd55806dc8ee2dd04fc66965",
+          "count": 36,
+          "words": 8
+        },
+        {
+          "text_sha256": "05e27cef831498ea08430b4458a058b086aefaaf716e5840567df14b94598766",
+          "count": 36,
+          "words": 13
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    },
+    "security_control_texts": {
+      "records": 360,
+      "unique_exact_texts": 10,
+      "unique_number_normalized_patterns": 10,
+      "top_repeated_text_hashes": [
+        {
+          "text_sha256": "af451fba62f99eb1aba317aec31ce84bea25ce83a807afb31834ae6866c0a189",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "052f6f6128526e2f6be542191dfbc63b05bd22210fa7589e29993e474c1e4a62",
+          "count": 36,
+          "words": 5
+        },
+        {
+          "text_sha256": "cf69e9529176330d67eb9b031b7fe97f214dede6c31f899be73ff5b593f73eed",
+          "count": 36,
+          "words": 7
+        },
+        {
+          "text_sha256": "229ae854b2b577121da129b6a25ed11c37e3d2562a84e2820381277bdf570979",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "071b412b067a6520e31e639fc5a543162782d094d76d71ecddd5c12afaf09956",
+          "count": 36,
+          "words": 8
+        },
+        {
+          "text_sha256": "7219d646d244b6ae47f3b71466a7054a96031f095b77d732d7259072ee363d41",
+          "count": 36,
+          "words": 6
+        },
+        {
+          "text_sha256": "c748336a369ef655d05c1b1d92a30ee2d1b64aa80bf4e3b5fb7511c2d1b1ba40",
+          "count": 36,
+          "words": 9
+        },
+        {
+          "text_sha256": "c229fe23b451b7a895a1caeb37a7235ee687a4e44621191d511ca07153efd05e",
+          "count": 36,
+          "words": 6
+        },
+        {
+          "text_sha256": "797b9b72676ccee313b52f84bcaf061aaa4b5ee5d470ea920ba01cc008cd1961",
+          "count": 36,
+          "words": 8
+        },
+        {
+          "text_sha256": "f4dc526623b747cb06d7f046aae5d75ba707be11f2ed2914ad3067f2a8d48486",
+          "count": 36,
+          "words": 7
+        }
+      ],
+      "note": "number normalization is a dependence heuristic, not a count of semantic teaching situations"
+    }
+  },
+  "independent_public_prompt_math": {
+    "pass": 232
+  },
+  "literal_long_answer_matches": 0,
+  "dialogues_omitted_by_supplied_short_key_check": 336,
+  "turn_outlier_flags": 32,
+  "priority_review_items": 116,
+  "blinded_annotation_items_per_rater": 480,
+  "quarantine_separate": true,
+  "retrieval_unlabelled": 87,
+  "source_unchanged": true,
+  "human_approvals": 0,
+  "independently_authored_final_cases": 0,
+  "runtime_exports": 0,
+  "pedagogy_verified": false,
+  "audit_seconds": 1.671,
+  "source_lineage": "tutor contexts depend on dialogues; parent seed is history, not additional independent data"
+}

@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chapter",
+    "creation_date",
+    "curriculum_scope",
+    "generator_version",
+    "id",
+    "linked_reference_answer_file",
+    "messages",
+    "misconception_id",
+    "mode",
+    "problem_id",
+    "review_status",
+    "reviewer_id",
+    "source_origin",
+    "split",
+    "trajectory",
+    "trajectory_design",
+    "variant_family"
+  ],
+  "properties": {
+    "chapter": {
+      "type": "string"
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "curriculum_scope": {
+      "type": "string"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "linked_reference_answer_file": {
+      "type": "string"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "move",
+          "role",
+          "state",
+          "text",
+          "turn"
+        ],
+        "properties": {
+          "move": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "role": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "turn": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "misconception_id": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "reviewer_id": {
+      "type": "null"
+    },
+    "source_origin": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "trajectory": {
+      "type": "string"
+    },
+    "trajectory_design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "difficulty",
+        "label"
+      ],
+      "properties": {
+        "difficulty": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "variant_family": {
+      "type": "string"
+    }
+  }
+}

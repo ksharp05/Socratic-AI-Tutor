@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "app_root": ".",
+  "data_directory": "Directions/beta_data",
+  "port": 8770,
+  "max_live_calls": 60
+}

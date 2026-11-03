@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "answer_leak_check_required",
+    "candidate_preferred",
+    "candidate_rejected",
+    "context_prefix",
+    "creation_date",
+    "curriculum_scope",
+    "dialogue_id",
+    "generator_version",
+    "id",
+    "misconception_id",
+    "mode",
+    "preference_label",
+    "problem_id",
+    "reject_reason",
+    "review_status",
+    "reviewer_id",
+    "source_origin",
+    "split",
+    "variant_family"
+  ],
+  "properties": {
+    "answer_leak_check_required": {
+      "type": "boolean"
+    },
+    "candidate_preferred": {
+      "type": "string"
+    },
+    "candidate_rejected": {
+      "type": "string"
+    },
+    "context_prefix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "move",
+          "role",
+          "state",
+          "text",
+          "turn"
+        ],
+        "properties": {
+          "move": {
+            "type": "null"
+          },
+          "role": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "turn": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "curriculum_scope": {
+      "type": "string"
+    },
+    "dialogue_id": {
+      "type": "string"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "misconception_id": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "preference_label": {
+      "type": "string"
+    },
+    "problem_id": {
+      "type": "string"
+    },
+    "reject_reason": {
+      "type": "string"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "reviewer_id": {
+      "type": "null"
+    },
+    "source_origin": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "variant_family": {
+      "type": "string"
+    }
+  }
+}

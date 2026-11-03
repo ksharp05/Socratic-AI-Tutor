@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chapter",
+    "id",
+    "plain_english_definition",
+    "source_origin",
+    "split",
+    "teacher_review_status",
+    "term"
+  ],
+  "properties": {
+    "chapter": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "plain_english_definition": {
+      "type": "string"
+    },
+    "source_origin": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "teacher_review_status": {
+      "type": "string"
+    },
+    "term": {
+      "type": "string"
+    }
+  }
+}

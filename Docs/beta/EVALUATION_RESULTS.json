@@ -1,0 +1,2273 @@
+{
+  "available": true,
+  "run_date": "2026-11-02T22:39:24.849838+00:00",
+  "run_id": "20261102T223908Z",
+  "development_only": true,
+  "independent_evaluation": false,
+  "human_review": false,
+  "total_cases": 34,
+  "case_file_sha256": "7198ffc7a061546966627eb2abaafc6f47f072977f809f25ed0cce8a7df3f69d",
+  "dataset_id": "ncert-2026-11-03-beta3",
+  "dataset_sha256": "50fc3a276f14359bb38e924585172fd13ada77867ec1fa7084b6f6134994fed3",
+  "live_calls": 26,
+  "groups": [
+    {
+      "id": "math_concepts",
+      "label": "Maths concepts",
+      "total": 6,
+      "completed": 6,
+      "completion_rate": 1.0,
+      "appropriate_abstentions": 0,
+      "median_latency_ms": 1750.0
+    },
+    {
+      "id": "science_concepts",
+      "label": "Science concepts",
+      "total": 8,
+      "completed": 8,
+      "completion_rate": 1.0,
+      "appropriate_abstentions": 0,
+      "median_latency_ms": 1453.0
+    },
+    {
+      "id": "other_subjects",
+      "label": "Other subjects",
+      "total": 4,
+      "completed": 4,
+      "completion_rate": 1.0,
+      "appropriate_abstentions": 0,
+      "median_latency_ms": 1703.0
+    },
+    {
+      "id": "natural_english",
+      "label": "Conversational English",
+      "total": 4,
+      "completed": 4,
+      "completion_rate": 1.0,
+      "appropriate_abstentions": 0,
+      "median_latency_ms": 3023.0
+    },
+    {
+      "id": "checked_practice",
+      "label": "Code-checked practice",
+      "total": 6,
+      "completed": 6,
+      "completion_rate": 1.0,
+      "appropriate_abstentions": 0,
+      "median_latency_ms": 109.0
+    },
+    {
+      "id": "known_limits",
+      "label": "Known limitations",
+      "total": 6,
+      "completed": 0,
+      "completion_rate": 0.0,
+      "appropriate_abstentions": 6,
+      "median_latency_ms": 54.5
+    }
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Can you explain photosyntesis in plain English?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Photosynthesis is how plants make their own food using sunlight. Inside leaf cells, tiny green parts called chloroplasts have chlorophyll, which captures sunlight. The plant uses this energy to turn water and carbon dioxide into food and oxygen. Which part of the leaf cell helps capture sunlight for photosynthesis?",
+          "citations": [
+            {
+              "id": "ncert:40aeb348aa6395293bfba8e4",
+              "title": "Science — 5.2.1 Autotrophic Nutrition",
+              "source_id": "jesc1/jesc105.pdf",
+              "source_sha256": "685ec7228afeb79d7bc9b989648e381e5eb4b5a6d290d6a13374489c9284054f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc105.pdf",
+              "page": 4,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1735,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:40aeb348aa6395293bfba8e4",
+              "ncert:54e75f78ca0b20cb1d417b7f",
+              "ncert:ae8a036ad220f1f4ce9ab10d"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1781
+    },
+    {
+      "id": "C02",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Explain DNA replication in simple English.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "DNA replication means the two strands of DNA separate and each strand acts as a template to make a new complementary strand. So, each new DNA has one old and one new strand. This is called semiconservative replication. Why do you think having one old and one new strand might be helpful for the cell?",
+          "citations": [
+            {
+              "id": "ncert:1fc123c6927ac40faee6a2fb",
+              "title": "Biology — 5.4.1 The Experimental Proof",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1718,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:35975572d0c88a12f5c784ae",
+              "ncert:1439de6cd716bb3b6aa60008",
+              "ncert:1fc123c6927ac40faee6a2fb"
+            ]
+          },
+          "human_review_status": "pending"
+        },
+        {
+          "reply": "DNA replication starts when the two strands of the DNA separate. Each strand then serves as a guide to build a new matching strand, so the result is two DNA molecules, each with one old and one new strand. Why do you think the cell needs to separate the strands before making new ones?",
+          "citations": [
+            {
+              "id": "ncert:1fc123c6927ac40faee6a2fb",
+              "title": "Biology — 5.4.1 The Experimental Proof",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "break_into_one_step",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1578,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:35975572d0c88a12f5c784ae",
+              "ncert:1439de6cd716bb3b6aa60008",
+              "ncert:1fc123c6927ac40faee6a2fb"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 3360
+    },
+    {
+      "id": "C03",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Explain photosynthesis.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Photosynthesis happens in the green parts of plants, mainly leaves, where chloroplasts with chlorophyll capture sunlight. This energy helps convert water and carbon dioxide into food (glucose) and oxygen. Chlorophyll is essential because it absorbs light needed for this process. Which part of the plant contains chloroplasts that carry out photosynthesis?",
+          "citations": [
+            {
+              "id": "ncert:40aeb348aa6395293bfba8e4",
+              "title": "Science — 5.2.1 Autotrophic Nutrition",
+              "source_id": "jesc1/jesc105.pdf",
+              "source_sha256": "685ec7228afeb79d7bc9b989648e381e5eb4b5a6d290d6a13374489c9284054f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc105.pdf",
+              "page": 4,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1719,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:40aeb348aa6395293bfba8e4",
+              "ncert:54e75f78ca0b20cb1d417b7f",
+              "ncert:ae8a036ad220f1f4ce9ab10d"
+            ]
+          },
+          "human_review_status": "pending"
+        },
+        {
+          "reply": "Respiration releases energy by breaking down glucose molecules using oxygen, producing carbon dioxide, water, and energy in the form of ATP (a usable energy molecule). This process is like burning fuel inside cells to power activities. What gas do cells need to use glucose to release energy during respiration?",
+          "citations": [
+            {
+              "id": "ncert:60ed94b73eb223b7f23ffb87",
+              "title": "Science — 4.3.1 Combustion",
+              "source_id": "jesc1/jesc104.pdf",
+              "source_sha256": "efbb053ea8cedf29bc6891834613fdbcc17772e369f6b35405f3bb4701c41abe",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc104.pdf",
+              "page": 12,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "acknowledge_correction",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1484,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:63fcd739c8516dafea8643f5",
+              "ncert:60ed94b73eb223b7f23ffb87",
+              "ncert:54e75f78ca0b20cb1d417b7f"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 3265
+    },
+    {
+      "id": "C04",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What is an arithmetic progression?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "An arithmetic progression (AP) is a sequence where the difference between each pair of adjacent terms is the same. This difference is called the common difference. For example, in 2, 5, 8, 11, the difference is 3 each time. What would be the common difference in the sequence 7, 10, 13, 16?",
+          "citations": [
+            {
+              "id": "normalized:ap01",
+              "title": "Recognising constant successive differences",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1422,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:ap01",
+              "normalized:ap07",
+              "normalized:ap08"
+            ]
+          },
+          "human_review_status": "pending"
+        },
+        {
+          "reply": "Just numbers going up isn’t enough because the difference between each pair of terms must be the same in an arithmetic progression. If the sequence is 7, 10, 13, 16, what is the difference between the first two terms?",
+          "citations": [
+            {
+              "id": "normalized:ap01",
+              "title": "Recognising constant successive differences",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "connect_to_recent_reasoning",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1297,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:ap01",
+              "normalized:ap07",
+              "normalized:ap08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 2781
+    },
+    {
+      "id": "H01",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 11,
+      "subject": "History",
+      "question": "Why was writing important in Mesopotamian cities?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Writing was important in Mesopotamian cities because it helped record the many activities happening there, like trade and temple affairs, making city life and organization possible. What kind of activities do you think needed to be recorded to keep the city running smoothly?",
+          "citations": [
+            {
+              "id": "ncert:a8b3eb546a6f85bf7d26a4c1",
+              "title": "Themes in World History",
+              "source_id": "kehs1/kehs101.pdf",
+              "source_sha256": "fb9875c4ccde7c733b3f388f1645163f67217f5ce5fe4fa9c42b4d4ef4c5e321",
+              "source_url": "https://ncert.nic.in/textbook/pdf/kehs101.pdf",
+              "page": 2,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1781,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:a8b3eb546a6f85bf7d26a4c1",
+              "ncert:37e2076981c27d73a4b481d4",
+              "ncert:de944535a375f95f9096b3b2"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1828
+    },
+    {
+      "id": "H02",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Economics",
+      "question": "What is the role of a central bank in an economy?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "The central bank issues the country's currency, controls the money supply using tools like bank rates and reserve ratios, acts as a banker to the government, manages foreign exchange reserves, and supports the banking system. Which function helps the central bank control inflation by adjusting money supply?",
+          "citations": [
+            {
+              "id": "ncert:b5f21522a771048dbb692761",
+              "title": "Introductory Macroeconomics — 3.2 DEMAND FOR MONEY AND SUPPLY OF MONEY",
+              "source_id": "leec1/leec103.pdf",
+              "source_sha256": "d1b7f0407236a4fcf300267a04c2897acfcfbe2435c100ccf5205acb0748843f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/leec103.pdf",
+              "page": 3,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1516,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:b5f21522a771048dbb692761",
+              "ncert:a6e10d2146f3d924b8969c6a",
+              "ncert:52bf602ef2106ac4ebbf5bda"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1578
+    },
+    {
+      "id": "H03",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Social Science",
+      "question": "Why is power sharing important in a democracy?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Power sharing in a democracy is important because it prevents all power from resting with one part of the government, like the legislature, executive, or judiciary. This helps manage social divisions and leads to better outcomes. Which part of the government is mentioned as sharing power in a democracy?",
+          "citations": [
+            {
+              "id": "ncert:ec4704e6d6ede97350f34e6b",
+              "title": "Democratic Politics",
+              "source_id": "jess4/jess401.pdf",
+              "source_sha256": "f196321f2b8b61df09cb2cf49684e950d8ad1a52aef26388af07b4467e7823e5",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jess401.pdf",
+              "page": 1,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 2281,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:ec4704e6d6ede97350f34e6b",
+              "ncert:53975f9d65893288aebcef0d",
+              "ncert:4d8acee797f58b10ad3641d0"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 2343
+    },
+    {
+      "id": "H04",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "English",
+      "question": "Why does Lencho write a letter to God in the story?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Lencho writes a letter to God because his crops are ruined by a hailstorm, and he believes only God can help him by giving him money to recover. What does this show about Lencho's faith or belief in God?",
+          "citations": [
+            {
+              "id": "ncert:reader_lencho_intro",
+              "title": "A Letter to God — Lencho and faith",
+              "source_id": "jeff1/jeff101.pdf",
+              "source_sha256": "2554abf66b90cc88e8df1ac85d670098842180780fd2ff549cddd6c1dd81e69a",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jeff101.pdf",
+              "page": 1,
+              "kind": "source_prose",
+              "human_review_status": "pending"
+            },
+            {
+              "id": "ncert:2d8dd4bf8fc6c9d63a720327",
+              "title": "Words and Expressions  2",
+              "source_id": "jewe2/jewe201.pdf",
+              "source_sha256": "8cd9aae27f03a5b1c4aa16d9acfd7171d05ff90d6cc698aaf61eeb01a463a1e0",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jewe201.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1344,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:reader_lencho_intro",
+              "ncert:7acffd6740287d87b3465f59",
+              "ncert:2d8dd4bf8fc6c9d63a720327"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1391
+    },
+    {
+      "id": "L01",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Mathematics",
+      "question": "Can you teach me integration by parts and check my answer?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "No normalized Class 12 maths teaching/checking adapter yet.",
+      "latency_ms": 47
+    },
+    {
+      "id": "L02",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 11,
+      "subject": "Urdu",
+      "question": "Explain the meaning of the poem in my Urdu textbook.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "The beta retrieval scope is English-first; Urdu teaching is not enabled.",
+      "latency_ms": 31
+    },
+    {
+      "id": "L03",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 9,
+      "subject": "ICT",
+      "question": "Explain computer networking from my Class 9 ICT textbook.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "No acquired active Class 9 ICT book; publisher Coming Soon.",
+      "latency_ms": 32
+    },
+    {
+      "id": "L04",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Using the attached diagram, tell me which ray is refracted.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I can work from the textbook text here, but I don't have live information or an attached image to inspect. Which written detail can we work through?",
+          "citations": [],
+          "move": "unsupported_input",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 15,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No image was supplied and this beta has no diagram-understanding adapter.",
+      "latency_ms": 62
+    },
+    {
+      "id": "L05",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Economics",
+      "question": "What is today's live stock price and should I buy it?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I can work from the textbook text here, but I don't have live information or an attached image to inspect. Which written detail can we work through?",
+          "citations": [],
+          "move": "unsupported_input",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 16,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No live market data or financial-advice tool in this textbook tutor.",
+      "latency_ms": 78
+    },
+    {
+      "id": "L06",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Why does it do that?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I don't have a usable passage for that in this class and subject yet. Which textbook topic or reading are you studying?",
+          "citations": [],
+          "move": "missing_evidence",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 0,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No prior referent/topic; clarification is needed rather than inventing a source.",
+      "latency_ms": 62
+    },
+    {
+      "id": "M01",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes an expression quadratic after simplifying it?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "A polynomial expression is quadratic if, after simplifying, the coefficient of the x² term is not zero. This means the highest power of x in the expression is 2 and it has a nonzero multiplier. What would happen if the x² term's coefficient became zero after simplification?",
+          "citations": [
+            {
+              "id": "normalized:qe01",
+              "title": "Standard form and degree after simplification",
+              "source_id": "jemh1/jemh104.pdf",
+              "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+              "page": 2,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1813,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:qe01",
+              "normalized:qe05",
+              "normalized:tr08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1937
+    },
+    {
+      "id": "M02",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What does the discriminant tell us about real roots?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "The discriminant (D) tells us about the number and type of real roots of a quadratic equation: if D>0, there are two distinct real roots; if D=0, one repeated real root; if D<0, no real roots. What does it mean if the discriminant equals zero?",
+          "citations": [
+            {
+              "id": "normalized:qe06",
+              "title": "Discriminant and real-root classification",
+              "source_id": "jemh1/jemh104.pdf",
+              "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+              "page": 8,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": true,
+          "repair_reason": "response_length",
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 3453,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:qe06",
+              "normalized:qe03",
+              "normalized:qe08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 3593
+    },
+    {
+      "id": "M03",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes a sequence an arithmetic progression?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "An arithmetic progression (AP) is a sequence where the difference between each pair of adjacent terms is the same. This difference is called the common difference. So, if you subtract any term from the next one, you get the same number every time. Can you identify the common difference in the sequence 3, 7, 11, 15?",
+          "citations": [
+            {
+              "id": "normalized:ap01",
+              "title": "Recognising constant successive differences",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 2203,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:ap01",
+              "normalized:ap07",
+              "normalized:ap08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 2343
+    },
+    {
+      "id": "M04",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Why is the common difference important in an arithmetic progression?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "The common difference in an arithmetic progression (AP) is important because it stays the same between every pair of adjacent terms, which defines the pattern of the sequence. Without this constant difference, the sequence wouldn't be an AP. How can you find the common difference if you know two terms and their positions in the sequence?",
+          "citations": [
+            {
+              "id": "normalized:ap07",
+              "title": "Recovering AP parameters from constraints",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 10,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            },
+            {
+              "id": "normalized:ap01",
+              "title": "Recognising constant successive differences",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1500,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:ap07",
+              "normalized:ap01",
+              "normalized:ap08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1563
+    },
+    {
+      "id": "M05",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "How are sine and cosine related to the sides of a right triangle?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Sine of an angle in a right triangle is the ratio of the length of the side opposite that angle to the hypotenuse, while cosine is the ratio of the adjacent side to the hypotenuse. Which side do you think changes if you swap the two acute angles in the triangle?",
+          "citations": [
+            {
+              "id": "normalized:tr01",
+              "title": "Triangle sides relative to a reference angle",
+              "source_id": "jemh1/jemh108.pdf",
+              "source_sha256": "5a4033fd2ab3fbb245f783a3e2c24fb5c31a00ae7fa7b9a7212633d11e06d2ac",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh108.pdf",
+              "page": 2,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            },
+            {
+              "id": "normalized:tr02",
+              "title": "Six trigonometric ratios",
+              "source_id": "jemh1/jemh108.pdf",
+              "source_sha256": "5a4033fd2ab3fbb245f783a3e2c24fb5c31a00ae7fa7b9a7212633d11e06d2ac",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh108.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1375,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:tr04",
+              "normalized:tr01",
+              "normalized:tr02"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1422
+    },
+    {
+      "id": "M06",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Why is tangent not defined at some standard angles?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Tangent is sine divided by cosine. At 90 degrees, cosine is zero, so tangent would divide by zero, which is undefined. Why does dividing by zero make tangent undefined at 90 degrees?",
+          "citations": [
+            {
+              "id": "normalized:tr06",
+              "title": "Defined and undefined endpoint ratios",
+              "source_id": "jemh1/jemh108.pdf",
+              "source_sha256": "5a4033fd2ab3fbb245f783a3e2c24fb5c31a00ae7fa7b9a7212633d11e06d2ac",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh108.pdf",
+              "page": 12,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            },
+            {
+              "id": "normalized:tr05",
+              "title": "Exact ratios at standard angles",
+              "source_id": "jemh1/jemh108.pdf",
+              "source_sha256": "5a4033fd2ab3fbb245f783a3e2c24fb5c31a00ae7fa7b9a7212633d11e06d2ac",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh108.pdf",
+              "page": 13,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1375,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:tr06",
+              "normalized:tr05",
+              "normalized:tr01"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1437
+    },
+    {
+      "id": "P01",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "An AP starts at 34 with common difference 6. Find term 17, using one-based positions.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "cea60f9a175f4ace86e727ad41e9d7e0",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_a5aa3cfe9241fbe1f927",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 78
+    },
+    {
+      "id": "P02",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find the sum of the first 13 terms of an AP with first term -8 and common difference 6.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "29d02fbc55214d6f81aec74dcb84ba21",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_a3ba7cec64df726ab50e",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 94
+    },
+    {
+      "id": "P03",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find every distinct real root of (-2)*x^2+(-20)*x+(-66)=0. Give exact values; do not repeat a repeated root.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "c175184045de4d0e9ab4c9fdd375360a",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_77c56ff5fa66c5daa3e3",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 109
+    },
+    {
+      "id": "P04",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Find every distinct real root of (3)*x^2+(36)*x+(-135)=0. Give exact values; do not repeat a repeated root.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "6ca6bced01224239a4fdfc84d00cfad1",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_5ecd82f7d79c0cb294b9",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 141
+    },
+    {
+      "id": "P05",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "A right triangle has hypotenuse 13, opposite side 12 and adjacent side 5 relative to acute angle A. C is its other acute angle. Find sec(A) exactly.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "1d93c5c2bf2d45deabb7fed479a4a310",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_49922f00fe38892497ab",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 204
+    },
+    {
+      "id": "P06",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "Classify the real roots of (-2)*x^2+(32)*x+(-128)=0 as two_distinct_real, repeated_real or no_real, using a checked discriminant.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "2ef33b25e5a74d159398a39e86971c0c",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_6e25990548d58ad7e456",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 109
+    },
+    {
+      "id": "S01",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 8,
+      "subject": "Science",
+      "question": "Why do rough surfaces oppose motion through friction?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Friction happens because the tiny bumps and irregularities on rough surfaces get stuck together, making it harder to slide one surface over the other. So, rough surfaces oppose motion by these interlocking bumps. What do you think happens to friction if the surfaces were perfectly smooth with no bumps?",
+          "citations": [
+            {
+              "id": "ncert:beta_friction_irregularities",
+              "title": "Exploring Forces — Friction",
+              "source_id": "hecu1/hecu105.pdf",
+              "source_sha256": "e9e58080c80e1f6a4b2887ffd8433df875cf18f390d53f26eb8a996b205a8da8",
+              "source_url": "https://ncert.nic.in/textbook/pdf/hecu105.pdf",
+              "page": 7,
+              "kind": "source_prose",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1312,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:beta_friction_irregularities",
+              "ncert:2a94bd654b082bd973c5cfc3",
+              "ncert:b0e5b21920bbb340034ebeff"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1360
+    },
+    {
+      "id": "S02",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 9,
+      "subject": "Science",
+      "question": "Why is a cell called a basic unit of life?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "A cell is called the basic unit of life because it is the smallest part of a living thing that can carry out all life processes, like growth, reproduction, and response to the environment. Which part of the cell controls what enters and leaves, helping it survive?",
+          "citations": [
+            {
+              "id": "ncert:182fc347ca332a2ee71e778d",
+              "title": "Exploration — 2.2 Structure of a Cell",
+              "source_id": "iesc1/iesc102.pdf",
+              "source_sha256": "f50bf0b4d8a7fb0c7b9adffd335acd0d29d807336c0e011cce0ce898aac22a5c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/iesc102.pdf",
+              "page": 4,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1500,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:dfcec0dcd011f15ebcacad21",
+              "ncert:182fc347ca332a2ee71e778d",
+              "ncert:b80dc554b9190d93b22398bb"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1563
+    },
+    {
+      "id": "S03",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "How does photosynthesis help a plant make food?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Photosynthesis helps a plant make food by using carbon dioxide and water to produce carbohydrates with the help of sunlight and chlorophyll. These carbohydrates provide energy for the plant, and extra carbohydrates are stored as starch for later use. Which two substances does the plant take in to start photosynthesis?",
+          "citations": [
+            {
+              "id": "ncert:d202140ca451e60f8ae529e4",
+              "title": "Science — 5.2.1 Autotrophic Nutrition",
+              "source_id": "jesc1/jesc105.pdf",
+              "source_sha256": "685ec7228afeb79d7bc9b989648e381e5eb4b5a6d290d6a13374489c9284054f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc105.pdf",
+              "page": 3,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1359,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:d202140ca451e60f8ae529e4",
+              "ncert:ae8a036ad220f1f4ce9ab10d",
+              "ncert:39646f887bd648040e440e3a"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1438
+    },
+    {
+      "id": "S04",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "What is the difference between xylem and phloem?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Xylem moves water and minerals from the soil to the plant, while phloem transports food made in the leaves to other parts. So, xylem carries water up, and phloem carries food around. Which tissue moves water and minerals from the soil to the plant?",
+          "citations": [
+            {
+              "id": "ncert:ae8a036ad220f1f4ce9ab10d",
+              "title": "Science — 5.4.2 Transportation in Plants",
+              "source_id": "jesc1/jesc105.pdf",
+              "source_sha256": "685ec7228afeb79d7bc9b989648e381e5eb4b5a6d290d6a13374489c9284054f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc105.pdf",
+              "page": 16,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1469,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:ae8a036ad220f1f4ce9ab10d",
+              "ncert:2aab6aec9cf58d3182fd5682",
+              "ncert:20da0a341b13cfc7ff4955b4"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1547
+    },
+    {
+      "id": "S05",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "How do acids and bases differ in their properties?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Acids taste sour and turn blue litmus paper red, while bases taste bitter and turn red litmus paper blue. For example, soap is basic and can change curry stains to reddish-brown. Which color does blue litmus paper turn when it touches an acid?",
+          "citations": [
+            {
+              "id": "ncert:d28f3497ae634ecc0e75b4a8",
+              "title": "Science",
+              "source_id": "jesc1/jesc102.pdf",
+              "source_sha256": "8ce001e9cd1ab5f842064d1f332d4a64e010c37d5e5e29664bacd9da526f7340",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc102.pdf",
+              "page": 1,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1391,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:76b1fbd8d6b20dbe9c4378ed",
+              "ncert:a1e8ce8e55dc96f54f47d5ad",
+              "ncert:d28f3497ae634ecc0e75b4a8"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1437
+    },
+    {
+      "id": "S06",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 11,
+      "subject": "Physics",
+      "question": "How is acceleration related to a change in velocity?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Acceleration measures how quickly velocity changes over time. If velocity changes in speed or direction, acceleration occurs. So, acceleration is directly related to the rate of change of velocity. What happens to acceleration if velocity remains constant?",
+          "citations": [
+            {
+              "id": "ncert:e09f508b251034bd746d944a",
+              "title": "Physics Part-I — 2.2 INSTANTANEOUS VELOCITY AND",
+              "source_id": "keph1/keph102.pdf",
+              "source_sha256": "cd0307176cef6d2ccf50a48f4342d82cec49d191f1869dc71da4ff5173846f27",
+              "source_url": "https://ncert.nic.in/textbook/pdf/keph102.pdf",
+              "page": 2,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1406,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:eae0d8c79b831d345351a3af",
+              "ncert:457a1034b3db75f803806092",
+              "ncert:e09f508b251034bd746d944a"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1453
+    },
+    {
+      "id": "S07",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Why should DNA replicate before a cell divides?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "DNA must replicate before a cell divides so that each new cell gets an exact copy of the genetic information. This ensures the new cells can function properly and carry out their roles. What would happen if DNA did not replicate before cell division?",
+          "citations": [
+            {
+              "id": "ncert:9d829426059fca752a792549",
+              "title": "Biology — 5.4.2 The Machinery and the Enzymes",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 12,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1391,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:88712784c924f260967d43c4",
+              "ncert:d4d52c2148dbd994a3d7fe13",
+              "ncert:9d829426059fca752a792549"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1453
+    },
+    {
+      "id": "S08",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "What role do decomposers play in an ecosystem?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Decomposers, like saprophytes, break down dead plants and animals, recycling nutrients back into the soil, which supports new plant growth. This role is vital but often not shown in ecological pyramids. Why do you think decomposers are important for nutrient cycling in an ecosystem?",
+          "citations": [
+            {
+              "id": "ncert:5c83bd6fa5456c214ea060f2",
+              "title": "Biology — 12.5 ECOLOGICAL PYRAMIDS",
+              "source_id": "lebo1/lebo112.pdf",
+              "source_sha256": "6d73b01f7ad5492d08a67b695ae8c05230631f20b1b40c791ab7435b39d0e59e",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo112.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1468,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:5c83bd6fa5456c214ea060f2",
+              "ncert:e7fd47bd4ae3ca0c0e1abe8b",
+              "ncert:69204dd13230ac46318eaf2c"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1532
+    }
+  ],
+  "best_questions": [
+    {
+      "id": "S01",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 8,
+      "subject": "Science",
+      "question": "Why do rough surfaces oppose motion through friction?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Friction happens because the tiny bumps and irregularities on rough surfaces get stuck together, making it harder to slide one surface over the other. So, rough surfaces oppose motion by these interlocking bumps. What do you think happens to friction if the surfaces were perfectly smooth with no bumps?",
+          "citations": [
+            {
+              "id": "ncert:beta_friction_irregularities",
+              "title": "Exploring Forces — Friction",
+              "source_id": "hecu1/hecu105.pdf",
+              "source_sha256": "e9e58080c80e1f6a4b2887ffd8433df875cf18f390d53f26eb8a996b205a8da8",
+              "source_url": "https://ncert.nic.in/textbook/pdf/hecu105.pdf",
+              "page": 7,
+              "kind": "source_prose",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1312,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:beta_friction_irregularities",
+              "ncert:2a94bd654b082bd973c5cfc3",
+              "ncert:b0e5b21920bbb340034ebeff"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1360
+    },
+    {
+      "id": "M01",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes an expression quadratic after simplifying it?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "A polynomial expression is quadratic if, after simplifying, the coefficient of the x² term is not zero. This means the highest power of x in the expression is 2 and it has a nonzero multiplier. What would happen if the x² term's coefficient became zero after simplification?",
+          "citations": [
+            {
+              "id": "normalized:qe01",
+              "title": "Standard form and degree after simplification",
+              "source_id": "jemh1/jemh104.pdf",
+              "source_sha256": "9aca4b28ad57ae78a5e69ce67d19344c44b1390c5b8afd13db83b46ad54e8e9d",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh104.pdf",
+              "page": 2,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1813,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:qe01",
+              "normalized:qe05",
+              "normalized:tr08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1937
+    },
+    {
+      "id": "C02",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Explain DNA replication in simple English.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "DNA replication means the two strands of DNA separate and each strand acts as a template to make a new complementary strand. So, each new DNA has one old and one new strand. This is called semiconservative replication. Why do you think having one old and one new strand might be helpful for the cell?",
+          "citations": [
+            {
+              "id": "ncert:1fc123c6927ac40faee6a2fb",
+              "title": "Biology — 5.4.1 The Experimental Proof",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1718,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:35975572d0c88a12f5c784ae",
+              "ncert:1439de6cd716bb3b6aa60008",
+              "ncert:1fc123c6927ac40faee6a2fb"
+            ]
+          },
+          "human_review_status": "pending"
+        },
+        {
+          "reply": "DNA replication starts when the two strands of the DNA separate. Each strand then serves as a guide to build a new matching strand, so the result is two DNA molecules, each with one old and one new strand. Why do you think the cell needs to separate the strands before making new ones?",
+          "citations": [
+            {
+              "id": "ncert:1fc123c6927ac40faee6a2fb",
+              "title": "Biology — 5.4.1 The Experimental Proof",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 10,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "break_into_one_step",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1578,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:35975572d0c88a12f5c784ae",
+              "ncert:1439de6cd716bb3b6aa60008",
+              "ncert:1fc123c6927ac40faee6a2fb"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 3360
+    },
+    {
+      "id": "M03",
+      "group": "math_concepts",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "What makes a sequence an arithmetic progression?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "An arithmetic progression (AP) is a sequence where the difference between each pair of adjacent terms is the same. This difference is called the common difference. So, if you subtract any term from the next one, you get the same number every time. Can you identify the common difference in the sequence 3, 7, 11, 15?",
+          "citations": [
+            {
+              "id": "normalized:ap01",
+              "title": "Recognising constant successive differences",
+              "source_id": "jemh1/jemh105.pdf",
+              "source_sha256": "1367857e5cd3206b1862655d17bf31778e6af768821d8dfc8c71d3ea0e19274c",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jemh105.pdf",
+              "page": 3,
+              "kind": "normalized_math_reference",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 2203,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "normalized:ap01",
+              "normalized:ap07",
+              "normalized:ap08"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 2343
+    },
+    {
+      "id": "S07",
+      "group": "science_concepts",
+      "kind": "chat",
+      "grade": 12,
+      "subject": "Biology",
+      "question": "Why should DNA replicate before a cell divides?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "DNA must replicate before a cell divides so that each new cell gets an exact copy of the genetic information. This ensures the new cells can function properly and carry out their roles. What would happen if DNA did not replicate before cell division?",
+          "citations": [
+            {
+              "id": "ncert:9d829426059fca752a792549",
+              "title": "Biology — 5.4.2 The Machinery and the Enzymes",
+              "source_id": "lebo1/lebo105.pdf",
+              "source_sha256": "21d77cdaf37c11b26956bbdae0b9eff9700d723135ac55c1a2141b1caee8f017",
+              "source_url": "https://ncert.nic.in/textbook/pdf/lebo105.pdf",
+              "page": 12,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1391,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:88712784c924f260967d43c4",
+              "ncert:d4d52c2148dbd994a3d7fe13",
+              "ncert:9d829426059fca752a792549"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1453
+    },
+    {
+      "id": "H03",
+      "group": "other_subjects",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Social Science",
+      "question": "Why is power sharing important in a democracy?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Power sharing in a democracy is important because it prevents all power from resting with one part of the government, like the legislature, executive, or judiciary. This helps manage social divisions and leads to better outcomes. Which part of the government is mentioned as sharing power in a democracy?",
+          "citations": [
+            {
+              "id": "ncert:ec4704e6d6ede97350f34e6b",
+              "title": "Democratic Politics",
+              "source_id": "jess4/jess401.pdf",
+              "source_sha256": "f196321f2b8b61df09cb2cf49684e950d8ad1a52aef26388af07b4467e7823e5",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jess401.pdf",
+              "page": 1,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 2281,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:ec4704e6d6ede97350f34e6b",
+              "ncert:53975f9d65893288aebcef0d",
+              "ncert:4d8acee797f58b10ad3641d0"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 2343
+    },
+    {
+      "id": "C01",
+      "group": "natural_english",
+      "kind": "chat",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Can you explain photosyntesis in plain English?",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [
+        {
+          "reply": "Photosynthesis is how plants make their own food using sunlight. Inside leaf cells, tiny green parts called chloroplasts have chlorophyll, which captures sunlight. The plant uses this energy to turn water and carbon dioxide into food and oxygen. Which part of the leaf cell helps capture sunlight for photosynthesis?",
+          "citations": [
+            {
+              "id": "ncert:40aeb348aa6395293bfba8e4",
+              "title": "Science — 5.2.1 Autotrophic Nutrition",
+              "source_id": "jesc1/jesc105.pdf",
+              "source_sha256": "685ec7228afeb79d7bc9b989648e381e5eb4b5a6d290d6a13374489c9284054f",
+              "source_url": "https://ncert.nic.in/textbook/pdf/jesc105.pdf",
+              "page": 4,
+              "kind": "extracted_prose_preview",
+              "human_review_status": "pending"
+            }
+          ],
+          "move": "diagnostic",
+          "provider_status": "live_accepted",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 1735,
+          "retrieval": {
+            "hits": 3,
+            "ids": [
+              "ncert:40aeb348aa6395293bfba8e4",
+              "ncert:54e75f78ca0b20cb1d417b7f",
+              "ncert:ae8a036ad220f1f4ce9ab10d"
+            ]
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "source_match": true,
+      "all_live_accepted": true,
+      "finding": "Live replies passed reply/citation checks and cited an expected textbook source; factual and teaching-quality review remain pending.",
+      "latency_ms": 1781
+    },
+    {
+      "id": "P01",
+      "group": "checked_practice",
+      "kind": "checked_math",
+      "grade": 10,
+      "subject": "Mathematics",
+      "question": "An AP starts at 34 with common difference 6. Find term 17, using one-based positions.",
+      "completed": true,
+      "appropriate_abstention": false,
+      "turns": [],
+      "failure": null,
+      "assessment_response": {
+        "message": "Your submitted answer checks out mathematically. Which step did you use?",
+        "status": "correct",
+        "verification": "code_checked",
+        "reasoning_assessed": false,
+        "assessment": {
+          "id": "cea60f9a175f4ace86e727ad41e9d7e0",
+          "mode": "practice",
+          "complete": true,
+          "position": 1,
+          "total": 1,
+          "hint_stage": 0,
+          "item": null,
+          "summary": {
+            "correct": 1,
+            "scored": 1,
+            "submitted": 1,
+            "reasoning_assessed": false,
+            "recommended_concept": null
+          }
+        }
+      },
+      "question_id": "q_a5aa3cfe9241fbe1f927",
+      "finding": "Independent arithmetic from the public givens matched the code checker; the language model did not grade this answer.",
+      "latency_ms": 78
+    }
+  ],
+  "worst_questions": [
+    {
+      "id": "L01",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Mathematics",
+      "question": "Can you teach me integration by parts and check my answer?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "No normalized Class 12 maths teaching/checking adapter yet.",
+      "latency_ms": 47
+    },
+    {
+      "id": "L02",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 11,
+      "subject": "Urdu",
+      "question": "Explain the meaning of the poem in my Urdu textbook.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "The beta retrieval scope is English-first; Urdu teaching is not enabled.",
+      "latency_ms": 31
+    },
+    {
+      "id": "L03",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 9,
+      "subject": "ICT",
+      "question": "Explain computer networking from my Class 9 ICT textbook.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [],
+      "failure": "scope_unavailable",
+      "http_status": 400,
+      "finding": "No acquired active Class 9 ICT book; publisher Coming Soon.",
+      "latency_ms": 32
+    },
+    {
+      "id": "L04",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Using the attached diagram, tell me which ray is refracted.",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I can work from the textbook text here, but I don't have live information or an attached image to inspect. Which written detail can we work through?",
+          "citations": [],
+          "move": "unsupported_input",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 15,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No image was supplied and this beta has no diagram-understanding adapter.",
+      "latency_ms": 62
+    },
+    {
+      "id": "L05",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 12,
+      "subject": "Economics",
+      "question": "What is today's live stock price and should I buy it?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I can work from the textbook text here, but I don't have live information or an attached image to inspect. Which written detail can we work through?",
+          "citations": [],
+          "move": "unsupported_input",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 16,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No live market data or financial-advice tool in this textbook tutor.",
+      "latency_ms": 78
+    },
+    {
+      "id": "L06",
+      "group": "known_limits",
+      "kind": "limit",
+      "grade": 10,
+      "subject": "Science",
+      "question": "Why does it do that?",
+      "completed": false,
+      "appropriate_abstention": true,
+      "turns": [
+        {
+          "reply": "I don't have a usable passage for that in this class and subject yet. Which textbook topic or reading are you studying?",
+          "citations": [],
+          "move": "missing_evidence",
+          "provider_status": "not_called",
+          "validation_error": null,
+          "verification": "not_assessed",
+          "format_repaired": false,
+          "repair_reason": null,
+          "dataset_id": "ncert-2026-11-03-beta3",
+          "latency_ms": 0,
+          "retrieval": {
+            "hits": 0,
+            "ids": []
+          },
+          "human_review_status": "pending"
+        }
+      ],
+      "failure": null,
+      "finding": "No prior referent/topic; clarification is needed rather than inventing a source.",
+      "latency_ms": 62
+    }
+  ],
+  "measurement_note": "Completion means expected-source plus reply-contract checks, or independently calculated maths checked by code. It is not factual accuracy or learning effectiveness.",
+  "runtime_sha256": {
+    "src\\socrates_beta\\api.py": "8a2960390e1e27ac800394e9288e4ac230ecad72184e733210482fae04417a5c",
+    "src\\socrates_beta\\bootstrap.py": "c67422ed6c3648075f6d021cafdadcd31ffcc6ec9d9e84959e8e48858707c6e5",
+    "src\\socrates_beta\\dialogue.py": "f3631686468843df3b2556c03e907f7afd04a436df75ebb2629f55f258a8ffab",
+    "src\\socrates_beta\\headings.py": "d0971050fed51b9882a0512f73e159b779753d7ca5ade47cf83adbe075039e2b",
+    "src\\socrates_beta\\knowledge.py": "3022e159189f3bf13932fa5429b54dbdc835d049c0bfd0e556915190a73897d3",
+    "src\\socrates_beta\\language.py": "4f63e257457544dbb564820bb3431b9867016679d63870a2c2fafd01b5d99731",
+    "src\\socrates_beta\\maths.py": "d3cf320c22700440636a6a014dd4f84783e77a9838d36e1f0b6e75e52fff30e7",
+    "src\\socrates_beta\\ports.py": "aefb1cfd13f0a0661e56bc768541e68e4555e6ca16bbb154bf59536415566e63",
+    "src\\socrates_beta\\repository.py": "cfc5ac3fd3118d4fd17caa108df81a586b5b572bbac72f5ac1aaeac47d3689ee",
+    "src\\socrates_beta\\study.py": "ac9723812bca71ab1f431d627c9814843889151a63ac39c3efa7201944ad255c",
+    "src\\socrates_beta\\__init__.py": "ddd4d302c98b1eb855faae709c05db5b8dc21c3e11f93f0e3e9d6f8cc81065bb",
+    "src\\socrates_beta\\__main__.py": "39bb766b6f68cfdc3f481e555484d9f40ce1ce14fc27dcad15308472d9167f0e",
+    "src\\socrates_beta\\static\\app.css": "4d0ec78ddf75592c0af4682b8a6bf8a15c6a60d705785d9964a66998a43e0379",
+    "src\\socrates_beta\\static\\app.js": "47200367fa405e80f2d320a4552e2d5a0352b2ff6e56894d748a01f6c6eca543",
+    "src\\socrates_beta\\static\\index.html": "5ee5e817f1726a1f3853aa4b4f09668ca436f9dce84157a3d8b9d9c4a7cb64ee"
+  },
+  "format_repairs": 1,
+  "monetary_cost": null,
+  "prior_runs": [
+    {
+      "run_id": "20261102T221350Z",
+      "completed": 25,
+      "total": 34,
+      "live_calls": 25,
+      "dataset_id": "ncert-2026-11-03-beta2"
+    },
+    {
+      "run_id": "20261102T222258Z",
+      "completed": 27,
+      "total": 34,
+      "live_calls": 25,
+      "dataset_id": "ncert-2026-11-03-beta3"
+    },
+    {
+      "run_id": "20261102T223337Z",
+      "completed": 27,
+      "total": 34,
+      "live_calls": 27,
+      "dataset_id": "ncert-2026-11-03-beta3"
+    },
+    {
+      "run_id": "20261102T223908Z",
+      "completed": 28,
+      "total": 34,
+      "live_calls": 26,
+      "dataset_id": "ncert-2026-11-03-beta3"
+    }
+  ],
+  "historical_issues": [
+    {
+      "id": "M02",
+      "issue": "Overlong first responses; bounded format repair was exercised in the release run."
+    },
+    {
+      "id": "C04",
+      "issue": "AP acronym retrieval initially favoured an advanced reference; foundational retrieval was corrected."
+    },
+    {
+      "id": "H04",
+      "issue": "An expected primary-reader passage was absent; an exact quote was added with the data import CLI."
+    },
+    {
+      "id": "S05",
+      "issue": "A factual sensory description falsely triggered the broad chemical guard. Raw-response audit distinguished it from an instruction; the rule was narrowed and both behaviors tested."
+    }
+  ]
+}
