@@ -162,6 +162,33 @@ def test_wrong_attempt_is_checked_and_correct_answer_needs_no_model(connected):
     assert len(fake.calls)==1
 
 
+def test_trace_keeps_citations_from_earlier_turns(connected):
+    client,tutor,fake=connected
+    publish_signature(client);turn(client,'practice');hint=turn(client,'hint')
+    turn(client,'x = 5');turn(client,'x = 0 or x = 5')
+    trace=client.get('/teacher/sessions/signature/trace',headers=T).json()
+    assert trace['citation_refs']==[] and not trace['cited_turns_truncated']
+    first=trace['cited_turns'][0]
+    assert first['kind']=='hint' and first['citations']==[{key:c[key] for key in ('passage_id','reference_sha256')} for c in hint['citations']]
+    messages=tutor.graph.get_state({'configurable':{'thread_id':'signature'}}).values['messages']
+    assert messages[first['message_index']]['role']=='tutor'
+    assert set(first)=={'message_index','kind','citations'} and hint['reply'] not in json.dumps(trace)
+
+
+def test_trace_projects_legacy_and_malformed_turn_citations(connected):
+    client,tutor,fake=connected
+    turn(client,'hello')
+    canary='SYNTHETIC_TURN_TEXT_DO_NOT_EXPORT'
+    tutor.graph.update_state({'configurable':{'thread_id':'signature'}},
+                             {'messages':[{'role':'tutor','content':canary,'kind':'Not A Kind!','citations':['normalized:qe05',7,{'passage_id':'normalized:qe04','extra':canary}]},
+                                          {'role':'student','content':'x','citations':['normalized:qe03']}]},as_node='respond')
+    trace=client.get('/teacher/sessions/signature/trace',headers=T).json()
+    assert trace['cited_turns'][-1]['kind'] is None
+    assert trace['cited_turns'][-1]['citations']==[{'passage_id':'normalized:qe05','reference_sha256':None},
+                                                    {'passage_id':'normalized:qe04','reference_sha256':None}]
+    assert canary not in json.dumps(trace) and 'normalized:qe03' not in json.dumps(trace['cited_turns'])
+
+
 def test_quiz_role_claim_and_own_homework_do_not_use_contextual_model(connected):
     client,tutor,fake=connected
     publish_signature(client)
@@ -273,6 +300,11 @@ def test_teacher_trace_widgets_show_events_and_citation_ids(connected,monkeypatc
     button().click().run(timeout=30)
     assert not ui.exception and ui.dataframe
     assert any('normalized:qe04' in element.value for element in ui.json)
+    turn(client,'x = 0 or x = 5')
+    button().click().run(timeout=30)
+    assert not ui.exception and len(ui.dataframe)==2
+    assert 'normalized:qe04' in ui.dataframe[1].value.to_string()
+    assert not any('normalized:qe04' in element.value for element in ui.json)
 
 
 def test_trace_does_not_accept_approval_or_shared_trace_names(connected):

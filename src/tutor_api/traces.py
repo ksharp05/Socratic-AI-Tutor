@@ -11,6 +11,31 @@ GENERATION_REASONS = frozenset({
     "turn_shape", "generic_answer_phrase", "invalid_or_missing_source_id",
     "active_item_leak_or_unknown_verdict", "leak_check_failed",
 })
+CITED_TURN_LIMIT = 50
+
+
+def _citation_refs(citations) -> list[dict]:
+    """Identifiers and hashes only; older messages may hold bare passage IDs without a snapshot hash."""
+    refs = []
+    for c in citations or []:
+        if isinstance(c, dict):
+            refs.append({key: c.get(key) for key in ("passage_id", "reference_sha256")})
+        elif isinstance(c, str):
+            refs.append({"passage_id": c, "reference_sha256": None})
+    return refs
+
+
+def _cited_turns(messages) -> list[dict]:
+    """Tutor turns that carried citations, in conversation order, without their text."""
+    turns = []
+    for index, message in enumerate(messages):
+        refs = _citation_refs(message.get("citations")) if message.get("role") == "tutor" else []
+        if refs:
+            kind = message.get("kind")
+            turns.append({"message_index": index,
+                          "kind": kind if isinstance(kind, str) and re.fullmatch(r"[a-z_]{1,32}", kind) else None,
+                          "citations": refs})
+    return turns
 
 
 def _detail(row) -> dict:
@@ -56,8 +81,10 @@ def session_trace(tutor, session_id: str) -> dict:
                               "WHERE session_id=? ORDER BY id DESC LIMIT 201", (session_id,)).fetchall()
     events = [{**{key: row[key] for key in ("id", "ts", "node", "role", "kind", "name", "outcome", "latency_ms")},
                "detail": _detail(row)} for row in reversed(rows[:200])]
-    citations = (values.get("messages") or [{}])[-1].get("citations") or []
+    messages = values.get("messages") or [{}]
+    cited = _cited_turns(messages)
     return {"session_id": session_id, "chapter": (values.get("session") or {}).get("chapter"),
             "registered_hint_mode": getattr(tutor, "registered_hint_mode", "template"),
             "events": events, "truncated": len(rows) > 200,
-            "citation_refs": [{key: c.get(key) for key in ("passage_id", "reference_sha256")} for c in citations]}
+            "citation_refs": _citation_refs(messages[-1].get("citations")),
+            "cited_turns": cited[-CITED_TURN_LIMIT:], "cited_turns_truncated": len(cited) > CITED_TURN_LIMIT}

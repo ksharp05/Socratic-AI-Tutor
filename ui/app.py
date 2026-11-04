@@ -242,7 +242,15 @@ def teacher_trace() -> None:
             if trace["truncated"]:
                 st.info("Showing the most recent 200 events.")
             st.dataframe(trace["events"], hide_index=True, width="stretch")
-            st.json({"citation_refs": trace["citation_refs"]})
+            st.subheader("Citations by tutor turn")
+            if trace["cited_turns_truncated"]:
+                st.info("Showing the most recent 50 cited turns.")
+            if trace["cited_turns"]:
+                st.dataframe([{"turn": t["message_index"], "kind": t["kind"], **c}
+                              for t in trace["cited_turns"] for c in t["citations"]], hide_index=True, width="stretch")
+            else:
+                st.caption("No tutor turn in this conversation carried a citation.")
+            st.json({"latest_message_citation_refs": trace["citation_refs"]})
 
 
 if me["role"] == "teacher":
