@@ -111,3 +111,33 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 - [Beta features, dataset import and evaluation](beta/README.md)
 - [Dataset report](datasets/DATASET_REPORT.md) and [book catalogue](datasets/NCERT_CATALOGUE.md)
 - [Team setup guide](https://github.com/ksharp05/Socratic-AI-Tutor/blob/milestone-1/Docs/SETUP.md), which describes the separate original proof of concept as well as general Git and Python setup.
+
+## Connected graph tutor: local offline demo
+
+The standalone beta launch above does not mount the authenticated graph. To try the connected quadratic-equations journey on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
+
+```powershell
+Set-Location -LiteralPath 'D:\Work\IITB\Socratic Tutor'
+$env:SOCRATES_SOURCE_WORKSPACE = (Get-Location).Path
+$env:TUTOR_BETA_WORKSPACE = (Get-Location).Path
+$env:TUTOR_BETA_CONFIG = Join-Path (Get-Location) 'config\beta\local.json'
+$env:TUTOR_VAR_DIR = Join-Path (Get-Location) 'Directions\connected_demo_state'
+$env:TUTOR_LLM = 'stub'
+$env:TUTOR_BETA_LIVE = '0'
+$env:TUTOR_API_SEED = '1'
+$env:TUTOR_API_TOKENS = 'local-student:student:L-DEMO,local-teacher:teacher:T-DEMO'
+$env:PYTHONPATH = (Join-Path (Get-Location) 'src') + ';' + (Join-Path (Get-Location) 'socratic_tutor_dataset_v2\src')
+.\.venv_app\Scripts\python.exe -m uvicorn tutor_api.main:app --host 127.0.0.1 --port 8771
+```
+
+Keep the server window open. In another PowerShell window, make a **synthetic development approval** so the local demo has questions:
+
+```powershell
+$teacherHeaders = @{ Authorization = 'Bearer local-teacher' }
+$proposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teacher/proposals' -Headers $teacherHeaders -ContentType 'application/json' -Body '{"concept_id":"qe04"}'
+$null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $proposal.set_id + "/approve") -Headers $teacherHeaders
+```
+
+Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question, then start a quiz. The quiz and study plan use the authenticated graph learner. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
+
+The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).

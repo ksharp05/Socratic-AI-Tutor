@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS stuck_alert_state (learner_id TEXT, concept_id TEXT, 
   PRIMARY KEY (learner_id, concept_id));
 CREATE TABLE IF NOT EXISTS applied_quizzes (quiz_id TEXT PRIMARY KEY, learner_id TEXT NOT NULL,
   payload_sha256 TEXT NOT NULL, applied_at REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS graph_session_leases (learner_id TEXT PRIMARY KEY, session_id TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS trace_events (id INTEGER PRIMARY KEY AUTOINCREMENT, ts REAL, session_id TEXT,
   node TEXT, role TEXT, kind TEXT, name TEXT, args TEXT, outcome TEXT, latency_ms REAL, detail TEXT);
 """

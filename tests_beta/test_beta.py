@@ -233,6 +233,7 @@ def client(tmp_path,registry,maths,repo):
 
 def test_api_complete_chat_source_card_history_journey(client):
     assert client.get('/api/health').status_code==200
+    assert client.get('/api/bootstrap').json()['graph_journey'] is False
     s=client.post('/api/sessions',json={'grade':10,'subject':'Science'},headers=HEADERS).json()
     out=client.post('/api/chat',json={'session_id':s['id'],'text':'Explain photosynthesis','request_id':'chat-00001'},headers=HEADERS)
     assert out.status_code==200

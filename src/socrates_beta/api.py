@@ -107,14 +107,14 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         entry=registry.entries();k=registry.knowledge()
         return {'status':'ok','version':__version__,'dataset':entry['active'],'dataset_integrity':'verified',
            'language':language.health() if language and hasattr(language,'health') else {'mode':'live' if language else 'offline'},
-           'beta':True,'maths_practice_items':len(maths.items),
+           'beta':True,'graph_journey':tutor_provider is not None,'maths_practice_items':len(maths.items),
            'assessment_policy':'teacher_published' if tutor_provider is not None else 'development_unapproved'}
     @app.get('/api/bootstrap')
     def initial(request:Request):
         entry=registry.public();k=registry.knowledge()
         return {'version':__version__,'library':entry,'catalogue':k.catalogue(),'profile':repo.profile(owner(request))['preferences'],
           'dashboard':study.dashboard(owner(request)),'language':health()['language'],
-          'assessment_policy':health()['assessment_policy'],'beta':True}
+          'assessment_policy':health()['assessment_policy'],'graph_journey':health()['graph_journey'],'beta':True}
     @app.get('/api/library/{dataset_id}')
     def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
     @app.post('/api/preferences')

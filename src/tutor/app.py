@@ -425,7 +425,7 @@ class TutorApp:
             text = f"Recorded. Q{quiz['index'] + 1}: {nxt['prompt']}"
         else:
             score = sum(r["correct"] for r in quiz["results"])
-            text = f"Quiz finished: {score}/{len(quiz['results'])}. I've updated your study plan (type /plan to see it)."
+            text = f"Quiz finished: {score}/{len(quiz['results'])}."
         return {"quiz": quiz, "draft": {"text": text, "citations": [], "kind": "question"}}
 
     def _refuse(self, state: TutorState) -> dict:

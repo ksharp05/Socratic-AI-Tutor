@@ -20,6 +20,7 @@ from typing import Literal
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from filelock import Timeout
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
 
@@ -169,6 +170,33 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             if owner != learner_id:
                 _deny(403, "this session belongs to someone else")
 
+    def _active_graph_session(learner_id: str):
+        """Reconcile a persisted reservation with the graph checkpoint under the publication lock."""
+        row = _tutor().conn.execute("SELECT session_id FROM graph_session_leases WHERE learner_id=?",
+                                   (learner_id,)).fetchone()
+        if not row:
+            return None
+        sid = row["session_id"]
+        snap = _tutor().graph.get_state({"configurable": {"thread_id": sid}})
+        if not (snap.next or (snap.values or {}).get("quiz")):
+            _tutor().conn.execute("DELETE FROM graph_session_leases WHERE learner_id=? AND session_id=?",
+                                  (learner_id, sid))
+            return None
+        return {"session_id": sid, "quiz_active": bool((snap.values or {}).get("quiz")),
+                "interrupted": bool(snap.next)}
+
+    def _reserve_graph_session(learner_id: str, session_id: str, *, resume: bool = False):
+        current = _active_graph_session(learner_id)
+        if current and current["session_id"] != session_id:
+            raise HTTPException(409, "Finish or recover your existing connected session before starting another.")
+        if current and current["interrupted"] and not resume:
+            raise HTTPException(409, "Recover the interrupted turn before sending another message.")
+        # Reserve before graph invocation. A crash leaves a marker to reconcile on recovery.
+        _tutor().conn.execute("INSERT OR REPLACE INTO graph_session_leases VALUES (?,?)", (learner_id, session_id))
+
+    def _finish_graph_session(learner_id: str):
+        _active_graph_session(learner_id)  # retain only an active quiz or interrupted checkpoint
+
     def _citations(reply: str) -> list[dict]:
         cards = _tutor().cards
         out = []
@@ -180,8 +208,14 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
 
     def _run_turn(p: Principal, body: ChatIn) -> dict:
         session_id = body.session_id or f"s-{p.subject_id}-{uuid.uuid4().hex[:8]}"
-        with lock:
+        with lock, _tutor().bus.publication_lock:
             _check_session(session_id, p.subject_id)
+            existing = _active_graph_session(p.subject_id)
+            if existing and existing["session_id"] != session_id and guards.screen_input(body.text)["distress"]:
+                return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode,
+                        "reply": guards.HANDOFF_MESSAGE, "route": "handoff", "plan": None,
+                        "citations": [], "tools": [], "quiz_active": None, "persistence": "not_saved_urgent"}
+            _reserve_graph_session(p.subject_id, session_id)
             started = time.perf_counter()
             try:
                 result = _call(_tutor().turn, session_id, p.subject_id, body.text, mode=body.mode)
@@ -196,8 +230,15 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             metrics.replies.labels(body.mode).inc()
             if route == "handoff":
                 metrics.handoffs.inc()
+            snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
+            quiz_active = bool((snap.values or {}).get("quiz"))
+            _finish_graph_session(p.subject_id)
         return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode, **result,
-                "citations": _citations(result["reply"])}
+                "quiz_active": quiz_active, "citations": _citations(result["reply"])}
+
+    @api.exception_handler(Timeout)
+    async def _publication_busy(_: Request, exc: Timeout):
+        return JSONResponse({"detail": "The tutor is busy; please try again."}, status_code=503)
 
     @api.exception_handler(HTTPException)
     async def _http_error(_: Request, exc: HTTPException):
@@ -248,17 +289,46 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
 
     @api.post("/chat/resume")
     def chat_resume(body: ResumeIn, p: Principal = Depends(student)) -> dict:
-        with lock:
+        with lock, _tutor().bus.publication_lock:
             _check_session(body.session_id, p.subject_id)
+            _reserve_graph_session(p.subject_id, body.session_id, resume=True)
             out = _call(_tutor().resume, body.session_id)
+            _finish_graph_session(p.subject_id)
         return {"session_id": body.session_id, "resumed": out is not None, **(out or {})}
+
+    @api.post("/chat/leave")
+    def leave_quiz(body: ResumeIn, p: Principal = Depends(student)) -> dict:
+        with lock, _tutor().bus.publication_lock:
+            _check_session(body.session_id, p.subject_id)
+            current = _active_graph_session(p.subject_id)
+            if current and current["session_id"] != body.session_id:
+                raise HTTPException(409, "Finish or recover your existing connected session first.")
+            snap = _tutor().graph.get_state({"configurable": {"thread_id": body.session_id}})
+            if snap.next:
+                raise HTTPException(409, "Recover the interrupted turn before leaving the quiz.")
+            if not (snap.values or {}).get("quiz"):
+                return {"session_id": body.session_id, "ended": False}
+            text = "Quiz ended. No score was recorded for this unfinished quiz."
+            _tutor().graph.update_state({"configurable": {"thread_id": body.session_id}},
+                {"quiz": None, "draft": None, "messages": [{"role": "tutor", "content": text, "kind": "info"}]},
+                as_node="respond")
+            _finish_graph_session(p.subject_id)
+            return {"session_id": body.session_id, "ended": True, "reply": text}
+
+    @api.get("/chat/active")
+    def active_chat(p: Principal = Depends(student)) -> dict:
+        with lock, _tutor().bus.publication_lock:
+            current = _active_graph_session(p.subject_id)
+        return current or {"session_id": None, "quiz_active": False, "interrupted": False}
 
     @api.get("/chat/{session_id}/history")
     def chat_history(session_id: str, p: Principal = Depends(student)) -> dict:
         with lock:
             _check_session(session_id, p.subject_id)
             messages = _call(_tutor().history, session_id)
-        return {"session_id": session_id, "messages": messages}
+            snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
+        return {"session_id": session_id, "messages": messages,
+                "quiz_active": bool((snap.values or {}).get("quiz")), "interrupted": bool(snap.next)}
 
     # ------------------------------------------------------------------ teacher
     @api.get("/teacher/proposals")

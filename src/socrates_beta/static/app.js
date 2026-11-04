@@ -72,12 +72,118 @@ async function evidencePage(){
  }
  return frag;
 }
-const pages={explore,tutor,practice,map:mapPage,cards:cardsPage,plan:planPage,history:historyPage,progress:progressPage,library:libraryPage,evidence:evidencePage};
-async function route(){if(!S.boot)return;const token=++S.render;const page=location.hash.slice(1)||'explore';S.page=pages[page]?page:'explore';document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.dataset.page===S.page));$('crumb').textContent={explore:'Your learning space',tutor:'A conversation with Socrates',practice:'Practice & quick checks',map:'Your learning map',cards:'Spaced recall',plan:'A five-day starting point',history:'Saved conversations',progress:'Your progress',library:'Knowledge collections',evidence:'Beta development evidence'}[S.page];try{const content=await pages[S.page]();if(token===S.render)$('main').replaceChildren(content);}catch(e){if(token===S.render)$('main').replaceChildren(title('Let’s take another route','This step needs another try.',e.message),btn('Try again',route,true));}}
+// The connected journey uses the existing student API. Credentials remain in memory.
+const GRAPH_BASE=new URL('../',new URL(BASE,location.origin));
+const G={token:null,learner:null,session:null,messages:[],plan:null,modelLabel:null,inQuiz:false,busy:false,uncertain:false,error:null};
+async function graphFetch(path,token,data){
+ const url=new URL(path,GRAPH_BASE);
+ if(url.origin!==location.origin)throw Error('The connected tutor must use the same server.');
+ const r=await fetch(url,{method:data===undefined?'GET':'POST',redirect:'error',cache:'no-store',
+  headers:{'Authorization':'Bearer '+token,...(data===undefined?{}:{'Content-Type':'application/json'})},
+  body:data===undefined?undefined:JSON.stringify(data)});
+ let result;try{result=await r.json();}catch{throw Error('The connected tutor did not return a readable response.');}
+ if(!r.ok)throw Error(typeof result.detail==='string'?result.detail:'The connected tutor could not complete the request.');
+ return result;
+}
+function graphStoreSession(){try{sessionStorage.setItem('socrates-connected:'+G.learner,G.session||'');}catch{ /* A later sign-in can recover an active quiz from the server. */ }}
+function graphSession(){if(!G.session){G.session='web-'+crypto.randomUUID();graphStoreSession();}return G.session;}
+async function graphSignIn(token){
+ if(!token||G.busy)return;
+ if(location.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(location.hostname))throw Error('Use HTTPS or the local computer to sign in.');
+ G.busy=true;G.error=null;await route();
+ try{
+  const who=await graphFetch('me',token);
+  if(who.role!=='student')throw Error('Use a student credential for the connected tutor.');
+  const profile=await graphFetch('learners/'+encodeURIComponent(who.id),token);
+  const health=await graphFetch('health',token);
+  const modelLabel=String(health.llm||'').startsWith('stub')?'Offline templates':'Model configured; a reply may use fallback';
+  const active=await graphFetch('chat/active',token);
+  let previous=null;try{previous=sessionStorage.getItem('socrates-connected:'+who.id)||null;}catch{}
+  const session=active.session_id||previous;
+  let history=null;if(session)history=await graphFetch('chat/'+encodeURIComponent(session)+'/history',token);
+  const messages=(history?.messages||[]).filter(m=>m.role==='student'||m.role==='tutor').map(m=>({role:m.role==='student'?'user':'assistant',text:m.content}));
+  Object.assign(G,{token,learner:who.id,session,messages,plan:profile.plan||null,modelLabel,inQuiz:!!history?.quiz_active,uncertain:!!history?.interrupted});
+  graphStoreSession();
+  if(G.uncertain)G.error='The previous turn was interrupted. Check the conversation before continuing.';
+ }catch(e){G.error=e.message;}finally{G.busy=false;await route();}
+}
+async function graphTurn(text,mode){
+ if(!G.token||G.busy||G.uncertain||!text.trim())return;
+ const sid=graphSession();G.busy=true;G.error=null;await route();
+ try{
+  const result=await graphFetch('chat',G.token,{session_id:sid,text:text.trim(),mode});
+  G.messages.push({role:'user',text:text.trim()},{role:'assistant',text:result.reply,citations:result.citations||[],persistence:result.persistence});
+  G.plan=result.plan||G.plan;if(typeof result.quiz_active==='boolean')G.inQuiz=result.quiz_active;
+ }catch(e){G.uncertain=true;G.error='The turn may have been recorded. Check the conversation before sending another message.';}
+ finally{G.busy=false;await route();}
+}
+async function graphRecover(){
+ if(!G.token||!G.session||G.busy)return;
+ G.busy=true;G.error=null;await route();
+ try{
+  const active=await graphFetch('chat/active',G.token);
+  if(active.session_id){G.session=active.session_id;graphStoreSession();}
+  await graphFetch('chat/resume',G.token,{session_id:G.session});
+  const history=await graphFetch('chat/'+encodeURIComponent(G.session)+'/history',G.token);
+  if(history.interrupted)throw Error('The turn is still interrupted. Try checking it again.');
+  G.messages=history.messages.filter(m=>m.role==='student'||m.role==='tutor').map(m=>({role:m.role==='student'?'user':'assistant',text:m.content}));
+  G.inQuiz=history.quiz_active;
+  const profile=await graphFetch('learners/'+encodeURIComponent(G.learner),G.token);
+  G.plan=profile.plan||null;G.uncertain=false;
+ }catch(e){G.error='The conversation could not be checked yet. Please try checking again.';}
+ finally{G.busy=false;await route();}
+}
+async function graphLeave(){
+ if(!G.token||!G.session||G.busy||G.uncertain||!G.inQuiz)return;
+ G.busy=true;G.error=null;await route();
+ try{
+  const result=await graphFetch('chat/leave',G.token,{session_id:G.session});
+  if(result.reply)G.messages.push({role:'assistant',text:result.reply});
+  G.inQuiz=false;
+ }catch(e){G.uncertain=true;G.error='The quiz state could not be confirmed. Check the conversation before continuing.';}
+ finally{G.busy=false;await route();}
+}
+function graphPlan(){
+ if(G.inQuiz)return h('section',{class:'card tip'},h('h3',{},'Quiz in progress'),h('p',{},'Your study plan will be shown after the quiz.'));
+ const plan=G.plan;if(!plan)return h('section',{class:'card tip'},h('h3',{},'Your study plan'),h('p',{},'Your plan appears after your first connected tutor turn.'));
+ return h('section',{class:'card tip'},h('h3',{},'Your study plan'),h('p',{class:'small muted'},`Revision ${plan.version} · ${plan.replan_reason||'Your current plan'}`),
+  h('ul',{},(plan.steps||[]).map(step=>h('li',{},step.title+(step.why?' — '+step.why:'')))));
+}
+async function connectedPage(){
+ const page=h('div',{},title('Class 10 · Quadratic equations','Your connected tutor.','One conversation for guided questions, teacher-approved practice and your learner plan.'));
+ page.append(h('p',{class:'footer-note'},'This signed-in learning record is separate from the anonymous beta conversations and cards. Signing out does not delete either record.'));
+ if(!G.token){
+  const input=h('input',{type:'password',autocomplete:'off',maxlength:'512',required:'required','aria-label':'Student credential'});
+  const button=h('button',{type:'submit'},G.busy?'Checking…':'Sign in');button.disabled=G.busy;
+  const form=h('form',{onSubmit:e=>{e.preventDefault();const value=input.value.trim();input.value='';run(()=>graphSignIn(value));}},
+    h('label',{},'Student credential',input),h('div',{class:'actions'},button));
+  page.append(h('section',{class:'card'},h('h2',{},'Connect your learning record'),h('p',{},'Enter the student credential supplied for this local tutor. It is kept only in this page’s memory.'),form,G.error?h('p',{class:'error',role:'alert'},G.error):null));return page;
+ }
+ const log=h('div',{class:'chat-log','aria-live':'polite'});
+ if(!G.messages.length)log.append(message('assistant','What would you like to understand about quadratic equations?'));
+ for(const entry of G.messages){const node=message(entry.role,entry.text);if(entry.persistence==='not_saved_urgent')node.append(h('div',{class:'reply-status'},'This urgent message was not saved.'));for(const citation of entry.citations||[]){node.append(h('details',{class:'source'},h('summary',{},citation.title||citation.passage_id),h('p',{},citation.text||''),h('p',{class:'small muted'},citation.passage_id)));}log.append(node);}
+ if(G.busy)log.append(message('assistant','Working on the next step…'));
+ const input=h('textarea',{placeholder:'Share your reasoning or answer…',maxlength:'4000','aria-label':'Your message'});input.disabled=G.busy||G.uncertain;
+ const send=h('button',{type:'submit'},'Send →');send.disabled=G.busy||G.uncertain;
+ const form=h('form',{onSubmit:e=>{e.preventDefault();const value=input.value;input.value='';run(()=>graphTurn(value,G.inQuiz?'quiz':'practice'));}},input,send);
+ const quiz=btn('Start a quiz',()=>graphTurn('start a quiz','quiz'),true);quiz.disabled=G.busy||G.uncertain||G.inQuiz;
+ const fresh=btn('New conversation',async()=>{if(G.busy||G.uncertain||G.inQuiz)return;Object.assign(G,{session:null,messages:[],error:null});graphStoreSession();await route();},true);fresh.disabled=G.busy||G.uncertain||G.inQuiz;
+ const out=btn('Sign out',async()=>{if(G.busy)return;Object.assign(G,{token:null,learner:null,session:null,messages:[],plan:null,modelLabel:null,inQuiz:false,uncertain:false,error:null});await route();},true);out.disabled=G.busy;
+ const leave=G.inQuiz?btn('Leave quiz',graphLeave,true):null;if(leave)leave.disabled=G.busy||G.uncertain;
+ const controls=h('div',{class:'actions'},quiz,leave,fresh,out);
+ const recover=G.uncertain?btn('Check conversation',graphRecover,true):null;
+ const surface=h('section',{class:'chat-surface'},h('div',{class:'chat-header'},h('div',{},h('h3',{},'Connected maths conversation'),h('span',{class:'small muted'},(G.inQuiz?'Quiz in progress · no hints':'Teacher-published questions · checked maths')+' · '+G.modelLabel)),controls),log,
+  h('div',{class:'chat-compose'},form,G.error?h('p',{class:'error',role:'alert'},G.error):null,recover,h('p',{class:'small muted'},'Please avoid sharing personal information.')));
+ page.append(h('div',{class:'chat-layout'},surface,h('aside',{class:'chat-aside'},graphPlan(),h('section',{class:'card tip'},h('h3',{},'Learn step by step'),h('p',{},'Ask a question, request practice, or start a quiz. Published questions depend on teacher approval.')))));
+ setTimeout(()=>{log.scrollTop=log.scrollHeight;},0);return page;
+}
+
+const pages={connected:connectedPage,explore,tutor,practice,map:mapPage,cards:cardsPage,plan:planPage,history:historyPage,progress:progressPage,library:libraryPage,evidence:evidencePage};
+async function route(){if(!S.boot)return;const token=++S.render;const page=location.hash.slice(1)||'explore';S.page=pages[page]?page:'explore';document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.dataset.page===S.page));$('crumb').textContent={connected:'Connected maths tutor',explore:'Your learning space',tutor:'A conversation with Socrates',practice:'Practice & quick checks',map:'Your learning map',cards:'Spaced recall',plan:'A five-day starting point',history:'Saved conversations',progress:'Your progress',library:'Knowledge collections',evidence:'Beta development evidence'}[S.page];try{const content=await pages[S.page]();if(token===S.render)$('main').replaceChildren(content);}catch(e){if(token===S.render)$('main').replaceChildren(title('Let’s take another route','This step needs another try.',e.message),btn('Try again',route,true));}}
 function setupSubjects(){const grade=Number($('setup-grade').value);const subjects=[...new Set(S.catalogue.filter(c=>c.grade===grade).map(c=>c.subject))];$('setup-subject').replaceChildren(...subjects.map(v=>h('option',{value:v},v)));if(subjects.includes(S.scope.subject))$('setup-subject').value=S.scope.subject;}
 function onboarding(){const grades=[...new Set(S.catalogue.map(c=>c.grade))];$('setup-grade').replaceChildren(...grades.map(g=>h('option',{value:g},g)));$('setup-grade').value=String(S.scope.grade);setupSubjects();$('setup-grade').onchange=setupSubjects;$('onboarding-error').textContent='';$('onboarding').showModal();}
 $('preferences').onclick=onboarding;$('onboarding-close').onclick=()=>$('onboarding').close();$('onboarding-form').onsubmit=e=>{e.preventDefault();run(async()=>{const prefs={grade:Number($('setup-grade').value),subject:$('setup-subject').value,minutes:Number($('setup-minutes').value),goal:$('setup-goal').value};await api('preferences',prefs);S.boot.profile=prefs;S.scope={grade:prefs.grade,subject:prefs.subject,book:null,unit:null};S.session=null;S.assessment=null;localStorage.removeItem('socrates-beta-session');$('onboarding').close();await route();});};
 const timer=JSON.parse(localStorage.getItem('socrates-beta-timer')||'null')||{mode:'focus',remaining:1500,running:false,deadline:null};function saveTimer(){localStorage.setItem('socrates-beta-timer',JSON.stringify(timer));}function drawTimer(){if(timer.running){timer.remaining=Math.max(0,Math.ceil((timer.deadline-Date.now())/1000));if(timer.remaining===0){timer.running=false;saveTimer();toast(timer.mode==='focus'?'Focus session complete. Take a short break.':'Break complete. Ready for another small step?');}}$('timer-time').textContent=String(Math.floor(timer.remaining/60)).padStart(2,'0')+':'+String(timer.remaining%60).padStart(2,'0');$('timer-label').textContent=timer.mode==='focus'?'Focus':'Break';$('timer-start').textContent=timer.running?'Pause':'Start';$('timer-switch').textContent=timer.mode==='focus'?'Take a break':'Back to focus';}
 $('focus-toggle').onclick=()=>{$('focus-panel').hidden=!$('focus-panel').hidden;drawTimer();};$('timer-start').onclick=()=>{if(timer.running){timer.remaining=Math.max(0,Math.ceil((timer.deadline-Date.now())/1000));timer.running=false;}else{if(timer.remaining===0)timer.remaining=timer.mode==='focus'?1500:300;timer.deadline=Date.now()+timer.remaining*1000;timer.running=true;}saveTimer();drawTimer();};$('timer-reset').onclick=()=>{timer.running=false;timer.remaining=timer.mode==='focus'?1500:300;saveTimer();drawTimer();};$('timer-switch').onclick=()=>{timer.running=false;timer.mode=timer.mode==='focus'?'break':'focus';timer.remaining=timer.mode==='focus'?1500:300;saveTimer();drawTimer();};setInterval(drawTimer,1000);
 window.addEventListener('hashchange',()=>run(route));
-run(async()=>{S.boot=await api('bootstrap');S.dataset=S.boot.library.active;S.catalogue=S.boot.catalogue;const profile=S.boot.profile||{};S.scope={grade:profile.grade||10,subject:profile.subject||'Mathematics',book:null,unit:null};if(!S.catalogue.some(c=>c.grade===S.scope.grade&&c.subject===S.scope.subject)){const c=S.catalogue[0];S.scope={grade:c.grade,subject:c.subject,book:null,unit:null};}const sid=localStorage.getItem('socrates-beta-session');if(sid){try{const saved=await api('sessions/'+sid);S.session=saved;S.scope=saved.scope;S.dataset=saved.dataset;if(S.dataset!==S.boot.library.active)S.catalogue=(await api('library/'+S.dataset)).catalogue;}catch{localStorage.removeItem('socrates-beta-session');}}$('connection').textContent=S.boot.language.mode==='live'?'● Live language model':'○ Source reading · offline';await route();if(!profile.grade)onboarding();});
+run(async()=>{S.boot=await api('bootstrap');$('connected-nav').hidden=!S.boot.graph_journey;S.dataset=S.boot.library.active;S.catalogue=S.boot.catalogue;const profile=S.boot.profile||{};S.scope={grade:profile.grade||10,subject:profile.subject||'Mathematics',book:null,unit:null};if(!S.catalogue.some(c=>c.grade===S.scope.grade&&c.subject===S.scope.subject)){const c=S.catalogue[0];S.scope={grade:c.grade,subject:c.subject,book:null,unit:null};}const sid=localStorage.getItem('socrates-beta-session');if(sid){try{const saved=await api('sessions/'+sid);S.session=saved;S.scope=saved.scope;S.dataset=saved.dataset;if(S.dataset!==S.boot.library.active)S.catalogue=(await api('library/'+S.dataset)).catalogue;}catch{localStorage.removeItem('socrates-beta-session');}}$('connection').textContent=S.boot.language.mode==='live'?'● Live language model':'○ Source reading · offline';await route();if(!profile.grade&&S.page!=='connected')onboarding();});
