@@ -9,10 +9,10 @@ Follow the [setup guide](Docs/SETUP.md): it ends with `pytest -q` showing every 
 ## Branches and pull requests
 
 1. **`main` is protected.** It must always install and pass its tests. Nobody pushes to it directly.
-2. **One branch per task**, named `r<role>/<topic>`, for example `r2/hybrid-retrieval` or `r6/compose`. Branch from the latest `main`.
+2. **One development branch per milestone**, named `milestone-<number>` (for example, `milestone-1`, `milestone-2`, `milestone-3`). Current work stays on **`milestone-2`**. Put features, fixes, tests and documentation for that milestone on the same branch. Create the next milestone branch only when work on that milestone begins, from the agreed completed milestone or integration commit. Do not create role-, task- or feature-specific branches for this workflow.
 3. **Push every day.** Open a draft pull request early so others can see the work.
 4. **Every pull request needs one review from someone in another role**, and CI must pass. Use squash merge.
-5. **Keep pull requests small** (under about 400 changed lines) and merge often. A long-lived branch turns into a painful merge.
+5. **Keep commits focused and reviewable** within the milestone branch. Review the complete milestone diff and its verification evidence before merging.
 6. **Change files you own.** If you need a change in someone else's file, ask them or tag them as reviewer. Owners: [who owns which file](Docs/LEAD_ROADMAP.md#who-owns-which-file).
 
 ## Every day
