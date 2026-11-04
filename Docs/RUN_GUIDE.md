@@ -42,7 +42,7 @@ This uses a labelled, source-backed fallback; it does not reproduce the live mod
 ## B. First-time setup for a team member
 
 1. Install Git and Python 3.12, and get access to the repository. In PowerShell, check `git --version` and `py -3.12 --version`.
-2. Clone the branch containing this guide into a new folder. The `milestone-2` branch is currently local and must be published before another machine can clone it. Once published, run this from the parent folder where you want the new checkout:
+2. Clone the branch containing this guide into a new folder. The `milestone-2` branch is published on GitHub. Run this from the parent folder where you want the new checkout:
 
    ```powershell
    git clone --branch milestone-2 https://github.com/ksharp05/Socratic-AI-Tutor.git
@@ -110,7 +110,7 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 
 - [Beta features, dataset import and evaluation](beta/README.md)
 - [Dataset report](datasets/DATASET_REPORT.md) and [book catalogue](datasets/NCERT_CATALOGUE.md)
-- [Team setup guide](https://github.com/ksharp05/Socratic-AI-Tutor/blob/milestone-1/Docs/SETUP.md), which describes the separate original proof of concept as well as general Git and Python setup.
+- [Team setup guide](SETUP.md), which covers prerequisites, the check script and both install routes.
 
 ## Connected graph tutor: local offline demo
 
@@ -162,7 +162,7 @@ The local browser walkthrough was verified with a synthetic index and the stub m
 
 ## Integrated Compose preparation
 
-The following is an **unverified Docker path**: Docker Desktop and WSL were installed on 4 November, but Windows must restart before engine verification. Base Compose configuration validation passed; image build and Compose health checks remain required. See [installation evidence](m2/FRESH_INSTALL.md). It uses the integrated `/beta` mount and an authorised prepared index. Obtain the expected SHA-256 separately from a trusted source; do not rely only on a hash computed from an untrusted input. In PowerShell from the checkout containing the Docker files:
+The base Compose stack was verified from a fresh clone on 5 November (build, health, teacher/learner flow and restart persistence). The **integrated overlay below is still unverified**: it needs an authorized index and a separately trusted hash. See [installation evidence](m2/FRESH_INSTALL.md). It uses the integrated `/beta` mount and an authorised prepared index. Obtain the expected SHA-256 separately from a trusted source; do not rely only on a hash computed from an untrusted input. In PowerShell from the checkout containing the Docker files:
 
 ```powershell
 $env:TUTOR_INDEX_PATH = 'C:\path\to\authorized\knowledge.sqlite'

@@ -33,7 +33,7 @@ Run every command from the repository root, with the environment active.
 | Score rater and judge agreement | `python -m tutor_eval.agreement score --raters a.csv b.csv --judge var/runs/<run_id>/judge.jsonl --label leak` |
 | Run security cases | `python -m tutor_eval.security --cases <attacks.jsonl> <controls.jsonl> [--no-defences]` |
 | Compare runs in one table | `python -m tutor_eval.tables var/runs/<a> var/runs/<b>` |
-| Freeze the held-out sets (once, R5) | `python -m tutor_eval.freeze ...`, see [the work plan](../Docs/roles/R1_R5_WORK_PLAN.md#9-next-steps-sat-31-oct-and-sun-1-nov) |
+| Freeze the held-out sets (once, R5) | `python -m tutor_eval.freeze ...`, see the R1/R5 work plan on the `r5/r1-r5-work-plan` branch |
 
 ## What each part does
 

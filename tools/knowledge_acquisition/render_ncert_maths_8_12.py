@@ -1,9 +1,9 @@
 from pathlib import Path
 from PIL import Image,ImageOps,ImageDraw
-import json,subprocess,concurrent.futures,hashlib
+import json,os,shutil,subprocess,concurrent.futures,hashlib
 root=Path.cwd();base=root/'Directions/ncert_maths_8_12/2026-11-03';m=json.loads((base/'MANIFEST.json').read_text(encoding='utf-8'))
 qa=base/'qa';qa.mkdir(exist_ok=True)
-poppler=Path(r'C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin')
+poppler=Path(os.environ.get('POPPLER_BIN') or Path(shutil.which('pdftoppm') or 'pdftoppm').parent)  # set POPPLER_BIN or put Poppler on PATH
 def check(b):
  pdf=base/b['reading_copy']['relative_path'];results=[]
  run=subprocess.run([str(poppler/'pdfinfo.exe'),str(pdf)],capture_output=True,text=True,encoding='utf-8',errors='replace');assert run.returncode==0,run.stderr

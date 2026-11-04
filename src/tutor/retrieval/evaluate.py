@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 from pathlib import Path
 
 import bm25s
@@ -24,7 +25,8 @@ import bm25s
 from ..config import CONFIG_PATH, ROOT, SETTINGS
 from .hybrid import HybridRetriever, build_retriever, card_text, load_cards
 
-DEFAULT_BUILD = Path(r"D:\Work\IITB\Socratic Tutor\socratic_tutor_dataset_v2\builds\v0.10.0")
+# The frozen build is private and not in git; point SOCRATES_SOURCE_WORKSPACE at the workspace that holds it.
+DEFAULT_BUILD = Path(os.environ.get("SOCRATES_SOURCE_WORKSPACE", ROOT)) / SETTINGS.raw["dataset"]["build"]
 
 
 def dev_queries(build: Path) -> list[dict]:

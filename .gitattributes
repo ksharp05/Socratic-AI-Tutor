@@ -4,3 +4,6 @@ eval/poc/** -text
 eval/dev/** -text
 eval/HELDOUT_MANIFEST.json -text
 src/socratic_data/*.py -text
+
+# Shell scripts must keep LF so they run on macOS and Linux checkouts
+*.sh text eol=lf

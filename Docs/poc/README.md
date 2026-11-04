@@ -179,7 +179,7 @@ The whole pipeline (judge, kappa, security runner, comparison tables) is describ
 pytest -q
 ```
 
-54 tests:
+At the proof-of-concept milestone there were 54 tests (there are many more now):
 - **one or more per MCP tool;**
 - **permission hooks:** wrong role, another learner;
 - **end-to-end flows:**

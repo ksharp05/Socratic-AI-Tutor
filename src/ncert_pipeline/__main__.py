@@ -23,7 +23,7 @@ def main():
     sub.add_parser('scopes')
     for name in ('chat','serve'):
         c=sub.add_parser(name); c.add_argument('--live',action='store_true')
-        c.add_argument('--app-root',type=Path,default=Path('D:/Work/IITB/Socratic Tutor Main'))
+        c.add_argument('--app-root',type=Path,default=Path(os.environ.get('SOCRATES_TEAM_APP_ROOT') or code_root))
         c.add_argument('--max-live-calls',type=int,default=6)
         if name=='chat':
             c.add_argument('--grade',type=int,required=True); c.add_argument('--subject',required=True)

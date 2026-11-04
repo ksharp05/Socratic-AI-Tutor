@@ -153,7 +153,7 @@ The tests use FastAPI's `TestClient` and the stub model. CI installs the `api` e
 
 ## Not tested yet
 
-- **Docker.** Docker was not installed on the machine that wrote this. The `Dockerfile` and `docker-compose.yml` were never built or run. Only the YAML and JSON were parsed with Python. The image tags (`prom/prometheus:v3.5.0`, `grafana/grafana:12.1.0`) are pinned but have not been pulled.
+- **Docker.** When this was written, Docker was not installed and the files were never built. On 5 November 2026 the base stack was built and run from a fresh clone and kept its state across a restart; see [Milestone 2 install evidence](../m2/FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). The `ops` profile below is still untested. The image tags (`prom/prometheus:v3.5.0`, `grafana/grafana:12.1.0`) are pinned but have not been pulled.
 - **Prometheus and Grafana.** The scrape config and the provisioned dashboard have not been loaded.
 - **The UI.** It was checked headlessly with Streamlit's `AppTest` against a local API: a student chat turn over SSE and a teacher proposal. It has not been clicked through in a browser.
 - **Streaming.** The POC graph does not stream model tokens. `/chat/stream` runs the whole turn first, then sends the reply in chunks.

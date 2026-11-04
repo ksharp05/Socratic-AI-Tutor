@@ -31,7 +31,8 @@ See the [dataset report](Docs/datasets/DATASET_REPORT.md) and [NCERT source cata
 |---|---|---|
 | [Socratic Tutor — Agentic AI Architecture Guide](Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct) | The architecture, the six team roles, the hand-offs between them, and who owns which folder | Reference |
 | [Project plan](Docs/plan/README.md) (24 Oct) | Builds on the guide with a dated schedule, design decisions, evaluation design, security and privacy, risks and viva preparation | Proposed |
-| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | **Runs; 54 tests pass** |
+| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | Runs (54 tests at the time; superseded) |
+| [Milestone 2 status](Docs/m2/STATUS.md) (5 Nov) | Connected graph tutor for three Class 10 chapters, teacher approval, quizzes and plans, Docker Compose, live-model hint evidence and the development test pack | **Current**: 325 tests in `tests/`, 451 across all suites; not yet accepted |
 | [Lead roadmap](Docs/LEAD_ROADMAP.md) (31 Oct) | The team, what we found on 31 Oct, the schedule to the viva, what each role delivers at each milestone, and who owns which file | **Current** (dates confirmed at the 1 Nov meeting) |
 
 | Key date | |
@@ -57,31 +58,29 @@ What each role owns and never does: [Lead roadmap · Team](Docs/LEAD_ROADMAP.md#
 
 ## Quick start
 
-**Running the browser beta:** see the [beta run guide](Docs/RUN_GUIDE.md) for setup, data access, live and offline modes, and troubleshooting.
+**Running the browser beta:** see the [beta run guide](Docs/RUN_GUIDE.md) for setup, data access, live and offline modes, and troubleshooting. It needs a separately supplied, authorized textbook index, which a fresh clone does not contain.
 
-**New to the project?** Follow the step-by-step [setup guide](Docs/SETUP.md): access, install, tests, your API key, and troubleshooting for Windows, macOS and Linux. The short version:
+**New to the project?** Follow the [setup guide](Docs/SETUP.md) (requirements, Docker or local Python, live key, private data, troubleshooting) or its one-page [install checklist](Docs/INSTALL_CHECKLIST.md). First see what is missing; this check is read-only:
 
-```bash
-python -m venv .venv
+```powershell
+powershell -ExecutionPolicy Bypass -File setup\check_prerequisites.ps1   # macOS/Linux: bash setup/check_prerequisites.sh
 ```
 
-Activate it (`.venv\Scripts\activate` on Windows, `source .venv/bin/activate` on macOS and Linux), then:
+**Route A, Docker** (Docker Desktop; on Windows also WSL 2): run `docker compose up --build --wait`, open http://localhost:8501 and sign in with the development token `dev-student-a` or `dev-teacher`.
 
-```bash
-pip install -e ".[dev]"
-```
+**Route B, local Python 3.12:**
 
-```bash
+```powershell
+powershell -ExecutionPolicy Bypass -File setup\install_python_env.ps1   # macOS/Linux: bash setup/install_python_env.sh
+.venv\Scripts\Activate.ps1                                               # macOS/Linux: source .venv/bin/activate
+pytest -q
 tutor setup
-```
-
-```bash
 tutor chat --learner A
 ```
 
-To use a live model, put your own course key in `.env` and run `tutor check-llm`. The steps are in [Using a real model](Docs/poc/README.md#using-a-real-model); things to try are in the same guide.
+The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requirements-beta-dev.txt` and `pip check`. None of this needs an API key or private data. For a live model, put your own course key in `.env` and run `tutor check-llm` ([setup guide, section 6](Docs/SETUP.md#6-optional-a-live-model-with-your-own-key)).
 
-**API, web UI and Docker:** run `uvicorn tutor_api.main:app` and `streamlit run ui/app.py`, or `docker compose up --build --wait`. Tokens, endpoints and what is still untested are in the [deployment guide](Docs/deploy/README.md).
+**API and web UI without Docker:** `uvicorn tutor_api.main:app` and `streamlit run ui/app.py`. Tokens, endpoints and what is still untested are in the [deployment guide](Docs/deploy/README.md).
 
 ## Repository structure
 
@@ -95,7 +94,12 @@ To use a live model, put your own course key in `.env` and run `tutor check-llm`
 | `content/` | Tutor-visible content: the POC slice and all of dataset v0.10.0's tutor-visible files |
 | `eval/` | Evaluation fixtures (development data only) |
 | `config/` | `app.toml`: models, thresholds and budgets |
-| `tests/` | Automated tests |
-| `Docs/` | The plan, the roadmap, the POC guide, and the contribution and decision logs |
+| `src/v02_integration/` | Opt-in contextual hints and replies (`TUTOR_CONTEXTUAL_HINTS=1`) |
+| `src/socrates_beta/`, `config/beta/` | The browser beta, mounted at `/beta/` when configured (needs private data) |
+| `src/ncert_pipeline/`, `tools/` | NCERT extraction and acquisition tools (need private source files) |
+| `scripts/` | Milestone probes, smoke runs and the development test-pack runner (`scripts/m2/`) |
+| `setup/` | Prerequisite check and Python environment install scripts |
+| `tests/` | Automated tests run by CI; `tests_beta/`, `tests_book_pipeline/`, `tests_integration_v02/` need private data |
+| `Docs/` | Setup guide, run guide, Milestone 2 evidence (`Docs/m2/`), the plan, roadmap and decision logs |
 
 Never committed: `.env`, API keys, NCERT PDFs or page images, the frozen dataset build, held-out data and personal data.

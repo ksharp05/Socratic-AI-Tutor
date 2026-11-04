@@ -1,6 +1,6 @@
 from pathlib import Path,PurePosixPath
 from pypdf import PdfReader
-import hashlib,io,json,re,zipfile,concurrent.futures,logging,subprocess
+import hashlib,io,json,os,re,shutil,zipfile,concurrent.futures,logging,subprocess
 ROOT=Path.cwd();BASE=ROOT/'Directions/ncert_all_subjects_8_12/2026-11-03'
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 def sha(p):
@@ -22,7 +22,7 @@ def coverage(book,files):
  return numbers,flags,notes
 
 def native_fallback(path,expected_pages,folder):
- binary=Path(r'C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin')
+ binary=Path(os.environ.get('POPPLER_BIN') or Path(shutil.which('pdftoppm') or 'pdftoppm').parent)  # set POPPLER_BIN or put Poppler on PATH
  info=subprocess.run([str(binary/'pdfinfo.exe'),str(path)],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=30);assert info.returncode==0,info.stderr
  n=int(re.search(r'^Pages:\s+(\d+)',info.stdout,re.M)[1]);assert n==expected_pages
  rendered=folder/'verification_renders'/path.stem;rendered.mkdir(parents=True,exist_ok=True)

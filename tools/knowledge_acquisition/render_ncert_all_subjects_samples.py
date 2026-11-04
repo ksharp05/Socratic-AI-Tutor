@@ -1,8 +1,8 @@
 from pathlib import Path
 from PIL import Image,ImageDraw
-import json,subprocess,concurrent.futures,hashlib
+import json,os,shutil,subprocess,concurrent.futures,hashlib
 root=Path.cwd();base=root/'Directions/ncert_all_subjects_8_12/2026-11-03';qa=base/'qa';qa.mkdir(exist_ok=True)
-ids=['hecu1','iesc1','jesc1','keph1','kech1','kebo1','leph1','lech1','lebo1','keac1','lecs1','hees1','iekv1','ihsh1','hhml1','iuju1','khgv1','lstp1','kuga1','hekr1'];binary=Path(r'C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin\pdftoppm.exe')
+ids=['hecu1','iesc1','jesc1','keph1','kech1','kebo1','leph1','lech1','lebo1','keac1','lecs1','hees1','iekv1','ihsh1','hhml1','iuju1','khgv1','lstp1','kuga1','hekr1'];binary=Path(os.environ.get('POPPLER_BIN') or Path(shutil.which('pdftoppm') or 'pdftoppm').parent)/'pdftoppm'  # set POPPLER_BIN or put Poppler on PATH
 def render(code):
  p=next(base.glob('**/'+code+'/volume_manifest.json'));b=json.loads(p.read_text(encoding='utf-8'));f=next((x for x in b['originals'] if x['name'].lower().endswith('ps.pdf') and x['pdf_parse']!='failed'),None) or next(x for x in b['originals'] if x['pdf_parse']!='failed');dest=qa/(code+'_title')
  run=subprocess.run([str(binary),'-f','1','-l','1','-scale-to','900','-singlefile','-png',f['absolute_path'],str(dest)],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=30);assert run.returncode==0,run.stderr

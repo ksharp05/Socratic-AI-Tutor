@@ -204,3 +204,7 @@ Fixed the gap found in the live walkthrough: the teacher trace now lists citatio
 ## Docker acceptance and development test pack - 5 November
 
 After the restart and a Docker reinstall, a fresh clone of `79b57c2` built and ran healthy under Compose (66 s), served the teacher/learner flow and kept its state across `down`/`up`. [Evidence](FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). A new offline runner played the user's 180-case development pack against the real API: 162 checks passed, 16 failed, 26 cannot be scored automatically, and no provider calls were made. [Findings](TESTPACK_RESULTS.md).
+
+## Install package and project tidy-up - 5 November
+
+Added `setup/` (read-only `check_prerequisites` and idempotent `install_python_env`, in PowerShell and POSIX versions), a rewritten `Docs/SETUP.md` with Docker and local-Python routes and troubleshooting, and `Docs/INSTALL_CHECKLIST.md`. A throwaway clone installed in 186 s, passed `pip check` and the 325 CI tests, and the API and UI started. Here the check reports 15 PASS, 3 WARN, 0 FAIL. Tidy-up: the Poppler, frozen-build and app-root paths no longer point at this machine (`POPPLER_BIN`/PATH, `SOCRATES_SOURCE_WORKSPACE`, `SOCRATES_TEAM_APP_ROOT`); stale Docker and publication notes, the README status and structure tables and one broken link are fixed; `*.sh` is stored with LF; the empty `Docs/.gitkeep` is removed. All 451 tests pass.
