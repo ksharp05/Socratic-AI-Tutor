@@ -327,3 +327,21 @@ def test_mounted_two_profiles_replan_after_completed_approved_quiz(mounted):
         assert after['evidence']['count']==3 and 'involving' in after['replan_reason'].lower()
         assert other['revision']==before_b['revision'] and other['days'][0]['node']['id']=='qe01'
         assert first.get('/beta/api/dashboard').json()['checked_answers']==3
+
+
+class MountedQuestionModePolicyViolation(AssertionError):
+    pass
+
+
+@pytest.mark.xfail(strict=True,raises=MountedQuestionModePolicyViolation,reason='Mounted beta quiz currently serves items whose dataset policy permits practice only')
+def test_mounted_quiz_only_uses_items_permitted_in_quiz_mode(mounted):
+    client,_=mounted
+    sid=session(client);approve(client)
+    response=client.post('/beta/api/practice',headers={'X-Socrates-Request':'1'},
+                         json={'session_id':sid,'mode':'quiz'})
+    assert response.status_code==200
+    question_id=response.json()['item']['id']
+    with (ROOT/'content/dataset-v0.10.0/practice_questions.jsonl').open(encoding='utf-8-sig') as f:
+        item=next(json.loads(line) for line in f if json.loads(line)['question_id']==question_id)
+    if 'quiz' not in item['mode_policy']['allowed_modes']:
+        raise MountedQuestionModePolicyViolation('A practice-only question was selected for the mounted quiz')

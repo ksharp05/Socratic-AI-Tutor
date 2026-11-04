@@ -114,6 +114,9 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 
 ## Connected graph tutor: local offline demo
 
+> **Known limitation:** Quiz and diagnostic checks currently reuse practice-only dataset questions. Do not use them as policy-compliant assessments. See [the integrity gap](m2/KEY_AND_MODE_INTEGRITY.md).
+
+
 The standalone beta launch above does not mount the authenticated graph. To try the connected quadratic-equations journey on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
 
 ```powershell
@@ -138,6 +141,6 @@ $proposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teacher/p
 $null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $proposal.set_id + "/approve") -Headers $teacherHeaders
 ```
 
-Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question, then start a quiz. The quiz and study plan use the authenticated graph learner. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
+Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question or request guided practice. The browser quiz control is currently unavailable while the question-mode policy is corrected; the underlying API still requires a policy fix. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
 
 The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).

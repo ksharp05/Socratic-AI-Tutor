@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS plans (learner_id TEXT PRIMARY KEY, plan_json TEXT, v
 CREATE TABLE IF NOT EXISTS learner_events (id INTEGER PRIMARY KEY AUTOINCREMENT, learner_id TEXT, kind TEXT,
   payload TEXT, ts REAL);
 CREATE TABLE IF NOT EXISTS keys (question_ref TEXT PRIMARY KEY, key_json TEXT, verified INTEGER);
+CREATE TABLE IF NOT EXISTS verified_key_cache (question_ref TEXT NOT NULL, problem_sha256 TEXT NOT NULL,
+  solver_sha256 TEXT NOT NULL, key_json TEXT NOT NULL, key_sha256 TEXT NOT NULL,
+  PRIMARY KEY (question_ref, problem_sha256, solver_sha256));
 CREATE TABLE IF NOT EXISTS proposals (set_id TEXT PRIMARY KEY, concept_id TEXT, payload_json TEXT,
   payload_sha256 TEXT, status TEXT, revision INTEGER, thread_id TEXT, reason TEXT, updated_at REAL);
 CREATE TABLE IF NOT EXISTS published (set_id TEXT PRIMARY KEY, payload_json TEXT, payload_sha256 TEXT,

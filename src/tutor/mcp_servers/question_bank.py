@@ -76,6 +76,15 @@ def build(conn: sqlite3.Connection, *, allow_dev_fixtures: bool = False) -> Fast
                 payload = _verified_payload(row["payload_json"], row["payload_sha256"])
                 if payload is None or _verified_payload(row["proposal_payload"], row["proposal_hash"]) is None:
                     continue
+                # The grader computes from the current runtime pool. An old
+                # approval must not authorize a different item under the same ID.
+                published_items = payload.get("items")
+                if (not isinstance(published_items, list) or not published_items or
+                        any(not isinstance(item, dict) or not isinstance(item.get("question_id"), str) or
+                            item["question_id"] not in pool or
+                            any(item.get(field) != pool[item["question_id"]].get(field) for field in ITEM_FIELDS)
+                            for item in published_items)):
+                    continue
             elif allow_dev_fixtures and row["label"] in DEV_FIXTURE_LABELS:
                 payload = json.loads(row["payload_json"])
             else:

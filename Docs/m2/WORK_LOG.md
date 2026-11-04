@@ -100,3 +100,10 @@ The mounted beta shell now offers a student-authenticated graph conversation, te
 
 The canonical workspace passed **285 offline tests** across all four suites, and the updated browser script passed `node --check`.
 Both project copies passed **285 offline tests** across the four suites; the team run used the canonical local data path. A later focused run passed nine checks after adding explicit assertions that standalone beta does not advertise the connected journey and `/chat/active` rejects missing and teacher credentials. The documented Uvicorn startup, synthetic teacher approval and student quiz were also exercised against an isolated synthetic index. Full logs are under ignored `Directions/git_delivery/`; no real provider was called.
+
+
+## Answer-key integrity and question-mode violation — 4 November
+
+Synthetic regression tests reproduced cached unverified keys being accepted on reuse, stale keys after a question changed, and old approved sets remaining visible after their runtime item changed. Verified keys are now bound to problem and solver fingerprints, corrupted or legacy entries are recomputed, and changed runtime items hide their approved set. An initial full run had 290 passes and one isolated subprocess import failure; after fixing import order, the full canonical run had **291 passes and two strict expected failures**. A third mounted-beta policy failure was reproduced separately.
+
+All 665 public practice questions are marked practice-only, but the graph, standalone beta and mounted beta can use them as quiz questions. This is a real remaining violation; the three strict expected failures are not passes. The browser temporarily pauses quiz/diagnostic entry points and shows the limitation, but its underlying APIs do not yet enforce the policy. A synthetic localhost browser check confirmed the notice, disabled connected quiz, typed-start pause and disabled anonymous quick checks. [Details and remediation](KEY_AND_MODE_INTEGRITY.md).

@@ -1,14 +1,21 @@
 """math-tools: keys, grading, parsing, leak checks and diagnosis. Keys stay inside this server."""
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
+import sys
+from pathlib import Path
+
+import sympy
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 
 from .. import mathcore
+from socratic_data import assessment_tasks, math_kernel, tasks  # mathcore registers the dataset path
 from ..setup_content import load
+from ..store import dumps
 from . import READ
 
 
@@ -22,15 +29,37 @@ def build(conn: sqlite3.Connection, extra_items: list[dict] | None = None) -> Fa
             raise ToolError(f"NOT_FOUND: unknown question {question_ref}")
         return items[question_ref]
 
+    # Cache entries are valid only for the loaded problem and calculation code.
+    # Legacy `keys` rows lack this provenance and are never trusted for reads.
+    engine = hashlib.sha256()
+    for module in (mathcore, math_kernel, tasks, assessment_tasks):
+        engine.update(module.__name__.encode("utf-8") + b"\0")
+        engine.update(Path(module.__file__).read_bytes())
+    engine.update((sympy.__version__ + ":" + sys.version).encode("utf-8"))
+    solver_sha256 = engine.hexdigest()
+
     def _key(question_ref: str) -> dict:
-        row = conn.execute("SELECT key_json, verified FROM keys WHERE question_ref=?", (question_ref,)).fetchone()
-        if row:
-            return json.loads(row["key_json"])
-        result = mathcore.compute_key(_item(question_ref)["problem"])
-        conn.execute("INSERT OR REPLACE INTO keys VALUES (?,?,?)",
-                     (question_ref, json.dumps(result["key"]), int(result["verified"])))
-        if not result["verified"]:
+        problem = _item(question_ref)["problem"]
+        problem_sha256 = hashlib.sha256(dumps(problem).encode("utf-8")).hexdigest()
+        row = conn.execute("SELECT key_json,key_sha256 FROM verified_key_cache "
+                           "WHERE question_ref=? AND problem_sha256=? AND solver_sha256=?",
+                           (question_ref,problem_sha256,solver_sha256)).fetchone()
+        if row and hashlib.sha256(row["key_json"].encode("utf-8")).hexdigest() == row["key_sha256"]:
+            try:
+                cached = json.loads(row["key_json"])
+                if isinstance(cached, dict):
+                    return cached
+            except (TypeError, ValueError):
+                pass
+        result = mathcore.compute_key(problem)
+        if result.get("verified") is not True or not isinstance(result.get("key"), dict):
             raise ToolError(f"UNVERIFIED: the two calculation routes disagree for {question_ref}")
+        key_json = dumps(result["key"])
+        key_sha256 = hashlib.sha256(key_json.encode("utf-8")).hexdigest()
+        conn.execute("INSERT OR REPLACE INTO verified_key_cache VALUES (?,?,?,?,?)",
+                     (question_ref,problem_sha256,solver_sha256,key_json,key_sha256))
+        # Retain the legacy audit/read interface; correctness never relies on this mirror.
+        conn.execute("INSERT OR REPLACE INTO keys VALUES (?,?,?)", (question_ref,key_json,1))
         return result["key"]
 
     mcp = FastMCP("math-tools")
