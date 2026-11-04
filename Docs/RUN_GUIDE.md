@@ -162,7 +162,7 @@ The local browser walkthrough was verified with a synthetic index and the stub m
 
 ## Integrated Compose preparation
 
-The following is an **unverified Docker path**: Docker was unavailable on the development computer, so a clean-machine build and Compose health check remain required. It uses the integrated `/beta` mount and an authorised prepared index. Obtain the expected SHA-256 separately from a trusted source; do not rely only on a hash computed from an untrusted input. In PowerShell from the checkout containing the Docker files:
+The following is an **unverified Docker path**: Docker Desktop and WSL were installed on 4 November, but Windows must restart before engine verification. Base Compose configuration validation passed; image build and Compose health checks remain required. See [installation evidence](m2/FRESH_INSTALL.md). It uses the integrated `/beta` mount and an authorised prepared index. Obtain the expected SHA-256 separately from a trusted source; do not rely only on a hash computed from an untrusted input. In PowerShell from the checkout containing the Docker files:
 
 ```powershell
 $env:TUTOR_INDEX_PATH = 'C:\path\to\authorized\knowledge.sqlite'
