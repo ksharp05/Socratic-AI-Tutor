@@ -1,0 +1,75 @@
+{
+  "development_only": true,
+  "independent_evaluation": false,
+  "source_student_count": 16,
+  "chapter_projection_count": 16,
+  "projection_is_not_an_independent_learner": true,
+  "chapters": {
+    "quadratic_equations": 6,
+    "arithmetic_progressions": 5,
+    "trigonometry": 5
+  },
+  "seeded_misconceptions": [
+    "ap_m01",
+    "ap_m02",
+    "ap_m03",
+    "ap_m04",
+    "ap_m05",
+    "qe_m01",
+    "qe_m02",
+    "qe_m03",
+    "qe_m04",
+    "qe_m05",
+    "qe_m06",
+    "tr_m01",
+    "tr_m02",
+    "tr_m03",
+    "tr_m04",
+    "tr_m05",
+    "tr_m08"
+  ],
+  "quiz_pairs": 22,
+  "quiz_items": 44,
+  "development_golden_cases": 160,
+  "candidate_final_student_count": 24,
+  "candidate_final_quiz_pairs": 30,
+  "final_content_exported": false,
+  "quiz_overlap_with_practice_problem_records": 0,
+  "simulator_validation": {
+    "cards": 16,
+    "card_misconception_pairs": 24,
+    "passed": 24,
+    "unobservable_in_assigned_quiz": [
+      {
+        "student": "sim_v2_002__arithmetic_progressions",
+        "misconception": "ap_m05"
+      },
+      {
+        "student": "sim_v2_004__quadratic_equations",
+        "misconception": "qe_m01"
+      },
+      {
+        "student": "sim_v2_006__trigonometry",
+        "misconception": "tr_m08"
+      },
+      {
+        "student": "sim_v2_010__quadratic_equations",
+        "misconception": "qe_m04"
+      },
+      {
+        "student": "sim_v2_016__quadratic_equations",
+        "misconception": "qe_m06"
+      }
+    ],
+    "seeded_not_registered_in_tutor": [
+      "ap_m01",
+      "ap_m02",
+      "ap_m03",
+      "ap_m04",
+      "ap_m05",
+      "tr_m03",
+      "tr_m05",
+      "tr_m08"
+    ]
+  }
+}

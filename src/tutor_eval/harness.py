@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -66,16 +67,17 @@ def _rows(path: Path) -> list[dict]:
 def load_data(cfg: dict) -> dict:
     """Students, quiz pairs (with both items) and which pairs each student takes."""
     d = cfg["data"]
-    students = _rows(ROOT / d["students"])
+    resolve = lambda name: ROOT / os.path.expandvars(d[name])
+    students = _rows(resolve("students"))
     if d.get("only_students"):
         students = [s for s in students if s["student_id"] in d["only_students"]]
-    pairs = _rows(ROOT / d["quiz_pairs"])
+    pairs = _rows(resolve("quiz_pairs"))
     if pairs and "pre" not in pairs[0]:  # eval/dev layout: items live in their own file
-        items = {i["question_id"]: i for i in _rows(ROOT / d["quiz_items"])}
+        items = {i["question_id"]: i for i in _rows(resolve("quiz_items"))}
         pairs = [{"pair_id": p["pair_id"], "pre": items[p["pre_id"]], "post": items[p["post_id"]],
                   "partition": p.get("evaluation_partition", DEV)} for p in pairs]
-    assignments = {a["student_id"]: a["pair_ids"] for a in _rows(ROOT / d["assignments"])} if d.get("assignments") else {}
-    files = [ROOT / d[k] for k in ("students", "quiz_pairs", "quiz_items", "assignments") if d.get(k)]
+    assignments = {a["student_id"]: a["pair_ids"] for a in _rows(resolve("assignments"))} if d.get("assignments") else {}
+    files = [resolve(k) for k in ("students", "quiz_pairs", "quiz_items", "assignments") if d.get(k)]
     return {"students": students, "pairs": {p["pair_id"]: p for p in pairs}, "assignments": assignments,
             "file_hashes": {str(f.relative_to(ROOT) if f.is_relative_to(ROOT) else f): sha256_file(f) for f in files}}
 
@@ -165,7 +167,7 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
     if chapter not in CHAPTERS:
         raise ValueError("Unknown student-card chapter")
     if card.get("chapter"):
-        concept_chapters = {c["concept_id"]: c["chapter"] for c in concepts()}
+        concept_chapters = {c["concept_id"]: c["chapter"] for c in _rows(ROOT / "content/dataset-v0.10.0/concepts.jsonl")}
         for pair in pairs:
             for item in (pair["pre"], pair["post"]):
                 ids = item["problem"]["concept_ids"]
@@ -272,6 +274,7 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
         turns.append({"index": index, "student": message, "tutor": reply, "route": result.get("route"),
                       "problem": {"prompt": about["prompt"], "answer": simulator.render(about["expected"])} if about else None,
                       "diagnosis": diag, "active_item": qid, "tools": result.get("tools", []),
+                      "citations": result.get("citations", []), "checks": result.get("checks", {}),
                       "output_guard": (result.get("checks") or {}).get("ok"), "latency_ms": round(ms, 1),
                       "leaks": leaks, "quiz_contamination": contamination, "post_question_exposure": post_exposure,
                       "graded_attempt": graded_attempt,
@@ -305,11 +308,14 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
     post = _quiz(student, post_items)
     rows = app.conn.execute("SELECT kind, outcome, detail FROM trace_events WHERE session_id=?", (session_id,)).fetchall()
     tokens_in = tokens_out = 0
+    billed_costs = []
     for r in rows:
         if r["kind"] == "llm" and r["detail"]:
             d = json.loads(r["detail"])
             tokens_in += d.get("tokens_in") or 0
             tokens_out += d.get("tokens_out") or 0
+            if isinstance(d.get("cost_usd"), (int, float)) and not isinstance(d["cost_usd"], bool):
+                billed_costs.append(d["cost_usd"])
     return {"student": card["student_id"], "chapter": chapter, "seed": seed, "session": session_id, "seeded": student.seeded,
             "practice_summary": practice_summary,
             "named": sorted(named), "targeted": sorted(targeted), "cleared": cleared, "pre": pre, "post": post,
@@ -318,7 +324,8 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
             "denied_tool_calls": sum(1 for r in rows if r["kind"] == "tool" and r["outcome"] == "denied"),
             "llm_errors": sum(1 for r in rows if r["kind"] == "llm" and r["outcome"] == "error"),
             "llm_calls": sum(1 for r in rows if r["kind"] == "llm"),
-            "tokens_in": tokens_in, "tokens_out": tokens_out}
+            "tokens_in": tokens_in, "tokens_out": tokens_out,
+            "provider_reported_usd": sum(billed_costs), "provider_cost_coverage": len(billed_costs)}
 
 
 def _git() -> dict:
@@ -333,6 +340,12 @@ def _git() -> dict:
         return {"commit": None, "uncommitted_changes": None}
 
 
+def preregistration_is_frozen(text: str) -> bool:
+    """Match the actual status line, never an example that tells the owner how to freeze."""
+    return any(re.fullmatch(r"(?:-\s*)?\*\*Status:\*\*\s*frozen\.?", line.strip(), re.I)
+               for line in text.splitlines())
+
+
 def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None, defences: bool | None = None,
         out_dir: Path | None = None) -> Path:
     cfg = tomllib.loads(config_path.read_text(encoding="utf-8"))
@@ -343,7 +356,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
     data = load_data(cfg)
     if _partitions(data) - {DEV}:
         prereg = ROOT / "eval" / "PREREGISTRATION.md"
-        frozen = prereg.exists() and "**Status:** frozen" in prereg.read_text(encoding="utf-8")
+        frozen = prereg.exists() and preregistration_is_frozen(prereg.read_text(encoding="utf-8"))
         if not (heldout and frozen):
             raise SystemExit("This config reads held-out data. That needs --heldout and a frozen eval/PREREGISTRATION.md.")
 
@@ -357,9 +370,28 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
     try:
         app = arms.make_app(cfg["run"]["arm"], defences=cfg["run"]["defences"], llm_mode=cfg["run"].get("llm"),
                             db_name=db_name, checkpoint_name=db_name.replace("tutor.db", "checkpoints.db"),
-                            allow_dev_fixtures=True)
+                            allow_dev_fixtures=True, **({"contextual": True,
+                                "playbook": json.loads((ROOT / os.path.expandvars(cfg["run"]["playbook"])).read_text(encoding="utf-8"))
+                                if cfg["run"].get("playbook") else None} if cfg["run"].get("contextual") else {}))
     finally:
         SETTINGS.raw["retrieval"] = retrieval
+    provider_budget = None
+    if app.llm.enabled:
+        from tutor_eval.provider_budget import ProviderBudget, attach_budget
+        policy = cfg.get("provider_budget")
+        if not policy or cfg["run"].get("voice", "template") != "template":
+            app.close()
+            raise ValueError("Live runs require a durable provider_budget and template voice")
+        provider_budget = ProviderBudget(Path(os.path.expandvars(policy["path"])),
+                                         max_calls=policy["max_calls"], max_usd=policy["max_usd"],
+                                         prior_calls=policy.get("prior_calls", 0),
+                                         batch_max_calls=policy.get("batch_max_calls"),
+                                         batch_start_attempts=policy.get("batch_start_attempts", 0))
+        try:
+            attach_budget(app.llm, provider_budget)
+        except Exception:
+            app.close()
+            raise
     retrieval_mode = cfg["run"].get("retrieval_mode") or retrieval.get("mode", "poc_cards")
     catalogue = {m["misconception_id"]: m for m in _rows(ROOT / "content" / "dataset-v0.10.0" / "misconceptions.jsonl")}
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
@@ -384,6 +416,10 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
             pairs = [data["pairs"][p] for p in pair_ids]
             sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
             s = sessions[-1]
+            with (run_dir / "sessions.partial.jsonl").open("a", encoding="utf-8") as checkpoint:
+                checkpoint.write(json.dumps(s, default=str) + "\n")
+                checkpoint.flush()
+                os.fsync(checkpoint.fileno())
             spent_usd += (s["tokens_in"] * in_p + s["tokens_out"] * out_p) / 1e6
             calls += s["llm_calls"]
             print(f"  {card['student_id']} seed {seed}: {len(s['turns'])} turns, {s['llm_calls']} model calls")
@@ -403,7 +439,9 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",
                          "tutor_eval/simulator.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py",
-                         "tutor_eval/metrics.py", "tutor_eval/tables.py", "tutor_eval/arms.py", "tutor_eval/single_agent.py")},
+                         "tutor_eval/metrics.py", "tutor_eval/tables.py", "tutor_eval/arms.py", "tutor_eval/single_agent.py",
+                         "tutor_eval/experiment_arms.py", "tutor_eval/provider_budget.py", "tutor/conversation.py",
+                         "tutor/retrieval/textnorm.py")},
         "math_engine_sha256": {m.__name__: sha256_file(Path(m.__file__)) for m in (simulator.mk, simulator.kt)},
         "metric_definitions": {"task_success": "diagnosis hit, no full leak, and simulated post score at least pre score; not a count of solved problems",
                                "checked_practice": "submitted registered practice answers checked by the tutor; not a human learning measure"},
@@ -417,6 +455,8 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "tutor_llm": app.llm.label, "retrieval_mode": retrieval_mode, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")
                                              .read_text(encoding="utf-8"))["payload_sha256"],
+        "playbook_sha256": sha256_file(ROOT / os.path.expandvars(cfg["run"]["playbook"])) if cfg["run"].get("playbook") else None,
+        "provider_budget": provider_budget.snapshot() if provider_budget else None,
         "budget": {**budget, "tutor_usd_spent": round(spent_usd, 5), "tutor_llm_calls": calls,
                    "voice_llm_calls": voice.counts["llm"] + voice.counts["fallback"], "sessions_not_run": skipped},
         "summary": summary, "gate": gate,
@@ -432,7 +472,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
 def log_entry(run_dir: Path) -> str:
     m = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
     s = m["summary"]
-    return (f"\n### {m['started'][:4]}-{m['started'][4:6]}-{m['started'][6:8]} · {m['run_id']} · {m['purpose']}\n"
+    return (f"\n### {m['started'][:4]}-{m['started'][4:6]}-{m['started'][6:8]} Ã‚Â· {m['run_id']} Ã‚Â· {m['purpose']}\n"
             f"- **Config:** `{m['config']['path']}` (`{m['config']['sha256'][:12]}`); arm {m['config']['run']['arm']}; "
             f"defences {'on' if m['config']['run']['defences'] else 'off'}; tutor {m['tutor_llm']}; seeds {m['config']['run']['seeds']}\n"
             f"- **Data:** {', '.join(m['partitions'])}; {s['sessions']} sessions\n"

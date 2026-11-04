@@ -139,16 +139,32 @@ def summarize(results: list[dict]) -> dict:
             "by_channel": dict(by_channel)}
 
 
-def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None = None) -> Path:
+def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None = None,
+        llm_mode: str = "stub", contextual: bool = False, provider_budget=None) -> Path:
     cases = [json.loads(line) for f in case_files for line in f.read_text(encoding="utf-8").splitlines() if line.strip()]
     run_id, run_dir = create_run_dir(out_dir or VAR_DIR / "runs", name, time.strftime('%Y%m%d-%H%M%S'))
     db = str(run_dir.relative_to(VAR_DIR) / "tutor.db") if run_dir.is_relative_to(VAR_DIR) else str(run_dir / "tutor.db")
-    app = arms.make_app("c2", defences=defences, llm_mode=None, db_name=db,
-                        checkpoint_name=db.replace("tutor.db", "checkpoints.db"), allow_dev_fixtures=True)
+    app = arms.make_app("c2", defences=defences, llm_mode=llm_mode, db_name=db,
+                        checkpoint_name=db.replace("tutor.db", "checkpoints.db"), allow_dev_fixtures=True,
+                        **({"contextual": True} if contextual else {}))
+    if app.llm.enabled:
+        if provider_budget is None:
+            app.close()
+            raise ValueError("Live security runs require a durable provider budget")
+        from tutor_eval.provider_budget import attach_budget
+        attach_budget(app.llm, provider_budget)
     practice = {q["question_id"]: q for q in _publish_fixture_items(app.conn)}
     checkpoints = run_dir / "checkpoints.db"
     try:
         results = [run_case(app, c, run_id, practice, [checkpoints, Path(f"{checkpoints}-wal")]) for c in cases]
+        llm_events = [dict(row) for row in app.conn.execute("SELECT outcome, detail FROM trace_events WHERE kind='llm'")]
+        usage = [json.loads(row['detail']) for row in llm_events if row['detail']]
+        costs = [d['cost_usd'] for d in usage if isinstance(d.get('cost_usd'), (int, float))]
+        operations = {'model_requests_logged': len(llm_events),
+                      'model_errors': sum(row['outcome'] == 'error' for row in llm_events),
+                      'tokens_in': sum(d.get('tokens_in') or 0 for d in usage),
+                      'tokens_out': sum(d.get('tokens_out') or 0 for d in usage),
+                      'provider_reported_usd': sum(costs), 'provider_cost_coverage': len(costs)}
     finally:
         app.close()
     summary = summarize(results)
@@ -163,7 +179,8 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
     (run_dir / "security.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     code_files = ("tutor/app.py", "tutor/guards.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/toolbus.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
                   "tutor/mathcore.py", "tutor/triangle_reasoning.py", "v02_integration/runtime.py", "tutor_api/traces.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
-                  "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py")
+                  "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py",
+                  "tutor_eval/experiment_arms.py", "tutor_eval/provider_budget.py", "v02_integration/runtime.py", "tutor/llm.py")
     manifest = {"run_id": run_id, "kind": "security", "defences": defences,
                 "development_fixtures_enabled": True, "fixture_status": "synthetic_unapproved_evaluation_only",
                 "fixture_input_sha256": fixture_input_hashes(),
@@ -171,6 +188,9 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
                 "case_sha256": {str(f): sha256_file(f) for f in case_files},
                 "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in code_files},
                 "app_config_sha256": SETTINGS.sha256, "git": _git(), "tutor_llm": app.llm.label,
+                "operations": operations,
+                "provider_budget": provider_budget.snapshot() if provider_budget else None,
+                "switch_scope": "input/output application guards; tool permissions and publication authority remain enforced",
                 "summary": summary}
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return run_dir

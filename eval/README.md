@@ -1,5 +1,7 @@
 # Evaluation pipeline
 
+**5 November Beta update:** the isolated development matrix, variant implementations, hard provider cap and data audit are described in [M3_DEVELOPMENT_PROTOCOL.md](M3_DEVELOPMENT_PROTOCOL.md) and `Docs/m3/`. The historical integration wish list below predates these variants. The final preregistration and human/independent-review gates remain pending.
+
 How we measure the tutor (R5). Simulated students with planted misconceptions talk to one configuration of the tutor. Code scores everything it can, a calibrated LLM judge scores the rest, and every number traces back to a `run_id`.
 
 **Everything runs offline on development data today.** Held-out runs wait for the frozen pre-registration (Fri 6 Nov).

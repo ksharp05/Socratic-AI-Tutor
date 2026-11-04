@@ -1,0 +1,31 @@
+{
+  "version": "candidate-v1",
+  "status": "development_candidate_unreviewed",
+  "human_reviews": 0,
+  "evidence": [
+    "Docs/m2/TESTPACK_RESULTS.md",
+    "Docs/m2/MULTITOPIC_EVALUATION.md"
+  ],
+  "lessons": [
+    {
+      "id": "qe-zero-factor",
+      "scope": "quadratic equations",
+      "text": "When division might discard a zero root, ask the learner what must be true before dividing and which factor cases still need checking."
+    },
+    {
+      "id": "ap-displacements",
+      "scope": "arithmetic progressions",
+      "text": "Distinguish the number of terms from the number of common-difference steps starting at the first term. Ask the learner to describe the displacement."
+    },
+    {
+      "id": "tr-reference",
+      "scope": "trigonometry",
+      "text": "When a numeric error has several possible causes, ask for the reference angle and opposite, adjacent and hypotenuse labels before choosing a cause."
+    },
+    {
+      "id": "context-step",
+      "scope": "all three chapters",
+      "text": "Ask one small question about the learner\u2019s stated step and cite the supplied source. Do not replace the reasoning step with a formula dump or final answer."
+    }
+  ]
+}

@@ -58,7 +58,8 @@ class LLM:
         if model not in self._clients:
             from langchain_openai import ChatOpenAI
             self._clients[model] = ChatOpenAI(model=model, api_key=self.key, temperature=SETTINGS.llm["temperature"],
-                                              base_url=base_url(), timeout=SETTINGS.llm["timeout_s"], max_retries=2)
+                                              base_url=base_url(), timeout=SETTINGS.llm["timeout_s"], max_retries=2,
+                                              extra_body={"usage": {"include": True}})
         return self._clients[model]
 
     def ping(self, model: str | None = None) -> dict:
@@ -78,9 +79,11 @@ class LLM:
             options = {} if max_tokens is None else {"max_tokens": max_tokens}
             reply = self._chat().invoke([("system", system), ("user", user)], **options)
             usage = getattr(reply, "usage_metadata", None) or {}
+            billed = (getattr(reply, "response_metadata", None) or {}).get("token_usage") or {}
             store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=self.model,
                         latency_ms=(time.perf_counter() - started) * 1000,
-                        detail={"tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens")})
+                        detail={"tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens"),
+                                "cost_usd": billed.get("cost")})
             return str(reply.content).strip()
         except Exception as exc:  # fall back to templates; the failure stays visible in the trace
             self.errors.append(explain(exc))

@@ -36,8 +36,8 @@ def score(rows: list[dict]) -> tuple[int, int, int]:
 def session_view(s: dict) -> dict:
     pre_c, _, pre_n = score(s["pre"])
     post_c, _, post_n = score(s["post"])
-    full = sum(1 for t in s["turns"] for leak in t["leaks"] if leak["level"] == "full")
-    partial = sum(1 for t in s["turns"] for leak in t["leaks"] if leak["level"] == "partial")
+    full = sum(any(leak["level"] == "full" for leak in t["leaks"]) for t in s["turns"])
+    partial = sum(any(leak["level"] == "partial" for leak in t["leaks"]) for t in s["turns"])
     hit = bool(set(s["seeded"]) & set(s["named"]))
     first_hit = next((t["index"] + 1 for t in s["turns"] if t["diagnosis"] in s["seeded"]), None)
     gain = post_c - pre_c
@@ -46,7 +46,8 @@ def session_view(s: dict) -> dict:
             "gain": gain, "norm_gain": (gain / (pre_n - pre_c)) if pre_n > pre_c else None,
             "full_leaks": full, "partial_leaks": partial,
             "contamination": sum(len(t["quiz_contamination"]) for t in s["turns"]),
-            "task_success": hit and full == 0 and post_c >= pre_c, "turns": len(s["turns"]),
+            "task_success": (hit and full == 0 and post_c >= pre_c and not s["failures"] and not s["timeouts"]
+                             and not any(t["quiz_contamination"] for t in s["turns"])), "turns": len(s["turns"]),
             "failures": s["failures"], "timeouts": s["timeouts"], "denied_tool_calls": s["denied_tool_calls"],
             "tool_calls": s["tool_calls"], "llm_errors": s["llm_errors"], "tokens_in": s["tokens_in"],
             "tokens_out": s["tokens_out"]}
@@ -106,7 +107,10 @@ def summarize(sessions: list[dict], catalogue: dict, price: tuple | None) -> dic
         "policy": {"denied_tool_calls": sum(v["denied_tool_calls"] for v in views),
                    "tool_calls": sum(v["tool_calls"] for v in views), "llm_errors": sum(v["llm_errors"] for v in views)},
         "latency_ms": {"p50": _percentile(latencies, 0.5), "p95": _percentile(latencies, 0.95)},
-        "cost_usd": {"per_session": _round(statistics.fmean(cost), 5) if cost else None, "total": _round(sum(cost), 4),
+        "cost_usd": {"basis": "token_price_estimate" if price and any(price) else "offline_no_provider",
+                     "provider_reported_total": sum(s.get("provider_reported_usd", 0) for s in sessions),
+                     "provider_reported_call_count": sum(s.get("provider_cost_coverage", 0) for s in sessions),
+                     "per_session": _round(statistics.fmean(cost), 5) if cost else None, "total": _round(sum(cost), 4),
                      "tokens_in": sum(v["tokens_in"] for v in views), "tokens_out": sum(v["tokens_out"] for v in views)},
         "across_seeds": {"seeds": sorted(by_seed), "gain_mean": _round(statistics.fmean(seed_gain)) if seed_gain else None,
                          "gain_sd": _round(statistics.stdev(seed_gain)) if len(seed_gain) > 1 else None,
