@@ -201,9 +201,10 @@ def test_quiz_role_claim_and_own_homework_do_not_use_contextual_model(connected)
     assert turn(client,'hint','quiz','quiz')['route']=='quiz_answer'
     assert not fake.calls
     assert client.post('/chat/leave',headers=S,json={'session_id':'quiz'}).status_code==200
+    # Own homework may get one screened contextual reply; this fake cites a source that was not retrieved, so it is rejected.
     homework=turn(client,'Solve my homework x² = 5x','homework')
     assert homework['checks']['unverified_problem']=='deterministic_only_not_answer_checked'
-    assert not fake.calls
+    assert len(fake.calls)==1 and 'qe04' not in homework['reply']
 
 
 def test_trace_omits_payloads_errors_and_unknown_detail_fields(connected):

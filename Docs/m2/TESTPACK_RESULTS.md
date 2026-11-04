@@ -35,3 +35,21 @@ Implicit multiplication (`5x`) failed to parse. Conversation state carries no pr
 ## Not covered
 
 No live model; human rubric scoring of replies; citation faithfulness; journey continuity across real sessions; C1/C2 comparison on the pack's development cards.
+
+## Communication change and live rerun - 5 November
+
+The first run showed the tutor rarely answered what the learner said. Three changes followed:
+
+- **Session questions answered directly** (`src/tutor/conversation.py`, new `converse` route). Requests about the plan or results, frustration, a smaller step, approval, deletion, traces, citations, keys, other learners' data, commands and score changes get a factual, policy-accurate reply plus the current hint. Answer-like messages still go to grading, and the refusal for teacher impersonation is now separate from the answer-key refusal.
+- **Quiz chat:** a hint request or recognised non-answer explains the no-hints rule without scoring it; unreadable answers keep the old message.
+- **Typed-in problems in the opt-in contextual mode:** one screened model reply that responds to the learner's described step. It is rejected unless it is a single question of at most 60 words, with no answer phrase, no number the learner did not write, and only a retrieved source ID. This reverses the earlier deterministic-only rule for this path; the check label now distinguishes `screened_model_reply_not_answer_checked`.
+
+The answer-leak checker flagged the first citation sentence ("If none covers…") as claiming no real roots, so the wording was changed. That checker can produce false positives on ordinary English.
+
+| Run | Mode | Pass / fail / pending | Typed tutoring replies | Provider calls |
+| --- | --- | --- | --- | --- |
+| `testpack-20261105T013707-6876f7` | stub, before | 162 / 16 / 26 | 8 distinct of 53 (42 identical) | 0 |
+| offline rerun after the change | stub | 165 / 12 / 27 | template path unchanged offline | 0 |
+| `testpack-20261105T015243-c977ea` | live, `openai/gpt-4.1-mini`, cap 300 | 166 / 11 / 27 | 47 distinct of 54, most common repeated 5 times | 95 |
+
+Live detail: own-problem replies were accepted 49 of 54 times (4 rejected for length or question count, 1 for an answer phrase). Registered hints were accepted 37 of 38 (one provider error fell back). About 47,500 input and 2,900 output tokens were used; the provider reported no cost. The adapter detected no answer leak in either tutoring path, and no unsafe safety action. Remaining failures are unchanged: four retrieval misses, plans that do not advance, and three workflow design gaps. Learner-facing model replies have not had human review, and some give a method formula (for example the AP sum formula), which a teacher may or may not want.

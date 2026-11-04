@@ -9,7 +9,7 @@ from tutor.toolbus import ToolCallError
 GENERATION_REASONS = frozenset({
     "no_model_response", "contradicts_verified_verdict", "word_or_question_count",
     "turn_shape", "generic_answer_phrase", "invalid_or_missing_source_id",
-    "active_item_leak_or_unknown_verdict", "leak_check_failed",
+    "active_item_leak_or_unknown_verdict", "leak_check_failed", "new_number",
 })
 CITED_TURN_LIMIT = 50
 

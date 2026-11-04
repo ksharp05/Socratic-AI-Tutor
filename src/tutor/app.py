@@ -19,7 +19,7 @@ from filelock import Timeout
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
-from . import approval_token, guards, learner, prompts, store
+from . import approval_token, conversation, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
@@ -221,6 +221,9 @@ class TutorApp:
             route = "quiz_answer"
         elif QUIZ_REQUEST.search(text) or (mode == "quiz" and not quiz):
             route = "quiz_start"
+        elif conversation.intent(text) and not (item and (item.get("reasoning_probe") or ANSWER_LIKE.search(text.strip()))):
+            # About the session (plan, frustration, how the app works), not a maths step: answer what was asked.
+            route = "converse"
         elif PRACTICE_REQUEST.search(text):
             route = "set_question"
         elif (item and item.get("reasoning_probe") and
@@ -481,8 +484,16 @@ class TutorApp:
         result = self._call(state, "quiz_answer", "grader", "math-tools", "check_equivalence",
                             {"question_ref": current["question_id"], "response": state["messages"][-1]["content"]})
         if not result.get("scorable"):
-            return {"quiz": quiz, "draft": {"text": "I could not read that answer. Please enter it in the expected format; this question has not been scored.",
-                                            "citations": [], "kind": "info"}}
+            message = state["messages"][-1]["content"]
+            kind = conversation.intent(message)
+            if kind:
+                text = conversation.reply(kind, plan=state.get("plan"), next_step=None, in_quiz=True)
+            elif HINT_REQUEST.search(message):
+                text = ("This is a quiz, so there are no hints; it checks what you can do on your own. "
+                        "Answer as best you can, or leave the quiz without a score.")
+            else:
+                text = "I could not read that answer. Please enter it in the expected format."
+            return {"quiz": quiz, "draft": {"text": text + " This question has not been scored.", "citations": [], "kind": "info"}}
         quiz["results"].append({"question_id": current["question_id"], "correct": bool(result["correct"]),
                                 "scorable": result["scorable"], "concept_ids": current["concept_ids"], "kind": current["kind"]})
         quiz["index"] += 1
@@ -495,8 +506,12 @@ class TutorApp:
         return {"quiz": quiz, "draft": {"text": text, "citations": [], "kind": "question"}}
 
     def _refuse(self, state: TutorState) -> dict:
-        text = ("I can't share answer keys or full solutions. Being a teacher doesn't change that inside the student chat; "
-                "teachers use the teacher view after signing in. ")
+        if (state.get("screen") or {}).get("key_request"):
+            text = ("I can't share answer keys or full solutions. Being a teacher doesn't change that inside the student chat; "
+                    "teachers use the teacher view after signing in. ")
+        else:
+            text = ("In the student chat I can't act as a teacher: approving question sets, answer keys and other teacher "
+                    "controls are only in the teacher view after signing in. ")
         item = state.get("active_item")
         if item:
             text += f"Let's keep going together: {item['hint_stages'][min(item['hint_stage'], 2)]['prompt']}"
@@ -506,6 +521,22 @@ class TutorApp:
             text += "What part are you stuck on?"
         self._note(state, "refuse", "role_or_key_request_refused")
         return {"draft": {"text": text, "citations": [], "kind": "refusal"}}
+
+    def _converse(self, state: TutorState) -> dict:
+        kind = conversation.intent(state["messages"][-1]["content"])
+        item = state.get("active_item")
+        if item and item.get("reasoning_probe"):
+            next_step = "Name the reference angle and the opposite, adjacent and hypotenuse lengths from the question."
+        elif item:
+            stages = item["hint_stages"]
+            next_step = f"Hint: {stages[min(item.get('hint_stage', 0), len(stages) - 1)]['prompt']}"
+        elif state.get("unverified_own_problem"):
+            next_step = "What first step could you try, and what assumption would it require?"
+        else:
+            next_step = None
+        text = conversation.reply(kind, plan=state.get("plan"), next_step=next_step, in_quiz=bool(state.get("quiz")))
+        self._note(state, "converse", "intent", {"intent": kind})
+        return {"draft": {"text": text, "citations": [], "kind": "info"}}
 
     def _question_revoked(self, state: TutorState) -> dict:
         """Stop a stale or unverifiable question without scoring or showing its content again."""
@@ -525,7 +556,8 @@ class TutorApp:
             return {"checks": {"skipped": True}}
         checks: dict[str, Any] = {}
         if state.get("unverified_own_problem"):
-            checks["unverified_problem"] = "deterministic_only_not_answer_checked"
+            checks["unverified_problem"] = ("screened_model_reply_not_answer_checked" if draft.get("style") == "own_problem_contextual"
+                                            else "deterministic_only_not_answer_checked")
         refs = []
         if state.get("active_item"):
             refs.append(state["active_item"]["question_id"])
@@ -699,6 +731,7 @@ class TutorApp:
         g.add_node("quiz_start", self._quiz_start)
         g.add_node("quiz_answer", self._quiz_answer)
         g.add_node("refuse", self._refuse)
+        g.add_node("converse", self._converse)
         g.add_node("handoff", self._handoff)
         g.add_node("question_revoked", self._question_revoked)
         g.add_node("output_guard", self._output_guard)
@@ -710,7 +743,7 @@ class TutorApp:
         g.add_edge("input_guard", "load_learner")
         g.add_edge("load_learner", "planner")
         specialists = ["diagnose", "tutor", "tutor_extension", "set_question", "grade", "check_reasoning", "quiz_start", "quiz_answer",
-                       "refuse", "handoff", "question_revoked"]
+                       "refuse", "handoff", "question_revoked", "converse"]
         g.add_conditional_edges("planner", lambda s: s["route"], {n: n for n in specialists})
         for n in specialists:
             g.add_edge(n, "output_guard")

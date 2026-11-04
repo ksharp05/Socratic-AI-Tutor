@@ -1,6 +1,10 @@
-"""Run the synthetic development test pack against the real connected app. Offline only: stub model, no network.
+"""Run the synthetic development test pack against the real connected app. Default: stub model, no network.
 
-    python scripts/m2/testpack_run.py <pack_dir> [--suite NAME] [--ids ID,ID] [--smoke]
+    python scripts/m2/testpack_run.py <pack_dir> [--suite NAME] [--ids ID,ID] [--smoke] [--live --max-calls N]
+
+--live uses the configured course model for the whole run, behind one shared budget: at most N provider
+requests in total (retries disabled, 240-token cap); requests beyond N are refused before sending and the
+app falls back to its templates. Use it only after the call budget is approved.
 
 Each case gets a fresh isolated store; the approval workflow probes share one store in order.
 Only `case.input` reaches the app. The adapter's own checks (answer leaks, state changes,
@@ -40,6 +44,7 @@ CONNECTED={'quadratic_equations':{'quadratic_solve'},'arithmetic_progressions':{
 TOKENS='syn-a:student:dev_learner_A,syn-b:student:dev_learner_B,syn-t:teacher:dev_teacher'
 A={'Authorization':'Bearer syn-a'};B={'Authorization':'Bearer syn-b'};T={'Authorization':'Bearer syn-t'}
 B_CANARY='SYNTHETIC-LEARNER-B-CANARY'
+LIVE=SimpleNamespace(on=False,max_calls=0,client=None)
 WORDS={'ten':10,'twenty':20,'fifteen':15,'eight':8,'nine':9,'twelve':12}
 RATIO={'sin':'sin','cos':'cos','tan':'tan','sec':'sec','cosec':'csc','csc':'csc','cot':'cot'}
 NUM=r'(-?\d+)'
@@ -131,8 +136,15 @@ def connected(state,extra_items=(),tutor_factory=None):
     from v02_integration.runtime import ContextualPreviewTutor
     state.mkdir(parents=True,exist_ok=True)
     config.VAR_DIR=state
-    tutor=(tutor_factory or ContextualPreviewTutor)(llm_mode='stub',extra_items=list(extra_items),allow_dev_fixtures=bool(extra_items))
+    tutor=(tutor_factory or ContextualPreviewTutor)(llm_mode='auto' if LIVE.on else 'stub',extra_items=list(extra_items),allow_dev_fixtures=bool(extra_items))
     try:
+        if LIVE.on:
+            if LIVE.client is None:
+                sys.path.insert(0,str(Path(__file__).resolve().parent))
+                from signature_live_walkthrough import BudgetedClient,live_preflight
+                from tutor.config import SETTINGS
+                LIVE.client=BudgetedClient(live_preflight(tutor.llm,SETTINGS.llm),budget=LIVE.max_calls)
+            tutor.llm._chat=lambda *args:LIVE.client
         for lid,alias in (('dev_learner_A','Synthetic learner A'),('dev_learner_B',B_CANARY)):
             if not tutor.conn.execute('SELECT 1 FROM learners WHERE learner_id=?',(lid,)).fetchone():
                 seed_learner(tutor.conn,lid,{'alias':alias})
@@ -422,7 +434,7 @@ def _workflow_single(case,run):
             if focus=='timeout_fallback':
                 def timeout(*args,**kwargs):raise TimeoutError('synthetic provider timeout injected by the test adapter')
                 app.tutor.llm.enabled=True;app.tutor.llm.model='SYNTHETIC_TIMEOUT_INJECTION_NOT_A_PROVIDER'
-                app.tutor.llm._chat=lambda *args:SimpleNamespace(invoke=timeout)
+                app.tutor.llm._chat=lambda *args:SimpleNamespace(invoke=timeout)  # synthetic failure, never the live client
             publish(app,'qe04','practice',['m2_signature_qe_factor_zero'])
             chat(app,'practice','trace');hint=chat(app,'hint','trace')
             trace=app.client.get('/teacher/sessions/trace/trace',headers=T).json()
@@ -476,11 +488,12 @@ def run_retrieval(cases,notes):
 
 
 def _timed(fn):
-    t=time.monotonic()
+    t=time.monotonic();calls=LIVE.client.calls if LIVE.client else 0
     try:
         detail,actual=fn();error=None
     except Exception as exc:
         detail,actual,error={},{},f'{type(exc).__name__}: {str(exc)[:300]}'
+    if LIVE.on and isinstance(detail,dict):detail['provider_calls']=(LIVE.client.calls if LIVE.client else 0)-calls
     return detail,actual,round(time.monotonic()-t,3),error
 
 
@@ -489,7 +502,12 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('pack',type=Path)
     parser.add_argument('--suite');parser.add_argument('--ids');parser.add_argument('--smoke',action='store_true')
+    parser.add_argument('--live',action='store_true',help='Use the configured course model under --max-calls')
+    parser.add_argument('--max-calls',type=int,default=0,help='Hard cap on provider requests for the whole run')
     args=parser.parse_args(argv)
+    if args.live and args.max_calls<1:raise SystemExit('--live requires --max-calls N (N >= 1)')
+    LIVE.on,LIVE.max_calls=args.live,args.max_calls
+    os.environ['TUTOR_LLM']='auto' if args.live else 'stub'
     load=lambda p:[json.loads(l) for l in p.read_text(encoding='utf-8').splitlines() if l.strip()]
     cases=load(args.pack/'data'/('smoke_30.jsonl' if args.smoke else 'all_cases.jsonl'))
     if args.suite:cases=[c for c in cases if c['suite']==args.suite]
@@ -520,7 +538,9 @@ def main(argv=None):
         dirty=bool(subprocess.run(['git','-C',str(CODE_ROOT),'status','--porcelain'],check=True,capture_output=True,text=True).stdout.strip())
     except subprocess.CalledProcessError:
         commit=dirty=None
-    meta={'run_id':run_id,'mode':'stub_offline','provider_calls':0,'cases':len(cases),'errors':sum(1 for r in results.values() if r[3]),
+    meta={'run_id':run_id,'mode':'live' if LIVE.on else 'stub_offline','provider_calls':LIVE.client.calls if LIVE.client else 0,
+          'call_cap':LIVE.max_calls if LIVE.on else 0,'refused_over_cap':LIVE.client.refused if LIVE.client else 0,
+          'model':os.environ.get('LLM_MODEL') or (__import__('tutor.config',fromlist=['SETTINGS']).SETTINGS.llm['specialist_model'] if LIVE.on else None),'cases':len(cases),'errors':sum(1 for r in results.values() if r[3]),
           'pack_dataset_sha256':hashlib.sha256((args.pack/'data/all_cases.jsonl').read_bytes()).hexdigest(),
           'git':{'commit':commit,'uncommitted_changes':dirty},'development_only':True,'independent_evaluation':False}
     (run/'meta.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8')
