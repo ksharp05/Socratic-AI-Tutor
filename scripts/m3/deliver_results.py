@@ -77,6 +77,7 @@ def main():
         'retrieval':load(root/'validation/RETRIEVAL.json'),'golden_consistency':load(root/'validation/GOLDEN_CONSISTENCY.json'),
         'reproducibility':load(root/'validation/REPRODUCIBILITY.json'),
         'dataset_integrity':load(root/'validation/DATASET_INTEGRITY.json'),
+        'post_copy_sensitivity':load(CODE/'Docs/m4/POST_COPY_SENSITIVITY.json') if (CODE/'Docs/m4/POST_COPY_SENSITIVITY.json').exists() else None,
         'budget':{'approved_total_requests':1000,'prior_requests':98,'new_requests':len(attempts),'total_requests':1000,
                   'provider_errors':0,'refused_over_limit':0,'new_provider_reported_usd':cost,
                   'cost_coverage':len(attempts),'prior_98_cost':'not_exposed_unmeasured',
@@ -123,6 +124,8 @@ def main():
         '| --- | ---: | ---: | ---: |']
     for row in run_table:
         flag_lines.append(f"| {labels[row['condition']]} | {row['quiz_answer_match_witnesses']} | {row['quiz_answer_match_sessions']}/{row['sessions']} | {row['post_question_exposures']} |")
+    if (out/'POST_COPY_SENSITIVITY.md').exists():
+        flag_lines += ['', 'An [offline fixed-trajectory sensitivity](POST_COPY_SENSITIVITY.md) exactly reproduces the recorded simulator outcomes for all 212 sessions using saved tutor replies/grades, then disables only post-quiz copying. C0/C1/C2 each have mean quiz change 0.104 under this intervention; the E3 tranche is 0.056. This post-hoc analysis is reported separately and does not replace primary outcomes or establish learning.']
     lines[insertion:insertion]=flag_lines+['']
     lines += ['## Operations','', '| Condition | Tool calls / denied | Turn p50 / p95 ms | Failures / timeouts / model errors |', '| --- | ---: | ---: | ---: |']
     for row in run_table:

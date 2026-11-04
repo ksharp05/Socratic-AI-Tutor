@@ -39,6 +39,8 @@ The frozen checker flags post-quiz answer matches in 83/212 study sessions. Some
 | Telling | 13 | 5/16 | 0 |
 | E3 candidate tranche | 29 | 16/36 | 0 |
 
+An [offline fixed-trajectory sensitivity](POST_COPY_SENSITIVITY.md) exactly reproduces the recorded simulator outcomes for all 212 sessions using saved tutor replies/grades, then disables only post-quiz copying. C0/C1/C2 each have mean quiz change 0.104 under this intervention; the E3 tranche is 0.056. This post-hoc analysis is reported separately and does not replace primary outcomes or establish learning.
+
 ## Paired estimates
 
 Student-cluster bootstrap, 2,000 resamples, seed 0; repeats from a student stay together. Intervals are empirical development uncertainty, with sparse positive cases and shared code. No p-values are used.

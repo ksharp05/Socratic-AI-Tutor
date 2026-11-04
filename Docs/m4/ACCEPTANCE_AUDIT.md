@@ -19,3 +19,7 @@ Sources: `Docs/plan/README.md` milestone table, `Docs/plan/08-schedule.md` M3 ex
 | Enough independent final data | 16 development source cards / 22 pairs, 24 candidate-final cards / 30 pairs; runtime coverage gaps recorded | Enough for bounded engineering runs; independent authorship, new hidden attacks/controls and semantic citation review remain missing. |
 
 The remaining E3 proposal is reviewable in `REMAINING_E3.md`; both request/cost caps require actual explicit approval. The separate Codex quota refresh does not grant tutor-provider requests. The original 1,000-request ledger remains unchanged and no extension wallet exists.
+
+## Offline scoring sensitivity follow-up
+
+Offline fixed-trajectory sensitivity is complete: all 212 original simulator trajectories/outcomes reproduce using saved tutor replies and grades; corrupt-input negative control is rejected. With post-quiz copying disabled, C0/C1/C2 each have mean gain 0.104; matched C2-vs-candidate, C2-vs-C0/C1 and memory on/off quiz differences are zero. This is post-hoc sensitivity, not a new tutor run, calibrated disclosure detector or learning evidence. See `Docs/m4/POST_COPY_SENSITIVITY.md` and `REPLAY_VALIDATION.json`. No provider requests were sent; original outcomes and ledger are intact.

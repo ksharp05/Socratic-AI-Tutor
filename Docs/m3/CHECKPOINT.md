@@ -37,3 +37,7 @@ Safe saved-data commands use the shared checkout's `.venv/Scripts/python.exe` (t
 - `scripts/m3/plot_results.py` uses isolated private plotting dependencies and makes no provider request.
 
 The formal M3/M4 goal remains incomplete. Do not label the 36-session E3 tranche as the original full design, or the development engineering checkpoint as human-approved final preregistration.
+
+## Offline scoring sensitivity follow-up
+
+Offline fixed-trajectory sensitivity is complete: all 212 original simulator trajectories/outcomes reproduce using saved tutor replies and grades; corrupt-input negative control is rejected. With post-quiz copying disabled, C0/C1/C2 each have mean gain 0.104; matched C2-vs-candidate, C2-vs-C0/C1 and memory on/off quiz differences are zero. This is post-hoc sensitivity, not a new tutor run, calibrated disclosure detector or learning evidence. See `Docs/m4/POST_COPY_SENSITIVITY.md` and `REPLAY_VALIDATION.json`. No provider requests were sent; original outcomes and ledger are intact.

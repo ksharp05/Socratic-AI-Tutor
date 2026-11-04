@@ -1,0 +1,10 @@
+{
+  "baseline_semantics_match": true,
+  "corrupt_student_message_rejected": true,
+  "all_212_post_copied_id_sets_match_recorded_flag_unions": true,
+  "copied_post_items": 83,
+  "flagged_sessions": 83,
+  "provider_calls": 0,
+  "ledger_sha256": "2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de",
+  "script_sha256": "9d6a1243d0b92c32406997d3ea04411d677558a17343de52f1cde132c7a7545f"
+}

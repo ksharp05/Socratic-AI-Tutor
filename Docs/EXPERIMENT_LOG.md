@@ -323,3 +323,9 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Outcome:** {}
 - **Source:** `12d541ed8dd4716bbcfee2a74bcb4215920a13fc`; dirty flag `False`.
 - **Decision:** Development evidence only; preserved unchanged. See Docs/m4/RESULTS.md for interpretation. V1 urgent-routing failure is retained; v2 is a known-case fix. No final preregistration or human approval is inferred.
+
+### 2026-11-05 · m3-post-copy-sensitivity-v1 · Post-hoc saved-trajectory analysis
+- **Config:** `scripts/m3/post_copy_sensitivity.py`, SHA-256 `9d6a1243d0b92c32406997d3ea04411d677558a17343de52f1cde132c7a7545f`; unchanged frozen run_session AST, template voice, no tutor/model instantiated.
+- **Data:** the six completed live tutoring conditions, 212 development sessions; exact manifest/session-file hashes in `Docs/m4/POST_COPY_SENSITIVITY.json`.
+- **Outcome:** 212/212 baseline semantic reproductions; corrupt student input rejected; 83 copied post items match flag unions exactly. Disabling post copying leaves C0/C1/C2 mean gain at 0.104 each; matched arm differences and intervals in the linked JSON. Zero provider requests.
+- **Decision:** exploratory sensitivity only; preserve original primary outcomes. The apparent C2/E3 quiz differences do not survive this intervention. This does not calibrate disclosure labels or establish learning. Final protocol/review and E3 extra-call approval remain pending.
