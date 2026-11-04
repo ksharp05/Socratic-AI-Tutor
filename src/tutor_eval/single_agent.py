@@ -42,6 +42,7 @@ class SingleAgentTutor(TutorApp):
             'tutor_extension': lambda s: self._tutor(s, extension=True),
             'set_question': self._set_question,
             'grade': self._grade,
+            'check_reasoning': self._check_reasoning,
             'quiz_start': self._quiz_start,
             'quiz_answer': self._quiz_answer,
             'refuse': self._refuse,

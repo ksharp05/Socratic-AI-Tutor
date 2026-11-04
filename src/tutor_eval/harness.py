@@ -399,7 +399,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
                         ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
-                         "tutor/learner.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
+                         "tutor/learner.py", "tutor/triangle_reasoning.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",
                          "tutor_eval/simulator.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py",

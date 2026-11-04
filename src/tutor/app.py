@@ -218,6 +218,9 @@ class TutorApp:
             route = "quiz_start"
         elif PRACTICE_REQUEST.search(text):
             route = "set_question"
+        elif (item and item.get("reasoning_probe") and
+              (re.search(r"\b(angle|opposite|adjacent|hypotenuse)\b",text,re.I) or not ANSWER_LIKE.search(text.strip()))):
+            route = "check_reasoning"
         elif item and HINT_REQUEST.search(text):
             route = "tutor"
         elif item and ANSWER_LIKE.search(text.strip()):
@@ -290,6 +293,10 @@ class TutorApp:
             cite = f" [{passages[0]['passage_id']}]" if passages else ""
             text = f"What first step could you try, and what assumption would it require?{cite}"
             style = "unverified_problem_fallback"
+        elif item and item.get("reasoning_probe"):
+            passages = []
+            text = "Name the reference angle and the opposite, adjacent and hypotenuse lengths from the question."
+            style = "reasoning_clarification"
         elif item and not extension:
             passages = []
             for pid in item.get("supporting_passage_ids", [])[:1]:
@@ -415,10 +422,34 @@ class TutorApp:
             hint = (self.misconceptions[mid]['diagnostic_probe'] if trig else
                     f"{self.concepts[self.misconceptions[mid]['concept_id']]['diagnostic_probe']} {hint}")
         if trig and len(diag) > 1:
+            item["reasoning_probe"] = True
             hint = "That value can result from more than one step. Which angle did you use, and which sides did you label opposite and adjacent?"
         update["draft"] = {"text": f"Not quite: you gave {result['parsed']}. {hint}", "citations": [], "kind": "feedback",
                            "misconception_id": update.get("focus_misconception")}
         return update
+
+    def _check_reasoning(self, state: TutorState) -> dict:
+        item = dict(state["active_item"])
+        stage = item.get("reasoning_stage", "labels")
+        tool = "check_triangle_ratio_definition" if stage == "ratio" else "check_triangle_labels"
+        result = self._call(state,"check_reasoning","diagnostician","math-tools",tool,
+                            {"question_ref":item["question_id"],"response":state["messages"][-1]["content"]})
+        status = result["status"]
+        replies = {
+            "labels_correct":"Those side labels fit the stated reference angle. Which two sides define the requested ratio?",
+            "definition_correct":"That ordered pair matches the requested ratio. What exact value do you get from your labeled lengths?",
+            "definition_mismatch":"Check the order of the sides in the requested ratio. Which side belongs in the numerator?",
+            "reference_mismatch":"The question names a different reference angle. Which angle is stated in the question?",
+            "labels_mismatch":"Check the side labels relative to the stated angle; the hypotenuse stays opposite the right angle. Which labels would you change?",
+        }
+        clarification = ("Name the numerator side, then the denominator side, using '... over ...' for the ratio in your question." if stage == "ratio" else
+                         "Name the reference angle and give the opposite, adjacent and hypotenuse lengths; for example, use 'angle C, opposite ..., adjacent ..., hypotenuse ...'.")
+        text = replies.get(status, clarification)
+        if status == "labels_correct":
+            item["reasoning_stage"] = "ratio"
+        item["reasoning_probe"] = status != "definition_correct"
+        self._note(state,"check_reasoning","triangle_labels",{"status":status,"question_id":item["question_id"]})
+        return {"active_item":item,"draft":{"text":text,"kind":"reasoning_feedback","citations":[]}}
 
     def _quiz_start(self, state: TutorState) -> dict:
         items = self._call(state, "quiz_start", "question_setter", "question-bank", "list_published", {"mode": "quiz"})["items"]
@@ -658,6 +689,7 @@ class TutorApp:
         g.add_node("tutor_extension", lambda s: self._tutor(s, extension=True))
         g.add_node("set_question", self._set_question)
         g.add_node("grade", self._grade)
+        g.add_node("check_reasoning", self._check_reasoning)
         g.add_node("quiz_start", self._quiz_start)
         g.add_node("quiz_answer", self._quiz_answer)
         g.add_node("refuse", self._refuse)
@@ -671,7 +703,7 @@ class TutorApp:
         g.add_edge(START, "input_guard")
         g.add_edge("input_guard", "load_learner")
         g.add_edge("load_learner", "planner")
-        specialists = ["diagnose", "tutor", "tutor_extension", "set_question", "grade", "quiz_start", "quiz_answer",
+        specialists = ["diagnose", "tutor", "tutor_extension", "set_question", "grade", "check_reasoning", "quiz_start", "quiz_answer",
                        "refuse", "handoff", "question_revoked"]
         g.add_conditional_edges("planner", lambda s: s["route"], {n: n for n in specialists})
         for n in specialists:

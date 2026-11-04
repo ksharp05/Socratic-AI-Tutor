@@ -176,3 +176,6 @@ Invoke-RestMethod http://127.0.0.1:8000/health/ready
 Replace the placeholders. The example tokens are for isolated local development; use separately provisioned credentials for a real deployment. Open `http://127.0.0.1:8000/beta/#connected` for the connected browser or `http://127.0.0.1:8501` for the Streamlit teacher interface. Publish separate practice and quiz proposals for each chapter as described above. The existing Compose ports bind on the host interfaces, so use this development configuration only on a trusted local network.
 
 To stop the stack without deleting its persistent volume, run `docker compose -f docker-compose.yml -f docker-compose.integrated.yml down`. Keep the same index path, ID and hash for restarts; the startup refuses to replace a different active dataset. The index is mounted read-only and is not copied into the image. The overlay forces offline stub mode. [Details and limitations](m2/INTEGRATED_COMPOSE.md).
+
+
+In connected trigonometry practice, an ambiguous ratio answer may prompt a request for the reference angle and side lengths. Reply with the labels from your question, for example “angle C, opposite ..., adjacent ..., hypotenuse ...”. The tutor checks those labels and then asks you to choose the ratio; the final numeric answer is graded separately. [Supported forms and limits](m2/TRIANGLE_REASONING.md).

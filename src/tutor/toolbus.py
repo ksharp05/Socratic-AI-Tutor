@@ -26,7 +26,7 @@ logging.getLogger("fastmcp").setLevel(logging.CRITICAL)
 PERMISSIONS: dict[str, set[tuple[str, str]]] = {
     "study_planner": {("learner-store", t) for t in
                       ("read_learner", "update_mastery", "record_misconception", "record_explanation", "save_plan", "apply_quiz")},
-    "diagnostician": {("textbook-kb", "search"), ("learner-store", "read_learner"), ("math-tools", "diagnose_response")},
+    "diagnostician": {("textbook-kb", "search"), ("learner-store", "read_learner"), ("math-tools", "diagnose_response"), ("math-tools", "check_triangle_labels"), ("math-tools", "check_triangle_ratio_definition")},
     "tutor": {("textbook-kb", "search"), ("textbook-kb", "get_section")},
     "grader": {("math-tools", "check_equivalence"), ("math-tools", "parse_answer"), ("math-tools", "diagnose_response")},
     "question_setter": {("question-bank", "list_published"), ("question-bank", "candidate_items"),

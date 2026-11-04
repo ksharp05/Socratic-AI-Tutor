@@ -99,6 +99,18 @@ def build(conn: sqlite3.Connection, extra_items: list[dict] | None = None) -> Fa
         return {"candidates": mathcore.diagnose_response(_item(question_ref)["problem"], key, parsed["typed"])}
 
     @mcp.tool(annotations=READ)
+    def check_triangle_labels(question_ref: str, response: str) -> dict:
+        """Check stated reference angle and side labels, without grading a ratio or returning a key."""
+        from ..triangle_reasoning import check_labels
+        return check_labels(_item(question_ref)["problem"], response)
+
+    @mcp.tool(annotations=READ)
+    def check_triangle_ratio_definition(question_ref: str, response: str) -> dict:
+        """Check the learner's ordered side names without returning the numeric ratio key."""
+        from ..triangle_reasoning import check_ratio_definition
+        return check_ratio_definition(_item(question_ref)["problem"], response)
+
+    @mcp.tool(annotations=READ)
     def leak_check(question_ref: str, text: str) -> dict:
         """Check whether a draft reply reveals the answer to this question."""
         return mathcore.leak_check(text, _key(question_ref))
