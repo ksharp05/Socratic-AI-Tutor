@@ -120,3 +120,10 @@ An assistant-operated localhost walkthrough with a synthetic teacher and learner
 The graph accepts and pins one of the three Class 10 chapters, searches a chapter-specific normalized card index, and keeps unavailable AP/trigonometry checked practice, quiz and plan paths separate from quadratic content. New cited messages persist the actual retrieved-reference snapshot, with available textbook identifiers, hash and page anchor; older messages are not assigned current-card snapshots retroactively. The canonical four-suite offline run passed **313 tests**. A synthetic localhost walkthrough checked AP/trigonometry conversation and chapter recovery; AP citation recovery was retested after the snapshot change. Human review, rights, live-model quality and AP/trigonometry assessments and plans remain open. [Details](CHAPTER_SCOPED_RETRIEVAL.md).
 
 The shared checkout also passed **313 offline tests** using the canonical local data path. The final generic citation-label wording was syntax-checked in both copies after the browser walkthrough.
+
+
+## Connected chapter practice — 4 November
+
+Selected public AP term/sum and trigonometry right-triangle questions now flow through exact-payload teacher publication, chapter-scoped graph practice, exact scalar checking and matching concept observations. All 120 candidates were checked against independent exact arithmetic for their represented givens. The canonical full offline suite passed **317 tests**, and a synthetic localhost walkthrough checked both chapter flows using stub mode. Review status stays pending; other mathematical families, chapter quizzes, diagnosis and plans remain open. [Details](CHAPTER_PRACTICE.md).
+
+The shared checkout also passed **317 offline tests** with its vendored maths package and the canonical local data path. The English answer lead-ins and active-question revocation were included in the final runs.

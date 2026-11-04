@@ -20,3 +20,20 @@ def cards():
                 if item['passage_id'] in seen:raise ValueError('Duplicate source card ID')
                 seen.add(item['passage_id']);result.append(item)
     return result
+
+
+def concepts():
+    """Retain the quadratic graph and register public AP/trigonometry concepts for observations."""
+    result = list(load('concepts'))
+    seen = {item['concept_id'] for item in result}
+    with (ROOT / 'content/dataset-v0.10.0/concepts.jsonl').open(encoding='utf-8-sig') as f:
+        for line in f:
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            if item.get('chapter') in ('arithmetic_progressions', 'trigonometry'):
+                if item['concept_id'] in seen:
+                    raise ValueError('Duplicate concept ID')
+                seen.add(item['concept_id'])
+                result.append(item)
+    return result

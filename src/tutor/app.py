@@ -22,7 +22,7 @@ from . import approval_token, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
-from .topic_sources import cards as topic_cards, CHAPTERS
+from .topic_sources import cards as topic_cards, concepts as topic_concepts, CHAPTERS
 from .setup_content import load
 from .toolbus import CallContext, ToolBus, ToolCallError
 
@@ -38,7 +38,7 @@ MIS_KEYWORDS = {
 PRACTICE_REQUEST = re.compile(r"^/practice\b|\b(practice|another (one|question)|next question|give me a (question|problem))\b", re.I)
 QUIZ_REQUEST = re.compile(r"^/quiz\b|\b(start|take) (a |the )?quiz\b", re.I)
 HINT_REQUEST = re.compile(r"\b(hint|help|stuck|don'?t know|idk|no idea)\b", re.I)
-ANSWER_LIKE = re.compile(r"(\b[a-z]\s*=\s*[-+]?\s*[\d(√s])|^[\s{(]*[-+]?\s*[\d√]|\bno real roots?\b", re.I)
+ANSWER_LIKE = re.compile(r"(\b[a-z]\s*=\s*[-+]?\s*[\d(√s])|^[\s{(]*(?:(?:(?:my|the) answer is|i think (?:the answer is|it(?:'s| is))|it(?:'s| is))\s*[:=]?\s*)?[-+]?\s*(?:[\d√]|sqrt\s*\()|\bno real roots?\b", re.I)
 STUCK_SIGNAL = re.compile(r"\b(stuck|no idea|don'?t know|idk)\b", re.I)
 GUESS_BY_KIND = learner.GUESS_BY_KIND
 
@@ -92,7 +92,7 @@ class TutorApp:
         self.defences = defences
         self.misconceptions = {m["misconception_id"]: m for m in load("misconceptions")}
         self.cards = {c["passage_id"]: c for c in topic_cards()}
-        self.concepts = learner.concept_graph()
+        self.concepts = {c["concept_id"]: c for c in topic_concepts()}
         self._ctx: dict[str, CallContext] = {}
         self.checkpointer = SqliteSaver(sqlite3.connect(db_path(checkpoint_name), check_same_thread=False))
         self.graph = self._build_session_graph().compile(checkpointer=self.checkpointer)
@@ -369,8 +369,10 @@ class TutorApp:
                   "concept_ids": item["problem"]["concept_ids"], "kind": item["answer_contract"]["allowed_kinds"][0],
                   "hint_stages": item["hint_stages"], "hint_stage": 0, "attempts": 0,
                   "supporting_passage_ids": [f"normalized:{c}" for c in item["problem"]["concept_ids"] if f"normalized:{c}" in self.cards]}
+        instruction = ("Answer like 'x = 2 or x = -3' (or 'no real roots')." if active['kind'] == 'finite_set'
+                       else "Give an exact value, for example -5, 3/4 or sqrt(3)/2.")
         text = (f"Practice ({item['difficulty']['level']}): {item['prompt']}\n"
-                "Answer like 'x = 2 or x = -3' (or 'no real roots'). Type 'hint' if you're stuck.")
+                f"{instruction} Type 'hint' if you're stuck.")
         return {"active_item": active, "attempted": attempted + [item["question_id"]],
                 "draft": {"text": text, "citations": [], "kind": "question"}}
 
@@ -383,13 +385,16 @@ class TutorApp:
                                             "set_id": item["set_id"], "set_payload_sha256": item["set_payload_sha256"],
                                             "kind": item["kind"]}}
         if not result["scorable"]:
+            example = "'x = 2 or x = -3'" if item['kind'] == 'finite_set' else "'-5' or '3/4'"
             update["draft"] = {"text": f"I couldn't read that as an answer ({result['reason']}). "
-                                       "Try again, for example 'x = 2 or x = -3'.", "citations": [], "kind": "info"}
+                                       f"Try again, for example {example}.", "citations": [], "kind": "info"}
             return update
         if result["correct"]:
             update["active_item"] = None
-            update["draft"] = {"text": f"Correct: {result['parsed']}. In one sentence, how did you make sure you "
-                                       "didn't miss a root?", "citations": [], "kind": "feedback"}
+            followup = ("how did you make sure you didn't miss a root?" if item['kind'] == 'finite_set'
+                        else "how did you check your reasoning?")
+            update["draft"] = {"text": f"Correct: {result['parsed']}. In one sentence, {followup}",
+                               "citations": [], "kind": "feedback"}
             return update
         item["attempts"] += 1
         diag = self._call(state, "grade", "grader", "math-tools", "diagnose_response",

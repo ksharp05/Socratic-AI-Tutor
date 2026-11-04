@@ -10,6 +10,11 @@ from .setup_content import load
 
 PUBLIC_FIELDS = ('question_id','prompt','problem','answer_contract','hint_stages','difficulty','chapter','family_id','supporting_passage_ids')
 MODES = frozenset({'practice','quiz','diagnostic'})
+# Only scalar families supported by the connected graph's parser and checker.
+CONNECTED_PRACTICE_FAMILIES = {
+    'arithmetic_progressions': frozenset({'ap_term', 'ap_sum'}),
+    'trigonometry': frozenset({'trig_triangle_ratio'}),
+}
 
 
 def allowed(item: dict, mode: str) -> bool:
@@ -22,7 +27,7 @@ def allowed(item: dict, mode: str) -> bool:
 
 
 def graph_items(poc_loader=load) -> list[dict]:
-    """Return only POC items matching public originals, plus separate dev checks.
+    """Return matched quadratic POC items, supported public practice and separate dev checks.
 
     No private/evaluation material is read. Missing or mismatched public content
     is not silently promoted; existing approvals are rechecked against this pool.
@@ -39,6 +44,21 @@ def graph_items(poc_loader=load) -> list[dict]:
         item['review_status']=original.get('review_status');item['authorship']=original.get('authorship')
         if allowed(item,'practice'):
             result.append(item);seen.add(item['question_id'])
+    for original in public.values():
+        chapter = original.get('chapter')
+        problem = original.get('problem') or {}
+        if (problem.get('task_type') not in CONNECTED_PRACTICE_FAMILIES.get(chapter, ())
+                or (original.get('answer_contract') or {}).get('allowed_kinds') != ['scalar']
+                or not allowed(original, 'practice')):
+            continue
+        qid = original['question_id']
+        if qid in seen:
+            raise ValueError('Duplicate practice question ID')
+        item = copy.deepcopy(original)
+        item.setdefault('review_status', None)
+        item.setdefault('authorship', None)
+        result.append(item)
+        seen.add(qid)
     for item in json.loads((ROOT/'content/milestone2_dev/quiz_items.json').read_text(encoding='utf-8-sig')):
         qid=item.get('question_id')
         if not isinstance(qid,str) or qid in seen or qid in public:

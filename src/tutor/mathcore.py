@@ -48,6 +48,9 @@ def parse_answer(text: str, key: dict) -> dict:
                 return {"ok": False, "reason": "Write your roots like: x = 2 or x = -3, or say 'no real roots'."}
         typed = {"kind": "finite_set", "values": values}
     elif kind == "scalar":
+        # Recognise a few explicit English lead-ins without guessing at free-form reasoning.
+        raw = re.sub(r"^\s*(?:(?:my|the) answer is|i think (?:the answer is|it(?:'s| is))|it(?:'s| is))\s*[:=]?\s*",
+                     "", raw, flags=re.I)
         m = re.search(r"=?\s*([-+0-9a-z*/^().√ ]+)$", raw)
         typed = {"kind": "scalar", "value": normalise_expression(m.group(1) if m else raw)}
     else:

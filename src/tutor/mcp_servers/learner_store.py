@@ -17,6 +17,7 @@ from fastmcp.exceptions import ToolError
 from .. import learner, store
 from ..config import SETTINGS
 from ..setup_content import load
+from ..topic_sources import concepts as topic_concepts
 from ..store import dumps, now
 from . import READ, WRITE
 
@@ -24,7 +25,7 @@ STATUSES = ("suspected", "confirmed", "addressed", "resolved")
 
 
 def build(conn: sqlite3.Connection) -> FastMCP:
-    concepts = {c["concept_id"] for c in load("concepts")}
+    concepts = {c["concept_id"] for c in topic_concepts()}
     misconceptions = {m["misconception_id"] for m in load("misconceptions")}
 
     def _exists(learner_id: str) -> None:
