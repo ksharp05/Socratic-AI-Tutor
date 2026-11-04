@@ -382,12 +382,14 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         if not policy or cfg["run"].get("voice", "template") != "template":
             app.close()
             raise ValueError("Live runs require a durable provider_budget and template voice")
-        provider_budget = ProviderBudget(Path(os.path.expandvars(policy["path"])),
-                                         max_calls=policy["max_calls"], max_usd=policy["max_usd"],
-                                         prior_calls=policy.get("prior_calls", 0),
-                                         batch_max_calls=policy.get("batch_max_calls"),
-                                         batch_start_attempts=policy.get("batch_start_attempts", 0))
         try:
+            provider_budget = ProviderBudget(Path(os.path.expandvars(policy["path"])),
+                                             max_calls=policy["max_calls"], max_usd=policy["max_usd"],
+                                             prior_calls=policy.get("prior_calls", 0),
+                                             batch_max_calls=policy.get("batch_max_calls"),
+                                             batch_start_attempts=policy.get("batch_start_attempts", 0),
+                                             approval_receipt=Path(os.path.expandvars(policy["approval_receipt"]))
+                                             if policy.get("approval_receipt") else None)
             attach_budget(app.llm, provider_budget)
         except Exception:
             app.close()

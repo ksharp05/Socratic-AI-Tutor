@@ -90,6 +90,8 @@ def security_bounds(results):
 
 
 def review_packet(all_runs,out):
+    if out.exists() and any(out.glob('rater_*.csv')):
+        return {'path':str(out),'existing_packet_preserved':True,'human_labels_present':'not_reassessed'}
     candidates=[]
     for arm,(manifest,sessions) in all_runs.items():
         for session in sessions:
@@ -150,6 +152,7 @@ def main():
     comparisons={}
     for label,left,right,seed in [('E1_C2_minus_C1','c1','c2',None),('E1_C2_minus_C0','c0','c2',None),
                                   ('E3_candidate_minus_before','c2','e3_after',None),
+                                  ('E3_budget_tranche_minus_matched_before','c2','e3_after_budget_tranche12',None),
                                   ('E4a_memory_on_minus_off','memory_off','c2',1),
                                   ('E4b_telling_minus_hints','c2','direct_answers',1)]:
         if left in all_runs and right in all_runs:
@@ -158,6 +161,9 @@ def main():
                  ('success_proxy',lambda s:int(metrics.session_view(s)['task_success'])),
                  ('cleared_misconceptions',lambda s:len(s['cleared']))]}
     report['paired_comparisons']=comparisons
+    report['analysis_code_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    if (root/'E3_BUDGET_TRANCHE.json').exists():
+        report['E3_original_design_completion']=json.loads((root/'E3_BUDGET_TRANCHE.json').read_text(encoding='utf-8'))
     report['review_packet']=review_packet(all_runs,root/'review_packet')
     (root/'ANALYSIS.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     lines=[f'# {args.stage.capitalize()} development experiment analysis','',

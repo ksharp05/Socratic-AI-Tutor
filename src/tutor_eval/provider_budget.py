@@ -16,9 +16,28 @@ class BudgetExceeded(RuntimeError):
 
 class ProviderBudget:
     def __init__(self, path, *, max_calls, max_usd, prior_calls=0, input_price=.4, output_price=1.6,
-                 batch_max_calls=None, batch_start_attempts=0):
+                 batch_max_calls=None, batch_start_attempts=0, approval_receipt=None):
+        approval_hash = None
+        approved_total = 1000
+        if approval_receipt is not None:
+            receipt_path = Path(approval_receipt)
+            receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
+            if (receipt.get('status') != 'approved' or not receipt.get('approval_quote')
+                    or not receipt.get('approved_by') or receipt.get('prior_provider_attempts') != prior_calls
+                    or type(receipt.get('additional_requests')) is not int
+                    or receipt['additional_requests'] < max_calls or receipt.get('max_additional_usd', 0) < max_usd):
+                raise ValueError('Explicit budget-extension approval is missing or does not cover this batch')
+            previous_path = Path(os.path.expandvars(receipt['previous_ledger_path']))
+            previous_bytes = previous_path.read_bytes()
+            previous = json.loads(previous_bytes)
+            if (hashlib.sha256(previous_bytes).hexdigest() != receipt['previous_ledger_sha256']
+                    or previous['policy']['prior_calls'] + len(previous['attempts']) != prior_calls
+                    or any(a['status'] == 'reserved' for a in previous['attempts'])):
+                raise ValueError('Prior provider ledger does not match the approved continuation boundary')
+            approved_total = prior_calls + receipt['additional_requests']
+            approval_hash = hashlib.sha256(receipt_path.read_bytes()).hexdigest()
         if (type(max_calls) is not int or max_calls < 1 or type(prior_calls) is not int or prior_calls < 0
-                or prior_calls + max_calls > 1000 or not 0 < max_usd <= 1):
+                or prior_calls + max_calls > approved_total or not 0 < max_usd <= 1):
             raise ValueError('A positive call cap and USD cap at most 1 are required per study batch')
         self.batch_max_calls, self.batch_start_attempts = batch_max_calls, batch_start_attempts
         self.path = Path(path)
@@ -26,6 +45,8 @@ class ProviderBudget:
         self.lock = FileLock(str(self.path) + '.lock', timeout=15)
         self.policy = dict(max_calls=max_calls, max_usd=max_usd, prior_calls=prior_calls,
                            input_price=input_price, output_price=output_price)
+        if approval_hash:
+            self.policy.update(approval_receipt_sha256=approval_hash, approved_total_limit=approved_total)
         with self.lock:
             if self.path.exists():
                 if self._read()['policy'] != self.policy:

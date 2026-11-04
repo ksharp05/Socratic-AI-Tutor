@@ -40,3 +40,44 @@ def test_unsupported_security_cases_remain_in_uncertainty_bounds():
                                      {'kind':'control','supported':False}])
     assert result['attack']['all_scheduled_rate_bounds']==[0,.5]
     assert result['control']['all_scheduled_rate_bounds']==[.5,1]
+
+
+def test_existing_human_packet_is_not_overwritten(tmp_path):
+    packet=tmp_path/'review';packet.mkdir();rated=packet/'rater_a.csv';rated.write_text('human rating must stay')
+    result=analysis.review_packet({},packet)
+    assert result['existing_packet_preserved'] is True
+    assert rated.read_text()=='human rating must stay'
+
+
+def test_contextual_packet_has_references_and_refuses_overwrite(tmp_path,monkeypatch):
+    import json,csv,pytest
+    spec=importlib.util.spec_from_file_location('m3_review',ROOT/'scripts/m3/review_packet.py')
+    review=importlib.util.module_from_spec(spec);spec.loader.exec_module(review)
+    monkeypatch.setattr(review,'SOURCE',tmp_path)
+    data=tmp_path/'Directions/m3_data/development-v1';data.mkdir(parents=True)
+    (data/'assignments.json').write_text(json.dumps([{'student_id':'synthetic','pair_ids':['p']}]))
+    (data/'pairs.json').write_text(json.dumps([{'pair_id':'p','post':{'prompt':'Synthetic post question','answer':{'kind':'scalar','value':'2'}}}]))
+    catalogue=tmp_path/'catalogue.jsonl';catalogue.write_text(json.dumps({'misconception_id':'m','incorrect_rule':'Synthetic wrong rule','correct_reasoning':'Synthetic reasoning'}))
+    run=tmp_path/'run';run.mkdir();(run/'manifest.json').write_text(json.dumps({'run_id':'synthetic-run'}))
+    turn={'index':0,'problem':{'prompt':'Synthetic question','answer':'2'},'student':'1','tutor':'Check the step?',
+          'leaks':[],'citations':[{'passage_id':'normalized:synthetic','text':'Synthetic source'}]}
+    (run/'sessions.jsonl').write_text(json.dumps({'student':'synthetic','seed':1,'seeded':['m'],'session':'s','turns':[turn]}))
+    index=tmp_path/'INDEX.json';index.write_text(json.dumps({'jobs':{'c2':{'status':'completed','run':str(run)}}}))
+    out=tmp_path/'packet';result=review.create(index,out,catalogue)
+    assert result['human_labels_at_creation']==0
+    with (out/'rater_a.csv').open(encoding='utf-8-sig',newline='') as f:row=next(csv.DictReader(f))
+    assert 'Synthetic post question' in row['session_references_evaluator_only']
+    assert 'Synthetic source' in row['citation_sources']
+    assert row['leak_label_none_partial_full']=='' and row['rater']==''
+    before=(out/'rater_a.csv').read_bytes()
+    with pytest.raises(ValueError,match='preserved'):review.create(index,out,catalogue)
+    assert (out/'rater_a.csv').read_bytes()==before
+
+
+def test_calibration_helper_refuses_existing_output_before_any_other_read(tmp_path):
+    import pytest
+    spec=importlib.util.spec_from_file_location('m3_calibration',ROOT/'scripts/m3/prepare_calibration.py')
+    calibration=importlib.util.module_from_spec(spec);spec.loader.exec_module(calibration)
+    out=tmp_path/'existing';out.mkdir();protected=out/'rater_a.csv';protected.write_text('human data')
+    with pytest.raises(ValueError,match='preserved'):calibration.prepare(tmp_path/'missing',out)
+    assert protected.read_text()=='human data'

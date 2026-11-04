@@ -1,5 +1,7 @@
 # Beta continuation - 5 November 2026
 
+Current M3/M4 continuation supersedes the historical counts and CI uncertainty below: see [M3 checkpoint](../m3/CHECKPOINT.md) and [M4 results](../m4/RESULTS.md). Baseline remote Actions is verified, 1,000/1,000 provider requests are used, and 500 final local regression checks pass. E3 remains 36/48; human/final gates are open.
+
 The user requested a new **local `Beta` branch**, created from `3dd518ac228f07e69969120c21b251eba52161b3` (the milestone-2 handoff). This replaces the older milestone-only branch instruction for this continuation. Work stays local until the Lead requests a push. The branch name is separate from the existing anonymous Socrates beta application.
 
 ## Changes

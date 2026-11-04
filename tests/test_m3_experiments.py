@@ -160,3 +160,27 @@ def test_data_path_overlay_is_delivered_without_mutating_sources_or_grading(tmp_
         assert app.conn.execute('SELECT count(*) FROM mastery').fetchone()[0]==0
     finally:
         app.close()
+
+
+def test_budget_extension_needs_explicit_receipt_and_preserves_prior_ledger(tmp_path):
+    import hashlib
+    previous=ProviderBudget(tmp_path/'original.json',max_calls=1,max_usd=.1,prior_calls=999)
+    call=previous.reserve([('user','synthetic fixture')],1)
+    previous.finish(call,reply=SimpleNamespace(usage_metadata={'input_tokens':1,'output_tokens':1},response_metadata={}))
+    original=previous.path.read_bytes()
+    receipt={'status':'pending','approval_quote':None,'approved_by':None,'prior_provider_attempts':1000,
+             'additional_requests':2,'max_additional_usd':.03,'previous_ledger_path':str(previous.path),
+             'previous_ledger_sha256':hashlib.sha256(original).hexdigest()}
+    path=tmp_path/'approval.json';path.write_text(json.dumps(receipt));extended=tmp_path/'extended.json'
+    options=dict(max_calls=2,max_usd=.03,prior_calls=1000,approval_receipt=path)
+    with pytest.raises(ValueError,match='approval'):ProviderBudget(extended,**options)
+    assert not extended.exists()
+    # Synthetic unit-test receipt only. This is not a real user approval or provider call.
+    receipt.update(status='approved',approval_quote='Synthetic test-only approval',approved_by='synthetic-test-owner')
+    path.write_text(json.dumps(receipt))
+    budget=ProviderBudget(extended,**options)
+    budget.reserve([('user','synthetic new attempt')],1)
+    assert budget.snapshot()['prior_plus_attempts']==1001
+    assert previous.path.read_bytes()==original
+    receipt['previous_ledger_sha256']='bad';path.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError,match='Prior provider ledger'):ProviderBudget(tmp_path/'bad.json',**options)

@@ -1,33 +1,39 @@
-# M3/M4 checkpoint - v2 safety exception
+# M3/M4 checkpoint - development results ready, approval gates open
 
-The active user goal is to complete actionable M3 behaviour freeze and M4 E1–E4 results, data sufficiency, citation/safety/cost analysis, while the user sleeps. Keep work local on Beta. A one-time continuation is scheduled in this chat for 6:32 am IST on 5 November after the reported 6:31 am account reset. Do not spend the reset credit or change plans.
+Continue locally on `Beta` in `D:\Work\IITB\Socratic Tutor Main`; all project commands use canonical `D:\Work\IITB\Socratic Tutor` as cwd. Mirror changed project files here. Do not push. Read `Docs/m4/RESULTS.md` before changing anything.
 
-## Current state
+## Current evidence
 
-- V1 implementation `b4c290b`, local tag `beta-m3-behaviour-v1`, is preserved. It passed 483 regression tests + 3 analysis tests, all six final two-card smoke configs and three CI evaluation gates. Baseline remote Actions is confirmed successful for 3dd518a (41908712265); unpushed Beta has no remote CI run.
-- V1 full offline matrix completed: 224 tutoring sessions, 160 safety cases, zero execution errors. Evidence is `Directions/m3_runs/offline/INDEX.json`, `ANALYSIS.json` and `ANALYSIS.md`; the blank-rater packet is beside them. One known development urgent case failed routing with guards on and off. No provider calls occurred.
-- V2 adds explicit first-person unsafe/not-safe recogniser phrases and regression checks. It also delivers the six existing source/tool-result cases through isolated returned-data overlays. Files/keys are untouched, delivery hashes are recorded, and semantic expectations stay unmeasured where code cannot establish them. The protocol documents both deviations; original v1 outcomes are not relabelled.
-- Use **`--revision v2` for all new smoke/offline/pilot/live and analysis commands**. V2 artifacts go under `Directions/m3_runs/v2/`; v1 stays where it is. No data, attack payload, seed, expected label or run count changed.
+- Frozen teaching behaviour: `12d541ed8dd4716bbcfee2a74bcb4215920a13fc`, tag `beta-m3-behaviour-v2`. That source passed 496 regressions, six two-card smoke configurations and all three CI evaluation gates. C1/C2 replays match 4/4 sessions; all 224 v1-to-v2 offline core trajectories are unchanged. Original v1 safety failures remain preserved.
+- Baseline Actions run 41908712265 passed on `3dd518a`. Beta is local and has no remote CI run. Reporting/approval-gate changes happened after all paid runs; they do not retroactively change the source recorded by the runs. All 500 final regression checks passed (396 core + 104 beta/data-pipeline/integration); no provider calls were sent by verification.
+- Live E1: C0/C1/C2 each 48 sessions. E4: memory-off/telling each 16, with matched C2 seed-1 comparators. E2: 40 previously seen attacks + 40 controls per selected-guard condition. E3: 36 of the original 48 candidate sessions, four cards per chapter, seeds 1/2/3; candidate lessons remain unreviewed. Total: 212 study tutoring sessions, four pilot sessions, 160 safety cases.
+- All 856 normal-study citation snapshots match their hash/chapter/source text. Semantic faithfulness is unmeasured. C2 does not improve the recorded success proxy over C0/C1; diagnosis recall is low. Guards-on has 0/18 observed attack violations, but 27/80 cases per condition are unsupported/semantic unknown. No human learning or final safety claim.
+- Shareable report, JSON, CSV and figure: `Docs/m4/`. Raw evidence is ignored under `Directions/m3_runs/v2/`; no raw learner cards, keys, transcripts or wallets are committed.
 
-## Execution next
+## Hard stop before any new provider request
 
-Run final full tests and committed v2 smoke/CI checks, then tag the committed source as `beta-m3-behaviour-v2`. Run:
+The original wallet `Directions/m3_runs/provider_budget.json` contains **902 new completed attempts + 98 prior = 1,000/1,000**. All 902 new attempts exposed cost: **USD 0.2659048**, no errors/reservations/refused attempts. Prior-98 money is unknown. Never reset, edit, delete or bypass this wallet. No voice or judge calls were made.
 
-```
-python scripts/m3/run_matrix.py --stage offline --revision v2 --security
-python scripts/m3/analyse.py --stage offline --revision v2
-python scripts/m3/run_matrix.py --stage pilot --revision v2 --arms c1 c2 --max-calls 902
-python scripts/m3/analyse.py --stage pilot --revision v2
-```
+Do not rerun the original full `m3_live_e3_after` configuration or the completed tranche. The exact remaining four cards / 12 sessions need an estimated 36 requests. `Docs/m4/REMAINING_E3.md` and `eval/configs/m3_live_e3_remaining4.toml` propose at most **50 additional requests / USD 0.03**. The private receipt `Directions/m3_runs/v2/live/E3_EXTENSION_APPROVAL.json` remains **pending**, with no approver or quote. No fresh allowance has been granted. An extension wallet must not exist before actual approval. The code refuses a pending receipt and chains approved extensions to the exact original ledger hash.
 
-Inspect the pilot before the full live matrix. The pilot is four sessions, at most 30 provider attempts total, estimated below USD 0.05; it shares the global ledger. If healthy, announce the next batch cap and cost estimate, then run `--stage live --revision v2 --max-calls 902 --security` and analyse it. All 16 predeclared development cards are retained; E1 and E3 use seeds 1,2,3, E4 uses seed 1 with the matched C2 subset reused. Failures/timeouts/contamination cannot become successes. Source/config/data-aware resumption refuses ambiguous/interrupted evidence. Inspect partial sessions, never silently repeat or drop them.
+Only an actual user answer can approve this extension. A scheduled continuation, account reset, preselected option or elapsed time is not approval. After approval, record the exact quote and identity; inspect pending evidence and deduplicate before calling. Do not repeat any interrupted session silently.
 
-## Budget and data
+## Data and human work
 
-Provider calls remain **98/1,000** (zero new as of this checkpoint). Shared durable wallet: `Directions/m3_runs/provider_budget.json`, max 902 further attempts and USD 1 accounting cap. Never reset, delete or bypass it. Retries disabled; max 240 output tokens; fixed openai/gpt-4.1-mini; template simulator; no judge calls. Provider cost is used if exposed, otherwise labelled token estimates/conservative reservations.
+The development export has 16 source cards (6 QE, 5 AP, 5 trig), 22 pairs / 44 quiz records, 17 seeded misconception types and 160 internally consistent golden references. There is no practice-record overlap. Eight seeded types have no runtime diagnosis adapter; five card/misconception associations cannot show in their assigned quizzes. The runtime has 131 registered practice items, 12 quizzes, 22 concepts/cards and nine diagnosis types. Candidate-final 24 cards / 30 pairs have not been exported or run. Frozen dataset integrity is verified; no final selection/freeze was performed.
 
-Existing development export: `Directions/m3_data/development-v1/`; 16 source cards (6 QE,5 AP,5 trig), 22 pairs/44 quiz items, 17 seeded misconception types, 160 development golden cases. No practice-record overlap. Simulator validation passes 24/24 card/misconception pairs; five are not observable in assigned quiz scores, eight seeded types are outside runtime diagnosis. Candidate final: 24 cards/30 pairs, not exported/run. More synthetic variants do not supply independent or human-reviewed data.
+Use the non-overwriting calibration packet `Directions/m3_runs/v2/live/review_packet_context_v2/`: 60 actual turns + three existing AI-drafted fixtures, 63 items total, all human labels blank. Proposed sample classes (36 none / 7 partial / 20 full) are not ground truth. Keep `mapping_private.json` hidden from raters; exclude fixtures from experimental metrics. The blank agreement check has zero jointly rated items and no kappa. Do not call a judge before calibration and request-budget approval.
 
-## Remaining reporting and gates
+Teacher lesson decisions are blank in `Directions/m3_runs/v2/human_actions/lesson_review.csv`. R2/Rizwan must decide the draft final preregistration; independent raters/final-content authors, new attacks/controls, semantic review and final-study budget remain external gates. The draft's obsolete “already frozen” sentence has been corrected without changing its draft status. Do not invent approval or a rejected lesson.
 
-Finish actual live/code results with exact run IDs, paired student-cluster bootstrap intervals, seed spread, mechanical citation checks, supported/unsupported safety bounds and cost coverage. Prepare the final report and blank human-review packet; preserve any existing rater files rather than overwriting them on analysis reruns. The original final preregistration stays draft: do not invent R2 approval, accepted/rejected human lessons, calibrated raters/judge, independent final authorship or real learning. Candidate-v1 playbook is explicitly unreviewed and exploratory. M3/M4 final acceptance still depends on those external gates, even after the development engineering work is complete.
+## Resume and reporting
+
+A one-time continuation is scheduled in this chat for 06:32 IST, 5 November, after the account's reported 06:31:31 reset. The computer and Codex must remain on. Do useful authorized local work; the request cap still applies. Do not create duplicate experiments.
+
+Safe saved-data commands use the shared checkout's `.venv/Scripts/python.exe` (the canonical dataset `.venv` does not contain pytest), `SOCRATES_SOURCE_WORKSPACE` set to the canonical workspace, and explicit script paths:
+
+- `scripts/m3/analyse.py --stage live --revision v2` recalculates saved evidence and preserves existing rater files.
+- `scripts/m3/deliver_results.py` writes the present 1,000-request development report. It intentionally asserts this evidence boundary; a newly approved extension needs an explicitly versioned combined report rather than silently rewriting the original boundary.
+- `scripts/m3/plot_results.py` uses isolated private plotting dependencies and makes no provider request.
+
+The formal M3/M4 goal remains incomplete. Do not label the 36-session E3 tranche as the original full design, or the development engineering checkpoint as human-approved final preregistration.

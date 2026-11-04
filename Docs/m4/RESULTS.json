@@ -1,0 +1,1253 @@
+{
+  "scope": "synthetic_development_engineering_study_not_final_qualification",
+  "behaviour_commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+  "local_tag": "beta-m3-behaviour-v2",
+  "date": "2026-11-05",
+  "conditions": [
+    {
+      "condition": "c0",
+      "run_id": "m3_live_c0-20261105-035255-ce6b6b08a470",
+      "sessions": 48,
+      "turns": 384,
+      "model_requests": 194,
+      "success_proxy": 2,
+      "diagnosis_recall": 0.042,
+      "mean_quiz_gain": 0.375,
+      "full_leak_turns": 0,
+      "partial_leak_turns": 0,
+      "practice_submitted": 144,
+      "practice_checked_correct": 32,
+      "unique_registered_practice_shown": 11,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.0545376,
+      "provider_cost_coverage": 194,
+      "estimated_usd": 0.0545,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 986.0,
+        "p95": 1476.1
+      },
+      "citations": {
+        "turns": 384,
+        "turns_with_source_id": 202,
+        "turns_with_snapshot": 202,
+        "snapshots": 202,
+        "valid_snapshot_hash": 202,
+        "same_chapter": 202,
+        "registered_source_text_match": 202,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.375
+          },
+          "2": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.4375
+          },
+          "3": {
+            "sessions": 16,
+            "success_rate": 0.0,
+            "mean_gain": 0.3125
+          }
+        },
+        "success_rate": {
+          "mean": 0.041666666666666664,
+          "sd": 0.03608439182435161,
+          "range": [
+            0.0,
+            0.0625
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.375,
+          "sd": 0.0625,
+          "range": [
+            0.3125,
+            0.4375
+          ]
+        }
+      }
+    },
+    {
+      "condition": "c1",
+      "run_id": "m3_live_c1-20261105-035710-eabed6949ac0",
+      "sessions": 48,
+      "turns": 384,
+      "model_requests": 194,
+      "success_proxy": 2,
+      "diagnosis_recall": 0.042,
+      "mean_quiz_gain": 0.375,
+      "full_leak_turns": 0,
+      "partial_leak_turns": 0,
+      "practice_submitted": 144,
+      "practice_checked_correct": 32,
+      "unique_registered_practice_shown": 11,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.0542736,
+      "provider_cost_coverage": 194,
+      "estimated_usd": 0.0543,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 996.7,
+        "p95": 1334.1
+      },
+      "citations": {
+        "turns": 384,
+        "turns_with_source_id": 203,
+        "turns_with_snapshot": 203,
+        "snapshots": 203,
+        "valid_snapshot_hash": 203,
+        "same_chapter": 203,
+        "registered_source_text_match": 203,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.375
+          },
+          "2": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.4375
+          },
+          "3": {
+            "sessions": 16,
+            "success_rate": 0.0,
+            "mean_gain": 0.3125
+          }
+        },
+        "success_rate": {
+          "mean": 0.041666666666666664,
+          "sd": 0.03608439182435161,
+          "range": [
+            0.0,
+            0.0625
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.375,
+          "sd": 0.0625,
+          "range": [
+            0.3125,
+            0.4375
+          ]
+        }
+      }
+    },
+    {
+      "condition": "c2",
+      "run_id": "m3_live_c2-20261105-040116-9c72acbd3556",
+      "sessions": 48,
+      "turns": 384,
+      "model_requests": 194,
+      "success_proxy": 2,
+      "diagnosis_recall": 0.042,
+      "mean_quiz_gain": 0.354,
+      "full_leak_turns": 0,
+      "partial_leak_turns": 0,
+      "practice_submitted": 144,
+      "practice_checked_correct": 32,
+      "unique_registered_practice_shown": 11,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.0542768,
+      "provider_cost_coverage": 194,
+      "estimated_usd": 0.0543,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 992.9,
+        "p95": 1349.7
+      },
+      "citations": {
+        "turns": 384,
+        "turns_with_source_id": 204,
+        "turns_with_snapshot": 204,
+        "snapshots": 204,
+        "valid_snapshot_hash": 204,
+        "same_chapter": 204,
+        "registered_source_text_match": 204,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.3125
+          },
+          "2": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.375
+          },
+          "3": {
+            "sessions": 16,
+            "success_rate": 0.0,
+            "mean_gain": 0.375
+          }
+        },
+        "success_rate": {
+          "mean": 0.041666666666666664,
+          "sd": 0.03608439182435161,
+          "range": [
+            0.0,
+            0.0625
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.3541666666666667,
+          "sd": 0.03608439182435161,
+          "range": [
+            0.3125,
+            0.375
+          ]
+        }
+      }
+    },
+    {
+      "condition": "memory_off",
+      "run_id": "m3_live_memory_off-20261105-040520-222f57a760ea",
+      "sessions": 16,
+      "turns": 128,
+      "model_requests": 63,
+      "success_proxy": 1,
+      "diagnosis_recall": 0.042,
+      "mean_quiz_gain": 0.375,
+      "full_leak_turns": 0,
+      "partial_leak_turns": 0,
+      "practice_submitted": 48,
+      "practice_checked_correct": 12,
+      "unique_registered_practice_shown": 10,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.0175956,
+      "provider_cost_coverage": 63,
+      "estimated_usd": 0.0176,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 149.6,
+        "p95": 1307.1
+      },
+      "citations": {
+        "turns": 128,
+        "turns_with_source_id": 66,
+        "turns_with_snapshot": 66,
+        "snapshots": 66,
+        "valid_snapshot_hash": 66,
+        "same_chapter": 66,
+        "registered_source_text_match": 66,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 16,
+            "success_rate": 0.0625,
+            "mean_gain": 0.375
+          }
+        },
+        "success_rate": {
+          "mean": 0.0625,
+          "sd": null,
+          "range": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.375,
+          "sd": null,
+          "range": [
+            0.375,
+            0.375
+          ]
+        }
+      }
+    },
+    {
+      "condition": "direct_answers",
+      "run_id": "m3_live_direct_answers-20261105-040638-d5b43f14862c",
+      "sessions": 16,
+      "turns": 128,
+      "model_requests": 13,
+      "success_proxy": 0,
+      "diagnosis_recall": 0.042,
+      "mean_quiz_gain": 0.375,
+      "full_leak_turns": 38,
+      "partial_leak_turns": 4,
+      "practice_submitted": 48,
+      "practice_checked_correct": 24,
+      "unique_registered_practice_shown": 11,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.0035124,
+      "provider_cost_coverage": 13,
+      "estimated_usd": 0.0035,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 55.8,
+        "p95": 1166.8
+      },
+      "citations": {
+        "turns": 128,
+        "turns_with_source_id": 12,
+        "turns_with_snapshot": 12,
+        "snapshots": 12,
+        "valid_snapshot_hash": 12,
+        "same_chapter": 12,
+        "registered_source_text_match": 12,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 16,
+            "success_rate": 0.0,
+            "mean_gain": 0.375
+          }
+        },
+        "success_rate": {
+          "mean": 0.0,
+          "sd": null,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.375,
+          "sd": null,
+          "range": [
+            0.375,
+            0.375
+          ]
+        }
+      }
+    },
+    {
+      "condition": "e3_after_budget_tranche12",
+      "run_id": "m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485",
+      "sessions": 36,
+      "turns": 288,
+      "model_requests": 158,
+      "success_proxy": 2,
+      "diagnosis_recall": 0.056,
+      "mean_quiz_gain": 0.389,
+      "full_leak_turns": 0,
+      "partial_leak_turns": 0,
+      "practice_submitted": 108,
+      "practice_checked_correct": 21,
+      "unique_registered_practice_shown": 10,
+      "unique_prequiz_items": 10,
+      "unique_postquiz_items": 10,
+      "provider_reported_usd": 0.058205599999999996,
+      "provider_cost_coverage": 158,
+      "estimated_usd": 0.0582,
+      "failures": 0,
+      "timeouts": 0,
+      "llm_errors": 0,
+      "latency_ms": {
+        "p50": 1037.9,
+        "p95": 1381.2
+      },
+      "citations": {
+        "turns": 288,
+        "turns_with_source_id": 169,
+        "turns_with_snapshot": 169,
+        "snapshots": 169,
+        "valid_snapshot_hash": 169,
+        "same_chapter": 169,
+        "registered_source_text_match": 169,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "seed_spread": {
+        "per_seed": {
+          "1": {
+            "sessions": 12,
+            "success_rate": 0.08333333333333333,
+            "mean_gain": 0.3333333333333333
+          },
+          "2": {
+            "sessions": 12,
+            "success_rate": 0.08333333333333333,
+            "mean_gain": 0.5833333333333334
+          },
+          "3": {
+            "sessions": 12,
+            "success_rate": 0.0,
+            "mean_gain": 0.25
+          }
+        },
+        "success_rate": {
+          "mean": 0.05555555555555555,
+          "sd": 0.04811252243246881,
+          "range": [
+            0.0,
+            0.08333333333333333
+          ]
+        },
+        "mean_gain": {
+          "mean": 0.3888888888888889,
+          "sd": 0.17347216662217776,
+          "range": [
+            0.25,
+            0.5833333333333334
+          ]
+        }
+      }
+    }
+  ],
+  "matched_C2_for_E3_tranche": {
+    "sessions": 36,
+    "mean_gain": 0.3611111111111111,
+    "success_proxy": 2
+  },
+  "matched_C2_seed1_for_E4": {
+    "sessions": 16,
+    "mean_gain": 0.3125,
+    "success_proxy": 1
+  },
+  "paired_comparisons": {
+    "E1_C2_minus_C1": {
+      "quiz_gain": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": -0.020833333333333332,
+        "cluster_bootstrap_ci95": [
+          -0.0625,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "success_proxy": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "cleared_misconceptions": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      }
+    },
+    "E1_C2_minus_C0": {
+      "quiz_gain": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": -0.020833333333333332,
+        "cluster_bootstrap_ci95": [
+          -0.0625,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "success_proxy": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "cleared_misconceptions": {
+        "matched_sessions": 48,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      }
+    },
+    "E3_budget_tranche_minus_matched_before": {
+      "quiz_gain": {
+        "matched_sessions": 36,
+        "student_clusters": 12,
+        "difference": 0.027777777777777776,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.08333333333333333
+        ],
+        "unmatched_left": 12,
+        "unmatched_right": 0
+      },
+      "success_proxy": {
+        "matched_sessions": 36,
+        "student_clusters": 12,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 12,
+        "unmatched_right": 0
+      },
+      "cleared_misconceptions": {
+        "matched_sessions": 36,
+        "student_clusters": 12,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 12,
+        "unmatched_right": 0
+      }
+    },
+    "E4a_memory_on_minus_off": {
+      "quiz_gain": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": -0.0625,
+        "cluster_bootstrap_ci95": [
+          -0.1875,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "success_proxy": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "cleared_misconceptions": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      }
+    },
+    "E4b_telling_minus_hints": {
+      "quiz_gain": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": 0.0625,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.1875
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "success_proxy": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": -0.0625,
+        "cluster_bootstrap_ci95": [
+          -0.1875,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      },
+      "cleared_misconceptions": {
+        "matched_sessions": 16,
+        "student_clusters": 16,
+        "difference": 0.0,
+        "cluster_bootstrap_ci95": [
+          0.0,
+          0.0
+        ],
+        "unmatched_left": 0,
+        "unmatched_right": 0
+      }
+    }
+  },
+  "security": {
+    "e2_on": {
+      "run_id": "m3_live_e2_on-20261105-040704-425b0cf5ca59",
+      "summary": {
+        "cases": 80,
+        "unsupported": 27,
+        "errors": 0,
+        "attack_success_rate": 0.0,
+        "false_block_rate": 0.0,
+        "by_channel": {
+          "user_message": {
+            "attacks": 18,
+            "succeeded": 0,
+            "controls": 30,
+            "falsely_blocked": 0,
+            "unsupported": 20
+          },
+          "homework_text": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 4
+          },
+          "retrieved_passage": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 2
+          },
+          "tool_result": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 1,
+            "falsely_blocked": 0,
+            "unsupported": 1
+          }
+        }
+      },
+      "bounds": {
+        "attack": {
+          "scheduled": 40,
+          "measured": 18,
+          "positive": 0,
+          "unsupported_or_error": 22,
+          "supported_only_rate": 0.0,
+          "all_scheduled_rate_bounds": [
+            0.0,
+            0.55
+          ]
+        },
+        "control": {
+          "scheduled": 40,
+          "measured": 35,
+          "positive": 0,
+          "unsupported_or_error": 5,
+          "supported_only_rate": 0.0,
+          "all_scheduled_rate_bounds": [
+            0.0,
+            0.125
+          ]
+        }
+      },
+      "operations": {
+        "model_requests_logged": 32,
+        "model_errors": 0,
+        "tokens_in": 18006,
+        "tokens_out": 966,
+        "provider_reported_usd": 0.008748,
+        "provider_cost_coverage": 32
+      },
+      "switch_scope": "input/output application guards; tool permissions and publication authority remain enforced",
+      "manifest_sha256": "65e0242e6901e633a2d9701f3838fdf6faeb9da15154bc4ed0ddb3854b7ee722"
+    },
+    "e2_off": {
+      "run_id": "m3_live_e2_off-20261105-040747-556d00c75c03",
+      "summary": {
+        "cases": 80,
+        "unsupported": 27,
+        "errors": 0,
+        "attack_success_rate": 0.056,
+        "false_block_rate": 0.0,
+        "by_channel": {
+          "user_message": {
+            "attacks": 18,
+            "succeeded": 1,
+            "controls": 30,
+            "falsely_blocked": 0,
+            "unsupported": 20
+          },
+          "homework_text": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 4
+          },
+          "retrieved_passage": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 2
+          },
+          "tool_result": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 1,
+            "falsely_blocked": 0,
+            "unsupported": 1
+          }
+        }
+      },
+      "bounds": {
+        "attack": {
+          "scheduled": 40,
+          "measured": 18,
+          "positive": 1,
+          "unsupported_or_error": 22,
+          "supported_only_rate": 0.05555555555555555,
+          "all_scheduled_rate_bounds": [
+            0.025,
+            0.575
+          ]
+        },
+        "control": {
+          "scheduled": 40,
+          "measured": 35,
+          "positive": 0,
+          "unsupported_or_error": 5,
+          "supported_only_rate": 0.0,
+          "all_scheduled_rate_bounds": [
+            0.0,
+            0.125
+          ]
+        }
+      },
+      "operations": {
+        "model_requests_logged": 40,
+        "model_errors": 0,
+        "tokens_in": 22408,
+        "tokens_out": 1150,
+        "provider_reported_usd": 0.0108032,
+        "provider_cost_coverage": 40
+      },
+      "switch_scope": "input/output application guards; tool permissions and publication authority remain enforced",
+      "manifest_sha256": "aaf9a59b6c71d952c3ce09ca14883bfe2bfb53a1049ea57f03825e0d6a31a922"
+    }
+  },
+  "data_sufficiency": {
+    "development_only": true,
+    "independent_evaluation": false,
+    "source_student_count": 16,
+    "chapter_projection_count": 16,
+    "projection_is_not_an_independent_learner": true,
+    "chapters": {
+      "quadratic_equations": 6,
+      "arithmetic_progressions": 5,
+      "trigonometry": 5
+    },
+    "seeded_misconceptions": [
+      "ap_m01",
+      "ap_m02",
+      "ap_m03",
+      "ap_m04",
+      "ap_m05",
+      "qe_m01",
+      "qe_m02",
+      "qe_m03",
+      "qe_m04",
+      "qe_m05",
+      "qe_m06",
+      "tr_m01",
+      "tr_m02",
+      "tr_m03",
+      "tr_m04",
+      "tr_m05",
+      "tr_m08"
+    ],
+    "quiz_pairs": 22,
+    "quiz_items": 44,
+    "development_golden_cases": 160,
+    "candidate_final_student_count": 24,
+    "candidate_final_quiz_pairs": 30,
+    "final_content_exported": false,
+    "quiz_overlap_with_practice_problem_records": 0,
+    "simulator_validation": {
+      "cards": 16,
+      "card_misconception_pairs": 24,
+      "passed": 24,
+      "unobservable_in_assigned_quiz": [
+        {
+          "student": "sim_v2_002__arithmetic_progressions",
+          "misconception": "ap_m05"
+        },
+        {
+          "student": "sim_v2_004__quadratic_equations",
+          "misconception": "qe_m01"
+        },
+        {
+          "student": "sim_v2_006__trigonometry",
+          "misconception": "tr_m08"
+        },
+        {
+          "student": "sim_v2_010__quadratic_equations",
+          "misconception": "qe_m04"
+        },
+        {
+          "student": "sim_v2_016__quadratic_equations",
+          "misconception": "qe_m06"
+        }
+      ],
+      "seeded_not_registered_in_tutor": [
+        "ap_m01",
+        "ap_m02",
+        "ap_m03",
+        "ap_m04",
+        "ap_m05",
+        "tr_m03",
+        "tr_m05",
+        "tr_m08"
+      ]
+    }
+  },
+  "runtime_scope": {
+    "runtime_reference_cards": 22,
+    "runtime_concepts": 22,
+    "runtime_misconceptions": 9,
+    "registered_practice_items": 131,
+    "registered_quiz_items": 12,
+    "practice_by_chapter": {
+      "quadratic_equations": 11,
+      "arithmetic_progressions": 80,
+      "trigonometry": 40
+    },
+    "practice_task_types": {
+      "quadratic_solve": 11,
+      "ap_sum": 40,
+      "ap_term": 40,
+      "trig_triangle_ratio": 40
+    },
+    "interpretation": "The full frozen practice bank and textbook holdings are broader than this connected graph adapter."
+  },
+  "retrieval": {
+    "run_id": "m3_v2_connected_retrieval",
+    "git": {
+      "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+      "uncommitted_changes": false
+    },
+    "development_only": true,
+    "backend": "actual chapter-pinned POC search with 22 runtime cards",
+    "labels": "assistant-proposed_not_human",
+    "metrics": {
+      "recall@5": 0.9278,
+      "mrr": 0.8356,
+      "group@5": 1.0,
+      "queries": 15
+    },
+    "per_query": [
+      {
+        "query_id": "retrieval_qe_01",
+        "ranked": [
+          "normalized:qe01",
+          "normalized:qe05",
+          "normalized:qe02"
+        ]
+      },
+      {
+        "query_id": "retrieval_qe_02",
+        "ranked": [
+          "normalized:qe02",
+          "normalized:qe05",
+          "normalized:qe01",
+          "normalized:qe03"
+        ]
+      },
+      {
+        "query_id": "retrieval_qe_04",
+        "ranked": [
+          "normalized:qe04",
+          "normalized:qe03"
+        ]
+      },
+      {
+        "query_id": "retrieval_qe_09",
+        "ranked": [
+          "normalized:qe01",
+          "normalized:qe04",
+          "normalized:qe02",
+          "normalized:qe05",
+          "normalized:qe03"
+        ]
+      },
+      {
+        "query_id": "retrieval_ap_01",
+        "ranked": [
+          "normalized:ap03",
+          "normalized:ap04",
+          "normalized:ap01",
+          "normalized:ap07",
+          "normalized:ap08"
+        ]
+      },
+      {
+        "query_id": "retrieval_ap_02",
+        "ranked": [
+          "normalized:ap02",
+          "normalized:ap01",
+          "normalized:ap07"
+        ]
+      },
+      {
+        "query_id": "retrieval_ap_04",
+        "ranked": [
+          "normalized:ap03",
+          "normalized:ap04"
+        ]
+      },
+      {
+        "query_id": "retrieval_ap_09",
+        "ranked": [
+          "normalized:ap02",
+          "normalized:ap01",
+          "normalized:ap05",
+          "normalized:ap07"
+        ]
+      },
+      {
+        "query_id": "retrieval_tr_01",
+        "ranked": [
+          "normalized:tr01",
+          "normalized:tr07",
+          "normalized:tr06",
+          "normalized:tr09",
+          "normalized:tr02"
+        ]
+      },
+      {
+        "query_id": "retrieval_tr_02",
+        "ranked": [
+          "normalized:tr02",
+          "normalized:tr03",
+          "normalized:tr08",
+          "normalized:tr01",
+          "normalized:tr05"
+        ]
+      },
+      {
+        "query_id": "retrieval_tr_04",
+        "ranked": [
+          "normalized:tr05",
+          "normalized:tr03",
+          "normalized:tr07",
+          "normalized:tr06",
+          "normalized:tr04"
+        ]
+      },
+      {
+        "query_id": "retrieval_tr_10",
+        "ranked": [
+          "normalized:tr01",
+          "normalized:tr02",
+          "normalized:tr04",
+          "normalized:tr08",
+          "normalized:tr05"
+        ]
+      },
+      {
+        "query_id": "retrieval_qe_13",
+        "ranked": [
+          "normalized:qe01",
+          "normalized:qe03",
+          "normalized:qe04",
+          "normalized:qe02"
+        ]
+      },
+      {
+        "query_id": "retrieval_ap_13",
+        "ranked": [
+          "normalized:ap08",
+          "normalized:ap07",
+          "normalized:ap03",
+          "normalized:ap01",
+          "normalized:ap06"
+        ]
+      },
+      {
+        "query_id": "retrieval_tr_13",
+        "ranked": [
+          "normalized:tr01",
+          "normalized:tr02",
+          "normalized:tr05",
+          "normalized:tr04",
+          "normalized:tr06"
+        ]
+      }
+    ]
+  },
+  "golden_consistency": {
+    "run_id": "m3_v2_development_golden",
+    "git": {
+      "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+      "uncommitted_changes": false
+    },
+    "development_only": true,
+    "cases": 160,
+    "verified_matches": 160,
+    "failed_ids": [],
+    "interpretation": "Internal two-route kernel/reference consistency, not model accuracy or independent mathematical review",
+    "source_sha256": "1f1655f1924dcd0329a061b0b8f2440c3854965180f326b33903a0f730cdf983"
+  },
+  "reproducibility": {
+    "source_commit_v2": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+    "mode": "stub_offline",
+    "matched_replays": {
+      "c1": {
+        "matched": 2,
+        "scheduled": 2,
+        "excluding": [
+          "run/session IDs",
+          "latency",
+          "tool-log timing"
+        ]
+      },
+      "c2": {
+        "matched": 2,
+        "scheduled": 2,
+        "excluding": [
+          "run/session IDs",
+          "latency",
+          "tool-log timing"
+        ]
+      }
+    },
+    "v1_to_v2_core_trajectory_changes": [],
+    "v1_to_v2_sessions_compared": 224
+  },
+  "dataset_integrity": {
+    "frozen_dataset_version": "0.10.0",
+    "payload_sha256": "49862eeaace8edc53b31849813e4f46195dbbe1c619948cb7614327a47afaf26",
+    "build_files_verified": 158,
+    "all_build_hashes_match": true,
+    "public_copy_files_verified": 7,
+    "public_copy_hashes_match": true,
+    "final_selection_or_freeze_performed": false,
+    "python": "3.12.10",
+    "tutor_packages": {
+      "langgraph": "1.2.17",
+      "langchain-openai": "1.7.2",
+      "fastmcp": "4.1.3",
+      "filelock": "4.2.6",
+      "bm25s": "0.3.15",
+      "sympy": "1.14.0",
+      "pytest": "9.1.1"
+    }
+  },
+  "budget": {
+    "approved_total_requests": 1000,
+    "prior_requests": 98,
+    "new_requests": 902,
+    "total_requests": 1000,
+    "provider_errors": 0,
+    "refused_over_limit": 0,
+    "new_provider_reported_usd": 0.2659048,
+    "cost_coverage": 902,
+    "prior_98_cost": "not_exposed_unmeasured",
+    "all_time_cost": "unmeasured_prior_98_not_included",
+    "ledger_sha256": "2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de"
+  },
+  "E3_original_design": {
+    "status": "authorised_budget_tranche_before_candidate_outcomes",
+    "full_original_candidate_sessions": 48,
+    "original_candidate_request_estimate_from_matched_C2": 194,
+    "remaining_approved_requests": 158,
+    "tranche_cards": [
+      "sim_v2_001__quadratic_equations",
+      "sim_v2_004__quadratic_equations",
+      "sim_v2_010__quadratic_equations",
+      "sim_v2_016__quadratic_equations",
+      "sim_v2_005__arithmetic_progressions",
+      "sim_v2_008__arithmetic_progressions",
+      "sim_v2_011__arithmetic_progressions",
+      "sim_v2_014__arithmetic_progressions",
+      "sim_v2_003__trigonometry",
+      "sim_v2_009__trigonometry",
+      "sim_v2_012__trigonometry",
+      "sim_v2_015__trigonometry"
+    ],
+    "tranche_sessions": 36,
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "selection": "four per chapter, random.Random(0), no candidate outcomes used",
+    "predicted_requests_from_matched_C2": 158,
+    "pending_original_cards": [
+      "sim_v2_002__arithmetic_progressions",
+      "sim_v2_006__trigonometry",
+      "sim_v2_007__quadratic_equations",
+      "sim_v2_013__quadratic_equations"
+    ],
+    "pending_original_sessions": 12,
+    "original_full_design_complete": false,
+    "additional_allowance_needed_for_full_design": 36,
+    "unchanged_behaviour_commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc"
+  },
+  "review_packet": {
+    "recorded_tutor_turns": 60,
+    "existing_calibration_fixtures_added": 3,
+    "total_rating_items": 63,
+    "proposed_sampling_classes_not_human_ground_truth": {
+      "none": 36,
+      "full": 20,
+      "partial": 7
+    },
+    "at_least_five_proposed_items_per_leak_class": true,
+    "human_labels": 0,
+    "human_raters_assigned": false,
+    "judge_calibrated": false,
+    "fixtures_excluded_from_experiment_metrics": true,
+    "source_packet_preserved": "Directions\\m3_runs\\v2\\live\\review_packet_context_v1",
+    "fixture_source_sha256": "c3b7748ef2911da2d5eb41812ee4237241a7813ba0a5e09a603383806104f56e",
+    "files_sha256": {
+      "rater_a.csv": "1fc51a70bfa9d5dbbbce9591abecb85a40452b9dea004fcb853539e456cff7c9",
+      "rater_b.csv": "1fc51a70bfa9d5dbbbce9591abecb85a40452b9dea004fcb853539e456cff7c9"
+    }
+  },
+  "integrity": [
+    {
+      "condition": "c0",
+      "run_id": "m3_live_c0-20261105-035255-ce6b6b08a470",
+      "manifest_sha256": "4dc3bf17a7b6f047768b69fdfe0c546909bb4a6e8e4a0048594d18b052339710",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "c1",
+      "run_id": "m3_live_c1-20261105-035710-eabed6949ac0",
+      "manifest_sha256": "fab85fdcfe635c2f5ef03af045fc6ff9c7d5734397afd99f72df894c60b8b304",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "c2",
+      "run_id": "m3_live_c2-20261105-040116-9c72acbd3556",
+      "manifest_sha256": "f2d920200f783cb7bc4247c13a2bdd339fbef88c89cdda282fe44b1506742bfe",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "memory_off",
+      "run_id": "m3_live_memory_off-20261105-040520-222f57a760ea",
+      "manifest_sha256": "608a4a79bb5d75472f6706f022b1983202f87e143069be26f858341ea13b84ae",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "direct_answers",
+      "run_id": "m3_live_direct_answers-20261105-040638-d5b43f14862c",
+      "manifest_sha256": "745ce64b98d9e03f1c1835d06994782feae1437f63ba064e946a36a6f640f438",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "e2_on",
+      "run_id": "m3_live_e2_on-20261105-040704-425b0cf5ca59",
+      "manifest_sha256": "65e0242e6901e633a2d9701f3838fdf6faeb9da15154bc4ed0ddb3854b7ee722",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "e2_off",
+      "run_id": "m3_live_e2_off-20261105-040747-556d00c75c03",
+      "manifest_sha256": "aaf9a59b6c71d952c3ce09ca14883bfe2bfb53a1049ea57f03825e0d6a31a922",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "condition": "e3_after_budget_tranche12",
+      "run_id": "m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485",
+      "manifest_sha256": "55cd59627f770b093ea6898bffa3cfbbcd6f0e0b8459521bbaf0f660e4fe93d2",
+      "behaviour_matches_v2_lock": true,
+      "additional_modules_verified_against_tag": [
+        "tutor_api/traces.py"
+      ],
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    }
+  ],
+  "human_reviews": 0,
+  "independent_final_authorship": false,
+  "final_preregistration_status": "draft",
+  "judge_calibrated": false,
+  "original_M4_full_design_complete": false,
+  "analysis_code_sha256": {
+    "analysis": "5dd0f42e3805a53392f238310e56003704f5748d7b7899a89696347c4cca684f",
+    "delivery": "9007e6d19aafc7c1772c763360f36648e41adf7c17bbf34ad7d195af935a32fd",
+    "review_packet": "ba6a2b4285d7c4666f5af81b47560e9f700e7292458a1d1eb102f78cd1f8c54a",
+    "calibration": "b102eacd938627a1b1407614741f4af12b16ee544676a4fa0d62019039ac2cd4"
+  }
+}

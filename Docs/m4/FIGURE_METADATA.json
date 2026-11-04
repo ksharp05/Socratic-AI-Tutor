@@ -1,0 +1,5 @@
+{
+  "matplotlib": "3.11.2",
+  "input": "RESULTS.json",
+  "no_new_experiments": true
+}

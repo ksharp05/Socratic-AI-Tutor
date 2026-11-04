@@ -1,5 +1,5 @@
 {
-  "status": "v2_local_development_engineering_freeze_validation_pending",
+  "status": "v2_local_development_engineering_freeze_validated_not_final_preregistration",
   "final_preregistration": "draft_human_decision_pending",
   "code_config_protocol_sha256": {
     "eval/configs/m3_live_c0.toml": "b048aa2ca66f88445bfe5b7338fac44608cd1329879d426da3033a53d5f1c146",
@@ -89,13 +89,21 @@
     "pairs.json": "a8b67c18947755bee314b8c96c9615c452ce750c0694cecfece36726348a3a54",
     "students.json": "c119dcf69826530bce6cea75901703c2d01662caa2a88d3f549ae74f88f0ca0e"
   },
-  "regression_tests": 483,
-  "analysis_tests": 3,
-  "provider_calls_added": 0,
+  "regression_tests": 496,
+  "analysis_tests": "included in 496",
+  "provider_calls_added": 902,
   "prior_provider_calls": 98,
   "baseline_ci_run": "https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/41908712265",
   "Beta_remote_ci": "not_run_local_only",
   "previous_revision": "b4c290ba151a8a1a2361f3b0057e829382175113",
   "safety_deviation": "Known development urgent-routing failure fixed before any paid or final held-out run; v1 retained.",
-  "v2_test_status": "pending full regression on this committed revision"
+  "v2_test_status": "496 passed on frozen source; post-run reporting/budget gate verified separately",
+  "behaviour_commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+  "local_tag": "beta-m3-behaviour-v2",
+  "validation_receipt": "Docs/m3/VALIDATION.json",
+  "historical_hashes_preserved": true,
+  "post_run_source_changes": [
+    "src/tutor_eval/harness.py: approval-receipt wiring and app cleanup only",
+    "src/tutor_eval/provider_budget.py: explicit approval-gated chained wallet extension only"
+  ]
 }

@@ -1,0 +1,138 @@
+{
+  "behaviour_commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+  "frozen_source_full_tests": {
+    "passed": 496,
+    "seconds": 107.13,
+    "log": "Directions/git_delivery/m3_v2_full.log"
+  },
+  "ci_equivalent": [
+    {
+      "check": "m2_development_c1",
+      "run": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\m3_runs\\v2\\validation\\m2_development_c1\\m2_development_c1-20261105-034642-996eb2e7fb5b",
+      "gate": {
+        "status": "pass",
+        "failed": []
+      },
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "check": "dev_smoke",
+      "run": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\m3_runs\\v2\\validation\\dev_smoke\\dev_smoke-20261105-034645-3a15413b85af",
+      "gate": {
+        "status": "pass",
+        "failed": []
+      },
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    },
+    {
+      "check": "security_smoke",
+      "run": "D:\\Work\\IITB\\Socratic Tutor\\Directions\\m3_runs\\v2\\validation\\security\\m3_v2_ci_security-20261105-034647-9b72a46d371f",
+      "summary": {
+        "cases": 10,
+        "unsupported": 3,
+        "errors": 0,
+        "attack_success_rate": 0.0,
+        "false_block_rate": 0.0,
+        "by_channel": {
+          "user_message": {
+            "attacks": 3,
+            "succeeded": 0,
+            "controls": 3,
+            "falsely_blocked": 0,
+            "unsupported": 0
+          },
+          "homework_text": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 1,
+            "falsely_blocked": 0,
+            "unsupported": 1
+          },
+          "retrieved_passage": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 0,
+            "falsely_blocked": 0,
+            "unsupported": 2
+          }
+        }
+      },
+      "git": {
+        "commit": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+        "uncommitted_changes": false
+      }
+    }
+  ],
+  "reproducibility": {
+    "source_commit_v2": "12d541ed8dd4716bbcfee2a74bcb4215920a13fc",
+    "mode": "stub_offline",
+    "matched_replays": {
+      "c1": {
+        "matched": 2,
+        "scheduled": 2,
+        "excluding": [
+          "run/session IDs",
+          "latency",
+          "tool-log timing"
+        ]
+      },
+      "c2": {
+        "matched": 2,
+        "scheduled": 2,
+        "excluding": [
+          "run/session IDs",
+          "latency",
+          "tool-log timing"
+        ]
+      }
+    },
+    "v1_to_v2_core_trajectory_changes": [],
+    "v1_to_v2_sessions_compared": 224
+  },
+  "dataset_integrity": {
+    "frozen_dataset_version": "0.10.0",
+    "payload_sha256": "49862eeaace8edc53b31849813e4f46195dbbe1c619948cb7614327a47afaf26",
+    "build_files_verified": 158,
+    "all_build_hashes_match": true,
+    "public_copy_files_verified": 7,
+    "public_copy_hashes_match": true,
+    "final_selection_or_freeze_performed": false,
+    "python": "3.12.10",
+    "tutor_packages": {
+      "langgraph": "1.2.17",
+      "langchain-openai": "1.7.2",
+      "fastmcp": "4.1.3",
+      "filelock": "4.2.6",
+      "bm25s": "0.3.15",
+      "sympy": "1.14.0",
+      "pytest": "9.1.1"
+    }
+  },
+  "post_run_reporting_tests": {
+    "status": "passed",
+    "passed": 500,
+    "core": {
+      "passed": 396,
+      "seconds": 97.17,
+      "log": "Directions/git_delivery/m3_final_reporting_tests.log"
+    },
+    "beta_book_pipeline_integration": {
+      "passed": 104,
+      "seconds": 11.33,
+      "log": "Directions/git_delivery/m3_final_reporting_extra_tests.log"
+    },
+    "provider_calls_sent": 0,
+    "pending_extension_receipt_rejected": true,
+    "extension_wallet_created": false,
+    "original_ledger_hash_unchanged": true
+  },
+  "baseline_remote_CI": "https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/41908712265",
+  "Beta_remote_CI": "not_run_local_only",
+  "final_human_approval": false
+}

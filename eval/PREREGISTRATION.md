@@ -18,7 +18,7 @@ What we will run on held-out data, how we will score it and how we will report i
 
 ## 2. Data
 
-All held-out sets were frozen by `python -m tutor_eval.freeze`; the manifest hash is in the log.
+Proposed final sets are listed below. They have not been frozen or executed for this Beta continuation. R2 approval, the final seed/selection and an actual `tutor_eval.freeze` manifest/log entry remain pending. The separate development engineering results in `Docs/m4/RESULTS.md` do not satisfy this final protocol.
 
 | Set | Held-out (results) | Development (tuning only) |
 |---|---|---|
