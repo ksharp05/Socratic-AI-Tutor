@@ -1,6 +1,6 @@
 # Milestone 2 status and engineering decision
 
-**Date:** 4 November 2026. **Evaluated code:** `b11c2bbce623022fe81882260bccb4fff3b65dc3` on local branch `milestone-2`. **Decision:** continue local development testing; **Milestone 2 acceptance is not verified**. This is an engineering assessment, not teacher sign-off or a course decision. Nothing was pushed during this work.
+**Date:** 4 November 2026. **Latest implementation:** `98cb00f3cd5a16fdd1412f80c61bc2c726aa602f` on local branch `milestone-2`. **Decision:** continue local development testing; **Milestone 2 acceptance is not verified**. This is an engineering assessment, not teacher sign-off or a course decision. Nothing was pushed during this work.
 
 ## What works in the local development path
 
@@ -8,11 +8,13 @@ The authenticated connected graph supports English-medium Class 10 Quadratic Equ
 
 Ambiguous registered right-triangle answers can now lead to a short reasoning exchange: the learner states the reference angle and side lengths, chooses the ordered sides for the ratio, and finally submits a numeric value to the checker. Reasoning statements do not create correctness scores or mastery gains. This is a bounded English parser, not arbitrary reasoning or general conversational understanding. [Supported forms and limits](TRIANGLE_REASONING.md).
 
-The final source tree passed **387 offline tests in each project copy**, using existing Windows Python environments, synthetic identities and the stub model. Those suites ran before the code commit; no code changed between the passing runs and that commit. They do not prove a clean installation, container behavior, educational quality or live-model performance.
+The final source tree passed **407 offline tests in each project copy**, using existing Windows Python environments, synthetic identities and the stub model. Those suites ran before the code commit; no code changed between the passing runs and that commit. They do not prove a clean installation, container behavior, educational quality or live-model performance.
 
-## Evidence on the clean committed build
+The latest change adds teacher-authorized graph learner deletion, a Data requests screen, interruption recovery and a policy describing actual retained data. Twenty focused synthetic checks and the full suites cover isolation, legacy/registered checkpoints, pending writes, retry/restart and cross-process locking. A separate local API example demonstrates redaction, rejected student deletion, a completed teacher receipt and an unchanged peer. This is logical deletion: backups, exported copies and the separate anonymous beta profile remain. The minimal deletion record blocks reuse of stale credentials. [Memory policy](../MEMORY_POLICY.md) and [lifecycle evidence](LEARNER_DATA_LIFECYCLE.md).
 
-The shared checkout was clean at `b11c2bb` during all three runs. C1/C2 have matching data, code, maths-engine and development-fixture hashes. Full manifests, transcripts and local synthetic state remain in ignored `Directions/git_delivery/m2_b11c2bb_smoke/`. The [projected evidence record](ACCEPTANCE_EVIDENCE.json) retains run IDs, results and manifest/test-log hashes without exporting raw source excerpts or private data.
+## Earlier clean committed comparison
+
+The shared checkout was clean at `b11c2bb` during all three comparison/security runs below; they are retained evidence from that earlier code checkpoint, not runs of the subsequent privacy commit. C1/C2 have matching data, code, maths-engine and development-fixture hashes. Full manifests, transcripts and local synthetic state remain in ignored `Directions/git_delivery/m2_b11c2bb_smoke/`. The [projected evidence record](ACCEPTANCE_EVIDENCE.json) retains run IDs, results and manifest/test-log hashes without exporting raw source excerpts or private data.
 
 | Development check | Actual observation | Interpretation |
 |---|---|---|
