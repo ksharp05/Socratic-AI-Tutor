@@ -117,7 +117,7 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 > **Development content:** Quizzes use a separate six-item synthetic quadratic pack. Teacher approval is required in the mounted tutor; human content review and independent evaluation remain pending. See [mode and provenance details](m2/KEY_AND_MODE_INTEGRITY.md).
 
 
-The standalone beta launch above does not mount the authenticated graph. To try the connected quadratic-equations journey on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
+The standalone beta launch above does not mount the authenticated graph. To try the connected graph tutor on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
 
 ```powershell
 Set-Location -LiteralPath 'D:\Work\IITB\Socratic Tutor'
@@ -143,6 +143,6 @@ $quizProposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teach
 $null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $quizProposal.set_id + "/approve") -Headers $teacherHeaders
 ```
 
-Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question, request guided practice, or start the development quiz. The two approvals above are separate because practice and quiz items have different permitted modes. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
+Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Choose quadratic equations, arithmetic progressions, or trigonometry and ask a question. Start a new conversation to change the chapter. Normalized references display their textbook anchors and pending review status. Guided checked practice and the development quiz are available only for quadratic equations; AP and trigonometry plans and assessments are not yet connected. The two approvals above are separate because practice and quiz items have different permitted modes. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
 
 The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).

@@ -5,6 +5,7 @@ Request path (see Docs/plan/04-architecture.md): input guard -> load learner -> 
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import operator
 import re
@@ -21,6 +22,7 @@ from . import approval_token, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
+from .topic_sources import cards as topic_cards, CHAPTERS
 from .setup_content import load
 from .toolbus import CallContext, ToolBus, ToolCallError
 
@@ -89,7 +91,7 @@ class TutorApp:
         self.llm = LLM(self.conn, llm_mode)
         self.defences = defences
         self.misconceptions = {m["misconception_id"]: m for m in load("misconceptions")}
-        self.cards = {c["passage_id"]: c for c in load("cards")}
+        self.cards = {c["passage_id"]: c for c in topic_cards()}
         self.concepts = learner.concept_graph()
         self._ctx: dict[str, CallContext] = {}
         self.checkpointer = SqliteSaver(sqlite3.connect(db_path(checkpoint_name), check_same_thread=False))
@@ -188,6 +190,9 @@ class TutorApp:
         lid = state["session"]["learner_id"]
         snapshot = self._call(state, "load_learner", "study_planner", "learner-store", "read_learner", {"learner_id": lid})
         update: dict[str, Any] = {"learner": snapshot}
+        if state["session"].get("chapter", "quadratic_equations") != "quadratic_equations":
+            update["plan"] = None
+            return update
         if not snapshot.get("plan"):
             plan = learner.make_plan(snapshot, reason="first plan")
             self._call(state, "load_learner", "study_planner", "learner-store", "save_plan", {"learner_id": lid, "plan": plan})
@@ -219,7 +224,8 @@ class TutorApp:
             route = "grade"
         else:
             snapshot = state["learner"]
-            candidates = self._keyword_candidates(text)
+            candidates = (self._keyword_candidates(text)
+                          if state["session"].get("chapter", "quadratic_equations") == "quadratic_equations" else [])
             flagged = [m for m, v in snapshot["misconceptions"].items() if v["status"] in ("suspected", "confirmed", "addressed")]
             cand = candidates[0] if candidates else None
             concept = self.misconceptions[cand]["concept_id"] if cand else None
@@ -264,7 +270,8 @@ class TutorApp:
                 "diagnosis": diagnosis, "focus_misconception": mid, "probe_asked_for": mid, "hint_stage": 0}
 
     def _passages_for(self, state: TutorState, node: str, query: str) -> list[dict]:
-        found = self._call(state, node, "tutor", "textbook-kb", "search", {"query": query, "k": 2})["results"]
+        found = self._call(state, node, "tutor", "textbook-kb", "search", {"query": query, "k": 2,
+                                                                           "chapter": state["session"].get("chapter", "quadratic_equations")})["results"]
         return found
 
     def _tutor(self, state: TutorState, extension: bool = False) -> dict:
@@ -323,13 +330,14 @@ class TutorApp:
             question = state["messages"][-1]["content"]
             passages = self._passages_for(state, "tutor", question)
             if not passages:
-                text, style = ("I couldn't find that in our chapter material (Quadratic Equations), so I won't guess. "
+                chapter = CHAPTERS[state["session"].get("chapter", "quadratic_equations")]
+                text, style = (f"I couldn't find that in our chapter material ({chapter}), so I won't guess. "
                                "Could you rephrase it, or type 'practice' for a question?"), "missing_evidence"
             else:
                 top = passages[0]
                 text = f"Let's think it through. {top['text']} [{top['passage_id']}] What does that suggest for your problem?"
                 style = "socratic_question"
-        retrieved = [{"passage_id": p["passage_id"]} for p in passages]
+        retrieved = [dict(p) for p in passages]
         update = {"draft": {"text": text, "citations": [p["passage_id"] for p in passages], "kind": "hint",
                             "style": style, "misconception_id": mid},
                   "retrieved": retrieved, "hint_stage": stage + 1 if mid and not item else stage}
@@ -342,10 +350,13 @@ class TutorApp:
         focus = state.get("focus_misconception")
         concept = (self.misconceptions[focus]["concept_id"] if focus else None) or \
                   next((s["concept_id"] for s in plan.get("steps", [])), None)
+        chapter = state["session"].get("chapter", "quadratic_equations")
         items = self._call(state, "set_question", "question_setter", "question-bank", "list_published",
                            {"concept_id": concept, "mode": "practice"})["items"]
+        items = [i for i in items if i.get("chapter") == chapter]
         if not items:
             items = self._call(state, "set_question", "question_setter", "question-bank", "list_published", {"mode": "practice"})["items"]
+            items = [i for i in items if i.get("chapter") == chapter]
         attempted = state.get("attempted", [])
         fresh = [i for i in items if i["question_id"] not in attempted] or items
         if not fresh:
@@ -397,7 +408,9 @@ class TutorApp:
         return update
 
     def _quiz_start(self, state: TutorState) -> dict:
-        items = self._call(state, "quiz_start", "question_setter", "question-bank", "list_published", {"mode": "quiz"})["items"][:3]
+        items = self._call(state, "quiz_start", "question_setter", "question-bank", "list_published", {"mode": "quiz"})["items"]
+        chapter = state["session"].get("chapter", "quadratic_equations")
+        items = [i for i in items if i.get("chapter") == chapter][:3]
         if not items:
             return {"draft": {"text": "There's no teacher-approved quiz yet.", "citations": [], "kind": "info"}}
         for it in items:
@@ -601,7 +614,21 @@ class TutorApp:
         draft = state.get("draft") or {"text": "…"}
         notes = state.get("notes") or []
         text = draft["text"] + ("".join(f"\n({n})" for n in notes) if notes else "")
-        return {"messages": [{"role": "tutor", "content": text, "kind": draft.get("kind")}]}
+        cited = set(guards.check_citations(text, set())["cited"])
+        citations = []
+        for ref in state.get("retrieved", []):
+            if ref.get("passage_id") not in cited or not isinstance(ref.get("text"), str):
+                continue
+            source = ref.get("source") if isinstance(ref.get("source"), dict) else {}
+            citation = {"passage_id": ref["passage_id"], "title": ref.get("title"),
+                        "concept_id": ref.get("concept_id"), "text": ref["text"],
+                        "chapter": ref.get("chapter"), "review_status": ref.get("review_status", "unavailable"),
+                        "source": {"source_id": source.get("source_id"), "source_sha256": source.get("source_sha256"),
+                                   "url": source.get("url"), "page": source.get("page"),
+                                   "pdf_page": source.get("pdf_page"), "section": source.get("section")}}
+            citation["reference_sha256"] = hashlib.sha256(store.dumps(citation).encode("utf-8")).hexdigest()
+            citations.append(citation)
+        return {"messages": [{"role": "tutor", "content": text, "kind": draft.get("kind"), "citations": citations}]}
 
     def _build_session_graph(self) -> StateGraph:
         g = StateGraph(TutorState)
@@ -640,24 +667,34 @@ class TutorApp:
         return g
 
     # ------------------------------------------------------------------ public API: student turns
-    def turn(self, session_id: str, learner_id: str, text: str, mode: str = "practice") -> dict:
+    def turn(self, session_id: str, learner_id: str, text: str, mode: str = "practice", chapter: str | None = None) -> dict:
         try:
             with self.bus.publication_lock:
-                return self._turn_locked(session_id, learner_id, text, mode)
+                return self._turn_locked(session_id, learner_id, text, mode, chapter)
         except Timeout as exc:
             raise ToolCallError("BUSY", "publication is busy; please retry") from exc
 
-    def _turn_locked(self, session_id: str, learner_id: str, text: str, mode: str) -> dict:
+    def _turn_locked(self, session_id: str, learner_id: str, text: str, mode: str, chapter: str | None = None) -> dict:
         screen = guards.screen_input(text) if self.defences else {"text": text}
         config = {"configurable": {"thread_id": session_id}}
+        prior = self.graph.get_state(config)
+        old_session = (prior.values or {}).get("session") if prior else None
+        old_chapter = (old_session or {}).get("chapter", "quadratic_equations")
+        if old_session and chapter is not None and chapter != old_chapter:
+            raise ValueError("A conversation cannot change its chapter; start a new conversation.")
+        selected = old_chapter if old_session else (chapter or "quadratic_equations")
+        if selected not in CHAPTERS:
+            raise ValueError("Unknown chapter")
         state = self.graph.invoke({"incoming": screen["text"], "screen": screen,
-                                   "session": {"session_id": session_id, "learner_id": learner_id, "mode": mode}}, config)
+                                   "session": {"session_id": session_id, "learner_id": learner_id, "mode": mode,
+                                               "chapter": selected}}, config)
         ctx = self._ctx.get(session_id)
         tools = list(ctx.log) if ctx else []
         if ctx:
             ctx.log.clear()
         return {"reply": state["messages"][-1]["content"], "route": state.get("route"), "plan": state.get("plan"),
                 "diagnosis": state.get("diagnosis"), "checks": state.get("checks"), "tools": tools,
+                "citations": state["messages"][-1].get("citations", []),
                 "active_item": (state.get("active_item") or {}).get("question_id")}
 
     def resume(self, session_id: str) -> dict | None:

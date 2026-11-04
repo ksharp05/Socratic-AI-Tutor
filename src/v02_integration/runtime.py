@@ -46,8 +46,8 @@ class ContextualPreviewTutor(TutorApp):
    self.checkpointer.conn.close()
    self.conn.close()
 
- def turn(self,session_id,learner_id,text,mode='practice'):
-  return super().turn(session_id,learner_id,normalize_math_input(text),mode)
+ def turn(self,session_id,learner_id,text,mode='practice',chapter=None):
+  return super().turn(session_id,learner_id,normalize_math_input(text),mode,chapter)
 
  def _clarification(self,state):
   text=(state.get('messages') or [{}])[-1].get('content','')
@@ -112,7 +112,7 @@ class ContextualPreviewTutor(TutorApp):
     'response_sha256':hashlib.sha256((generated or '').encode()).hexdigest(),'raw_response_sha256':hashlib.sha256((raw_generated or '').encode()).hexdigest(),'presentation_only_normalization':presentation_normalized,'deterministic_incorrect_feedback_added':bool(incorrect_attempt and generated),'candidate_shape':{'first_character_class':'quote' if (raw_generated or '')[:1] in ['\"',"'"] else 'bracket' if (raw_generated or '')[:1] in ['[','{'] else 'text','last_character_class':'quote' if (raw_generated or '').rstrip()[-1:] in ['\"',"'"] else 'bracket' if (raw_generated or '').rstrip()[-1:] in [']','}'] else 'question' if (raw_generated or '').rstrip().endswith('?') else 'other','question_count':(raw_generated or '').count('?')},'raw_expanded_data_used':False})
   if reason:return update
   draft={**update['draft'],'text':generated,'citations':[r['passage_id'] for r in refs]}
-  return {**update,'draft':draft,'retrieved':[{'passage_id':r['passage_id']} for r in refs]}
+  return {**update,'draft':draft,'retrieved':[dict(r) for r in refs]}
 
  def _tutor(self,state,extension=False):
   clarified=self._clarification(state)

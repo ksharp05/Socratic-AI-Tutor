@@ -34,7 +34,8 @@ def sha256_file(path: Path) -> str:
 
 def fixture_input_hashes() -> dict[str, str]:
     """Identify the public and synthetic content used by the development fixture."""
-    paths = ("content/poc/practice.json", "content/dataset-v0.10.0/practice_questions.jsonl",
+    paths = ("content/poc/practice.json", "content/poc/cards.json",
+             "content/dataset-v0.10.0/practice_questions.jsonl", "content/dataset-v0.10.0/corpus.jsonl",
              "content/milestone2_dev/quiz_items.json")
     return {name: sha256_file(ROOT / name) for name in paths}
 
@@ -68,12 +69,12 @@ def _partitions(data: dict) -> set[str]:
 def _publish_fixture_items(conn) -> list[dict]:
     """The evaluation database gets the practice items as one set, clearly marked as not teacher-approved."""
     from tutor.question_catalog import graph_items, allowed
+    from tutor.mcp_servers.question_bank import ITEM_FIELDS
     catalog = graph_items()
     items = [q for q in catalog if allowed(q, "practice")]
     checks = [q for q in catalog if allowed(q, "quiz")]
     payload = {"set_id": "eval-fixture", "concept_id": "all", "revision": 1,
-               "items": [{k: q[k] for k in ("question_id", "prompt", "problem", "answer_contract", "hint_stages",
-                                            "difficulty", "mode_policy")} for q in items + checks]}
+               "items": [{k: q[k] for k in ITEM_FIELDS} for q in items + checks]}
     conn.execute("INSERT OR REPLACE INTO published VALUES (?,?,?,?,?,?)",
                  ("eval-fixture", store.dumps(payload), "n/a", "none", "eval_fixture_unapproved", store.now()))
     conn.commit()
@@ -291,7 +292,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "finished": time.strftime("%Y%m%d-%H%M%S"), "config": {"path": str(config_path), "sha256": sha256_file(config_path), **cfg},
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
-                        ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/question_catalog.py",
+                        ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
                          "tutor/learner.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",

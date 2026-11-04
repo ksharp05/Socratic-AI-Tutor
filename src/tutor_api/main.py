@@ -41,6 +41,7 @@ class ChatIn(BaseModel):
     session_id: str | None = Field(default=None, description="Continue this session; omit to start a new one")
     text: str = Field(min_length=1, max_length=4000)
     mode: Literal["practice", "quiz"] = "practice"
+    chapter: Literal["quadratic_equations", "arithmetic_progressions", "trigonometry"] | None = None
 
 
 class ResumeIn(BaseModel):
@@ -198,28 +199,30 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     def _finish_graph_session(learner_id: str):
         _active_graph_session(learner_id)  # retain only an active quiz or interrupted checkpoint
 
-    def _citations(reply: str) -> list[dict]:
-        cards = _tutor().cards
-        out = []
-        for pid in guards.check_citations(reply, set())["cited"]:
-            card = cards.get(pid) or {}
-            out.append({"passage_id": pid, "title": card.get("title"), "concept_id": card.get("concept_id"),
-                        "text": card.get("text")})
-        return out
-
     def _run_turn(p: Principal, body: ChatIn) -> dict:
         session_id = body.session_id or f"s-{p.subject_id}-{uuid.uuid4().hex[:8]}"
         with lock, _tutor().bus.publication_lock:
             _check_session(session_id, p.subject_id)
+            prior = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
+            prior_session = (prior.values or {}).get("session")
+            prior_chapter = (prior_session or {}).get("chapter", "quadratic_equations")
+            if prior_session and body.chapter is not None and body.chapter != prior_chapter:
+                if guards.screen_input(body.text)["distress"]:
+                    return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode,
+                            "chapter": prior_chapter, "reply": guards.HANDOFF_MESSAGE, "route": "handoff",
+                            "plan": None, "citations": [], "tools": [], "quiz_active": None,
+                            "persistence": "not_saved_urgent"}
+                raise HTTPException(409, "Start a new conversation to change chapters.")
+            chapter = prior_chapter if prior_session else (body.chapter or "quadratic_equations")
             existing = _active_graph_session(p.subject_id)
             if existing and existing["session_id"] != session_id and guards.screen_input(body.text)["distress"]:
                 return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode,
                         "reply": guards.HANDOFF_MESSAGE, "route": "handoff", "plan": None,
-                        "citations": [], "tools": [], "quiz_active": None, "persistence": "not_saved_urgent"}
+                        "citations": [], "tools": [], "quiz_active": None, "chapter": chapter, "persistence": "not_saved_urgent"}
             _reserve_graph_session(p.subject_id, session_id)
             started = time.perf_counter()
             try:
-                result = _call(_tutor().turn, session_id, p.subject_id, body.text, mode=body.mode)
+                result = _call(_tutor().turn, session_id, p.subject_id, body.text, mode=body.mode, chapter=chapter)
             except HTTPException:
                 raise
             except Exception:
@@ -234,8 +237,10 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
             quiz_active = bool((snap.values or {}).get("quiz"))
             _finish_graph_session(p.subject_id)
-        return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode, **result,
-                "quiz_active": quiz_active, "citations": _citations(result["reply"])}
+            if chapter != "quadratic_equations":
+                result["plan"] = None
+        return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode, "chapter": chapter, **result,
+                "quiz_active": quiz_active}
 
     @api.exception_handler(Timeout)
     async def _publication_busy(_: Request, exc: Timeout):
@@ -329,6 +334,7 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             messages = _call(_tutor().history, session_id)
             snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
         return {"session_id": session_id, "messages": messages,
+                "chapter": ((snap.values or {}).get("session") or {}).get("chapter", "quadratic_equations"),
                 "quiz_active": bool((snap.values or {}).get("quiz")), "interrupted": bool(snap.next)}
 
     # ------------------------------------------------------------------ teacher
