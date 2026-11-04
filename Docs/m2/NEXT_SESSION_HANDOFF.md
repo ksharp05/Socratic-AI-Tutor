@@ -1,5 +1,7 @@
 # Next-session handoff
 
+**Resumed on 5 November:** the user requested local branch `Beta`, created from `3dd518a`. Use `Beta` for this continuation; the milestone-only instructions below describe the earlier handoff. See [Beta progress and current remaining work](BETA_PROGRESS.md).
+
 **Written:** 5 November 2026, end of day. **Branch:** `milestone-2`, pushed at `ee29630` (local and `origin` match). **Next roadmap date:** M3 "behaviour frozen" on Friday 6 November; Human day Saturday 7; M4 results Monday 9; content freeze Wednesday 11 at 9 pm; submit Thursday 12 by 6 pm; viva Sunday 15.
 
 Read first: `AGENTS.md` and `PROJECT_CONTEXT.md` in the canonical workspace, then [STATUS.md](STATUS.md), [TESTPACK_RESULTS.md](TESTPACK_RESULTS.md) and [the work log](WORK_LOG.md).

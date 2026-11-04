@@ -165,7 +165,7 @@ def build(conn: sqlite3.Connection) -> FastMCP:
             score = sum(result["correct"] for result in normalized)
             reason = f"after quiz: scored {score}/{len(normalized)}"
             if chapter == "quadratic_equations":
-                plan = learner.make_plan(fresh, previous=fresh.get("plan"), reason=reason)
+                plan = learner.make_plan(fresh, previous=fresh.get("plan"), reason=reason, quiz_results=normalized)
                 conn.execute("INSERT OR REPLACE INTO plans VALUES (?,?,?,?)", (learner_id,dumps(plan),plan["version"],now()))
             else:
                 plan = learner.make_topic_plan(fresh, chapter, normalized, previous=fresh["topic_plans"].get(chapter))

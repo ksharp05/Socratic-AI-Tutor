@@ -57,11 +57,21 @@ def _stem(token: str) -> str:
     return token
 
 
+_RATIO_NAMES = {"sine": "sin", "cosine": "cos", "tangent": "tan", "secant": "sec",
+                "cosecant": "csc", "cosec": "csc", "cotangent": "cot"}
+_RATIO_PATTERN = re.compile(r"\b(" + "|".join(_RATIO_NAMES) + r")\b", re.I)
+
+
+def normalise_ratio_names(text: str) -> str:
+    """Use the same ratio spelling in queries and indexed formulas; match whole words."""
+    return _RATIO_PATTERN.sub(lambda match: _RATIO_NAMES[match.group().lower()], text)
+
+
 def normalise(text: str) -> str:
     text = repair_symbols(text)
     for src, dst in _MATH:
         text = text.replace(src, dst)
-    text = unicodedata.normalize("NFKC", text).lower()
+    text = normalise_ratio_names(unicodedata.normalize("NFKC", text).lower())
     return text.replace("x-squared", "x^2").replace("squared", "^2")
 
 

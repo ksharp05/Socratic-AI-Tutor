@@ -53,6 +53,9 @@ def intent(text: str) -> str | None:
 def plan_summary(plan: dict | None) -> str:
     steps = (plan or {}).get("steps") or []
     if not steps:
+        if plan:
+            return ("Your current study plan has no new steps. Ask your teacher about a review quiz "
+                    "or what to study next.")
         return "You don't have a study plan yet. Try a practice question or a quiz, and I'll build one from how you do."
     lines = [f"{k}. {s['action'].replace('_', ' ').capitalize()}: {s['title']} ({s['why']})"
              for k, s in enumerate(steps[:3], 1)]

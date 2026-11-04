@@ -654,7 +654,8 @@ class TutorApp:
                 # it already committed updates. Do not risk applying it twice.
                 self._note(state, "update_memory", "legacy_quiz_not_replayed")
         # An explicit self-reported stuck signal on a registered problem counts
-        # once per distinct session. Infer the concept only when unambiguous.
+        # once per distinct session. Prefer a specific misconception; otherwise
+        # attribute it to the item's first registered concept, without diagnosing a cause.
         item = state.get("active_item") or {}
         message = (state.get("messages") or [{}])[-1].get("content", "")
         if draft.get("kind") == "hint" and STUCK_SIGNAL.search(message) and item.get("concept_ids"):
@@ -666,6 +667,8 @@ class TutorApp:
                 candidates = {self.misconceptions[mid]["concept_id"] for mid, observed in snapshot["misconceptions"].items()
                               if mid in self.misconceptions and observed["status"] in ("suspected", "confirmed", "addressed")
                               and self.misconceptions[mid]["concept_id"] in candidates}
+            if len(candidates) != 1:
+                candidates = {item["concept_ids"][0]}
             if len(candidates) == 1:
                 concept = next(iter(candidates))
                 created = store.record_stuck_session(self.conn, lid, concept, state["session"]["session_id"])

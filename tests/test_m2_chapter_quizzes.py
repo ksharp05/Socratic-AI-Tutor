@@ -71,6 +71,9 @@ def test_connected_quiz_replans_only_its_chapter_and_learner(tmp_path,monkeypatc
             for answer in correct_answers:other=turn('b','quiz-b',answer)
             assert other['plan']['replan_reason']=='after quiz: scored 3/3'
             assert all(step['action']=='practise' for step in other['plan']['steps'])
+            assessed = {cid for item in payload['items'] for cid in item['problem']['concept_ids']}
+            assert other['plan']['steps'] and all(step['concept_id'] not in assessed for step in other['plan']['steps'])
+            assert set(other['plan']['quiz_passed']) == assessed
             assert client.get('/learners/A',headers={'Authorization':'Bearer a'}).json()['topic_plans'][chapter]==result['plan']
             assert client.get('/learners/A',headers={'Authorization':'Bearer b'}).status_code==403
     finally:app.close()

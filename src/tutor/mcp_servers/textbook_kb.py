@@ -16,13 +16,14 @@ from fastmcp.exceptions import ToolError
 
 from ..config import ROOT, SETTINGS
 from ..topic_sources import cards as topic_cards
+from ..retrieval.textnorm import normalise_ratio_names
 from . import READ
 
 _SYMBOLS = {"²": " squared ", "^2": " squared ", "√": " sqrt ", "±": " plusminus ", "θ": " theta "}
 
 
 def _tokenise(text: str) -> str:
-    text = text.lower()
+    text = normalise_ratio_names(text.lower())
     for src, dst in _SYMBOLS.items():
         text = text.replace(src, dst)
     return re.sub(r"[^a-z0-9 ]+", " ", text)

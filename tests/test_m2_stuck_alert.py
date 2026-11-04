@@ -1,16 +1,18 @@
 """A local teacher-view signal requires explicit stuck reports in three different sessions."""
+import pytest
 from fastapi.testclient import TestClient
 from tutor.app import TutorApp
 from tutor.seed import DEMO_LEARNERS, seed_learner
 from tutor_api.main import create_app
 
 
-def test_three_distinct_sessions_create_one_teacher_view_event(tmp_path):
+@pytest.mark.parametrize('fresh', [False, True])
+def test_three_distinct_sessions_create_one_teacher_view_event(tmp_path, fresh):
     tutor = TutorApp(llm_mode='stub', db_name=str(tmp_path/'tutor.db'),
                      checkpoint_name=str(tmp_path/'checkpoints.db'))
     try:
         for learner_id, spec in DEMO_LEARNERS.items():
-            seed_learner(tutor.conn, learner_id, spec)
+            seed_learner(tutor.conn, learner_id, {'alias': 'Fresh synthetic learner'} if fresh and learner_id == 'L-A' else spec)
         tutor.conn.commit()
         proposal = tutor.propose_set('qe04')
         assert tutor.decide(proposal['set_id'], 'approve', 'synthetic-teacher')['status'] == 'published'
@@ -19,7 +21,8 @@ def test_three_distinct_sessions_create_one_teacher_view_event(tmp_path):
             tutor.turn(session, 'L-A', 'I am stuck')
             tutor.turn(session, 'L-A', 'still stuck')
             assert tutor.conn.execute("SELECT count(*) FROM alerts WHERE kind='stuck_concept'").fetchone()[0] == 0
-        assert tutor.turn('third', 'L-A', 'practice')['active_item']
+        active = tutor.turn('third', 'L-A', 'practice')['active_item']
+        assert active
         tutor.turn('third', 'L-A', 'I am stuck')
         tutor.turn('third', 'L-A', 'still stuck')
         rows = tutor.conn.execute("SELECT learner_id,detail FROM alerts WHERE kind='stuck_concept'").fetchall()
@@ -31,7 +34,10 @@ def test_three_distinct_sessions_create_one_teacher_view_event(tmp_path):
             assert client.get('/learners/L-A', headers={'Authorization':'Bearer a'}).json()['alerts'] == []
             overview = client.get('/learners/L-A', headers={'Authorization':'Bearer t'}).json()
             event = next(x for x in overview['alerts'] if x['kind'] == 'stuck_concept')
-            assert event['detail']['concept_id'] == 'qe04'
+            item = tutor.graph.get_state({'configurable': {'thread_id': 'third'}}).values['active_item']
+            assert event['detail']['concept_id'] == (item['concept_ids'][0] if fresh else 'qe04')
+            if fresh:
+                assert overview['misconceptions'] == {}
             assert event['detail']['distinct_sessions'] == 3
             assert event['detail']['delivery'] == 'teacher_view_only'
             assert event['detail']['human_acknowledged'] is False
