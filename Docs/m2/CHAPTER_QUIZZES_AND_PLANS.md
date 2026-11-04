@@ -13,3 +13,6 @@ Existing software versions that predate the new table do not display chapter pla
 ## Evidence and limits
 
 The six keys were checked against explicit exact arithmetic in the tests, alongside the two existing calculator routes. Synthetic API tests cover two learners, chapter-scoped approvals, scores and plan reasons, isolation from the quadratic plan, unscorable input, role access, transaction rollback, duplicate application, and a resumed interrupted quiz after a newer plan. A local stub-model browser walkthrough exercised an AP quiz, its chapter plan and refresh/sign-in recovery; trigonometry was tested through the API. Neither the developer-authored pack nor a synthetic teacher approval is human review or independent evaluation. A real-model Socratic hint, human teaching quality, source rights, fresh Compose deployment, and a live integrated demonstration remain unverified.
+
+
+Checked right-triangle practice now supports three provisional error hypotheses with explicit ambiguity handling. See [trigonometry hypotheses](TRIGONOMETRY_HYPOTHESES.md); broader diagnosis remains incomplete.

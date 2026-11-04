@@ -37,3 +37,15 @@ def concepts():
                 seen.add(item['concept_id'])
                 result.append(item)
     return result
+
+
+def misconceptions():
+    """Public provisional rules supported by checked trigonometry practice."""
+    result = list(load('misconceptions'))
+    with (ROOT / 'content/dataset-v0.10.0/misconceptions.jsonl').open(encoding='utf-8-sig') as f:
+        for line in f:
+            if line.strip():
+                item = json.loads(line)
+                if item['misconception_id'] in ('tr_m01','tr_m02','tr_m04'):
+                    result.append(item)
+    return result

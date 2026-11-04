@@ -22,7 +22,7 @@ from . import approval_token, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
-from .topic_sources import cards as topic_cards, concepts as topic_concepts, CHAPTERS
+from .topic_sources import cards as topic_cards, concepts as topic_concepts, misconceptions as topic_misconceptions, CHAPTERS
 from .setup_content import load
 from .toolbus import CallContext, ToolBus, ToolCallError
 
@@ -90,7 +90,7 @@ class TutorApp:
         self.bus = ToolBus(self.conn, extra_items, allow_dev_fixtures=allow_dev_fixtures)
         self.llm = LLM(self.conn, llm_mode)
         self.defences = defences
-        self.misconceptions = {m["misconception_id"]: m for m in load("misconceptions")}
+        self.misconceptions = {m["misconception_id"]: m for m in topic_misconceptions()}
         self.cards = {c["passage_id"]: c for c in topic_cards()}
         self.concepts = {c["concept_id"]: c for c in topic_concepts()}
         self._ctx: dict[str, CallContext] = {}
@@ -248,13 +248,15 @@ class TutorApp:
         mis = self.misconceptions[mid]
         evidence = ["keywords in the student's message"]
         if self.llm.enabled and not state.get("unverified_own_problem"):
-            catalogue = "\n".join(f"{m}: {v['incorrect_rule']}" for m, v in self.misconceptions.items())
+            permitted = {m:v for m,v in self.misconceptions.items()
+                         if self.concepts[v['concept_id']]['chapter'] == state['session'].get('chapter','quadratic_equations')}
+            catalogue = "\n".join(f"{m}: {v['incorrect_rule']}" for m, v in permitted.items())
             system, user = prompts.render(prompts.DIAGNOSTICIAN, catalogue=catalogue, message=state["messages"][-1]["content"])
             raw = self.llm.complete(session_id=state["session"]["session_id"], node="diagnose", role="diagnostician",
                                     system=system, user=user)
             try:
                 verdict = json.loads(re.search(r"\{.*\}", raw or "", re.S).group(0))
-                if verdict.get("misconception_id") in self.misconceptions:
+                if verdict.get("misconception_id") in permitted:
                     mid, mis = verdict["misconception_id"], self.misconceptions[verdict["misconception_id"]]
                     evidence.append(f"LLM: {verdict.get('evidence', '')}"[:120])
             except Exception:
@@ -403,11 +405,17 @@ class TutorApp:
         hint = stages[min(item["hint_stage"], len(stages) - 1)]["prompt"]
         item["hint_stage"] = min(item["hint_stage"] + 1, len(stages) - 1)
         update["active_item"] = item
-        if diag:
+        trig = state["session"].get("chapter") == "trigonometry"
+        if trig:
+            update["focus_misconception"] = None
+        if diag and (not trig or len(diag) == 1):
             mid = diag[0]["misconception_id"]
-            update["diagnosis"] = {"misconception_id": mid, "status": "suspected", "evidence": [f"rule: {diag[0]['rule']}"]}
+            update["diagnosis"] = {"misconception_id": mid, "status": "suspected", "evidence": [f"candidate rule on {item['question_id']}: {diag[0]['rule']}"]}
             update["focus_misconception"] = mid
-            hint = f"{self.concepts[self.misconceptions[mid]['concept_id']]['diagnostic_probe']} {hint}"
+            hint = (self.misconceptions[mid]['diagnostic_probe'] if trig else
+                    f"{self.concepts[self.misconceptions[mid]['concept_id']]['diagnostic_probe']} {hint}")
+        if trig and len(diag) > 1:
+            hint = "That value can result from more than one step. Which angle did you use, and which sides did you label opposite and adjacent?"
         update["draft"] = {"text": f"Not quite: you gave {result['parsed']}. {hint}", "citations": [], "kind": "feedback",
                            "misconception_id": update.get("focus_misconception")}
         return update
@@ -522,13 +530,15 @@ class TutorApp:
         call = lambda tool, args: self._call(state, "update_memory", "study_planner", "learner-store", tool, args)  # noqa: E731
         grade, draft, diag = state.get("grade"), state.get("draft") or {}, state.get("diagnosis")
         if diag and draft.get("kind") in ("probe", "feedback") and diag.get("evidence"):
-            status = "confirmed" if snapshot["misconceptions"].get(diag["misconception_id"]) else "suspected"
+            status = ("suspected" if diag["misconception_id"].startswith("tr_") else
+                      "confirmed" if snapshot["misconceptions"].get(diag["misconception_id"]) else "suspected")
             call("record_misconception", {"learner_id": lid, "misconception_id": diag["misconception_id"],
                                           "status": status, "evidence_ref": "; ".join(diag["evidence"])[:200]})
             mis_concept = self.misconceptions[diag["misconception_id"]]["concept_id"]
-            if plan and mis_concept not in [s["concept_id"] for s in plan.get("steps", [])]:
+            if state["session"].get("chapter", "quadratic_equations") == "quadratic_equations" and plan and mis_concept not in [s["concept_id"] for s in plan.get("steps", [])]:
                 replan_reason = f"new misconception {diag['misconception_id']} on {mis_concept}"
-        if draft.get("kind") == "hint" and draft.get("misconception_id") and draft.get("style") not in ("extension",):
+        if (draft.get("kind") == "hint" and draft.get("misconception_id")
+                and not draft["misconception_id"].startswith("tr_") and draft.get("style") not in ("extension",)):
             call("record_misconception", {"learner_id": lid, "misconception_id": draft["misconception_id"],
                                           "status": "addressed", "evidence_ref": f"targeted hint ({draft['style']})"})
         graded = []
@@ -551,7 +561,7 @@ class TutorApp:
                 if not g["correct"] and plan and cid in plan.get("mastered", []):
                     replan_reason = f"contradiction: failed {cid}, which the plan assumed was mastered"
             focus = state.get("focus_misconception")
-            if focus and grade and g is grade:
+            if focus and not focus.startswith("tr_") and grade and g is grade:
                 style = next((s["style"] for s in snapshot.get("styles", []) if s["misconception_id"] == focus), None)
                 call("record_explanation", {"learner_id": lid, "misconception_id": focus,
                                             "style": style or "socratic_question", "success": bool(g["correct"])})
@@ -608,7 +618,7 @@ class TutorApp:
         elif quiz_done:
             update["draft"] = {"text": "This older quiz could not be safely recorded. Please start a new quiz.", "citations": [], "kind": "info"}
             update["notes"] = (state.get("notes") or []) + ["This older quiz could not be safely replayed. Please start a new quiz."]
-        elif replan_reason:
+        elif replan_reason and state["session"].get("chapter", "quadratic_equations") == "quadratic_equations":
             new_plan = learner.make_plan(fresh, previous=plan, reason=replan_reason)
             call("save_plan", {"learner_id": lid, "plan": new_plan})
             update["plan"] = new_plan

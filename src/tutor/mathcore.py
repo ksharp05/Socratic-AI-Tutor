@@ -110,7 +110,26 @@ def _as_set(values: list[str]) -> set[str]:
 
 
 def diagnose_response(problem: dict, key: dict, typed: dict) -> list[dict]:
-    """Return misconceptions whose rule reproduces the student's wrong answer, strongest first."""
+    """Return supported rules matching a wrong answer; callers must handle ambiguity."""
+    if problem.get("task_type") == "trig_triangle_ratio" and typed.get("kind") == "scalar" and key.get("kind") == "scalar":
+        if _equivalent(str(typed.get("value", "")), str(key["value"])):
+            return []
+        g = problem["givens"]
+        o, a, h = g["opposite"], g["adjacent"], g["hypotenuse"]
+        if any(type(v) is not int or v <= 0 for v in (o,a,h)) or o*o+a*a != h*h or g.get("reference") not in ("A", "C"):
+            return []
+        original = {"sin":(o,h), "cos":(a,h), "tan":(o,a), "csc":(h,o), "sec":(h,a), "cot":(a,o)}
+        if g["reference"] == "C":
+            o,a = a,o
+        candidates = []
+        if g["reference"] == "C" and g.get("ratio") in original:
+            candidates.append(("tr_m01", original[g["ratio"]], "kept the side labels for the other acute angle"))
+        if g.get("ratio") == "sin":
+            candidates.append(("tr_m02", (a,h), "used adjacent over hypotenuse for sine"))
+        if g.get("ratio") == "tan":
+            candidates.append(("tr_m04", (a,o), "used adjacent over opposite for tangent"))
+        return [{"misconception_id":mid, "rule":rule} for mid,(numerator,denominator),rule in candidates
+                if _equivalent(str(typed.get("value", "")), f"{numerator}/{denominator}")]
     if problem["task_type"] != "quadratic_solve" or typed.get("kind") != "finite_set":
         return []
     truth, given = _as_set(key["values"]), _as_set(typed["values"])

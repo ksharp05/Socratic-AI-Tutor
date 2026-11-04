@@ -150,3 +150,8 @@ The existing two cards were quadratic-only, and the evaluator could update simul
 Both project copies passed **345 offline tests** across the four suites. A subsequent repository-wide Git-provenance correction passed **37 focused evaluation and security tests** in each copy. Logs remain under ignored `Directions/git_delivery/`.
 
 The matched C1/C2 development runs were repeated on clean commit `d8b65500cce031b24482c022266195a74ae724c2`; their recorded data, code and maths-engine hashes match. Each had two sessions, 0/6 checked-correct registered attempts and no trigonometry diagnosis. They remain synthetic stub-mode evidence. [Details](MULTITOPIC_EVALUATION.md).
+
+
+**Checked trigonometry hypotheses:** Added three numerical error patterns to registered practice, recording a suspected cause only for a unique match. Ambiguous values request angle/side reasoning; repeated responses do not confirm or resolve these hypotheses. Both tutor configurations have focused checks. The unchanged synthetic C1/C2 comparison remains at 0/6 checked-correct attempts per arm; the seeded trig cause is ambiguous and is not automatically named. [Details](TRIGONOMETRY_HYPOTHESES.md).
+
+Both project copies passed **356 offline tests** across the four suites. The final repeated-success checks passed in **11 focused trigonometry tests** in each copy. No live provider was called.
