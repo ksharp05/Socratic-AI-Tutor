@@ -18,7 +18,7 @@ def test_two_learners_and_quiz_replan_use_the_team_api(tmp_path):
             teacher = {'Authorization': 'Bearer t'}
             student_a = {'Authorization': 'Bearer a'}
             student_b = {'Authorization': 'Bearer b'}
-            proposed = client.post('/teacher/proposals', headers=teacher, json={'concept_id': 'qe04'})
+            proposed = client.post('/teacher/proposals', headers=teacher, json={'concept_id': 'qe04', 'mode': 'quiz'})
             assert proposed.status_code == 200
             assert client.post(f"/teacher/proposals/{proposed.json()['set_id']}/approve", headers=teacher).json()['status'] == 'published'
 

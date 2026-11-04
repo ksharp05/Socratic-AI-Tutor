@@ -9,7 +9,7 @@ from socrates_beta.repository import Repository
 
 class FakeMaths:
     def __init__(self):
-        self.items = {f'q{i}': {'question_id':f'q{i}', 'problem':{'concept_ids':['qe04']}} for i in range(5)}
+        self.items = {f'q{i}': {'question_id':f'q{i}', 'problem':{'concept_ids':['qe04']}, 'mode_policy':{'tutor_visible':True,'allowed_modes':['practice','quiz','diagnostic']}} for i in range(5)}
         self.calls = 0
         self.guard = Lock()
     def eligible(self, scope, concept=None): return list(self.items.values())

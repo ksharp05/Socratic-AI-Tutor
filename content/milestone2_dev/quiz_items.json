@@ -1,0 +1,350 @@
+[
+  {
+    "question_id": "m2_demo_quiz_qe_01",
+    "prompt": "Find all distinct real roots of (1)*x^2 + (-3)*x + (2) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": -3,
+        "c": 2
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_qe_02",
+    "prompt": "Find all distinct real roots of (1)*x^2 + (-2)*x + (-3) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": -2,
+        "c": -3
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_qe_03",
+    "prompt": "Find all distinct real roots of (1)*x^2 + (0)*x + (-16) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": 0,
+        "c": -16
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_qe_04",
+    "prompt": "Find all distinct real roots of (1)*x^2 + (4)*x + (4) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": 4,
+        "c": 4
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_qe_05",
+    "prompt": "Find all distinct real roots of (1)*x^2 + (0)*x + (1) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": 0,
+        "c": 1
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_qe_06",
+    "prompt": "Find all distinct real roots of (2)*x^2 + (-5)*x + (2) = 0. Use exact values; give each root once.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 2,
+        "b": -5,
+        "c": 2
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe03",
+      "normalized:qe04",
+      "normalized:qe05"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  }
+]

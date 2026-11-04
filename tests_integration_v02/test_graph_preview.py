@@ -34,6 +34,8 @@ class GraphPreviewFlows(unittest.TestCase):
         self.app.llm.enabled=True;self.app.llm.complete=self.model_reply
         proposal=self.app.propose_set('qe04')
         self.app.decide(proposal['set_id'],'approve','AUTHORED_UNIT_FIXTURE_NOT_HUMAN_APPROVAL')
+        quiz_proposal=self.app.propose_set('qe04',mode='quiz')
+        self.app.decide(quiz_proposal['set_id'],'approve','AUTHORED_UNIT_FIXTURE_NOT_HUMAN_APPROVAL')
         self.session='authored_graph_fixture'
     def tearDown(self):
         self.app.close();self.patch.stop()

@@ -114,7 +114,7 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 
 ## Connected graph tutor: local offline demo
 
-> **Known limitation:** Quiz and diagnostic checks currently reuse practice-only dataset questions. Do not use them as policy-compliant assessments. See [the integrity gap](m2/KEY_AND_MODE_INTEGRITY.md).
+> **Development content:** Quizzes use a separate six-item synthetic quadratic pack. Teacher approval is required in the mounted tutor; human content review and independent evaluation remain pending. See [mode and provenance details](m2/KEY_AND_MODE_INTEGRITY.md).
 
 
 The standalone beta launch above does not mount the authenticated graph. To try the connected quadratic-equations journey on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
@@ -139,8 +139,10 @@ Keep the server window open. In another PowerShell window, make a **synthetic de
 $teacherHeaders = @{ Authorization = 'Bearer local-teacher' }
 $proposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teacher/proposals' -Headers $teacherHeaders -ContentType 'application/json' -Body '{"concept_id":"qe04"}'
 $null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $proposal.set_id + "/approve") -Headers $teacherHeaders
+$quizProposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teacher/proposals' -Headers $teacherHeaders -ContentType 'application/json' -Body '{"concept_id":"qe04","mode":"quiz"}'
+$null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $quizProposal.set_id + "/approve") -Headers $teacherHeaders
 ```
 
-Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question or request guided practice. The browser quiz control is currently unavailable while the question-mode policy is corrected; the underlying API still requires a policy fix. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
+Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Ask a quadratic-equations question, request guided practice, or start the development quiz. The two approvals above are separate because practice and quiz items have different permitted modes. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
 
 The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).

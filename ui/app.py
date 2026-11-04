@@ -154,8 +154,9 @@ def teacher_approvals() -> None:
     st.header("Question-set approvals")
     with st.form("propose"):
         concept = st.text_input("Concept ID", value="qe04")
+        mode = st.selectbox("Intended use", ["practice", "quiz", "diagnostic"])
         if st.form_submit_button("Propose a set") and concept:
-            out = call("POST", "/teacher/proposals", json={"concept_id": concept})
+            out = call("POST", "/teacher/proposals", json={"concept_id": concept, "mode": mode})
             if out:
                 st.success(f"Proposed {out['set_id']}")
     data = call("GET", "/teacher/proposals")
@@ -173,7 +174,7 @@ def teacher_approvals() -> None:
                 f"payload sha256 `{prop['payload_sha256']}`")
     items = prop["payload"]["items"]
     for item in items:
-        st.markdown(f"- `{item['question_id']}` {item['prompt']}")
+        st.markdown(f"- `{item['question_id']}` {item['prompt']} — allowed: {', '.join(item.get('mode_policy', {}).get('allowed_modes', []))}; content review: {item.get('review_status') or 'not recorded'}; authorship: {item.get('authorship') or 'not recorded'}")
     pool = call("GET", "/teacher/items", params={"concept_id": prop["payload"]["concept_id"]}) or {"items": []}
     options = sorted({i["question_id"] for i in pool["items"]} | {i["question_id"] for i in items})
     chosen = st.multiselect("Items (edit to change the set)", options, default=[i["question_id"] for i in items])

@@ -11,10 +11,12 @@ from fastmcp.exceptions import ToolError
 
 from .. import approval_token
 from ..setup_content import load
+from ..question_catalog import graph_items, allowed, MODES
 from ..store import dumps, now
 from . import READ, WRITE
 
-ITEM_FIELDS = ("question_id", "prompt", "problem", "answer_contract", "hint_stages", "difficulty")
+ITEM_FIELDS = ("question_id", "prompt", "problem", "answer_contract", "hint_stages", "difficulty", "mode_policy",
+               "chapter", "family_id", "supporting_passage_ids", "review_status", "authorship")
 DEV_FIXTURE_LABELS = {"eval_fixture_unapproved", "development_fixture_not_human_approved"}
 
 
@@ -23,7 +25,7 @@ def payload_hash(payload: dict) -> str:
 
 
 def build(conn: sqlite3.Connection, *, allow_dev_fixtures: bool = False) -> FastMCP:
-    pool = {q["question_id"]: q for q in load("practice")}
+    pool = {q["question_id"]: q for q in graph_items(load)}
 
     def _proposal(set_id: str) -> sqlite3.Row:
         row = conn.execute("SELECT * FROM proposals WHERE set_id=?", (set_id,)).fetchone()
@@ -61,8 +63,10 @@ def build(conn: sqlite3.Connection, *, allow_dev_fixtures: bool = False) -> Fast
     mcp = FastMCP("question-bank")
 
     @mcp.tool(annotations=READ)
-    def list_published(concept_id: str | None = None) -> dict:
+    def list_published(concept_id: str | None = None, mode: str | None = None) -> dict:
         """List items in teacher-approved (published) sets."""
+        if mode is not None and mode not in MODES:
+            raise ToolError("INVALID_INPUT: unknown question mode")
         items = []
         rows = conn.execute("SELECT p.*, q.status AS proposal_status, q.payload_sha256 AS proposal_hash, "
                             "q.payload_json AS proposal_payload FROM published p "
@@ -90,15 +94,18 @@ def build(conn: sqlite3.Connection, *, allow_dev_fixtures: bool = False) -> Fast
             else:
                 continue
             for item in payload["items"]:
-                if concept_id is None or concept_id in item["problem"]["concept_ids"]:
+                if ((concept_id is None or concept_id in item["problem"]["concept_ids"]) and
+                        (mode is None or allowed(item, mode))):
                     items.append({**item, "set_id": row["set_id"], "set_payload_sha256": row["payload_sha256"],
                                   "label": row["label"]})
         return {"items": items}
 
     @mcp.tool(annotations=READ)
-    def candidate_items(concept_id: str) -> dict:
+    def candidate_items(concept_id: str, mode: str = "practice") -> dict:
         """Items in the unapproved development pool that practise a concept (for proposing sets)."""
-        return {"question_ids": [q for q, item in pool.items() if concept_id in item["problem"]["concept_ids"]]}
+        if mode not in MODES:
+            raise ToolError("INVALID_INPUT: unknown question mode")
+        return {"question_ids": [q for q, item in pool.items() if concept_id in item["problem"]["concept_ids"] and allowed(item, mode)]}
 
     @mcp.tool(annotations=WRITE)
     def propose_set(set_id: str, concept_id: str, question_ids: list[str], rationale: str, thread_id: str) -> dict:

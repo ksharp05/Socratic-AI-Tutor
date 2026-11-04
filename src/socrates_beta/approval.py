@@ -49,8 +49,8 @@ class ApprovedAssessmentService(AssessmentService):
         except Timeout as exc:
             raise ApprovalUnavailable('Question approvals are busy. Please try again.') from exc
 
-    def _eligible(self, scope, concept):
-        return [item for item in super()._eligible(scope, concept) if item['question_id'] in self._available]
+    def _eligible(self, scope, concept, mode):
+        return [item for item in super()._eligible(scope, concept, mode) if item['question_id'] in self._available]
 
     def _bind_publication(self, record, eligible):
         record['state']['approval_versions'] = {
@@ -89,6 +89,8 @@ class ApprovedAssessmentService(AssessmentService):
                 return super().public(record, conn=conn) if self._valid(record, visible) else self._cancel(record, conn=conn)
 
     def _guard_assessment(self, record, conn):
+        policy = super()._guard_assessment(record, conn)
+        if policy:return policy
         if record['state'].get('approval_revoked') or not self._valid(record, self._available):
             return self._cancel(record, conn=conn)
         return None

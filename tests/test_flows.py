@@ -52,9 +52,11 @@ def test_personal_details_are_redacted():
 
 
 def test_quiz_triggers_replan(app, published_set):
+    quiz_set = app.propose_set("qe04", mode="quiz")
+    app.decide(quiz_set["set_id"], "approve", "synthetic-teacher")
     r = app.turn("t-quiz", "L-B", "start", mode="quiz")
     assert r["route"] == "quiz_start"
-    n = len(app.proposal(published_set["set_id"])["payload"]["items"])
+    n = len(app.proposal(quiz_set["set_id"])["payload"]["items"])
     for _ in range(min(n, 3)):
         r = app.turn("t-quiz", "L-B", "no real roots", mode="quiz")
     assert r["plan"]["replan_reason"].startswith("after quiz")

@@ -20,6 +20,12 @@ class CheckedMaths:
         file=Path(app_root)/'content/dataset-v0.10.0/practice_questions.jsonl'
         # Only public practice prompts. No private tests, hidden keys or held-out corpus.
         self.items={x['question_id']:x for x in [json.loads(l) for l in file.read_text(encoding='utf-8-sig').splitlines()]}
+        from tutor.question_catalog import allowed
+        demo=Path(app_root)/'content/milestone2_dev/quiz_items.json'
+        for item in json.loads(demo.read_text(encoding='utf-8-sig')):
+            if item['question_id'] in self.items or not allowed(item,'quiz') or allowed(item,'practice'):
+                raise ValueError('Invalid or duplicate development-check question')
+            self.items[item['question_id']]=item
         self.keys={};self.lock=threading.RLock()
     def eligible(self,scope,concept=None):
         if scope.grade!=10 or scope.subject.casefold()!='mathematics':return []
@@ -92,9 +98,26 @@ class AssessmentService:
         with self.repo.owner_guard(session['owner']), self.lock:
             return self._start(session,mode,concept,question_id)
 
-    def _eligible(self,scope,concept):return self.maths.eligible(scope,concept)
+    def _eligible(self,scope,concept,mode):
+        from tutor.question_catalog import allowed
+        return [item for item in self.maths.eligible(scope,concept) if allowed(item,mode)]
     def _bind_publication(self,record,eligible):pass
-    def _guard_assessment(self,record,conn):return None
+    def _guard_mode(self,record,conn):
+        from tutor.question_catalog import allowed
+        state=record['state']
+        if state.get('policy_revoked'):
+            return {'id':record['id'],'mode':record['mode'],'complete':True,'revoked':True,
+                    'position':min(state['index']+1,state['limit']),'total':state['limit'],
+                    'hint_stage':0,'item':None,'message':'This check is no longer available for its permitted use. Please start again.'}
+        if state.get('complete'):
+            return None
+        selected=set(state.get('queue',[])[:state.get('limit',0)]) | set(state.get('used',[]))
+        if not selected or any(qid not in self.maths.items or not allowed(self.maths.items[qid],record['mode']) for qid in selected):
+            state.update(complete=True,policy_revoked=True)
+            self.repo.save_assessment(record,conn=conn)
+            return self._guard_mode(record,conn)
+        return None
+    def _guard_assessment(self,record,conn):return self._guard_mode(record,conn)
 
     def _start(self,session,mode='practice',concept=None,question_id=None):
         from .ports import Scope
@@ -104,8 +127,8 @@ class AssessmentService:
             if (self.repo.active_assessment(session['id'],session['owner'],conn=conn)
                     or self.repo.open_check(session['owner'],conn=conn)):
                 raise ValueError('Finish or leave the current practice first')
-            eligible=self._eligible(Scope(**session['scope']),concept)
-            if not eligible:raise ValueError('Checked practice is available for the three Class 10 maths chapters; this topic is not yet covered')
+            eligible=self._eligible(Scope(**session['scope']),concept,mode)
+            if not eligible:raise ValueError('No questions are available for this topic and mode yet.')
             aid=uuid.uuid4().hex
             # Deterministic per-run ordering with unique public items; no benchmark material is read.
             import hashlib
@@ -123,6 +146,8 @@ class AssessmentService:
             return self.public(record,conn=conn)
 
     def public(self,a,*,conn=None):
+        revoked=self._guard_mode(a,conn)
+        if revoked:return revoked
         state=a['state'];done=state['complete']
         result={'id':a['id'],'mode':a['mode'],'complete':done,'position':min(state['index']+1,state['limit']),'total':state['limit'],
                 'hint_stage':state['hint_stage'],'item':None if done else self.maths.public_item(state['queue'][state['index']])}

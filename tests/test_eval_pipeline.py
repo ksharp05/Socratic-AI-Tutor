@@ -55,6 +55,7 @@ def test_harness_runs_end_to_end_and_passes_its_gate(tmp_path):
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["development_fixtures_enabled"] is True
     assert manifest["fixture_status"] == "synthetic_unapproved_evaluation_only"
+    assert manifest["fixture_input_sha256"]["content/milestone2_dev/quiz_items.json"] == harness.sha256_file(ROOT / "content/milestone2_dev/quiz_items.json")
     assert manifest["summary"]["sessions"] == 2 and manifest["summary"]["failures"] == 0
     assert manifest["gate"]["status"] == "pass" and manifest["partitions"] == ["development"]
     sessions = [json.loads(line) for line in (run_dir / "sessions.jsonl").read_text(encoding="utf-8").splitlines()]
@@ -94,6 +95,7 @@ def test_security_cases_hold_with_defences_and_break_without(tmp_path):
     on_manifest = json.loads((security.run(fixtures, "on", True, tmp_path) / "manifest.json").read_text(encoding="utf-8"))
     assert on_manifest["development_fixtures_enabled"] is True
     assert on_manifest["fixture_status"] == "synthetic_unapproved_evaluation_only"
+    assert on_manifest["fixture_input_sha256"]["content/milestone2_dev/quiz_items.json"] == harness.sha256_file(ROOT / "content/milestone2_dev/quiz_items.json")
     on = on_manifest["summary"]
     off = json.loads((security.run(fixtures, "off", False, tmp_path) / "manifest.json").read_text(encoding="utf-8"))["summary"]
     assert on_manifest["case_sha256"][str(fixtures[0])] == harness.sha256_file(fixtures[0])

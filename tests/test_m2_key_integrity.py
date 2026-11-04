@@ -105,3 +105,15 @@ def test_solver_version_change_does_not_reuse_an_earlier_key(tmp_path,monkeypatc
         with pytest.raises(ToolCallError,match='UNVERIFIED'):
             call(changed,'solve',{'question_ref':'synthetic-cache-binding'})
     finally:changed.close()
+
+
+def test_extra_question_cannot_shadow_an_approved_catalog_id(tmp_path):
+    from tutor import store
+    from tutor.mcp_servers import math_tools
+    source=copy.deepcopy(load('practice')[0])
+    source['problem']['givens']['c']+=1
+    conn=store.connect(tmp_path/'shadow.sqlite')
+    try:
+        with pytest.raises(ValueError,match='cannot replace'):
+            math_tools.build(conn,extra_items=[source])
+    finally:conn.close()

@@ -49,6 +49,7 @@ class ResumeIn(BaseModel):
 
 class ProposeIn(BaseModel):
     concept_id: str = Field(min_length=1, max_length=32)
+    mode: Literal["practice", "quiz", "diagnostic"] = "practice"
 
 
 class EditIn(BaseModel):
@@ -341,7 +342,7 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     @api.post("/teacher/proposals")
     def propose(body: ProposeIn, _: Principal = Depends(teacher)) -> dict:
         with lock:
-            out = _call(_tutor().propose_set, body.concept_id)
+            out = _call(_tutor().propose_set, body.concept_id, body.mode)
             return {**out, "proposal": _call(_tutor().proposal, out["set_id"])}
 
     @api.get("/teacher/proposals/{set_id}")
@@ -367,9 +368,10 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     @api.get("/teacher/items")
     def candidate_items(concept_id: str | None = None, _: Principal = Depends(teacher)) -> dict:
         """The development practice pool (IDs and prompts only), for editing a proposal."""
-        from tutor.setup_content import load
-        items = [{"question_id": q["question_id"], "prompt": q["prompt"], "concept_ids": q["problem"]["concept_ids"]}
-                 for q in load("practice")]
+        from tutor.question_catalog import graph_items
+        items = [{"question_id": q["question_id"], "prompt": q["prompt"], "concept_ids": q["problem"]["concept_ids"],
+                  "allowed_modes": q["mode_policy"]["allowed_modes"], "review_status": q.get("review_status"),
+                  "authorship": q.get("authorship")} for q in graph_items()]
         if concept_id:
             items = [i for i in items if concept_id in i["concept_ids"]]
         return {"items": items}

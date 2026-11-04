@@ -20,6 +20,7 @@ from langgraph.types import Command, interrupt
 from . import approval_token, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
+from .question_catalog import allowed
 from .setup_content import load
 from .toolbus import CallContext, ToolBus, ToolCallError
 
@@ -69,6 +70,7 @@ class TutorState(TypedDict, total=False):
 class ApprovalState(TypedDict, total=False):
     set_id: str
     concept_id: str
+    mode: str
     thread_id: str
     edit_question_ids: list[str] | None
     payload_sha256: str
@@ -126,19 +128,20 @@ class TutorApp:
         """Fail closed if a referenced question no longer has its approved version."""
         referenced = []
         if state.get("active_item"):
-            referenced.append(state["active_item"])
+            referenced.append((state["active_item"], "practice"))
         quiz = state.get("quiz") or {}
         items = quiz.get("items", [])
-        referenced.extend(items if include_completed else items[quiz.get("index", 0):])
+        referenced.extend((item, "quiz") for item in (items if include_completed else items[quiz.get("index", 0):]))
         if include_completed and state.get("grade"):
-            referenced.append(state["grade"])
+            referenced.append((state["grade"], "practice"))
         if not referenced:
             return False
         try:
             visible = self._call(state, "input_guard", "question_setter", "question-bank", "list_published", {})["items"]
-            valid = {(i["question_id"], i["set_id"], i["set_payload_sha256"]) for i in visible}
-            revoked = any((i.get("question_id"), i.get("set_id"), i.get("set_payload_sha256")) not in valid
-                          for i in referenced)
+            valid = {(i["question_id"], i["set_id"], i["set_payload_sha256"], mode)
+                     for i in visible for mode in ("practice", "quiz") if allowed(i, mode)}
+            revoked = any((i.get("question_id"), i.get("set_id"), i.get("set_payload_sha256"), mode) not in valid
+                          for i, mode in referenced)
         except Exception as exc:
             revoked = True
             self._note(state, "input_guard", "publication_check_failed", {"error_type": type(exc).__name__})
@@ -340,9 +343,9 @@ class TutorApp:
         concept = (self.misconceptions[focus]["concept_id"] if focus else None) or \
                   next((s["concept_id"] for s in plan.get("steps", [])), None)
         items = self._call(state, "set_question", "question_setter", "question-bank", "list_published",
-                           {"concept_id": concept})["items"]
+                           {"concept_id": concept, "mode": "practice"})["items"]
         if not items:
-            items = self._call(state, "set_question", "question_setter", "question-bank", "list_published", {})["items"]
+            items = self._call(state, "set_question", "question_setter", "question-bank", "list_published", {"mode": "practice"})["items"]
         attempted = state.get("attempted", [])
         fresh = [i for i in items if i["question_id"] not in attempted] or items
         if not fresh:
@@ -394,7 +397,7 @@ class TutorApp:
         return update
 
     def _quiz_start(self, state: TutorState) -> dict:
-        items = self._call(state, "quiz_start", "question_setter", "question-bank", "list_published", {})["items"][:3]
+        items = self._call(state, "quiz_start", "question_setter", "question-bank", "list_published", {"mode": "quiz"})["items"][:3]
         if not items:
             return {"draft": {"text": "There's no teacher-approved quiz yet.", "citations": [], "kind": "info"}}
         for it in items:
@@ -698,12 +701,12 @@ class TutorApp:
         published = {i["question_id"] for i in
                      self._call(s, "qs_start", "question_setter", "question-bank", "list_published", {})["items"]}
         pool = self._call(s, "qs_start", "question_setter", "question-bank", "candidate_items",
-                          {"concept_id": state["concept_id"]})["question_ids"]
+                          {"concept_id": state["concept_id"], "mode": state.get("mode", "practice")})["question_ids"]
         chosen = [q for q in pool if q not in published][:3] or pool[:3]
         set_id = f"set-{uuid.uuid4().hex[:8]}"
         res = self._call(s, "qs_start", "question_setter", "question-bank", "propose_set",
                          {"set_id": set_id, "concept_id": state["concept_id"], "question_ids": chosen,
-                          "rationale": f"Practice for {state['concept_id']}", "thread_id": state["thread_id"]})
+                          "rationale": f"{state.get('mode', 'practice').title()} for {state['concept_id']}", "thread_id": state["thread_id"]})
         return {"set_id": set_id, "payload_sha256": res["payload_sha256"], "status": "pending"}
 
     def _qs_validate(self, state: ApprovalState) -> dict:
@@ -752,9 +755,9 @@ class TutorApp:
         g.add_edge("qs_reject", END)
         return g
 
-    def propose_set(self, concept_id: str) -> dict:
+    def propose_set(self, concept_id: str, mode: str = "practice") -> dict:
         thread_id = f"qs-{uuid.uuid4().hex[:8]}"
-        out = self.approval.invoke({"concept_id": concept_id, "thread_id": thread_id},
+        out = self.approval.invoke({"concept_id": concept_id, "mode": mode, "thread_id": thread_id},
                                    {"configurable": {"thread_id": thread_id}})
         return {"set_id": out["set_id"], "payload_sha256": out["payload_sha256"], "thread_id": thread_id,
                 "waiting_for_teacher": bool(out.get("__interrupt__"))}

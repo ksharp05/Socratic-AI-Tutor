@@ -50,7 +50,7 @@ def test_same_server_connected_quiz_updates_only_authenticated_learner(connected
     assert client.post('/chat',json={'text':'hello'}).status_code==401
     assert client.get('/learners/L-B',headers=a).status_code==403
     assert client.post('/teacher/proposals',headers=a,json={'concept_id':'qe04'}).status_code==403
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     assert client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher).json()['status']=='published'
     sid='web-synthetic-learner-a'
     first=client.post('/chat',headers=a,json={'session_id':sid,'text':'hello','mode':'practice'}).json()
@@ -74,7 +74,7 @@ def test_same_server_connected_quiz_updates_only_authenticated_learner(connected
 
 def test_same_server_edit_revokes_connected_quiz(connected):
     client,_=connected;a={'Authorization':'Bearer a'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     set_id=proposal['set_id'];items=proposal['proposal']['payload']['items']
     assert client.post('/teacher/proposals/'+set_id+'/approve',headers=teacher).json()['status']=='published'
     sid='web-synthetic-revocation'
@@ -89,7 +89,7 @@ def test_same_server_edit_revokes_connected_quiz(connected):
 
 def test_connected_quiz_cannot_be_bypassed_by_another_graph_session(connected):
     client,_=connected;a={'Authorization':'Bearer a'};b={'Authorization':'Bearer b'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     assert client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher).json()['status']=='published'
     first=client.post('/chat',headers=a,json={'session_id':'quiz-a','text':'start a quiz','mode':'quiz'}).json()
     assert first['quiz_active'] is True
@@ -103,7 +103,7 @@ def test_connected_quiz_cannot_be_bypassed_by_another_graph_session(connected):
 
 def test_active_quiz_can_be_recovered_and_left_without_a_score(connected):
     client,tutor=connected;a={'Authorization':'Bearer a'};b={'Authorization':'Bearer b'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher)
     sid='quiz-recover-leave'
     client.post('/chat',headers=a,json={'session_id':sid,'text':'start a quiz','mode':'quiz'})
@@ -124,7 +124,7 @@ def test_active_quiz_can_be_recovered_and_left_without_a_score(connected):
 
 def test_quiz_reservation_survives_another_api_instance(connected,tmp_path):
     client,_=connected;a={'Authorization':'Bearer a'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher)
     client.post('/chat',headers=a,json={'session_id':'quiz-persisted','text':'start a quiz','mode':'quiz'})
     other=TutorApp(llm_mode='stub',db_name=str(tmp_path/'tutor.db'),checkpoint_name=str(tmp_path/'checkpoints.db'))
@@ -139,7 +139,7 @@ def test_quiz_reservation_survives_another_api_instance(connected,tmp_path):
 
 def test_interrupted_quiz_requires_recovery_before_another_turn(connected,monkeypatch):
     client,tutor=connected;a={'Authorization':'Bearer a'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher)
     sid='quiz-interrupted-api'
     client.post('/chat',headers=a,json={'session_id':sid,'text':'start a quiz','mode':'quiz'})
@@ -169,7 +169,7 @@ def test_concurrent_quiz_starts_on_separate_connections_admit_only_one(connected
     from threading import Barrier
 
     client,_=connected;a={'Authorization':'Bearer a'};teacher={'Authorization':'Bearer t'}
-    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04'}).json()
+    proposal=client.post('/teacher/proposals',headers=teacher,json={'concept_id':'qe04','mode':'quiz'}).json()
     client.post('/teacher/proposals/'+proposal['set_id']+'/approve',headers=teacher)
     second_tutor=TutorApp(llm_mode='stub',db_name=str(tmp_path/'tutor.db'),checkpoint_name=str(tmp_path/'checkpoints.db'))
     try:

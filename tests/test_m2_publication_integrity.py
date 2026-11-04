@@ -177,7 +177,7 @@ def test_edit_cancels_an_active_quiz_without_scoring_it(tmp_path, arm, defences)
                    checkpoint_name=str(tmp_path/'checkpoints.db'))
     try:
         seed_learner(app.conn, 'learner', {'alias':'synthetic'})
-        proposal = app.propose_set('qe04')
+        proposal = app.propose_set('qe04', mode='quiz')
         sid = proposal['set_id']
         assert app.decide(sid, 'approve', 'synthetic-teacher')['status'] == 'published'
         started = app.turn('quiz-session', 'learner', 'start a quiz', mode='quiz')

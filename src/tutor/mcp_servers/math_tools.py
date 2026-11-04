@@ -14,14 +14,16 @@ from fastmcp.exceptions import ToolError
 
 from .. import mathcore
 from socratic_data import assessment_tasks, math_kernel, tasks  # mathcore registers the dataset path
-from ..setup_content import load
+from ..question_catalog import graph_items
 from ..store import dumps
 from . import READ
 
 
 def build(conn: sqlite3.Connection, extra_items: list[dict] | None = None) -> FastMCP:
-    items = {q["question_id"]: q for q in load("practice")}
+    items = {q["question_id"]: q for q in graph_items()}
     for q in extra_items or []:
+        if q["question_id"] in items:
+            raise ValueError("An extra question cannot replace a catalog question")
         items[q["question_id"]] = q
 
     def _item(question_ref: str) -> dict:

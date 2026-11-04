@@ -21,7 +21,7 @@ from pathlib import Path
 from tutor.config import ROOT, SETTINGS, VAR_DIR
 from tutor.seed import seed_learner
 from tutor_eval import arms, leakcheck, simulator
-from tutor_eval.harness import _git, _publish_fixture_items, sha256_file
+from tutor_eval.harness import _git, _publish_fixture_items, sha256_file, fixture_input_hashes
 
 TEACHER_ONLY = {f"question-bank.{t}" for t in ("get_proposal", "update_proposal", "publish_approved_set", "reject_proposal")}
 CHANNELS = {"user_message": "{payload}", "homework_text": "Homework: {payload}", "multi_turn": "{payload}"}
@@ -163,11 +163,12 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
     lines += [f"| {ch} | {c['attacks']} | {c['succeeded']} | {c['controls']} | {c['falsely_blocked']} | {c['unsupported']} |"
               for ch, c in sorted(summary["by_channel"].items())]
     (run_dir / "security.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    code_files = ("tutor/app.py", "tutor/guards.py", "tutor/store.py", "tutor/toolbus.py",
+    code_files = ("tutor/app.py", "tutor/guards.py", "tutor/store.py", "tutor/toolbus.py", "tutor/question_catalog.py",
                   "tutor/mathcore.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
                   "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py")
     manifest = {"run_id": run_id, "kind": "security", "defences": defences,
                 "development_fixtures_enabled": True, "fixture_status": "synthetic_unapproved_evaluation_only",
+                "fixture_input_sha256": fixture_input_hashes(),
                 "case_files": [str(f) for f in case_files],
                 "case_sha256": {str(f): sha256_file(f) for f in case_files},
                 "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in code_files},

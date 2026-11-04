@@ -50,9 +50,9 @@ def session(client):
     return response.json()['id']
 
 
-def approve(client):
+def approve(client, mode='practice'):
     teacher = {'Authorization':'Bearer teacher-token'}
-    proposal = client.post('/teacher/proposals', headers=teacher, json={'concept_id':'qe04'})
+    proposal = client.post('/teacher/proposals', headers=teacher, json={'concept_id':'qe04','mode':mode})
     assert proposal.status_code == 200
     body = proposal.json(); sid = body['set_id']
     approved = client.post(f'/teacher/proposals/{sid}/approve', headers=teacher)
@@ -115,7 +115,7 @@ def test_mounted_quiz_is_cancelled_without_grading_after_an_edit(mounted, tmp_pa
     client, _ = mounted
     learner = {'X-Socrates-Request':'1'}
     sid = session(client)
-    set_id, ids = approve(client)
+    set_id, ids = approve(client,mode='quiz')
     start = client.post('/beta/api/practice', headers=learner, json={'session_id':sid,'mode':'quiz'}).json()
     assert start['total'] >= 2
     aid = start['id']
@@ -247,7 +247,7 @@ def test_mounted_quiz_hides_dashboard_results_and_saved_card_contents(mounted):
     passage=chat.json()['citations'][0]['id']
     card=client.post('/beta/api/cards',headers=learner,json={'session_id':sid,'passage_id':passage})
     assert card.status_code==200
-    approve(client)
+    approve(client,mode='quiz')
     quiz=client.post('/beta/api/practice',headers=learner,json={'session_id':sid,'mode':'quiz'}).json()
     before=client.get('/beta/api/dashboard').json()['checked_answers']
     result=client.post(f"/beta/api/practice/{quiz['id']}/submit",headers=learner,
@@ -262,7 +262,7 @@ def test_mounted_quiz_hides_dashboard_results_and_saved_card_contents(mounted):
 
 def test_mounted_other_session_practice_is_hidden_during_quiz_and_resumes(mounted):
     client, _=mounted;headers={'X-Socrates-Request':'1'}
-    one=session(client);two=session(client);approve(client)
+    one=session(client);two=session(client);approve(client);approve(client,mode='quiz')
     practice=client.post('/beta/api/practice',headers=headers,json={'session_id':one,'mode':'practice'}).json()
     quiz=client.post('/beta/api/practice',headers=headers,json={'session_id':two,'mode':'quiz'}).json()
     paused=client.get(f'/beta/api/sessions/{one}').json()
@@ -305,7 +305,7 @@ def test_urgent_mounted_chat_is_not_delayed_by_active_write(mounted):
 def test_mounted_two_profiles_replan_after_completed_approved_quiz(mounted):
     first, _=mounted
     headers={'X-Socrates-Request':'1'}
-    sid=session(first);approve(first)
+    sid=session(first);approve(first,mode='quiz')
     with TestClient(first.app,base_url='http://localhost') as second:
         session(second)
         params={'grade':10,'subject':'Mathematics','book':'jemh1'}
@@ -329,19 +329,27 @@ def test_mounted_two_profiles_replan_after_completed_approved_quiz(mounted):
         assert first.get('/beta/api/dashboard').json()['checked_answers']==3
 
 
-class MountedQuestionModePolicyViolation(AssertionError):
-    pass
-
-
-@pytest.mark.xfail(strict=True,raises=MountedQuestionModePolicyViolation,reason='Mounted beta quiz currently serves items whose dataset policy permits practice only')
 def test_mounted_quiz_only_uses_items_permitted_in_quiz_mode(mounted):
     client,_=mounted
-    sid=session(client);approve(client)
+    sid=session(client);approve(client,mode='quiz')
     response=client.post('/beta/api/practice',headers={'X-Socrates-Request':'1'},
                          json={'session_id':sid,'mode':'quiz'})
     assert response.status_code==200
     question_id=response.json()['item']['id']
-    with (ROOT/'content/dataset-v0.10.0/practice_questions.jsonl').open(encoding='utf-8-sig') as f:
-        item=next(json.loads(line) for line in f if json.loads(line)['question_id']==question_id)
-    if 'quiz' not in item['mode_policy']['allowed_modes']:
-        raise MountedQuestionModePolicyViolation('A practice-only question was selected for the mounted quiz')
+    items=json.loads((ROOT/'content/milestone2_dev/quiz_items.json').read_text(encoding='utf-8-sig'))
+    item=next(item for item in items if item['question_id']==question_id)
+    assert 'quiz' in item['mode_policy']['allowed_modes']
+
+
+def test_legacy_mounted_practice_only_quiz_is_cancelled_before_grading(mounted,tmp_path):
+    client,_=mounted;learner={'X-Socrates-Request':'1'}
+    sid=session(client);approve(client)
+    practice=client.post('/beta/api/practice',headers=learner,json={'session_id':sid,'mode':'practice'}).json()
+    with sqlite3.connect(tmp_path/'data/beta.sqlite') as db:
+        db.execute("UPDATE assessments SET mode='quiz' WHERE id=?",(practice['id'],))
+    result=client.post(f"/beta/api/practice/{practice['id']}/submit",headers=learner,
+                       json={'answer':'x = 3','request_id':'legacy-mode-0001'}).json()
+    assert result['status']=='question_revoked' and result['assessment']['item'] is None
+    assert 'summary' not in result['assessment']
+    with sqlite3.connect(tmp_path/'data/beta.sqlite') as db:
+        assert db.execute("SELECT COUNT(*) FROM observations WHERE kind='checked_answer'").fetchone()[0]==0

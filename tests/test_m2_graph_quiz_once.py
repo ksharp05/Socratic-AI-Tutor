@@ -7,7 +7,7 @@ from tutor.seed import seed_learner
 def setup_app(tmp_path):
     app=TutorApp(llm_mode='stub',db_name=str(tmp_path/'tutor.db'),checkpoint_name=str(tmp_path/'checkpoint.db'))
     seed_learner(app.conn,'learner',{'alias':'synthetic'})
-    proposal=app.propose_set('qe04')
+    proposal=app.propose_set('qe04',mode='quiz')
     assert app.decide(proposal['set_id'],'approve','synthetic-teacher')['status']=='published'
     return app
 

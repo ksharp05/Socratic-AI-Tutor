@@ -107,7 +107,7 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         entry=registry.entries();k=registry.knowledge()
         return {'status':'ok','version':__version__,'dataset':entry['active'],'dataset_integrity':'verified',
            'language':language.health() if language and hasattr(language,'health') else {'mode':'live' if language else 'offline'},
-           'beta':True,'graph_journey':tutor_provider is not None,'maths_practice_items':len(maths.items),
+           'beta':True,'graph_journey':tutor_provider is not None,'maths_practice_items':sum('practice' in q.get('mode_policy',{}).get('allowed_modes',[]) for q in maths.items.values()),
            'assessment_policy':'teacher_published' if tutor_provider is not None else 'development_unapproved'}
     @app.get('/api/bootstrap')
     def initial(request:Request):
