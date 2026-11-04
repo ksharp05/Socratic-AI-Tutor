@@ -398,7 +398,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "finished": time.strftime("%Y%m%d-%H%M%S"), "config": {"path": str(config_path), "sha256": sha256_file(config_path), **cfg},
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
-                        ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
+                        ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
                          "tutor/learner.py", "tutor/triangle_reasoning.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",

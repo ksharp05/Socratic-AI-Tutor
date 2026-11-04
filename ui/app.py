@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+from urllib.parse import quote
 
 import requests
 import streamlit as st
@@ -216,9 +217,24 @@ def teacher_learners() -> None:
     learner_overview(lid)
 
 
+def teacher_privacy() -> None:
+    st.header("Learner data requests")
+    st.write("Delete a signed-in learning record only after confirming the learner's request and your authority to act.")
+    st.caption("This removes the connected learning history and progress. Anonymous browser history, backups and downloaded copies are separate.")
+    lid = st.text_input("Learner ID for deletion", key="delete_learner_id").strip()
+    confirmation = st.text_input("Type the learner ID again", key="delete_confirmation").strip()
+    authorized = st.checkbox("I have confirmed this request and am authorized to delete this record.")
+    if st.button("Delete connected learning record", disabled=not (lid and lid == confirmation and authorized)):
+        receipt = call("DELETE", "/learners/" + quote(lid, safe=''))
+        if receipt:
+            st.success("The connected learning record was deleted. Keep the receipt for this request.")
+            st.json(receipt)
+
+
 if me["role"] == "teacher":
     pages = [st.Page(teacher_approvals, title="Approvals", url_path="approvals"),
-             st.Page(teacher_learners, title="Learners", url_path="learners")]
+             st.Page(teacher_learners, title="Learners", url_path="learners"),
+             st.Page(teacher_privacy, title="Data requests", url_path="data-requests")]
 else:
     pages = [st.Page(student_chat, title="Chat", url_path="chat"),
              st.Page(student_progress, title="My progress", url_path="progress")]

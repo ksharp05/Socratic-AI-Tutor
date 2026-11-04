@@ -18,14 +18,26 @@ DEMO_LEARNERS = {
 ALIASES = {"A": "L-A", "B": "L-B"}
 
 
-def seed_learner(conn, learner_id: str, spec: dict) -> None:
-    conn.execute("INSERT OR REPLACE INTO learners VALUES (?,?,?)", (learner_id, spec.get("alias", learner_id), store.now()))
-    for cid, p in spec.get("mastery", {}).items():
-        conn.execute("INSERT OR REPLACE INTO mastery VALUES (?,?,?,?)", (learner_id, cid, p, store.now()))
-    for mid, status in spec.get("misconceptions", {}).items():
-        conn.execute("INSERT OR REPLACE INTO misconceptions VALUES (?,?,?,?,?)", (learner_id, mid, status, 1, store.now()))
-    for mid, style, ok, bad in spec.get("styles", []):
-        conn.execute("INSERT OR REPLACE INTO explanations VALUES (?,?,?,?,?)", (learner_id, mid, style, ok, bad))
+def seed_learner(conn, learner_id: str, spec: dict) -> bool:
+    """Seed synthetic/development state; a deletion tombstone prevents re-enrolment."""
+    conn.execute("SAVEPOINT seed_learner")
+    try:
+        if store.deletion_requested(conn, learner_id):
+            conn.execute("RELEASE seed_learner")
+            return False
+        conn.execute("INSERT OR REPLACE INTO learners VALUES (?,?,?)", (learner_id, spec.get("alias", learner_id), store.now()))
+        for cid, p in spec.get("mastery", {}).items():
+            conn.execute("INSERT OR REPLACE INTO mastery VALUES (?,?,?,?)", (learner_id, cid, p, store.now()))
+        for mid, status in spec.get("misconceptions", {}).items():
+            conn.execute("INSERT OR REPLACE INTO misconceptions VALUES (?,?,?,?,?)", (learner_id, mid, status, 1, store.now()))
+        for mid, style, ok, bad in spec.get("styles", []):
+            conn.execute("INSERT OR REPLACE INTO explanations VALUES (?,?,?,?,?)", (learner_id, mid, style, ok, bad))
+        conn.execute("RELEASE seed_learner")
+        return True
+    except Exception:
+        conn.execute("ROLLBACK TO seed_learner")
+        conn.execute("RELEASE seed_learner")
+        raise
 
 
 def reset_and_seed() -> dict:

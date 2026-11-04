@@ -1,0 +1,45 @@
+{
+  "artifact_type": "synthetic_memory_policy_example",
+  "source": "actual local API responses with stub model",
+  "projection": "Selected learner response fields and redacted student messages; not a new export endpoint",
+  "human_review": false,
+  "before_deletion": {
+    "learner_id": "synthetic-example-a",
+    "mastery": {},
+    "misconceptions": {},
+    "plan_version": 1,
+    "redacted_student_messages": [
+      "My email is [email]. I am unsure about common factors."
+    ]
+  },
+  "student_delete_status": 403,
+  "teacher_deletion_receipt": {
+    "deleted": true,
+    "request_id": "9bc560b0dba14484bf85659b580ff23a",
+    "learner_id": "synthetic-example-a",
+    "completed_at": 1793802480.251297,
+    "checkpoint_threads": 1,
+    "removed_rows": {
+      "trace_events": 9,
+      "mastery": 0,
+      "misconceptions": 0,
+      "explanations": 0,
+      "plans": 1,
+      "topic_plans": 0,
+      "learner_events": 1,
+      "alerts": 0,
+      "stuck_sessions": 0,
+      "stuck_alert_state": 0,
+      "applied_quizzes": 0,
+      "graph_session_leases": 0,
+      "learner_session_index": 1,
+      "learners": 1
+    },
+    "scope": "graph learner and registered local checkpoint stores",
+    "logical_deletion_only": true,
+    "backups_removed": false,
+    "separate_beta_profile_removed": false
+  },
+  "history_after_delete_status": 410,
+  "peer_record_unchanged": true
+}

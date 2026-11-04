@@ -1,7 +1,6 @@
 """FastAPI service around TutorApp. Run with: uvicorn tutor_api.main:app
 
-The tutor itself is unchanged: this module wraps the public TutorApp methods (turn, resume, history,
-propose_set, proposal, decide, try_publish, close). TutorApp is not thread-safe, so every call into it
+This module wraps TutorApp turns, recovery, learner data requests and teacher approval. TutorApp is not thread-safe, so every call into it
 holds one lock; a single API process serves one turn at a time, which is enough for the demo.
 
 Endpoints and tokens are documented in Docs/deploy/README.md.
@@ -32,7 +31,7 @@ from .metrics import Metrics
 
 SESSION_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,64}$")
 RESERVED_PREFIXES = ("qs-",)  # approval-graph threads share the checkpointer
-ERROR_STATUS = {"NOT_FOUND": 404, "INVALID_INPUT": 422, "FORBIDDEN": 403, "BUDGET": 429, "BUSY": 503}
+ERROR_STATUS = {"NOT_FOUND": 404, "INVALID_INPUT": 422, "FORBIDDEN": 403, "BUDGET": 429, "BUSY": 503, "GONE": 410, "CONFLICT": 409}
 
 
 # ---------------------------------------------------------------------- request bodies
@@ -164,7 +163,8 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         return p
 
     def _check_session(session_id: str, learner_id: str) -> None:
-        if not SESSION_ID.match(session_id) or session_id.startswith(RESERVED_PREFIXES):
+        _call(_tutor().ensure_learner_available, learner_id)
+        if not SESSION_ID.match(session_id) or session_id.startswith(RESERVED_PREFIXES) or session_id in {"api", "teacher"}:
             raise HTTPException(422, "invalid session_id")
         snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
         values = (snap.values or {}) if snap else {}
@@ -353,12 +353,13 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     @api.get("/chat/active")
     def active_chat(p: Principal = Depends(student)) -> dict:
         with lock, _tutor().bus.publication_lock:
+            _call(_tutor().ensure_learner_available, p.subject_id)
             current = _active_graph_session(p.subject_id)
         return current or {"session_id": None, "quiz_active": False, "interrupted": False}
 
     @api.get("/chat/{session_id}/history")
     def chat_history(session_id: str, p: Principal = Depends(student)) -> dict:
-        with lock:
+        with lock, _tutor().bus.publication_lock:
             _check_session(session_id, p.subject_id)
             messages = _call(_tutor().history, session_id)
             snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
@@ -414,15 +415,17 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     # ------------------------------------------------------------------ learners
     @api.get("/learners")
     def list_learners(_: Principal = Depends(teacher)) -> dict:
-        with lock:
-            rows = _tutor().conn.execute("SELECT learner_id, alias FROM learners ORDER BY learner_id").fetchall()
+        with lock, _tutor().bus.publication_lock:
+            rows = _tutor().conn.execute("SELECT learner_id, alias FROM learners WHERE learner_id NOT IN "
+                                         "(SELECT learner_id FROM learner_deletions) ORDER BY learner_id").fetchall()
         return {"learners": [dict(r) for r in rows]}
 
     @api.get("/learners/{learner_id}")
     def learner_overview(learner_id: str, p: Principal = Depends(principal)) -> dict:
         if not p.is_teacher and p.subject_id != learner_id:
             _deny(403, "you may only view your own record")
-        with lock:
+        with lock, _tutor().bus.publication_lock:
+            _call(_tutor().ensure_learner_available, learner_id)
             model = _call(_tutor().bus.call, CallContext(session_id="api", learner_id=learner_id, node="api"),
                           "study_planner", "learner-store", "read_learner", {"learner_id": learner_id})
             # Alert details are a teacher workflow. Students may read their own
@@ -432,6 +435,10 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
                       if p.is_teacher else [])
         return {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
                 "plan": model.get("plan"), "topic_plans": model.get("topic_plans", {}), "alerts": alerts}
+
+    @api.delete("/learners/{learner_id}")
+    def forget_learner(learner_id: str, p: Principal = Depends(teacher)) -> dict:
+        return _call(_tutor().forget_learner, learner_id, p.subject_id)
 
     if beta_config := os.environ.get('TUTOR_BETA_CONFIG'):
         from .beta import mount_beta

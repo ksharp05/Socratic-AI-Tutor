@@ -113,6 +113,9 @@ class ToolBus:
         return self._call_unlocked(ctx, role, server, tool, args)
 
     def _call_unlocked(self, ctx: CallContext, role: str, server: str, tool: str, args: dict) -> dict:
+        if ctx.learner_id and store.deletion_requested(self.conn, ctx.learner_id):
+            # Do not recreate learner-linked traces after a completed deletion.
+            raise ToolCallError("GONE", "This learning record is unavailable.")
         scrubbed = {k: (f"<{len(str(v))} chars>" if k in _SCRUB else v) for k, v in args.items()}
         # ---- pre-tool hook ----
         denial = None

@@ -11,6 +11,7 @@ import operator
 import re
 import sqlite3
 import uuid
+from pathlib import Path
 from typing import Annotated, Any, TypedDict
 
 from langgraph.checkpoint.sqlite import SqliteSaver
@@ -95,6 +96,10 @@ class TutorApp:
         self.concepts = {c["concept_id"]: c for c in topic_concepts()}
         self._ctx: dict[str, CallContext] = {}
         self.checkpointer = SqliteSaver(sqlite3.connect(db_path(checkpoint_name), check_same_thread=False))
+        self.checkpoint_path = str(Path(
+            self.checkpointer.conn.execute("PRAGMA database_list").fetchone()[2]).resolve())
+        with self.bus.publication_lock:
+            self.conn.execute("INSERT OR IGNORE INTO learner_checkpoint_registry VALUES (?)", (self.checkpoint_path,))
         self.graph = self._build_session_graph().compile(checkpointer=self.checkpointer)
         self.approval = self._build_approval_graph().compile(checkpointer=self.checkpointer)
 
@@ -724,17 +729,42 @@ class TutorApp:
         except Timeout as exc:
             raise ToolCallError("BUSY", "publication is busy; please retry") from exc
 
+    def ensure_learner_available(self, learner_id: str) -> None:
+        if store.deletion_requested(self.conn, learner_id):
+            raise ToolCallError("GONE", "This learning record has been deleted or is awaiting deletion.")
+
+    def forget_learner(self, learner_id: str, teacher_id: str) -> dict:
+        """Trusted API operation; intentionally unavailable to agents and the tool bus."""
+        from .learner_privacy import forget
+        try:
+            with self.bus.publication_lock:
+                return forget(self, learner_id, teacher_id)
+        except Timeout as exc:
+            raise ToolCallError("BUSY", "The tutor is busy; please retry.") from exc
+
     def _turn_locked(self, session_id: str, learner_id: str, text: str, mode: str, chapter: str | None = None) -> dict:
+        self.ensure_learner_available(learner_id)
+        if session_id in {"api", "teacher"} or session_id.startswith("qs-"):
+            raise ToolCallError("INVALID_INPUT", "This conversation ID is reserved.")
         screen = guards.screen_input(text) if self.defences else {"text": text}
         config = {"configurable": {"thread_id": session_id}}
         prior = self.graph.get_state(config)
         old_session = (prior.values or {}).get("session") if prior else None
+        if old_session and old_session.get("learner_id") != learner_id:
+            raise ToolCallError("FORBIDDEN", "This conversation belongs to another learner.")
         old_chapter = (old_session or {}).get("chapter", "quadratic_equations")
         if old_session and chapter is not None and chapter != old_chapter:
             raise ValueError("A conversation cannot change its chapter; start a new conversation.")
         selected = old_chapter if old_session else (chapter or "quadratic_equations")
         if selected not in CHAPTERS:
             raise ValueError("Unknown chapter")
+        indexed = self.conn.execute("SELECT learner_id FROM learner_session_index WHERE session_id=? AND learner_id<>?",
+                                    (session_id, learner_id)).fetchone()
+        if indexed:
+            raise ToolCallError("FORBIDDEN", "This conversation belongs to another learner.")
+        self.conn.execute("INSERT INTO learner_session_index VALUES (?,?,?) "
+                          "ON CONFLICT(session_id,checkpoint_path) DO NOTHING",
+                          (session_id, self.checkpoint_path, learner_id))
         state = self.graph.invoke({"incoming": screen["text"], "screen": screen,
                                    "session": {"session_id": session_id, "learner_id": learner_id, "mode": mode,
                                                "chapter": selected}}, config)
@@ -753,6 +783,9 @@ class TutorApp:
             with self.bus.publication_lock:
                 config = {"configurable": {"thread_id": session_id}}
                 snap = self.graph.get_state(config)
+                owner = ((snap.values or {}).get("session") or {}).get("learner_id")
+                if owner:
+                    self.ensure_learner_available(owner)
                 if not snap.next:
                     return None
                 if self._publication_unavailable(snap.values, include_completed=True):
@@ -769,8 +802,12 @@ class TutorApp:
             raise ToolCallError("BUSY", "publication is busy; please retry") from exc
 
     def history(self, session_id: str) -> list[dict]:
-        snap = self.graph.get_state({"configurable": {"thread_id": session_id}})
-        return (snap.values or {}).get("messages", []) if snap else []
+        with self.bus.publication_lock:
+            snap = self.graph.get_state({"configurable": {"thread_id": session_id}})
+            owner = ((snap.values or {}).get("session") or {}).get("learner_id")
+            if owner:
+                self.ensure_learner_available(owner)
+            return (snap.values or {}).get("messages", []) if snap else []
 
     # ------------------------------------------------------------------ teacher approval graph
     def _qs_ctx(self, state: ApprovalState) -> dict:

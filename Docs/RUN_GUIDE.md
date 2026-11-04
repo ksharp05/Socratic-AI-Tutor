@@ -179,3 +179,7 @@ To stop the stack without deleting its persistent volume, run `docker compose -f
 
 
 In connected trigonometry practice, an ambiguous ratio answer may prompt a request for the reference angle and side lengths. Reply with the labels from your question, for example “angle C, opposite ..., adjacent ..., hypotenuse ...”. The tutor checks those labels and then asks you to choose the ratio; the final numeric answer is graded separately. [Supported forms and limits](m2/TRIANGLE_REASONING.md).
+
+## Delete a connected learner record
+
+Use the teacher interface's **Data requests** page with a synthetic learner when demonstrating deletion. The teacher must confirm the learner ID and authority for the request; deletion returns a receipt and cannot be undone. It removes that signed-in graph record, owned registered checkpoints and traces, and blocks reuse by the old credential. The anonymous beta browser history is separate. A pending/busy deletion must be retried by the teacher; do not reset the database to clear it. [Workflow and recovery](m2/LEARNER_DATA_LIFECYCLE.md) and [memory policy](MEMORY_POLICY.md) describe retained deletion metadata, backup/physical-erasure limitations and the separate browser-clear action.

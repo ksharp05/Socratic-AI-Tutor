@@ -8,7 +8,7 @@ The maths service calculates and verifies each key before the quiz starts. Answe
 
 The original quadratic `plans` record is retained. AP and trigonometry plans are stored separately per learner and chapter in the additive `topic_plans` table, created when an existing database is opened; opening an old database preserves its quadratic record. After a complete chapter quiz, the deterministic development policy prioritises concepts associated with incorrect questions, shows the number of associated incorrect answers and records supporting question IDs. A question can be associated with several concepts: this does not diagnose which concept caused the error, prove mastery, or establish learning. Only the learner's authenticated API response exposes their plans; the teacher path has its existing permissions. The connected browser switches plans with the selected chapter and restores them after signing back in.
 
-Existing software versions that predate the new table do not display chapter plans. Back up the database before upgrading or reverting. Existing graph checkpoints and quiz ledger entries are retained; legacy quadratic digest handling remains compatible. No full export/deletion workflow or multi-host upgrade/rollback procedure has been verified.
+Existing software versions that predate the new table do not display chapter plans. Back up the database before upgrading or reverting. Existing graph checkpoints and quiz ledger entries are retained; legacy quadratic digest handling remains compatible. A later [graph deletion workflow](LEARNER_DATA_LIFECYCLE.md) covers learner plans and quiz ledger rows; a full export service and multi-host upgrade/rollback procedure remain unverified.
 
 ## Evidence and limits
 

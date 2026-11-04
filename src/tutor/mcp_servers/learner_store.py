@@ -29,6 +29,8 @@ def build(conn: sqlite3.Connection) -> FastMCP:
     misconceptions = {m["misconception_id"] for m in topic_misconceptions()}
 
     def _exists(learner_id: str) -> None:
+        if store.deletion_requested(conn, learner_id):
+            raise ToolError("GONE: this learning record is unavailable")
         if not conn.execute("SELECT 1 FROM learners WHERE learner_id=?", (learner_id,)).fetchone():
             raise ToolError(f"NOT_FOUND: unknown learner {learner_id}")
 
