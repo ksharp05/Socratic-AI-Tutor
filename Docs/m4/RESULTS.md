@@ -26,6 +26,19 @@ The matched C2 baseline for E3 has mean quiz change 0.361; the C2 seed-1 baselin
 
 The success proxy means a seeded misconception was named, no full leak or contamination occurred, post-quiz score did not decline, and no execution failure/timeout occurred. It is not a count of solved problems. Quiz changes are numbers of correct items under the simulator rules, not measured human learning. Telling intentionally discloses registered practice answers in isolated stores and invokes the simulator copying rule.
 
+## Quiz-answer match and copying limitation
+
+The frozen checker flags post-quiz answer matches in 83/212 study sessions. Some recorded matches occur in generic numeric instructions, even though no post-question text exposure was detected. This is an uncalibrated code flag, not a human-confirmed answer disclosure. The harness adds every flagged post item to the simulator told set, enabling its answer-copying rule. Consequently the recorded quiz changes in every arm can include copying triggered by numeric overlap; they are not clean estimates of learning. Primary outcomes and all flagged sessions remain included unchanged. A context-sensitive checker and fresh, separately frozen validation are required before interpreting learning effects.
+
+| Condition | Match witnesses | Flagged sessions | Post-question text exposures |
+| --- | ---: | ---: | ---: |
+| C0 fixed teaching | 38 | 19/48 | 0 |
+| C1 single controller | 38 | 19/48 | 0 |
+| C2 graph | 37 | 18/48 | 0 |
+| Memory off | 13 | 6/16 | 0 |
+| Telling | 13 | 5/16 | 0 |
+| E3 candidate tranche | 29 | 16/36 | 0 |
+
 ## Paired estimates
 
 Student-cluster bootstrap, 2,000 resamples, seed 0; repeats from a student stay together. Intervals are empirical development uncertainty, with sparse positive cases and shared code. No p-values are used.
@@ -40,9 +53,23 @@ Student-cluster bootstrap, 2,000 resamples, seed 0; repeats from a student stay 
 
 C2 did not improve the recorded success proxy over C0/C1. Diagnosis recall is low in all arms. The E3 tranche has no difference in the success proxy or number of cleared misconceptions. Small quiz differences can reflect the synthetic mastery/guessing/clearing rules and wording-sensitive targeting proxy; these results establish no human learning advantage.
 
+
+## Operations
+
+| Condition | Tool calls / denied | Turn p50 / p95 ms | Failures / timeouts / model errors |
+| --- | ---: | ---: | ---: |
+| C0 fixed teaching | 2615/0 | 986.0/1476.1 | 0/0/0 |
+| C1 single controller | 2628/0 | 996.7/1334.1 | 0/0/0 |
+| C2 graph | 2627/0 | 992.9/1349.7 | 0/0/0 |
+| Memory off | 472/0 | 149.6/1307.1 | 0/0/0 |
+| Telling | 655/0 | 55.8/1166.8 | 0/0/0 |
+| E3 candidate tranche | 1991/0 | 1037.9/1381.2 | 0/0/0 |
+
+Latency is the observed local turn latency for these fixed runs; template voice and no judge requests. It is not a deployment load test.
+
 ![Paired score intervals and code-detected disclosure rates](development_results.png)
 
-## Citation and retrieval evidence
+## Citation snapshots and retrieval
 
 Across the 212 tutoring sessions (excluding the pilot and security overlays), **856/856 citation snapshots** have valid content hashes; all match their chapter and registered source text. These checks establish mechanical integrity, not semantic faithfulness. The 15 assistant-labelled development retrieval queries score Recall@5 **0.9278**, MRR **0.8356**, support-group@5 **1.0000** through the actual 22-card chapter-pinned backend. Human relevance/faithfulness remains unmeasured. All 160 development golden references match the two-route kernel; this is internal consistency with shared dependencies, not independent factual or tutor-answer accuracy.
 

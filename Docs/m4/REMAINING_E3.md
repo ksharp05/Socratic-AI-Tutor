@@ -9,6 +9,8 @@ The original 48-session development E3 candidate design has 36 completed session
 | sim_v2_007 | Quadratic equations | 1, 2, 3 | 3 |
 | sim_v2_013 | Quadratic equations | 1, 2, 3 | 3 |
 
+**Measurement limitation:** the existing frozen harness can trigger post-quiz copying from generic numeric overlaps (83/212 recorded study sessions flagged). Completing these 12 sessions fills the original recorded development design; it does not repair or validate a learning measure. See `ACCEPTANCE_AUDIT.md` and `RESULTS.md`.
+
 Same model (`openai/gpt-4.1-mini`), template voice, code scoring, eight-turn limit, development data and unreviewed candidate playbook. The existing matched C2 sessions predict 36 requests. Proposed extension: **up to 50 requests, hard additional accounting cap USD 0.03**, retries disabled, maximum 240 output tokens. No judge, voice, new model, purchase, push or final-study allowance is included.
 
 Why approval is needed: `Docs/m2/NEXT_SESSION_HANDOFF.md` records the user's explicit at-most-1,000-call allowance. It is exactly exhausted. User intent to continue overnight or resume after the Codex account refresh does not change that separate tutor-provider limit. The intact original ledger hash is `2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de`.

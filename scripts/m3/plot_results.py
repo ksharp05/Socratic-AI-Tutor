@@ -37,10 +37,11 @@ def main():
     bx.set_title('Recorded answer disclosure',loc='left',fontweight='bold',pad=15)
     bx.grid(axis='x',color='#e7e7e7',lw=.8);bx.set_axisbelow(True)
     fig.suptitle('Exploratory development results',x=.03,y=.98,ha='left',fontsize=17,fontweight='bold')
-    fig.text(.03,.025,'Synthetic students and code proxies; no human learning or semantic-safety claim. E3 is 36/48 planned sessions. Intervals: 2,000 clustered resamples, seed 0.',fontsize=9,color='#555')
+    fig.text(.03,.025,'Quiz changes include code-triggered copying; no learning claim. E3 is 36/48 planned sessions. Intervals: 2,000 clustered resamples, seed 0.',fontsize=9,color='#555')
     fig.tight_layout(rect=[.01,.08,.99,.92],w_pad=3)
     for ext in ['png','svg']:
         path=out/f'development_results.{ext}';fig.savefig(path,dpi=170,facecolor='white',bbox_inches='tight',pad_inches=.2)
+        if ext=='svg':path.write_text('\n'.join(line.rstrip() for line in path.read_text(encoding='utf-8').splitlines())+'\n',encoding='utf-8')
         import shutil;shutil.copy2(path,SOURCE/'Docs/m4'/path.name)
     plt.close(fig)
     (out/'FIGURE_METADATA.json').write_text(json.dumps({'matplotlib':matplotlib.__version__,'input':'RESULTS.json','no_new_experiments':True},indent=2)+'\n',encoding='utf-8')

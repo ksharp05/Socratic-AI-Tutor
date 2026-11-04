@@ -56,6 +56,10 @@ def main():
             'provider_cost_coverage':sum(one.get('provider_cost_coverage',0) for one in s),
             'estimated_usd':summary['cost_usd']['total'],'failures':summary['failures'],'timeouts':summary['timeouts'],
             'llm_errors':summary['policy']['llm_errors'],'latency_ms':summary['latency_ms'],
+            'tool_calls':summary['policy']['tool_calls'],'denied_tool_calls':summary['policy']['denied_tool_calls'],
+            'quiz_answer_match_witnesses':summary['leaks']['quiz_contamination'],
+            'quiz_answer_match_sessions':sum(any(t.get('quiz_contamination') for t in one['turns']) for one in s),
+            'post_question_exposures':summary['leaks']['post_question_exposures'],
             'citations':analysis['runs'][arm]['citations'],'seed_spread':analysis['runs'][arm]['seed_spread']})
     selected={s['student'] for s in sessions['e3_after_budget_tranche12']}
     matched_base=[s for s in sessions['c2'] if s['student'] in selected]
@@ -111,7 +115,19 @@ def main():
         item=analysis['paired_comparisons'][key]['quiz_gain'];ci=item['cluster_bootstrap_ci95']
         lines.append(f"| {label} | {item['matched_sessions']} / {item['student_clusters']} | {item['difference']:.4f} | [{ci[0]:.4f}, {ci[1]:.4f}] |")
     lines += ['', 'C2 did not improve the recorded success proxy over C0/C1. Diagnosis recall is low in all arms. The E3 tranche has no difference in the success proxy or number of cleared misconceptions. Small quiz differences can reflect the synthetic mastery/guessing/clearing rules and wording-sensitive targeting proxy; these results establish no human learning advantage.','',
-        '## Citation and retrieval evidence','']
+        '']
+    insertion=lines.index('## Paired estimates')
+    flag_lines=['## Quiz-answer match and copying limitation','',
+        'The frozen checker flags post-quiz answer matches in 83/212 study sessions. Some recorded matches occur in generic numeric instructions, even though no post-question text exposure was detected. This is an uncalibrated code flag, not a human-confirmed answer disclosure. The harness adds every flagged post item to the simulator told set, enabling its answer-copying rule. Consequently the recorded quiz changes in every arm can include copying triggered by numeric overlap; they are not clean estimates of learning. Primary outcomes and all flagged sessions remain included unchanged. A context-sensitive checker and fresh, separately frozen validation are required before interpreting learning effects.','',
+        '| Condition | Match witnesses | Flagged sessions | Post-question text exposures |',
+        '| --- | ---: | ---: | ---: |']
+    for row in run_table:
+        flag_lines.append(f"| {labels[row['condition']]} | {row['quiz_answer_match_witnesses']} | {row['quiz_answer_match_sessions']}/{row['sessions']} | {row['post_question_exposures']} |")
+    lines[insertion:insertion]=flag_lines+['']
+    lines += ['## Operations','', '| Condition | Tool calls / denied | Turn p50 / p95 ms | Failures / timeouts / model errors |', '| --- | ---: | ---: | ---: |']
+    for row in run_table:
+        lines.append(f"| {labels[row['condition']]} | {row['tool_calls']}/{row['denied_tool_calls']} | {row['latency_ms']['p50']}/{row['latency_ms']['p95']} | {row['failures']}/{row['timeouts']}/{row['llm_errors']} |")
+    lines += ['', 'Latency is the observed local turn latency for these fixed runs; template voice and no judge requests. It is not a deployment load test.', '', '## Citation snapshots and retrieval', '']
     snapshots=sum(row['citations'].get('snapshots',0) for row in run_table)
     valid=sum(row['citations'].get('valid_snapshot_hash',0) for row in run_table)
     lines += [f'Across the 212 tutoring sessions (excluding the pilot and security overlays), **{valid}/{snapshots} citation snapshots** have valid content hashes; all match their chapter and registered source text. These checks establish mechanical integrity, not semantic faithfulness. The 15 assistant-labelled development retrieval queries score Recall@5 **0.9278**, MRR **0.8356**, support-group@5 **1.0000** through the actual 22-card chapter-pinned backend. Human relevance/faithfulness remains unmeasured. All 160 development golden references match the two-route kernel; this is internal consistency with shared dependencies, not independent factual or tutor-answer accuracy.','',
@@ -131,7 +147,7 @@ def main():
         '', 'The original full E3 design remains incomplete: 36/48 candidate sessions are measured; four cards / 12 sessions remain. Their matched-C2 request estimate is 36. A ready-to-review remaining configuration and a pending-only approval receipt propose up to 50 additional provider attempts, capped at USD 0.03. No extra allowance or human approval has been inferred, and no further call will be sent without an explicit approved receipt linked to the intact original ledger.',
         '', 'Exact run IDs, hashes, per-seed statistics, paired intervals, operations and scope are in [RESULTS.json](RESULTS.json). Raw transcripts, wallets, data exports and rating CSVs remain private under the canonical workspace’s ignored `Directions/m3_runs/v2/`.']
     if (out/'development_results.png').exists():
-        at=lines.index('## Citation and retrieval evidence')
+        at=lines.index('## Citation snapshots and retrieval')
         lines[at:at]=['![Paired score intervals and code-detected disclosure rates](development_results.png)','']
     (out/'RESULTS.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     for p in out.iterdir():

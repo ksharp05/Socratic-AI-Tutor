@@ -30,6 +30,11 @@
         "p50": 986.0,
         "p95": 1476.1
       },
+      "tool_calls": 2615,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 38,
+      "quiz_answer_match_sessions": 19,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 384,
         "turns_with_source_id": 202,
@@ -102,6 +107,11 @@
         "p50": 996.7,
         "p95": 1334.1
       },
+      "tool_calls": 2628,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 38,
+      "quiz_answer_match_sessions": 19,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 384,
         "turns_with_source_id": 203,
@@ -174,6 +184,11 @@
         "p50": 992.9,
         "p95": 1349.7
       },
+      "tool_calls": 2627,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 37,
+      "quiz_answer_match_sessions": 18,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 384,
         "turns_with_source_id": 204,
@@ -246,6 +261,11 @@
         "p50": 149.6,
         "p95": 1307.1
       },
+      "tool_calls": 472,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 13,
+      "quiz_answer_match_sessions": 6,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 128,
         "turns_with_source_id": 66,
@@ -308,6 +328,11 @@
         "p50": 55.8,
         "p95": 1166.8
       },
+      "tool_calls": 655,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 13,
+      "quiz_answer_match_sessions": 5,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 128,
         "turns_with_source_id": 12,
@@ -370,6 +395,11 @@
         "p50": 1037.9,
         "p95": 1381.2
       },
+      "tool_calls": 1991,
+      "denied_tool_calls": 0,
+      "quiz_answer_match_witnesses": 29,
+      "quiz_answer_match_sessions": 16,
+      "post_question_exposures": 0,
       "citations": {
         "turns": 288,
         "turns_with_source_id": 169,
@@ -1246,7 +1276,7 @@
   "original_M4_full_design_complete": false,
   "analysis_code_sha256": {
     "analysis": "5dd0f42e3805a53392f238310e56003704f5748d7b7899a89696347c4cca684f",
-    "delivery": "9007e6d19aafc7c1772c763360f36648e41adf7c17bbf34ad7d195af935a32fd",
+    "delivery": "919f9f9553e263c4e9ddce3322fb2af36335b11024c83a449b3b13ef467da103",
     "review_packet": "ba6a2b4285d7c4666f5af81b47560e9f700e7292458a1d1eb102f78cd1f8c54a",
     "calibration": "b102eacd938627a1b1407614741f4af12b16ee544676a4fa0d62019039ac2cd4"
   }

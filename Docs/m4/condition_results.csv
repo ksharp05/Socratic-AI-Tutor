@@ -1,7 +1,7 @@
-condition,run_id,sessions,turns,model_requests,success_proxy,diagnosis_recall,mean_quiz_gain,full_leak_turns,partial_leak_turns,practice_submitted,practice_checked_correct,unique_registered_practice_shown,unique_prequiz_items,unique_postquiz_items,provider_reported_usd,provider_cost_coverage,estimated_usd,failures,timeouts,llm_errors
-c0,m3_live_c0-20261105-035255-ce6b6b08a470,48,384,194,2,0.042,0.375,0,0,144,32,11,10,10,0.0545376,194,0.0545,0,0,0
-c1,m3_live_c1-20261105-035710-eabed6949ac0,48,384,194,2,0.042,0.375,0,0,144,32,11,10,10,0.0542736,194,0.0543,0,0,0
-c2,m3_live_c2-20261105-040116-9c72acbd3556,48,384,194,2,0.042,0.354,0,0,144,32,11,10,10,0.0542768,194,0.0543,0,0,0
-memory_off,m3_live_memory_off-20261105-040520-222f57a760ea,16,128,63,1,0.042,0.375,0,0,48,12,10,10,10,0.0175956,63,0.0176,0,0,0
-direct_answers,m3_live_direct_answers-20261105-040638-d5b43f14862c,16,128,13,0,0.042,0.375,38,4,48,24,11,10,10,0.0035124,13,0.0035,0,0,0
-e3_after_budget_tranche12,m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485,36,288,158,2,0.056,0.389,0,0,108,21,10,10,10,0.058205599999999996,158,0.0582,0,0,0
+condition,run_id,sessions,turns,model_requests,success_proxy,diagnosis_recall,mean_quiz_gain,full_leak_turns,partial_leak_turns,practice_submitted,practice_checked_correct,unique_registered_practice_shown,unique_prequiz_items,unique_postquiz_items,provider_reported_usd,provider_cost_coverage,estimated_usd,failures,timeouts,llm_errors,tool_calls,denied_tool_calls,quiz_answer_match_witnesses,quiz_answer_match_sessions,post_question_exposures
+c0,m3_live_c0-20261105-035255-ce6b6b08a470,48,384,194,2,0.042,0.375,0,0,144,32,11,10,10,0.0545376,194,0.0545,0,0,0,2615,0,38,19,0
+c1,m3_live_c1-20261105-035710-eabed6949ac0,48,384,194,2,0.042,0.375,0,0,144,32,11,10,10,0.0542736,194,0.0543,0,0,0,2628,0,38,19,0
+c2,m3_live_c2-20261105-040116-9c72acbd3556,48,384,194,2,0.042,0.354,0,0,144,32,11,10,10,0.0542768,194,0.0543,0,0,0,2627,0,37,18,0
+memory_off,m3_live_memory_off-20261105-040520-222f57a760ea,16,128,63,1,0.042,0.375,0,0,48,12,10,10,10,0.0175956,63,0.0176,0,0,0,472,0,13,6,0
+direct_answers,m3_live_direct_answers-20261105-040638-d5b43f14862c,16,128,13,0,0.042,0.375,38,4,48,24,11,10,10,0.0035124,13,0.0035,0,0,0,655,0,13,5,0
+e3_after_budget_tranche12,m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485,36,288,158,2,0.056,0.389,0,0,108,21,10,10,10,0.058205599999999996,158,0.0582,0,0,0,1991,0,29,16,0
