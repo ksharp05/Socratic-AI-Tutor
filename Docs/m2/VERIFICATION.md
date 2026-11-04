@@ -1,5 +1,7 @@
 # Milestone 2 verification snapshot
 
+Latest consolidated assessment: [4 November committed-build status](STATUS.md) and [projected run evidence](ACCEPTANCE_EVIDENCE.json). Earlier checkpoints below are retained as history.
+
 **Date:** 4 November 2026. **Code checkpoint:** `6d78fef866dfa3dbd5e65f3a60b94c62fe56db64`. **Decision:** Milestone 2 remains incomplete. These results are development evidence, not human review or an independent final evaluation.
 
 | Check | Observed result | Limit |

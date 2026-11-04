@@ -1,5 +1,7 @@
 # Milestone 2 requirement and evidence matrix
 
+Latest consolidated assessment: [4 November committed-build status](STATUS.md) and [projected run evidence](ACCEPTANCE_EVIDENCE.json). Earlier checkpoints below are retained as history.
+
 Baseline: commit `b3f0d6d4ee958e4498c16a0aaeca84b141ffdfe0`; The recorded development evidence was collected from an uncommitted working tree; rerun release gates against the exact committed build. Statuses are evidence-based, not claims of final acceptance. `PARTIAL` means some supporting functionality exists but the stated integrated exit is not demonstrated.
 
 | ID | Exit requirement | Status | Evidence / missing work |
