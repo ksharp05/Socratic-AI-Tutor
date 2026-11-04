@@ -200,3 +200,7 @@ The user explicitly approved the two-request live walkthrough. Run `signature-wa
 ## Teacher trace citations by turn - 4 November
 
 Fixed the gap found in the live walkthrough: the teacher trace now lists citations for every cited tutor turn (`cited_turns`), alongside the unchanged latest-message `citation_refs`, and the Session trace page shows them in a table. Turn text stays withheld. Two new API tests and an extended UI test pass; both project copies passed **429 offline tests**. An offline browser check of a copy of the live run's state showed the hint's `normalized:qe04` citation at turn 3. No provider call was made. [Details](VERIFICATION.md#teacher-trace-citations-by-turn---4-november).
+
+## Docker acceptance and development test pack - 5 November
+
+After the restart and a Docker reinstall, a fresh clone of `79b57c2` built and ran healthy under Compose (66 s), served the teacher/learner flow and kept its state across `down`/`up`. [Evidence](FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). A new offline runner played the user's 180-case development pack against the real API: 162 checks passed, 16 failed, 26 cannot be scored automatically, and no provider calls were made. [Findings](TESTPACK_RESULTS.md).

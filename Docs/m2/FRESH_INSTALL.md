@@ -32,3 +32,11 @@ Local ignored evidence: `Directions/git_delivery/m2_clean_install_current.json`,
 4. Follow [integrated Compose preparation](INTEGRATED_COMPOSE.md) and the [run guide](../RUN_GUIDE.md), supplying the authorised index and separately trusted expected hash. Verify image build, service readiness, authenticated UI and restart/persistent-volume behavior with retained logs.
 
 Docker Desktop was stopped at verification. Engine startup, image builds, container health, integrated overlay execution and volume recovery remain unverified until after the restart. These installation results do not change content-review or live-model acceptance gates.
+
+## Compose acceptance after restart - 5 November 2026
+
+The first Docker Desktop start failed: the per-user install had not created the `SOFTWARE\Docker Inc.\Docker Desktop` registry key the app reads. The user reran the hash- and signature-verified installer; the app then started and the engine reported server 29.9.2 on the `docker-desktop` WSL 2 distribution.
+
+From a fresh clone of the pushed `milestone-2` (`79b57c2`), with no `.env` and the stub model, `docker compose -p tutor-accept up --build --wait` built both images and reported API and UI healthy in 66 seconds. `/health/ready` returned `ready` (graph ready, beta not configured). Through the containers, a teacher approved a `qe04` practice set, and a learner got a question, a cited hint and a code-graded wrong answer. The teacher trace returned 28 events with one cited turn, and the learner was refused the trace (403). After `docker compose down` and `up --wait` (12 seconds), readiness was restored, the conversation's 6 messages and the published question were still there, and the session continued with its active item. The `tutor-var` volume held the state.
+
+Not yet verified: the integrated overlay with a mounted index (it needs an authorized index and a separately trusted hash), the optional Prometheus/Grafana profile, a second machine and a live model inside the container. Docker's actual data location was not confirmed against the requested `D:\DockerData\wsl`.

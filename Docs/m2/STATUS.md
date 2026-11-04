@@ -31,11 +31,15 @@ The shared checkout was clean at `b11c2bb` during all three comparison/security 
 
 The unchanged two-card simulator does not produce angle/side-definition reasoning. Its 0/6 result was not improved by tuning the fixture to the new parser, and the parser's passing examples must not be substituted for evaluation of teaching effectiveness. Historical results and failures are retained in [verification](VERIFICATION.md) and the [work log](WORK_LOG.md).
 
+## Development test pack - 5 November
+
+The user-supplied 180-case synthetic pack ran offline through the real API: 162 automatic checks passed, 16 failed and 26 cannot be scored automatically. The main findings are repetitive generic replies, spelled-out trigonometry words that retrieval cannot match, chapter plans that never advance, and a stuck alert that cannot fire for a new learner. [Results](TESTPACK_RESULTS.md).
+
 ## Remaining acceptance work
 
 | Requirement | Next evidence needed | Dependency |
 |---|---|---|
-| M2-01: clean Compose startup | Build/start from a fresh clone, supply an authorized hash-pinned index, verify services, readiness and restart behavior; retain logs. | Docker Desktop/WSL are installed; Windows restart is required. CLI/Compose syntax and fresh Python dependency installation passed. Engine startup, integrated image build and container behavior remain unverified. [Setup evidence](FRESH_INSTALL.md). |
+| M2-01: clean Compose startup | The integrated overlay with an authorized index; a second machine. | A fresh clone built and started healthy under Docker on 5 Nov, with graph readiness, the teacher/learner flow and restart persistence verified. [Compose evidence](FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). |
 | M2-02: live cited hint | Show the live cited hint and trace in the browser on the accepted (Compose) build. Report buffered SSE honestly. | The approved API walkthrough produced an accepted, cited live hint with a model/tool trace; one of two generations fell back to deterministic feedback. Browser/Compose display and educator review remain. Each further live call needs fresh approval. [Live walkthrough](SIGNATURE_API_PATH.md#live-result--4-november-2026). |
 | M2-03: two learners/replanning | Capture the two-history and three-topic journey on the accepted integrated live build, including quiz result, plan reason and recovery. | Offline synthetic API/browser evidence exists; the live build remains unverified. External alert delivery and acknowledgement are not proven by a local alert event. |
 | M2-04: teacher control | A real educator reviews the actual content and exercises edit, invalidation, reapproval and publication on the accepted build. | Synthetic teacher workflow tests establish mechanics, not human content review. |
