@@ -16,7 +16,8 @@ _COMPOUND = re.compile(r"[-+−]?\s*\d+(?:\.\d+)?\s*[-+−±]\s*\d*(?:\.\d+)?\s*
 _SQRT = re.compile(r"[-+−]?\s*\d*(?:\.\d+)?\s*\*?\s*(?:√|sqrt)\s*\(?\s*\d+\s*\)?(?:\s*/\s*\d+)?")
 _NUMBER = re.compile(r"(?<![\w.])[-−]?\d+(?:\.\d+)?(?:\s*/\s*\d+)?(?!\.?\d)(?![A-Za-z_])")
 _EXAMPLE = re.compile(r"(?:\blike|\be\.g\.|\bfor example|\bsuch as|\bformat)\s*:?\s*'[^']*'(?:\s*\((?:or\s+)?'[^']*'\))?", re.I)
-_ASSERTS = re.compile(r"(?:=|\b(?:is|are|equals?|gives?|be)\b)\s*$", re.I)  # "x = 5", "the root is 5"
+_ASSERTS = re.compile(r"(?:=|\b(?:is|are|equals?|gives?|be)\b)\s*$", re.I)
+_POLYNOMIAL_EQUATION = re.compile(r"(?i)(?:\bx\s*(?:\^|\*\*)\s*2|x²)[^=\n]{0,160}=\s*$")  # "x = 5", "the root is 5"
 _EMPTY = re.compile(r"\bno\s+(?:real\s+)?(?:roots?|solutions?|values?|such\s+terms?|terms?)\b|\bnot?\s+(?:have|has)\s+(?:any\s+)?real\s+roots?\b", re.I)
 _UNDEFINED = re.compile(r"\b(?:undefined|not\s+defined|does\s+not\s+exist|doesn't\s+exist)\b", re.I)
 _VERDICT = re.compile(r"\b(?:(?:claim|statement|identity|it|this|that)\s+(?:is|isn't|is\s+not)\s+(?:true|false|correct|incorrect|valid|invalid|right|wrong)"
@@ -53,6 +54,9 @@ def _candidates(text: str) -> list[tuple[str, bool]]:
         before = text[max(0, start - 20):start]
         listed = previous_asserted and re.fullmatch(r"\s*(?:,|and|or|,\s*and)\s*", text[previous_end:start], re.I)
         asserted = bool(_ASSERTS.search(before) or listed)
+        # The RHS of a quadratic equation is a given, not the assertion x = 0.
+        if _POLYNOMIAL_EQUATION.search(text[max(0, start - 200):start]):
+            asserted = False
         found.append((value, asserted))
         previous_asserted, previous_end = asserted, end
     return found

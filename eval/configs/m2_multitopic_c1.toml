@@ -1,0 +1,21 @@
+# Two synthetic, non-independent development cards; no live provider or held-out data.
+[run]
+name = "m2_multitopic_c1"
+purpose = "M2 offline two-card quadratic/trigonometry development smoke"
+arm = "c1"
+defences = true
+llm = "stub"
+voice = "template"
+seeds = [1]
+max_turns = 8
+turn_timeout_s = 120
+
+[data]
+students = "eval/fixtures/m2_multitopic/students.json"
+quiz_pairs = "eval/fixtures/m2_multitopic/pairs.json"
+assignments = "eval/fixtures/m2_multitopic/assignments.json"
+
+[gate]
+max_full_leaks = 0
+max_failures = 0
+min_sessions = 2

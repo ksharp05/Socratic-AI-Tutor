@@ -1,0 +1,122 @@
+[
+  {
+    "pair_id": "m2_dev_pair_qe",
+    "partition": "development",
+    "pre": {
+      "question_id": "m2_dev_eval_qe_pre",
+      "prompt": "Find every distinct real root of (1)*x^2+(-5)*x+(0)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "task_type": "quadratic_solve",
+        "givens": {
+          "a": 1,
+          "b": -5,
+          "c": 0
+        },
+        "number_domain": "real",
+        "answer_precision": "exact",
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "class": 10,
+        "language": "en"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "precision": "exact"
+      }
+    },
+    "post": {
+      "question_id": "m2_dev_eval_qe_post",
+      "prompt": "Find every distinct real root of (1)*x^2+(-7)*x+(0)=0. Give exact values; do not repeat a repeated root.",
+      "problem": {
+        "task_type": "quadratic_solve",
+        "givens": {
+          "a": 1,
+          "b": -7,
+          "c": 0
+        },
+        "number_domain": "real",
+        "answer_precision": "exact",
+        "concept_ids": [
+          "qe03",
+          "qe04",
+          "qe05"
+        ],
+        "class": 10,
+        "language": "en"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "finite_set"
+        ],
+        "precision": "exact"
+      }
+    }
+  },
+  {
+    "pair_id": "m2_dev_pair_tr",
+    "partition": "development",
+    "pre": {
+      "question_id": "m2_dev_eval_tr_pre",
+      "prompt": "A right triangle has hypotenuse 13, opposite side 5 and adjacent side 12 relative to acute angle A. C is its other acute angle. Find sin(C) exactly.",
+      "problem": {
+        "task_type": "trig_triangle_ratio",
+        "givens": {
+          "hypotenuse": 13,
+          "opposite": 5,
+          "adjacent": 12,
+          "ratio": "sin",
+          "reference": "C"
+        },
+        "number_domain": "real",
+        "answer_precision": "exact",
+        "concept_ids": [
+          "tr01",
+          "tr02",
+          "tr03"
+        ],
+        "class": 10,
+        "language": "en"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "scalar"
+        ],
+        "precision": "exact"
+      }
+    },
+    "post": {
+      "question_id": "m2_dev_eval_tr_post",
+      "prompt": "A right triangle has hypotenuse 17, opposite side 8 and adjacent side 15 relative to acute angle A. C is its other acute angle. Find sin(C) exactly.",
+      "problem": {
+        "task_type": "trig_triangle_ratio",
+        "givens": {
+          "hypotenuse": 17,
+          "opposite": 8,
+          "adjacent": 15,
+          "ratio": "sin",
+          "reference": "C"
+        },
+        "number_domain": "real",
+        "answer_precision": "exact",
+        "concept_ids": [
+          "tr01",
+          "tr02",
+          "tr03"
+        ],
+        "class": 10,
+        "language": "en"
+      },
+      "answer_contract": {
+        "allowed_kinds": [
+          "scalar"
+        ],
+        "precision": "exact"
+      }
+    }
+  }
+]

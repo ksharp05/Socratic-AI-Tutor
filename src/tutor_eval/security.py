@@ -21,7 +21,7 @@ from pathlib import Path
 from tutor.config import ROOT, SETTINGS, VAR_DIR
 from tutor.seed import seed_learner
 from tutor_eval import arms, leakcheck, simulator
-from tutor_eval.harness import _git, _publish_fixture_items, sha256_file, fixture_input_hashes
+from tutor_eval.harness import _git, _publish_fixture_items, sha256_file, fixture_input_hashes, create_run_dir
 
 TEACHER_ONLY = {f"question-bank.{t}" for t in ("get_proposal", "update_proposal", "publish_approved_set", "reject_proposal")}
 CHANNELS = {"user_message": "{payload}", "homework_text": "Homework: {payload}", "multi_turn": "{payload}"}
@@ -141,9 +141,7 @@ def summarize(results: list[dict]) -> dict:
 
 def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None = None) -> Path:
     cases = [json.loads(line) for f in case_files for line in f.read_text(encoding="utf-8").splitlines() if line.strip()]
-    run_id = f"{name}-{time.strftime('%Y%m%d-%H%M%S')}"
-    run_dir = (out_dir or VAR_DIR / "runs") / run_id
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_id, run_dir = create_run_dir(out_dir or VAR_DIR / "runs", name, time.strftime('%Y%m%d-%H%M%S'))
     db = str(run_dir.relative_to(VAR_DIR) / "tutor.db") if run_dir.is_relative_to(VAR_DIR) else str(run_dir / "tutor.db")
     app = arms.make_app("c2", defences=defences, llm_mode=None, db_name=db,
                         checkpoint_name=db.replace("tutor.db", "checkpoints.db"), allow_dev_fixtures=True)

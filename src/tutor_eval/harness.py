@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 import tomllib
+import uuid
 from pathlib import Path
 
 from tutor import store
@@ -30,6 +31,22 @@ PRICES_DEFAULT = {"openai/gpt-4.1-mini": (0.40, 1.60)}  # USD per million tokens
 
 def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def create_run_dir(base: Path, name: str, started: str) -> tuple[str, Path]:
+    """Create a unique run directory without overwriting earlier evidence."""
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", name):
+        raise ValueError("Invalid evaluation run name")
+    base.mkdir(parents=True, exist_ok=True)
+    for _ in range(5):
+        run_id = f"{name}-{started}-{uuid.uuid4().hex[:12]}"
+        directory = base / run_id
+        try:
+            directory.mkdir()
+            return run_id, directory
+        except FileExistsError:
+            continue
+    raise FileExistsError("Unable to allocate a unique evaluation run directory")
 
 
 def fixture_input_hashes() -> dict[str, str]:
@@ -86,6 +103,42 @@ def _norm(text: str) -> str:
     return re.sub(r"[^a-z0-9 ]", "", text.lower())
 
 
+def _cross_problem_context(reply: str, active_id: str | None, practice: dict, original_prompt: str) -> str:
+    """Include newly introduced question givens while retaining all reply text for leak checks."""
+    if active_id and reply.startswith("Practice") and active_id in practice:
+        prompt = practice[active_id].get("prompt")
+        if isinstance(prompt, str) and prompt in reply:
+            return original_prompt + "\n" + prompt
+    return original_prompt
+
+
+def _same_problem(first: dict, second: dict) -> bool:
+    """Match exact problem givens, not answers shared by unrelated questions."""
+    return (isinstance(first.get("task_type"), str) and isinstance(first.get("givens"), dict)
+            and first.get("task_type") == second.get("task_type")
+            and first.get("givens") == second.get("givens")
+            and first.get("number_domain") == second.get("number_domain"))
+
+
+def _post_produced(post: dict, problems: dict) -> list[dict]:
+    return [answer for qid, p in problems.items()
+            if qid == post.get("question_id") or _same_problem(p.get("problem") or {}, post.get("problem") or {})
+            for answer in p.get("produced", [])]
+
+
+def _post_question_exposure(reply: str, active_id: str | None, practice: dict, post_items: list[dict]) -> list[str]:
+    """Track exposure of a post-quiz problem separately from disclosure of its answer."""
+    if not active_id or not reply.startswith("Practice") or active_id not in practice:
+        return []
+    item = practice[active_id]
+    prompt = item.get("prompt")
+    if not isinstance(prompt, str) or prompt not in reply:
+        return []
+    problem = item.get("problem") or {}
+    return [post["question_id"] for post in post_items
+            if post.get("question_id") == active_id or _same_problem(problem, post.get("problem") or {})]
+
+
 def _targeted(reply: str, misconception: dict) -> bool:
     """Code proxy for rule 1(b) until the judge's "targets m" label is calibrated: the reply uses the
     misconception's own probe or a step of its hint ladder."""
@@ -107,6 +160,17 @@ def _quiz(student: simulator.Student, items: list[dict]) -> list[dict]:
 def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id: str, catalogue: dict,
                 practice: dict, voice: simulator.Voice | None = None) -> dict:
     voice = voice or simulator.Voice()
+    chapter = card.get("chapter", "quadratic_equations")
+    from tutor.topic_sources import CHAPTERS, concepts
+    if chapter not in CHAPTERS:
+        raise ValueError("Unknown student-card chapter")
+    if card.get("chapter"):
+        concept_chapters = {c["concept_id"]: c["chapter"] for c in concepts()}
+        for pair in pairs:
+            for item in (pair["pre"], pair["post"]):
+                ids = item["problem"]["concept_ids"]
+                if not ids or any(concept_chapters.get(cid) != chapter for cid in ids):
+                    raise ValueError("Assigned quiz item does not belong to the card's chapter")
     student = simulator.Student(card, catalogue, seed)
     learner_id = f"sim-{card['student_id']}-s{seed}"
     session_id = f"{run_id}-{card['student_id']}-s{seed}"
@@ -131,10 +195,12 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
 
     turns, named, targeted, failures, timeouts = [], set(), set(), 0, 0
     current, probe_replied, last_was_wrong_answer = None, False, False
+    pending = None
+    practice_summary = {"submitted": 0, "checked_correct": 0, "not_checked": 0, "grading_disagreements": 0}
     for index in range(cfg["run"]["max_turns"]):
         started = time.perf_counter()
         try:
-            result = app.turn(session_id, learner_id, message)
+            result = app.turn(session_id, learner_id, message, chapter=chapter)
             error = None
         except Exception as exc:  # counted, never dropped
             result, error = {"reply": "", "route": "error"}, f"{type(exc).__name__}: {exc}"[:300]
@@ -143,6 +209,36 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
         if ms > cfg["run"]["turn_timeout_s"] * 1000:
             timeouts += 1
         reply = result.get("reply", "")
+        graded_attempt = None
+        if pending is not None:
+            practice_summary["submitted"] += 1
+            question = problems[pending["question_id"]]
+            question["produced"].append(pending["typed"])
+            grade, grade_error = None, None
+            if not error and result.get("route") == "grade":
+                try:
+                    snapshot = app.graph.get_state({"configurable": {"thread_id": session_id}})
+                    candidate = (snapshot.values or {}).get("grade")
+                    if candidate and candidate.get("question_id") == pending["question_id"]:
+                        grade = candidate
+                except Exception as exc:
+                    grade_error = f"{type(exc).__name__}: {exc}"[:300]
+                    failures += 1
+            graded_attempt = {"question_id": pending["question_id"],
+                              "simulator_correct": pending["correct"],
+                              "tutor_status": grade.get("status") if grade else "not_checked",
+                              "tutor_correct": grade.get("correct") if grade else None, "error": grade_error}
+            if not grade or not grade.get("scorable"):
+                practice_summary["not_checked"] += 1
+            elif pending["correct"] is not None and bool(grade.get("correct")) != pending["correct"]:
+                practice_summary["grading_disagreements"] += 1
+                failures += 1
+            elif grade.get("correct") and pending["correct"] is True:
+                question["solved"] = True
+                practice_summary["checked_correct"] += 1
+                if question["hints"] <= 1 and pending["rule"] != "copied_from_tutor":
+                    student.learn(question["problem"]["concept_ids"])
+            pending = None
         diag = (result.get("diagnosis") or {}).get("misconception_id")
         if diag:
             named.add(diag)
@@ -160,22 +256,29 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
         for pid, p in problems.items():  # TP-M4: the student's own problem counts too
             if p["solved"] or (pid == qid and reply.startswith("Practice")):
                 continue
-            level = leakcheck.check(reply, p["expected"], prompt=p["prompt"], produced=p["produced"])
+            context = _cross_problem_context(reply, qid, practice, p["prompt"]) if pid != qid else p["prompt"]
+            level = leakcheck.check(reply, p["expected"], prompt=context, produced=p["produced"])
             if level["level"] != leakcheck.NONE:
                 leaks.append({"question_id": pid, **level})
                 if level["level"] == leakcheck.FULL:
                     student.told.add(pid)  # rule 3
-        said_so_far = [a for p in problems.values() for a in p["produced"]]
         contamination = [i["question_id"] for i in post_items
                          if leakcheck.check(reply, i.get("answer") or simulator.correct_answer(i["problem"]),
-                                            prompt=i["prompt"], produced=said_so_far)["level"] == leakcheck.FULL]
+                                            prompt=_cross_problem_context(reply, qid, practice, i["prompt"]),
+                                            produced=_post_produced(i, problems))["level"] == leakcheck.FULL]
         student.told.update(contamination)  # rule 3 applies to a post-quiz item the tutor gave away
+        post_exposure = _post_question_exposure(reply, qid, practice, post_items)
         about = problems.get(current) or next((p for p in problems.values() if p.get("own")), None)
         turns.append({"index": index, "student": message, "tutor": reply, "route": result.get("route"),
                       "problem": {"prompt": about["prompt"], "answer": simulator.render(about["expected"])} if about else None,
                       "diagnosis": diag, "active_item": qid, "tools": result.get("tools", []),
                       "output_guard": (result.get("checks") or {}).get("ok"), "latency_ms": round(ms, 1),
-                      "leaks": leaks, "quiz_contamination": contamination, "error": error})
+                      "leaks": leaks, "quiz_contamination": contamination, "post_question_exposure": post_exposure,
+                      "graded_attempt": graded_attempt,
+                      "new_question_givens_in_cross_problem_context": bool(
+                          qid and reply.startswith("Practice") and qid in practice
+                          and isinstance(practice[qid].get("prompt"), str) and practice[qid]["prompt"] in reply),
+                      "error": error})
         if error:
             break
 
@@ -190,12 +293,8 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
             else:
                 given = student.answer(p["problem"], current)
                 p["attempts"] += 1
-                p["produced"].append(given["typed"])
                 ok = simulator.is_correct(given["typed"], p["expected"])
-                if ok:
-                    p["solved"] = True
-                    if p["hints"] <= 1 and given["rule"] != "copied_from_tutor":
-                        student.learn(p["problem"]["concept_ids"])  # rule 2
+                pending = {"question_id": current, "typed": given["typed"], "correct": ok, "rule": given["rule"]}
                 message, last_was_wrong_answer = given["text"], not ok
         elif result.get("route") == "diagnose" and not probe_replied:
             message, probe_replied = voice.say(student.belief(), student, keep=[], last_tutor=reply), True
@@ -211,7 +310,8 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
             d = json.loads(r["detail"])
             tokens_in += d.get("tokens_in") or 0
             tokens_out += d.get("tokens_out") or 0
-    return {"student": card["student_id"], "seed": seed, "session": session_id, "seeded": student.seeded,
+    return {"student": card["student_id"], "chapter": chapter, "seed": seed, "session": session_id, "seeded": student.seeded,
+            "practice_summary": practice_summary,
             "named": sorted(named), "targeted": sorted(targeted), "cleared": cleared, "pre": pre, "post": post,
             "turns": turns, "failures": failures, "timeouts": timeouts,
             "tool_calls": sum(1 for r in rows if r["kind"] == "tool"),
@@ -223,10 +323,12 @@ def run_session(app, card: dict, pairs: list[dict], cfg: dict, seed: int, run_id
 
 def _git() -> dict:
     try:
-        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", "src", "config", "eval"], cwd=ROOT,
-                                    capture_output=True, text=True).stdout.strip())
-        return {"commit": head or None, "uncommitted_changes": dirty}
+        head_proc = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
+        value = head_proc.stdout.strip()
+        head = value if head_proc.returncode == 0 and re.fullmatch(r"[0-9a-f]{40,64}", value) else None
+        status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True)
+        dirty = bool(status.stdout.strip()) if status.returncode == 0 else None
+        return {"commit": head, "uncommitted_changes": dirty}
     except OSError:
         return {"commit": None, "uncommitted_changes": None}
 
@@ -246,9 +348,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
             raise SystemExit("This config reads held-out data. That needs --heldout and a frozen eval/PREREGISTRATION.md.")
 
     started = time.strftime("%Y%m%d-%H%M%S")
-    run_id = f"{cfg['run']['name']}-{started}"
-    run_dir = (out_dir or VAR_DIR / "runs") / run_id
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_id, run_dir = create_run_dir(out_dir or VAR_DIR / "runs", cfg['run']['name'], started)
     rel = run_dir.relative_to(VAR_DIR) if run_dir.is_relative_to(VAR_DIR) else None
     db_name = str(rel / "tutor.db") if rel else str(run_dir / "tutor.db")
     retrieval = dict(SETTINGS.raw.get("retrieval", {}))
@@ -275,8 +375,13 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
             if (budget.get("max_usd") is not None and spent_usd >= budget["max_usd"]) or                (budget.get("max_llm_calls") is not None and calls >= budget["max_llm_calls"]):
                 skipped.append(f"{card['student_id']} seed {seed}")
                 continue
-            pair_ids = data["assignments"].get(card["student_id"]) or list(data["pairs"])
-            pairs = [data["pairs"][p] for p in pair_ids if p in data["pairs"]]
+            if cfg["data"].get("assignments"):
+                pair_ids = data["assignments"].get(card["student_id"])
+                if not pair_ids or any(pid not in data["pairs"] for pid in pair_ids):
+                    raise ValueError("Missing or invalid student-pair assignment")
+            else:
+                pair_ids = list(data["pairs"])
+            pairs = [data["pairs"][p] for p in pair_ids]
             sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
             s = sessions[-1]
             spent_usd += (s["tokens_in"] * in_p + s["tokens_out"] * out_p) / 1e6
@@ -298,7 +403,10 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",
                          "tutor_eval/simulator.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py",
-                         "tutor_eval/arms.py", "tutor_eval/single_agent.py")},
+                         "tutor_eval/metrics.py", "tutor_eval/tables.py", "tutor_eval/arms.py", "tutor_eval/single_agent.py")},
+        "math_engine_sha256": {m.__name__: sha256_file(Path(m.__file__)) for m in (simulator.mk, simulator.kt)},
+        "metric_definitions": {"task_success": "diagnosis hit, no full leak, and simulated post score at least pre score; not a count of solved problems",
+                               "checked_practice": "submitted registered practice answers checked by the tutor; not a human learning measure"},
         "simulator": {"slip": simulator.SLIP, "guess": simulator.GUESS, "learn": simulator.LEARN,
                       "p_clear": simulator.P_CLEAR, "voice": voice.kind, "voice_model": voice.model if voice.client else None,
                       "voice_counts": voice.counts, "targeting": "code_proxy",

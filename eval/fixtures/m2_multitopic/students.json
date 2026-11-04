@@ -1,0 +1,58 @@
+[
+  {
+    "student_id": "m2_dev_qe_division",
+    "chapter": "quadratic_equations",
+    "partition": "development",
+    "synthetic": true,
+    "independently_authored": false,
+    "review_status": "pending_independent_owner_review",
+    "visibility": "simulator_only_never_tutor_or_learner_store",
+    "hidden_card": {
+      "seeded_misconception_ids": [
+        "qe_m04"
+      ],
+      "target_concept_ids": [
+        "qe04"
+      ],
+      "true_mastery_by_concept": {
+        "qe03": 0.3,
+        "qe04": 0.2,
+        "qe05": 0.3
+      },
+      "persona": {
+        "communication_style": "brief",
+        "confidence_expression": "hesitant",
+        "response_pace": "normal",
+        "provenance": "fictional_simulator_configuration_not_observed_student_traits"
+      }
+    }
+  },
+  {
+    "student_id": "m2_dev_tr_sides",
+    "chapter": "trigonometry",
+    "partition": "development",
+    "synthetic": true,
+    "independently_authored": false,
+    "review_status": "pending_independent_owner_review",
+    "visibility": "simulator_only_never_tutor_or_learner_store",
+    "hidden_card": {
+      "seeded_misconception_ids": [
+        "tr_m01"
+      ],
+      "target_concept_ids": [
+        "tr01"
+      ],
+      "true_mastery_by_concept": {
+        "tr01": 0.2,
+        "tr02": 0.3,
+        "tr03": 0.3
+      },
+      "persona": {
+        "communication_style": "brief",
+        "confidence_expression": "hesitant",
+        "response_pace": "normal",
+        "provenance": "fictional_simulator_configuration_not_observed_student_traits"
+      }
+    }
+  }
+]

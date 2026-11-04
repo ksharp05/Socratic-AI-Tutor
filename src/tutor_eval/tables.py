@@ -33,7 +33,8 @@ def run_report(manifest: dict, sessions: list[dict]) -> str:
         f"- **Config:** `{manifest['config']['path']}` sha256 `{manifest['config']['sha256'][:12]}`; app config "
         f"`{manifest['app_config_sha256'][:12]}`; commit `{(manifest['git']['commit'] or 'unknown')[:10]}`"
         + (" with uncommitted changes" if manifest["git"]["uncommitted_changes"] else ""),
-        f"- **Gate:** {manifest['gate']['status']}" + (f" ({'; '.join(manifest['gate']['failed'])})" if manifest["gate"]["failed"] else ""),
+        f"- **Gate:** {manifest['gate']['status']}" + (f" ({'; '.join(manifest['gate']['failed'])})" if manifest["gate"]["failed"] else "")
+        + "; configured engineering thresholds only, not a teaching-quality or release decision",
         "",
         "## Summary",
         "",
@@ -45,9 +46,11 @@ def run_report(manifest: dict, sessions: list[dict]) -> str:
         f"| Sessions with the seeded misconception named | {s['diagnosis']['sessions_with_hit']} of {s['sessions']} |",
         f"| Full / partial leak turns | {s['leaks']['full_turns']} / {s['leaks']['partial_turns']} |",
         f"| Post-quiz answers given away | {s['leaks']['quiz_contamination']} |",
-        f"| Quiz pre → post (mean of {s['quiz']['items_per_quiz']} items) | {_fmt(s['quiz']['mean_pre'])} → {_fmt(s['quiz']['mean_post'])} |",
-        f"| Mean gain, 95% CI | {_fmt(s['quiz']['mean_gain'])}, {_fmt(s['quiz']['gain_ci95'])} |",
-        f"| Task success | {s['task_success']} of {s['sessions']} |",
+        f"| Post-quiz question exposures (not answer leaks) | {s['leaks'].get('post_question_exposures', 0)} |",
+        f"| Simulated quiz pre → post (mean of {s['quiz']['items_per_quiz']} items) | {_fmt(s['quiz']['mean_pre'])} → {_fmt(s['quiz']['mean_post'])} |",
+        f"| Simulated change, bootstrap interval | {_fmt(s['quiz']['mean_gain'])}, {_fmt(s['quiz']['gain_ci95'])} |",
+        f"| Diagnosis/quiz proxy (not problems solved) | {s['task_success']} of {s['sessions']} |",
+        f"| Submitted / checked-correct practice attempts | {s.get('checked_practice', {}).get('submitted', 0)} / {s.get('checked_practice', {}).get('checked_correct', 0)} |",
         f"| Tool calls / denied | {s['policy']['tool_calls']} / {s['policy']['denied_tool_calls']} |",
         f"| Latency p50 / p95 (ms) | {_fmt(s['latency_ms']['p50'])} / {_fmt(s['latency_ms']['p95'])} |",
         f"| Cost per session (USD), tokens in / out | {_fmt(s['cost_usd']['per_session'])}, {s['cost_usd']['tokens_in']} / {s['cost_usd']['tokens_out']} |",
@@ -76,7 +79,7 @@ ROWS = [("Sessions", lambda s: s["sessions"]), ("Failures + timeouts", lambda s:
         ("Full leak turns", lambda s: s["leaks"]["full_turns"]), ("Partial leak turns", lambda s: s["leaks"]["partial_turns"]),
         ("Mean gain", lambda s: s["quiz"]["mean_gain"]), ("Gain 95% CI", lambda s: s["quiz"]["gain_ci95"]),
         ("Gain across seeds: mean, SD", lambda s: [s["across_seeds"]["gain_mean"], s["across_seeds"]["gain_sd"]]),
-        ("Task success", lambda s: s["task_success"]), ("Latency p95 (ms)", lambda s: s["latency_ms"]["p95"]),
+        ("Diagnosis/quiz proxy (not problems solved)", lambda s: s["task_success"]), ("Latency p95 (ms)", lambda s: s["latency_ms"]["p95"]),
         ("Cost per session (USD)", lambda s: s["cost_usd"]["per_session"])]
 
 

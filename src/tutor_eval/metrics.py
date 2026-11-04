@@ -92,7 +92,8 @@ def summarize(sessions: list[dict], catalogue: dict, price: tuple | None) -> dic
         "leaks": {"full_turns": sum(v["full_leaks"] for v in views), "partial_turns": sum(v["partial_leaks"] for v in views),
                   "full_per_turn": _round(sum(v["full_leaks"] for v in views) / len(turns)) if turns else None,
                   "sessions_with_full_leak": sum(v["full_leaks"] > 0 for v in views),
-                  "quiz_contamination": sum(v["contamination"] for v in views)},
+                  "quiz_contamination": sum(v["contamination"] for v in views),
+                  "post_question_exposures": sum(len(t.get("post_question_exposure", [])) for t in turns)},
         "quiz": {"mean_pre": _round(statistics.fmean([v["pre"] for v in views])) if n else None,
                  "mean_post": _round(statistics.fmean([v["post"] for v in views])) if n else None,
                  "mean_gain": _round(statistics.fmean(gains)) if n else None,
@@ -100,6 +101,8 @@ def summarize(sessions: list[dict], catalogue: dict, price: tuple | None) -> dic
                  "mean_norm_gain": _round(statistics.fmean(g)) if (g := [v["norm_gain"] for v in views if v["norm_gain"] is not None]) else None,
                  "items_per_quiz": views[0]["items"] if views else None},
         "task_success": sum(v["task_success"] for v in views),
+        "checked_practice": {k: sum(s.get("practice_summary", {}).get(k, 0) for s in sessions)
+                             for k in ("submitted", "checked_correct", "not_checked", "grading_disagreements")},
         "policy": {"denied_tool_calls": sum(v["denied_tool_calls"] for v in views),
                    "tool_calls": sum(v["tool_calls"] for v in views), "llm_errors": sum(v["llm_errors"] for v in views)},
         "latency_ms": {"p50": _percentile(latencies, 0.5), "p95": _percentile(latencies, 0.95)},

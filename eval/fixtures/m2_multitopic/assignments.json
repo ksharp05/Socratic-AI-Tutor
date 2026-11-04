@@ -1,0 +1,14 @@
+[
+  {
+    "student_id": "m2_dev_qe_division",
+    "pair_ids": [
+      "m2_dev_pair_qe"
+    ]
+  },
+  {
+    "student_id": "m2_dev_tr_sides",
+    "pair_ids": [
+      "m2_dev_pair_tr"
+    ]
+  }
+]
