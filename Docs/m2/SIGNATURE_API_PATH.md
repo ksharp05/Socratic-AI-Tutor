@@ -35,13 +35,34 @@ $env:TUTOR_LLM = 'stub'
 
 This command has **no live mode**. It creates a unique isolated store under ignored `Directions/git_delivery/`, starts the actual API with the contextual factory selected, replaces the model transport with a labelled synthetic response, performs teacher publication, a cited hint, incorrect/correct grading, teacher trace lookup, student trace denial and edit revocation, and then closes the app. Its projected evidence records zero provider calls and counts synthetic invocations separately. It does not export source excerpts, keys or real learner data. The same script can run from the shared checkout using its installed environment; its code-root Git identity is recorded when available.
 
-For an interactive offline server, set `TUTOR_CONTEXTUAL_HINTS=1` and keep `TUTOR_LLM=stub` before following the [isolated connected run guide](../RUN_GUIDE.md). The Compose setting defaults to 0; the integrated overlay still forces stub mode. Docker execution remains unverified.
+For an interactive offline server, set `TUTOR_CONTEXTUAL_HINTS=1` and keep `TUTOR_LLM=stub` before following the [isolated connected run guide](../RUN_GUIDE.md).
+
+## Integrated walkthrough with an optional bounded live mode
+
+`scripts/m2/signature_live_walkthrough.py` runs the same API workflow as the smoke, plus the streamed hint endpoint. Its steps are: teacher publication, `practice`, a streamed `hint`, the wrong answer `x = 5`, the correct answer `x = 0 or x = 5`, the teacher trace, student trace denial and edit revocation. The default is a labelled synthetic model with **no network**:
+
+```powershell
+.\.venv_app\Scripts\python.exe scripts/m2/signature_live_walkthrough.py
+```
+
+The provider key is configured only in the shared checkout's `.env`, so an approved live run uses that copy of the script with this workspace's data and evidence folder:
+
+```powershell
+$env:SOCRATES_SOURCE_WORKSPACE = 'D:\Work\IITB\Socratic Tutor'
+.\.venv_app\Scripts\python.exe '..\Socratic Tutor Main\scripts\m2\signature_live_walkthrough.py' --live
+```
+
+`--live` uses the configured course model (`openai/gpt-4.1-mini` through OpenRouter in the current config) and must be approved first. Only the hint and wrong-attempt turns are eligible for contextual generation, so the flow needs **two provider requests**. A budget wrapper refuses a third before sending, and the preflight stops before creating a client unless a key is configured, the model is on the course list and retries can be disabled on both the wrapper and the underlying HTTP client. Each request has a 22-second timeout and a 240-token output cap.
+
+Each request carries the tutor instructions, the active problem, the latest learner message, at most four recent synthetic messages, the allowed teaching move and hint stage, and the project's one-sentence `normalized:qe04` card. The wrong-attempt request also carries the code-graded verdict "incorrect". It sends no learner ID, answer key, checkpoint or reviewed examples. The exact requests are saved to `sent_messages.json` in the ignored run folder.
+
+The script records evidence even if a step fails: model identity, provider-request count, each reply and its guard result, citation IDs and hashes, SSE event counts and the projected teacher trace. The streamed endpoint still chunks the completed reply; the evidence labels this as not model-token streaming. It is an in-process API client, not a browser, Docker or second-machine run. The persisted run state can afterwards be opened offline in the Streamlit **Session trace** page. The Compose setting defaults to 0; the integrated overlay still forces stub mode. Docker execution remains unverified.
 
 ## Acceptance limits and retained failures
 
 The first focused run caught a new-candidate concept-tag mistake; the checker rejected it before publication. Correcting the required metadata yielded passing API checks. The first full run in each copy had **423 passes and one failure**: the older isolated probe omitted supporting reference IDs from its synthetic publication. That fixture now explicitly carries those IDs; no unverified source inference was reintroduced. Historical failure logs remain under ignored `Directions/git_delivery/`.
 
-The implementation does not satisfy the handbook's **live-model** signature demonstration yet. Automatic approval review rejected the earlier live probe because retrieved textbook excerpts could be transmitted without explicit transfer authorization. The API adapter would send the context described above if live generation were enabled; selecting it is not that authorization. Keep it offline until the specific transfer is approved. The [isolated live-probe specification](QUADRATIC_PROBE.md) has a different, one-attempt call budget and remains unexecuted. Actual educator review, live teaching quality, Docker/fresh-machine startup, independent evaluation and human acceptance remain open. Earlier C1/C2 results are from the base configurations and do not evaluate this opted-in API adapter.
+The implementation does not satisfy the handbook's **live-model** signature demonstration yet. Automatic approval review rejected the earlier live probe because retrieved textbook excerpts could be transmitted without explicit transfer authorization. The API adapter would send the context described above if live generation were enabled; selecting it is not that authorization. Keep it offline until the specific transfer is approved. The [isolated live probe](QUADRATIC_PROBE.md) has a different, one-attempt call budget; its one approved run is recorded there and is not a result for this API path. Actual educator review, live teaching quality, Docker/fresh-machine startup, independent evaluation and human acceptance remain open. Earlier C1/C2 results are from the base configurations and do not evaluate this opted-in API adapter.
 
 
 The corrected final selections each passed **424 offline tests** (canonical 109.79 seconds; shared checkout 109.69 seconds), with successful process exits. Logs: `Directions/git_delivery/m2_signature_full_02.log` and `m2_signature_full_team_02.log`. The 19 focused signature/probe checks passed with the requested token cap; both browser scripts passed `node --check`. An assistant-operated in-app browser inspected the real Streamlit Session trace page against an isolated synthetic store: the labelled fake-model event, reference retrieval, leak checks, accepted generation, guard pass and citation identifier were visible. The current server was explicitly in stub mode; the model events were retained synthetic-script events. The temporary browser tab and both localhost server process trees were closed after verification. Screenshot and observation: ignored `Directions/git_delivery/signature-api-c5b26b4e75c1/`. This is not a live-model, real-educator or cross-browser acceptance run.
