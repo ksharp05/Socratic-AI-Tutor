@@ -153,7 +153,17 @@ docker compose up --build --wait
 
 (bash: `export TUTOR_API_TOKENS='local-student:student:L-DEMO,local-teacher:teacher:T-DEMO'`). The format is comma-separated `token:role:id`. These are development tokens only; never expose a server that uses them. Details: [deployment guide](deploy/README.md#tokens).
 
-Try it: sign in as `dev-teacher`, propose and approve a set for concept `qe04`, then sign in as `dev-student-a` and type `practice`.
+**Try it** (use the tokens that match how you started the stack):
+
+| Step | Default tokens (`TUTOR_API_TOKENS` unset) | Local tokens (set as above) |
+| --- | --- | --- |
+| 1. Open http://localhost:8501 and type the token into **Access token** in the sidebar | `dev-teacher` | `local-teacher` |
+| 2. On **Approvals**, propose a set for concept `qe04` (mode `practice`), review it and approve it | | |
+| 3. Change the token to a student | `dev-student-a` | `local-student` |
+| 4. On **Chat**, type `practice`, then try `hint`, a wrong answer such as `x = 999`, or a question such as "What should I practise next?" | | |
+| 5. Back as the teacher, open **Session trace** and paste the student's conversation reference | | |
+
+A student only gets questions after a teacher has approved a set; approve a `quiz`-mode set too if you want to try `start a quiz`. Set `TUTOR_CONTEXTUAL_HINTS=1` (and a key, section 6) for model-written hints and replies; the default is templates only.
 
 | Task | Command |
 | --- | --- |
@@ -270,6 +280,19 @@ Everything above works without a key. For live replies, each member uses their *
 4. `git status` must not list `.env` (it is git-ignored). The check script also verifies this.
 
 Models are configured in `config/app.toml`. Set `TUTOR_LLM=stub` to force the offline stub even with a key. In Docker, Compose reads `.env` but still uses the stub unless `.env` (or your shell) also sets `TUTOR_LLM=auto`; the live model inside a container has not been verified yet.
+
+### Run the development test pack
+
+`scripts/m2/testpack_run.py` plays a test pack's cases (for example the 180-case *IITB Socratic Tutor Development Test Pack v1*, unzipped anywhere) against the real API, one fresh local store per case. Results go to `Directions/testpack_runs/<run>/`, which git ignores; score them with the pack's own `scripts/eval_cli.py score`. Findings so far: [Docs/m2/TESTPACK_RESULTS.md](m2/TESTPACK_RESULTS.md).
+
+```powershell
+python scripts/m2/testpack_run.py <pack_dir> --smoke                  # 30 cases, offline, no model calls
+python scripts/m2/testpack_run.py <pack_dir>                          # all 180 cases, offline
+python scripts/m2/testpack_run.py <pack_dir> --live --max-calls 300   # uses your key; hard cap on model calls
+python <pack_dir>/scripts/eval_cli.py score --responses Directions/testpack_runs/<run>/responses.jsonl --cases <pack_dir>/data/all_cases.jsonl --output Directions/testpack_runs/<run>/scores.json
+```
+
+A live run of all 180 cases used 95 calls on 5 November. The runner refuses any call beyond `--max-calls` before sending it. Agree a budget with the team before live runs, since course keys are tracked per person.
 
 ## 7. What needs private data
 
