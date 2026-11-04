@@ -49,3 +49,32 @@ def make_plan(snapshot: dict, previous: dict | None = None, reason: str | None =
     version = (previous or {}).get("version", 0) + 1
     return {"version": version, "steps": steps, "replan_reason": reason,
             "mastered": sorted(cid for cid in graph if mastery[cid] >= LM["mastered"])}
+
+
+def make_topic_plan(snapshot: dict, chapter: str, results: list[dict], previous: dict | None = None) -> dict:
+    """Prioritise concepts associated with incorrect quiz responses, without inferring a cause."""
+    from .topic_sources import concepts
+    graph = {c['concept_id']: c for c in concepts() if c.get('chapter') == chapter}
+    evidence = {}
+    for result in results:
+        for cid in result['concept_ids']:
+            if cid not in graph:
+                continue
+            entry = evidence.setdefault(cid, {'attempts': 0, 'incorrect': 0, 'question_ids': []})
+            entry['attempts'] += 1
+            entry['incorrect'] += int(not result['correct'])
+            entry['question_ids'].append(result['question_id'])
+    order = sorted(evidence, key=lambda cid: (-evidence[cid]['incorrect'],
+                                               snapshot['mastery'].get(cid, LM['p_init']), cid))
+    steps = []
+    for cid in order[:3]:
+        e = evidence[cid]
+        why = f"{e['incorrect']} of {e['attempts']} associated quiz answers incorrect"
+        steps.append({'concept_id': cid, 'title': graph[cid]['title'],
+                      'action': 'review' if e['incorrect'] else 'practise',
+                      'mastery': round(snapshot['mastery'].get(cid, LM['p_init']), 2),
+                      'why': why, 'evidence_question_ids': e['question_ids']})
+    score = sum(item['correct'] for item in results)
+    return {'chapter': chapter, 'version': (previous or {}).get('version', 0) + 1,
+            'steps': steps, 'replan_reason': f"after quiz: scored {score}/{len(results)}",
+            'mastered': []}

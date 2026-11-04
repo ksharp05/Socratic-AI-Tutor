@@ -21,11 +21,12 @@ class CheckedMaths:
         # Only public practice prompts. No private tests, hidden keys or held-out corpus.
         self.items={x['question_id']:x for x in [json.loads(l) for l in file.read_text(encoding='utf-8-sig').splitlines()]}
         from tutor.question_catalog import allowed
-        demo=Path(app_root)/'content/milestone2_dev/quiz_items.json'
-        for item in json.loads(demo.read_text(encoding='utf-8-sig')):
-            if item['question_id'] in self.items or not allowed(item,'quiz') or allowed(item,'practice'):
-                raise ValueError('Invalid or duplicate development-check question')
-            self.items[item['question_id']]=item
+        for name in ('quiz_items.json','chapter_quiz_items.json'):
+            demo=Path(app_root)/'content/milestone2_dev'/name
+            for item in json.loads(demo.read_text(encoding='utf-8-sig')):
+                if item['question_id'] in self.items or not allowed(item,'quiz') or allowed(item,'practice'):
+                    raise ValueError('Invalid or duplicate development-check question')
+                self.items[item['question_id']]=item
         self.keys={};self.lock=threading.RLock()
     def eligible(self,scope,concept=None):
         if scope.grade!=10 or scope.subject.casefold()!='mathematics':return []

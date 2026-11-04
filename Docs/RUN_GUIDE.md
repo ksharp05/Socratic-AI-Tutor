@@ -114,7 +114,7 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 
 ## Connected graph tutor: local offline demo
 
-> **Development content:** Quizzes use a separate six-item synthetic quadratic pack. Teacher approval is required in the mounted tutor; human content review and independent evaluation remain pending. See [mode and provenance details](m2/KEY_AND_MODE_INTEGRITY.md).
+> **Development content:** Quizzes use separate synthetic development packs: six quadratic questions and six AP/trigonometry questions. Teacher approval is required in the mounted tutor; human content review and independent evaluation remain pending. See [mode and provenance details](m2/KEY_AND_MODE_INTEGRITY.md).
 
 
 The standalone beta launch above does not mount the authenticated graph. To try the connected graph tutor on this computer, use a separate PowerShell window and a local beta configuration whose registered dataset is already available. This example uses an isolated graph data directory, obvious development-only credentials, and stub models; do not expose it on a public network.
@@ -143,6 +143,18 @@ $quizProposal = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teach
 $null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $quizProposal.set_id + "/approve") -Headers $teacherHeaders
 ```
 
-Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Choose quadratic equations, arithmetic progressions, or trigonometry and ask a question. Start a new conversation to change the chapter. Normalized references display their textbook anchors and pending review status. Checked practice is available in all three chapters after separate teacher publication. The development quiz and graph study plan are available for quadratic equations only. For AP or trigonometry, a teacher can create and review a practice proposal using concept `ap03` or `tr01` in the teacher interface; approval publishes the exact selected payload. See [chapter practice](m2/CHAPTER_PRACTICE.md). The two approvals above are separate because practice and quiz items have different permitted modes. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
+To add synthetic development practice and quiz approvals for the other two chapters, run the following in the same second window. These automated local approvals are for demonstration only; they are not educator reviews.
+
+```powershell
+foreach ($concept in @('ap03', 'tr01')) {
+    foreach ($mode in @('practice', 'quiz')) {
+        $body = @{ concept_id = $concept; mode = $mode } | ConvertTo-Json -Compress
+        $draft = Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8771/teacher/proposals' -Headers $teacherHeaders -ContentType 'application/json' -Body $body
+        $null = Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:8771/teacher/proposals/" + $draft.set_id + "/approve") -Headers $teacherHeaders
+    }
+}
+```
+
+Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Choose quadratic equations, arithmetic progressions, or trigonometry and ask a question. Start a new conversation to change the chapter. Normalized references display their textbook anchors and pending review status. Checked practice is available in all three chapters after separate teacher publication. The development quiz is available in each chapter after separate quiz-mode publication; completing an AP/trigonometry quiz creates that chapter’s graph plan. For AP or trigonometry, a teacher can create and review a proposal using concept `ap03` or `tr01` in the teacher interface, selecting `practice` or `quiz`; approval publishes that exact selected payload. [Chapter quizzes and plans](m2/CHAPTER_QUIZZES_AND_PLANS.md). See [chapter practice](m2/CHAPTER_PRACTICE.md). The two approvals above cover quadratics only and are separate because practice and quiz items have different permitted modes; AP/trigonometry need separate approvals. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
 
 The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).

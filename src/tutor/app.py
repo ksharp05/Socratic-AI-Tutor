@@ -191,7 +191,7 @@ class TutorApp:
         snapshot = self._call(state, "load_learner", "study_planner", "learner-store", "read_learner", {"learner_id": lid})
         update: dict[str, Any] = {"learner": snapshot}
         if state["session"].get("chapter", "quadratic_equations") != "quadratic_equations":
-            update["plan"] = None
+            update["plan"] = snapshot.get("topic_plans", {}).get(state["session"]["chapter"])
             return update
         if not snapshot.get("plan"):
             plan = learner.make_plan(snapshot, reason="first plan")
@@ -564,7 +564,8 @@ class TutorApp:
         if quiz_done:
             if quiz.get("quiz_id"):
                 quiz_application = call("apply_quiz", {"learner_id": lid, "quiz_id": quiz["quiz_id"],
-                                                       "results": quiz["results"]})
+                                                       "results": quiz["results"],
+                                                       "chapter": state["session"].get("chapter", "quadratic_equations")})
                 for concept in quiz_application.get("resolved_concepts", []):
                     self._note(state, "update_memory", "stuck_episode_closed", {"concept_id": concept})
                 self._note(state, "update_memory", "quiz_applied" if quiz_application["applied"] else "quiz_already_applied",
@@ -594,7 +595,9 @@ class TutorApp:
         fresh = call("read_learner", {"learner_id": lid})
         update: dict[str, Any] = {"learner": fresh, "resolve_progress": progress}
         if quiz_done and quiz_application is not None:
-            current_plan = fresh.get("plan")
+            chapter = state["session"].get("chapter", "quadratic_equations")
+            current_plan = (fresh.get("plan") if chapter == "quadratic_equations"
+                            else fresh.get("topic_plans", {}).get(chapter))
             update["plan"] = current_plan
             if current_plan and quiz_application["applied"]:
                 reason = current_plan.get("replan_reason")

@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS misconceptions (learner_id TEXT, misconception_id TEX
 CREATE TABLE IF NOT EXISTS explanations (learner_id TEXT, misconception_id TEXT, style TEXT,
   successes INTEGER DEFAULT 0, failures INTEGER DEFAULT 0, PRIMARY KEY (learner_id, misconception_id, style));
 CREATE TABLE IF NOT EXISTS plans (learner_id TEXT PRIMARY KEY, plan_json TEXT, version INTEGER, updated_at REAL);
+CREATE TABLE IF NOT EXISTS topic_plans (learner_id TEXT NOT NULL, chapter TEXT NOT NULL, plan_json TEXT NOT NULL,
+  version INTEGER NOT NULL, updated_at REAL NOT NULL, PRIMARY KEY (learner_id, chapter));
 CREATE TABLE IF NOT EXISTS learner_events (id INTEGER PRIMARY KEY AUTOINCREMENT, learner_id TEXT, kind TEXT,
   payload TEXT, ts REAL);
 CREATE TABLE IF NOT EXISTS keys (question_ref TEXT PRIMARY KEY, key_json TEXT, verified INTEGER);

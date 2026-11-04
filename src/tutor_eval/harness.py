@@ -37,7 +37,7 @@ def fixture_input_hashes() -> dict[str, str]:
     paths = ("content/poc/practice.json", "content/poc/cards.json",
              "content/dataset-v0.10.0/practice_questions.jsonl", "content/dataset-v0.10.0/corpus.jsonl",
              "content/dataset-v0.10.0/concepts.jsonl",
-             "content/milestone2_dev/quiz_items.json")
+             "content/milestone2_dev/quiz_items.json", "content/milestone2_dev/chapter_quiz_items.json")
     return {name: sha256_file(ROOT / name) for name in paths}
 
 

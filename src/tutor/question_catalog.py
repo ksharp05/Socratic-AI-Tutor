@@ -59,7 +59,10 @@ def graph_items(poc_loader=load) -> list[dict]:
         item.setdefault('authorship', None)
         result.append(item)
         seen.add(qid)
-    for item in json.loads((ROOT/'content/milestone2_dev/quiz_items.json').read_text(encoding='utf-8-sig')):
+    dev_items = []
+    for name in ('quiz_items.json', 'chapter_quiz_items.json'):
+        dev_items.extend(json.loads((ROOT/'content/milestone2_dev'/name).read_text(encoding='utf-8-sig')))
+    for item in dev_items:
         qid=item.get('question_id')
         if not isinstance(qid,str) or qid in seen or qid in public:
             raise ValueError('Invalid or duplicate development-check question ID')

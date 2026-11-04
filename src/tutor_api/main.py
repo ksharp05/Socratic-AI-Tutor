@@ -237,8 +237,6 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             snap = _tutor().graph.get_state({"configurable": {"thread_id": session_id}})
             quiz_active = bool((snap.values or {}).get("quiz"))
             _finish_graph_session(p.subject_id)
-            if chapter != "quadratic_equations":
-                result["plan"] = None
         return {"session_id": session_id, "learner_id": p.subject_id, "mode": body.mode, "chapter": chapter, **result,
                 "quiz_active": quiz_active}
 
@@ -402,7 +400,7 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
                 "SELECT ts, kind, learner_id, detail FROM alerts WHERE learner_id=? ORDER BY id", (learner_id,))]
                       if p.is_teacher else [])
         return {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
-                "plan": model.get("plan"), "alerts": alerts}
+                "plan": model.get("plan"), "topic_plans": model.get("topic_plans", {}), "alerts": alerts}
 
     if beta_config := os.environ.get('TUTOR_BETA_CONFIG'):
         from .beta import mount_beta

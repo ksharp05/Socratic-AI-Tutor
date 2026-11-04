@@ -1,0 +1,348 @@
+[
+  {
+    "question_id": "m2_demo_quiz_ap_01",
+    "prompt": "An AP starts at 7 with common difference -3. Find term 9, using one-based positions.",
+    "problem": {
+      "task_type": "ap_term",
+      "givens": {
+        "a": 7,
+        "d": -3,
+        "n": 9
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "ap02",
+        "ap03",
+        "ap04"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "arithmetic_progressions",
+    "family_id": "ap_term",
+    "supporting_passage_ids": [
+      "normalized:ap02",
+      "normalized:ap03",
+      "normalized:ap04"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_ap_02",
+    "prompt": "An AP starts at 4 with common difference 5. Find term 7, using one-based positions.",
+    "problem": {
+      "task_type": "ap_term",
+      "givens": {
+        "a": 4,
+        "d": 5,
+        "n": 7
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "ap02",
+        "ap03",
+        "ap04"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "arithmetic_progressions",
+    "family_id": "ap_term",
+    "supporting_passage_ids": [
+      "normalized:ap02",
+      "normalized:ap03",
+      "normalized:ap04"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_ap_03",
+    "prompt": "Find the sum of the first 6 terms of an AP with first term 3 and common difference 2.",
+    "problem": {
+      "task_type": "ap_sum",
+      "givens": {
+        "a": 3,
+        "d": 2,
+        "n": 6
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "ap03",
+        "ap06"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "arithmetic_progressions",
+    "family_id": "ap_sum",
+    "supporting_passage_ids": [
+      "normalized:ap03",
+      "normalized:ap06"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_tr_01",
+    "prompt": "A right triangle has hypotenuse 17, opposite side 8 and adjacent side 15 relative to acute angle A. C is its other acute angle. Find sin(A) exactly.",
+    "problem": {
+      "task_type": "trig_triangle_ratio",
+      "givens": {
+        "hypotenuse": 17,
+        "opposite": 8,
+        "adjacent": 15,
+        "ratio": "sin",
+        "reference": "A"
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "tr01",
+        "tr02",
+        "tr03"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "trigonometry",
+    "family_id": "trig_triangle_ratio",
+    "supporting_passage_ids": [
+      "normalized:tr01",
+      "normalized:tr02",
+      "normalized:tr03"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_tr_02",
+    "prompt": "A right triangle has hypotenuse 25, opposite side 7 and adjacent side 24 relative to acute angle A. C is its other acute angle. Find cos(C) exactly.",
+    "problem": {
+      "task_type": "trig_triangle_ratio",
+      "givens": {
+        "hypotenuse": 25,
+        "opposite": 7,
+        "adjacent": 24,
+        "ratio": "cos",
+        "reference": "C"
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "tr01",
+        "tr02",
+        "tr03"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "trigonometry",
+    "family_id": "trig_triangle_ratio",
+    "supporting_passage_ids": [
+      "normalized:tr01",
+      "normalized:tr02",
+      "normalized:tr03"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  },
+  {
+    "question_id": "m2_demo_quiz_tr_03",
+    "prompt": "A right triangle has hypotenuse 41, opposite side 9 and adjacent side 40 relative to acute angle A. C is its other acute angle. Find tan(A) exactly.",
+    "problem": {
+      "task_type": "trig_triangle_ratio",
+      "givens": {
+        "hypotenuse": 41,
+        "opposite": 9,
+        "adjacent": 40,
+        "ratio": "tan",
+        "reference": "A"
+      },
+      "number_domain": "real",
+      "answer_precision": "exact",
+      "concept_ids": [
+        "tr01",
+        "tr02",
+        "tr03"
+      ],
+      "class": 10,
+      "language": "en"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "scalar"
+      ],
+      "format": "exact scalar",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1"
+    },
+    "hint_stages": [],
+    "difficulty": {
+      "level": "medium",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "trigonometry",
+    "family_id": "trig_triangle_ratio",
+    "supporting_passage_ids": [
+      "normalized:tr01",
+      "normalized:tr02",
+      "normalized:tr03"
+    ],
+    "mode_policy": {
+      "allowed_modes": [
+        "quiz",
+        "diagnostic"
+      ],
+      "tutor_visible": true,
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "none_during_assessment"
+    },
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_synthetic_milestone2_demonstration"
+  }
+]

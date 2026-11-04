@@ -75,7 +75,7 @@ async function evidencePage(){
 // The connected journey uses the existing student API. Credentials remain in memory.
 const GRAPH_BASE=new URL('../',new URL(BASE,location.origin));
 const GRAPH_CHAPTERS={quadratic_equations:'Quadratic Equations',arithmetic_progressions:'Arithmetic Progressions',trigonometry:'Introduction to Trigonometry'};
-const G={token:null,learner:null,session:null,chapter:'quadratic_equations',messages:[],plan:null,modelLabel:null,inQuiz:false,busy:false,uncertain:false,error:null};
+const G={token:null,learner:null,session:null,chapter:'quadratic_equations',messages:[],plan:null,plans:{},modelLabel:null,inQuiz:false,busy:false,uncertain:false,error:null};
 async function graphFetch(path,token,data){
  const url=new URL(path,GRAPH_BASE);
  if(url.origin!==location.origin)throw Error('The connected tutor must use the same server.');
@@ -103,7 +103,8 @@ async function graphSignIn(token){
   const session=active.session_id||previous;
   let history=null;if(session)history=await graphFetch('chat/'+encodeURIComponent(session)+'/history',token);
   const messages=(history?.messages||[]).filter(m=>m.role==='student'||m.role==='tutor').map(m=>({role:m.role==='student'?'user':'assistant',text:m.content,citations:m.citations||[]}));
-  Object.assign(G,{token,learner:who.id,session,chapter:history?.chapter||'quadratic_equations',messages,plan:profile.plan||null,modelLabel,inQuiz:!!history?.quiz_active,uncertain:!!history?.interrupted});
+  const chapter=history?.chapter||'quadratic_equations';const plans={quadratic_equations:profile.plan||null,...(profile.topic_plans||{})};
+  Object.assign(G,{token,learner:who.id,session,chapter,messages,plans,plan:plans[chapter]||null,modelLabel,inQuiz:!!history?.quiz_active,uncertain:!!history?.interrupted});
   graphStoreSession();
   if(G.uncertain)G.error='The previous turn was interrupted. Check the conversation before continuing.';
  }catch(e){G.error=e.message;}finally{G.busy=false;await route();}
@@ -114,7 +115,7 @@ async function graphTurn(text,mode){
  try{
   const result=await graphFetch('chat',G.token,{session_id:sid,text:text.trim(),mode,chapter:G.chapter});
   G.messages.push({role:'user',text:text.trim()},{role:'assistant',text:result.reply,citations:result.citations||[],persistence:result.persistence});
-  G.plan=result.plan||G.plan;if(typeof result.quiz_active==='boolean')G.inQuiz=result.quiz_active;
+  if(result.plan){G.plan=result.plan;G.plans[G.chapter]=result.plan;}if(typeof result.quiz_active==='boolean')G.inQuiz=result.quiz_active;
  }catch(e){G.uncertain=true;G.error='The turn may have been recorded. Check the conversation before sending another message.';}
  finally{G.busy=false;await route();}
 }
@@ -130,7 +131,7 @@ async function graphRecover(){
   G.messages=history.messages.filter(m=>m.role==='student'||m.role==='tutor').map(m=>({role:m.role==='student'?'user':'assistant',text:m.content,citations:m.citations||[]}));
   G.inQuiz=history.quiz_active;G.chapter=history.chapter;
   const profile=await graphFetch('learners/'+encodeURIComponent(G.learner),G.token);
-  G.plan=profile.plan||null;G.uncertain=false;
+  G.plans={quadratic_equations:profile.plan||null,...(profile.topic_plans||{})};G.plan=G.plans[G.chapter]||null;G.uncertain=false;
  }catch(e){G.error='The conversation could not be checked yet. Please try checking again.';}
  finally{G.busy=false;await route();}
 }
@@ -145,16 +146,15 @@ async function graphLeave(){
  finally{G.busy=false;await route();}
 }
 function graphPlan(){
- if(G.chapter!=='quadratic_equations')return h('section',{class:'card tip'},h('h3',{},'Study plan'),h('p',{},'Personalised plans are currently available for Quadratic Equations only.'));
  if(G.inQuiz)return h('section',{class:'card tip'},h('h3',{},'Quiz in progress'),h('p',{},'Your study plan will be shown after the quiz.'));
- const plan=G.plan;if(!plan)return h('section',{class:'card tip'},h('h3',{},'Your study plan'),h('p',{},'Your plan appears after your first connected tutor turn.'));
+ const plan=G.plan;if(!plan)return h('section',{class:'card tip'},h('h3',{},'Your study plan'),h('p',{},G.chapter==='quadratic_equations'?'Your plan appears after your first connected tutor turn.':'Your plan appears after a completed quiz.'));
  return h('section',{class:'card tip'},h('h3',{},'Your study plan'),h('p',{class:'small muted'},`Revision ${plan.version} · ${plan.replan_reason||'Your current plan'}`),
   h('ul',{},(plan.steps||[]).map(step=>h('li',{},step.title+(step.why?' — '+step.why:'')))));
 }
 async function connectedPage(){
  const page=h('div',{},title('Class 10 · '+GRAPH_CHAPTERS[G.chapter],'Your connected tutor.','Explore the selected chapter with source-backed questions.'));
  page.append(h('p',{class:'footer-note'},'This signed-in learning record is separate from the anonymous beta conversations and cards. Signing out does not delete either record.'));
- page.append(h('p',{class:'small muted'},'Quizzes use a small development question set and require teacher approval. Content review is pending.'));
+ page.append(h('p',{class:'small muted'},'Quizzes use small development question sets and require teacher approval. Content review is pending.'));
  if(!G.token){
   const input=h('input',{type:'password',autocomplete:'off',maxlength:'512',required:'required','aria-label':'Student credential'});
   const button=h('button',{type:'submit'},G.busy?'Checking…':'Sign in');button.disabled=G.busy;
@@ -169,17 +169,17 @@ async function connectedPage(){
  const input=h('textarea',{placeholder:'Share your reasoning or answer…',maxlength:'4000','aria-label':'Your message'});input.disabled=G.busy||G.uncertain;
  const send=h('button',{type:'submit'},'Send →');send.disabled=G.busy||G.uncertain;
  const form=h('form',{onSubmit:e=>{e.preventDefault();const value=input.value;input.value='';run(()=>graphTurn(value,G.inQuiz?'quiz':'practice'));}},input,send);
- const quiz=btn('Start a quiz',()=>graphTurn('start a quiz','quiz'),true);quiz.disabled=G.busy||G.uncertain||G.inQuiz||G.chapter!=='quadratic_equations';
+ const quiz=btn('Start a quiz',()=>graphTurn('start a quiz','quiz'),true);quiz.disabled=G.busy||G.uncertain||G.inQuiz;
  const fresh=btn('New conversation',async()=>{if(G.busy||G.uncertain||G.inQuiz)return;Object.assign(G,{session:null,messages:[],error:null});graphStoreSession();await route();},true);fresh.disabled=G.busy||G.uncertain||G.inQuiz;
- const out=btn('Sign out',async()=>{if(G.busy)return;Object.assign(G,{token:null,learner:null,session:null,messages:[],plan:null,modelLabel:null,inQuiz:false,uncertain:false,error:null});await route();},true);out.disabled=G.busy;
+ const out=btn('Sign out',async()=>{if(G.busy)return;Object.assign(G,{token:null,learner:null,session:null,messages:[],plan:null,plans:{},modelLabel:null,inQuiz:false,uncertain:false,error:null});await route();},true);out.disabled=G.busy;
  const leave=G.inQuiz?btn('Leave quiz',graphLeave,true):null;if(leave)leave.disabled=G.busy||G.uncertain;
- const selector=choice(Object.entries(GRAPH_CHAPTERS).map(([value,label])=>({value,label})),G.chapter,async value=>{if(G.session||G.busy)return;G.chapter=value;await route();});selector.disabled=!!G.session||G.busy;
+ const selector=choice(Object.entries(GRAPH_CHAPTERS).map(([value,label])=>({value,label})),G.chapter,async value=>{if(G.session||G.busy)return;G.chapter=value;G.plan=G.plans[value]||null;await route();});selector.disabled=!!G.session||G.busy;
  page.append(h('section',{class:'scope-bar'},h('label',{},'Chapter',selector),h('span',{class:'small muted'},G.session?'Start a new conversation to change chapters.':'Choose a chapter before your first message.')));
  const controls=h('div',{class:'actions'},quiz,leave,fresh,out);
  const recover=G.uncertain?btn('Check conversation',graphRecover,true):null;
  const surface=h('section',{class:'chat-surface'},h('div',{class:'chat-header'},h('div',{},h('h3',{},'Connected maths conversation'),h('span',{class:'small muted'},(G.inQuiz?'Quiz in progress · no hints':'Teacher-published questions · checked maths')+' · '+G.modelLabel)),controls),log,
   h('div',{class:'chat-compose'},form,G.error?h('p',{class:'error',role:'alert'},G.error):null,recover,h('p',{class:'small muted'},'Please avoid sharing personal information.')));
- page.append(h('div',{class:'chat-layout'},surface,h('aside',{class:'chat-aside'},graphPlan(),h('section',{class:'card tip'},h('h3',{},'Learn step by step'),h('p',{},G.chapter==='quadratic_equations'?'Ask a question, request practice, or start a quiz. Published questions depend on teacher approval.':'Ask for practice after a teacher approves questions. Quizzes and personalised plans are not yet connected for this chapter.')))));
+ page.append(h('div',{class:'chat-layout'},surface,h('aside',{class:'chat-aside'},graphPlan(),h('section',{class:'card tip'},h('h3',{},'Learn step by step'),h('p',{},G.chapter==='quadratic_equations'?'Ask a question, request practice, or start a quiz. Published questions depend on teacher approval.':'Ask for practice or start a quiz after a teacher approves questions. Complete a quiz to update your chapter plan.')))));
  setTimeout(()=>{log.scrollTop=log.scrollHeight;},0);return page;
 }
 

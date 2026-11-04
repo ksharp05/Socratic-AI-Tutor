@@ -47,8 +47,10 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         styles = [dict(r) for r in conn.execute(
             "SELECT misconception_id, style, successes, failures FROM explanations WHERE learner_id=?", (learner_id,))]
         plan_row = conn.execute("SELECT plan_json FROM plans WHERE learner_id=?", (learner_id,)).fetchone()
+        topic_plans = {r["chapter"]: json.loads(r["plan_json"]) for r in
+                       conn.execute("SELECT chapter,plan_json FROM topic_plans WHERE learner_id=?", (learner_id,))}
         return {"learner_id": learner_id, "mastery": mastery, "misconceptions": mis, "styles": styles,
-                "plan": json.loads(plan_row["plan_json"]) if plan_row else None}
+                "plan": json.loads(plan_row["plan_json"]) if plan_row else None, "topic_plans": topic_plans}
 
     @mcp.tool(annotations=READ)
     def read_learner(learner_id: str) -> dict:
@@ -104,10 +106,13 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         return {"ok": True}
 
     @mcp.tool(annotations=WRITE)
-    def apply_quiz(learner_id: str, quiz_id: str, results: list[dict]) -> dict:
+    def apply_quiz(learner_id: str, quiz_id: str, results: list[dict], chapter: str = "quadratic_equations") -> dict:
         """Atomically apply a quiz and replan once; repeated identical applications are no-ops."""
         if not re.fullmatch(r"[0-9a-f]{32}", quiz_id) or not 1 <= len(results) <= 20:
             raise ToolError("INVALID_INPUT: invalid quiz identifier or result count")
+        if chapter not in ("quadratic_equations", "arithmetic_progressions", "trigonometry"):
+            raise ToolError("INVALID_INPUT: unknown quiz chapter")
+        chapter_concepts = {c['concept_id'] for c in topic_concepts() if c.get('chapter') == chapter}
         normalized = []
         for result in results:
             if not isinstance(result, dict):
@@ -121,9 +126,12 @@ def build(conn: sqlite3.Connection) -> FastMCP:
                     or any(not isinstance(cid, str) or not 1 <= len(cid) <= 64 for cid in ids)
                     or len(set(ids)) != len(ids)):
                 raise ToolError("INVALID_INPUT: invalid quiz result fields")
+            if chapter != "quadratic_equations" and (not set(ids) <= chapter_concepts or not scorable):
+                raise ToolError("INVALID_INPUT: chapter quiz results must be scorable and use chapter concepts")
             normalized.append({"question_id": qid, "correct": correct, "scorable": scorable,
                                "kind": kind, "concept_ids": ids})
-        digest = hashlib.sha256(dumps(normalized).encode("utf-8")).hexdigest()
+        digest_data = normalized if chapter == "quadratic_equations" else {"chapter": chapter, "results": normalized}
+        digest = hashlib.sha256(dumps(digest_data).encode("utf-8")).hexdigest()
         try:
             conn.execute("BEGIN IMMEDIATE")
             _exists(learner_id)
@@ -154,9 +162,14 @@ def build(conn: sqlite3.Connection) -> FastMCP:
             fresh = _snapshot(learner_id)
             score = sum(result["correct"] for result in normalized)
             reason = f"after quiz: scored {score}/{len(normalized)}"
-            plan = learner.make_plan(fresh, previous=fresh.get("plan"), reason=reason)
-            conn.execute("INSERT OR REPLACE INTO plans VALUES (?,?,?,?)", (learner_id,dumps(plan),plan["version"],now()))
-            _event(learner_id,"plan",{"version":plan["version"],"reason":reason})
+            if chapter == "quadratic_equations":
+                plan = learner.make_plan(fresh, previous=fresh.get("plan"), reason=reason)
+                conn.execute("INSERT OR REPLACE INTO plans VALUES (?,?,?,?)", (learner_id,dumps(plan),plan["version"],now()))
+            else:
+                plan = learner.make_topic_plan(fresh, chapter, normalized, previous=fresh["topic_plans"].get(chapter))
+                conn.execute("INSERT OR REPLACE INTO topic_plans VALUES (?,?,?,?,?)",
+                             (learner_id,chapter,dumps(plan),plan["version"],now()))
+            _event(learner_id,"plan",{"version":plan["version"],"reason":reason,"chapter":chapter})
             conn.execute("INSERT INTO applied_quizzes VALUES (?,?,?,?)", (quiz_id,learner_id,digest,now()))
             conn.execute("COMMIT")
             return {"applied": True, "quiz_id": quiz_id, "resolved_concepts": sorted(set(resolved))}

@@ -59,7 +59,7 @@ def test_teacher_approved_practice_checks_answers_and_updates_matching_concepts(
 
 def test_new_public_practice_pool_is_explicitly_scoped():
     from tutor.question_catalog import graph_items,allowed
-    extra=[q for q in graph_items() if q['chapter'] in ('arithmetic_progressions','trigonometry')]
+    extra=[q for q in graph_items() if q['chapter'] in ('arithmetic_progressions','trigonometry') and allowed(q,'practice')]
     assert len(extra)==120
     assert {q['problem']['task_type'] for q in extra}=={'ap_term','ap_sum','trig_triangle_ratio'}
     assert all(q['answer_contract']['allowed_kinds']==['scalar'] and allowed(q,'practice') and not allowed(q,'quiz') for q in extra)
@@ -69,8 +69,8 @@ def test_new_public_practice_pool_is_explicitly_scoped():
 def test_public_candidate_answers_against_independent_exact_arithmetic():
     from fractions import Fraction
     from tutor import mathcore
-    from tutor.question_catalog import graph_items
-    questions=[q for q in graph_items() if q['problem']['task_type'] in {'ap_term','ap_sum','trig_triangle_ratio'}]
+    from tutor.question_catalog import graph_items, allowed
+    questions=[q for q in graph_items() if allowed(q,'practice') and q['problem']['task_type'] in {'ap_term','ap_sum','trig_triangle_ratio'}]
     assert len(questions)==120
     for question in questions:
         problem=question['problem'];g=problem['givens'];task=problem['task_type']

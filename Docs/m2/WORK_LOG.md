@@ -127,3 +127,10 @@ The shared checkout also passed **313 offline tests** using the canonical local 
 Selected public AP term/sum and trigonometry right-triangle questions now flow through exact-payload teacher publication, chapter-scoped graph practice, exact scalar checking and matching concept observations. All 120 candidates were checked against independent exact arithmetic for their represented givens. The canonical full offline suite passed **317 tests**, and a synthetic localhost walkthrough checked both chapter flows using stub mode. Review status stays pending; other mathematical families, chapter quizzes, diagnosis and plans remain open. [Details](CHAPTER_PRACTICE.md).
 
 The shared checkout also passed **317 offline tests** with its vendored maths package and the canonical local data path. The English answer lead-ins and active-question revocation were included in the final runs.
+
+
+## Chapter quizzes and separate plans — 4 November
+
+A separate, provisional six-question AP/trigonometry quiz pack requires exact-payload teacher approval and remains distinct from practice-only content. Completed chapter quizzes update separate learner/chapter plans in the same SQLite transaction as the result ledger; quadratic plans remain in the existing table. Synthetic tests check both chapters, learner isolation, atomic failure, replay and legacy-store upgrade. A stub localhost browser checked an AP quiz, plan explanation and refresh recovery. Live model, human content review, independent evaluation, multi-host behavior and fresh Compose remain open. [Details](CHAPTER_QUIZZES_AND_PLANS.md).
+
+The final canonical and shared-checkout four-suite runs each passed **324 offline tests**. The shared run used its vendored maths package and canonical local data. Logs are in ignored `Directions/git_delivery/`.
