@@ -231,10 +231,25 @@ def teacher_privacy() -> None:
             st.json(receipt)
 
 
+def teacher_trace() -> None:
+    st.header("Connected session trace")
+    st.caption("Use the conversation reference from the connected learner screen. The timeline shows model, tool and guard events; prompts, answer keys and tool payloads are withheld.")
+    sid = st.text_input("Conversation reference", key="teacher_trace_session").strip()
+    if st.button("Load session trace", disabled=not sid):
+        trace = call("GET", "/teacher/sessions/" + quote(sid, safe='') + "/trace")
+        if trace:
+            st.caption("Registered-question hint mode: " + trace["registered_hint_mode"])
+            if trace["truncated"]:
+                st.info("Showing the most recent 200 events.")
+            st.dataframe(trace["events"], hide_index=True, width="stretch")
+            st.json({"citation_refs": trace["citation_refs"]})
+
+
 if me["role"] == "teacher":
     pages = [st.Page(teacher_approvals, title="Approvals", url_path="approvals"),
              st.Page(teacher_learners, title="Learners", url_path="learners"),
-             st.Page(teacher_privacy, title="Data requests", url_path="data-requests")]
+             st.Page(teacher_privacy, title="Data requests", url_path="data-requests"),
+             st.Page(teacher_trace, title="Session trace", url_path="session-trace")]
 else:
     pages = [st.Page(student_chat, title="Chat", url_path="chat"),
              st.Page(student_progress, title="My progress", url_path="progress")]

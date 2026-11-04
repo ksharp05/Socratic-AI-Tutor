@@ -88,6 +88,18 @@ def _seed_if_needed(tokens: dict[str, Principal]) -> None:
         conn.close()
 
 
+def configured_tutor_class():
+    """Explicit opt-in; choosing this class does not authorize a provider transfer."""
+    setting = os.environ.get("TUTOR_CONTEXTUAL_HINTS", "0")
+    if setting == "0":
+        from tutor.app import TutorApp
+        return TutorApp
+    if setting == "1":
+        from v02_integration.runtime import ContextualPreviewTutor
+        return ContextualPreviewTutor
+    raise RuntimeError("TUTOR_CONTEXTUAL_HINTS must be 0 or 1")
+
+
 def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     """Build the API. Pass `tutor` to wrap an existing TutorApp (tests); otherwise one is created at startup."""
     token_map = load_tokens(tokens)
@@ -99,10 +111,10 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(_: FastAPI):
         if state["tutor"] is None:
+            tutor_class = configured_tutor_class()
             if os.environ.get("TUTOR_API_SEED", "1") != "0":
                 _seed_if_needed(token_map)
-            from tutor.app import TutorApp
-            state["tutor"] = TutorApp()
+            state["tutor"] = tutor_class()
         state["trace_id"] = _max_trace_id()
         yield
         if state["owned"] and state["tutor"] is not None:
@@ -253,7 +265,9 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     @api.get("/health")
     def health() -> dict:
         t = state["tutor"]
-        return {"status": "ok" if t is not None else "starting", "llm": t.llm.label if t is not None else None}
+        return {"status": "ok" if t is not None else "starting", "llm": t.llm.label if t is not None else None,
+                "registered_hint_mode": getattr(t, "registered_hint_mode", "template"),
+                "model_enabled": bool(t is not None and t.llm.enabled)}
 
     @api.get("/health/ready")
     def readiness() -> JSONResponse:
@@ -411,6 +425,14 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         if concept_id:
             items = [i for i in items if concept_id in i["concept_ids"]]
         return {"items": items}
+
+    @api.get("/teacher/sessions/{session_id}/trace")
+    def teacher_session_trace(session_id: str, _: Principal = Depends(teacher)) -> dict:
+        if not SESSION_ID.fullmatch(session_id) or session_id.startswith(RESERVED_PREFIXES) or session_id in {"api", "teacher"}:
+            raise HTTPException(422, "invalid session_id")
+        from .traces import session_trace
+        with lock, _tutor().bus.publication_lock:
+            return _call(session_trace, _tutor(), session_id)
 
     # ------------------------------------------------------------------ learners
     @api.get("/learners")

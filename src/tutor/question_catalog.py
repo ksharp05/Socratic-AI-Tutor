@@ -27,7 +27,7 @@ def allowed(item: dict, mode: str) -> bool:
 
 
 def graph_items(poc_loader=load) -> list[dict]:
-    """Return matched quadratic POC items, supported public practice and separate dev checks.
+    """Return public practice, the signature candidate and separate development checks.
 
     No private/evaluation material is read. Missing or mismatched public content
     is not silently promoted; existing approvals are rechecked against this pool.
@@ -59,6 +59,14 @@ def graph_items(poc_loader=load) -> list[dict]:
         item.setdefault('authorship', None)
         result.append(item)
         seen.add(qid)
+    candidates = json.loads((ROOT/'content/milestone2_dev/practice_items.json').read_text(encoding='utf-8-sig'))
+    for item in candidates:
+        qid = item.get('question_id')
+        if not isinstance(qid, str) or qid in seen or qid in public:
+            raise ValueError('Invalid or duplicate development-practice question ID')
+        if not allowed(item, 'practice') or allowed(item, 'quiz') or allowed(item, 'diagnostic'):
+            raise ValueError('Development practice must be excluded from assessment')
+        result.append(item); seen.add(qid)
     dev_items = []
     for name in ('quiz_items.json', 'chapter_quiz_items.json'):
         dev_items.extend(json.loads((ROOT/'content/milestone2_dev'/name).read_text(encoding='utf-8-sig')))

@@ -13,3 +13,6 @@ A wrapper permits at most one generation attempt. The probe verifies that both t
 The program records `synthetic_model` versus `live`, counts provider calls separately from fake generations, and refuses to present a guarded fallback as an accepted model response. Local evidence contains a redacted event summary and code hashes. Human review, complete output-leak protection and the teacher/learner integrated UI flow remain separate work.
 
 Automatic approval review rejected the original live probe because the proposed request could transmit local source passages without explicit authorization. Do not run `--live` until the authorized user approves that specific data transfer.
+
+
+A later [integrated signature API path](SIGNATURE_API_PATH.md) supports the registered equation through normal teacher publication and an explicit contextual-adapter option. Its synthetic-only smoke command has no live mode. This older probe remains isolated and unapproved; its synthetic publication now includes explicit supporting reference IDs to match the active-question reference contract. Its one-attempt live budget and the API adapter's normal SDK retry policy are different. Neither path has an authorized live-provider result.

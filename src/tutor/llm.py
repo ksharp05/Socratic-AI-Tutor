@@ -69,12 +69,14 @@ class LLM:
         return {"ms": round((time.perf_counter() - started) * 1000), "reply": str(reply.content).strip()[:60],
                 "tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens")}
 
-    def complete(self, *, session_id: str | None, node: str, role: str, system: str, user: str) -> str | None:
+    def complete(self, *, session_id: str | None, node: str, role: str, system: str, user: str,
+                 max_tokens: int | None = None) -> str | None:
         if not self.enabled:
             return None
         started = time.perf_counter()
         try:
-            reply = self._chat().invoke([("system", system), ("user", user)])
+            options = {} if max_tokens is None else {"max_tokens": max_tokens}
+            reply = self._chat().invoke([("system", system), ("user", user)], **options)
             usage = getattr(reply, "usage_metadata", None) or {}
             store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=self.model,
                         latency_ms=(time.perf_counter() - started) * 1000,

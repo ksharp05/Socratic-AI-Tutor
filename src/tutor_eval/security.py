@@ -162,7 +162,7 @@ def run(case_files: list[Path], name: str, defences: bool, out_dir: Path | None 
               for ch, c in sorted(summary["by_channel"].items())]
     (run_dir / "security.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     code_files = ("tutor/app.py", "tutor/guards.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/toolbus.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
-                  "tutor/mathcore.py", "tutor/triangle_reasoning.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
+                  "tutor/mathcore.py", "tutor/triangle_reasoning.py", "v02_integration/runtime.py", "tutor_api/traces.py", "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/question_bank.py",
                   "tutor_eval/security.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py", "tutor_eval/arms.py")
     manifest = {"run_id": run_id, "kind": "security", "defences": defences,
                 "development_fixtures_enabled": True, "fixture_status": "synthetic_unapproved_evaluation_only",

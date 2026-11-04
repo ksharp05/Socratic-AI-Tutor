@@ -177,7 +177,7 @@ async function connectedPage(){
  page.append(h('section',{class:'scope-bar'},h('label',{},'Chapter',selector),h('span',{class:'small muted'},G.session?'Start a new conversation to change chapters.':'Choose a chapter before your first message.')));
  const controls=h('div',{class:'actions'},quiz,leave,fresh,out);
  const recover=G.uncertain?btn('Check conversation',graphRecover,true):null;
- const surface=h('section',{class:'chat-surface'},h('div',{class:'chat-header'},h('div',{},h('h3',{},'Connected maths conversation'),h('span',{class:'small muted'},(G.inQuiz?'Quiz in progress · no hints':'Teacher-published questions · checked maths')+' · '+G.modelLabel)),controls),log,
+ const surface=h('section',{class:'chat-surface'},h('div',{class:'chat-header'},h('div',{},h('h3',{},'Connected maths conversation'),h('span',{class:'small muted'},(G.inQuiz?'Quiz in progress · no hints':'Teacher-published questions · checked maths')+' · '+G.modelLabel)),controls),G.session?h('p',{class:'small muted'},'Conversation reference: '+G.session):null,log,
   h('div',{class:'chat-compose'},form,G.error?h('p',{class:'error',role:'alert'},G.error):null,recover,h('p',{class:'small muted'},'Please avoid sharing personal information.')));
  page.append(h('div',{class:'chat-layout'},surface,h('aside',{class:'chat-aside'},graphPlan(),h('section',{class:'card tip'},h('h3',{},'Learn step by step'),h('p',{},G.chapter==='quadratic_equations'?'Ask a question, request practice, or start a quiz. Published questions depend on teacher approval.':'Ask for practice or start a quiz after a teacher approves questions. Complete a quiz to update your chapter plan.')))));
  setTimeout(()=>{log.scrollTop=log.scrollHeight;},0);return page;

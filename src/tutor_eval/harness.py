@@ -54,7 +54,7 @@ def fixture_input_hashes() -> dict[str, str]:
     paths = ("content/poc/practice.json", "content/poc/cards.json",
              "content/dataset-v0.10.0/practice_questions.jsonl", "content/dataset-v0.10.0/corpus.jsonl",
              "content/dataset-v0.10.0/concepts.jsonl", "content/dataset-v0.10.0/misconceptions.jsonl",
-             "content/milestone2_dev/quiz_items.json", "content/milestone2_dev/chapter_quiz_items.json")
+             "content/milestone2_dev/practice_items.json", "content/milestone2_dev/quiz_items.json", "content/milestone2_dev/chapter_quiz_items.json")
     return {name: sha256_file(ROOT / name) for name in paths}
 
 
@@ -399,7 +399,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
                         ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
-                         "tutor/learner.py", "tutor/triangle_reasoning.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
+                         "tutor/learner.py", "tutor/triangle_reasoning.py", "v02_integration/runtime.py", "tutor_api/traces.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",
                          "tutor_eval/simulator.py", "tutor_eval/leakcheck.py", "tutor_eval/harness.py",

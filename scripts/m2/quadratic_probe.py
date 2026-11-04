@@ -66,7 +66,7 @@ def main(argv=None):
     try:
         seed_learner(app.conn, 'm2-synthetic-learner', {'alias': 'synthetic development learner'})
         payload = {'set_id':'m2-synthetic-set','concept_id':'qe04','revision':1,
-                   'items':[{k:item[k] for k in ('question_id','prompt','problem','answer_contract','hint_stages','difficulty','mode_policy','chapter')}]}
+                   'items':[{k:item[k] for k in ('question_id','prompt','problem','answer_contract','hint_stages','difficulty','mode_policy','chapter','supporting_passage_ids')}]}
         app.conn.execute('INSERT INTO published VALUES (?,?,?,?,?,?)',
                          ('m2-synthetic-set',store.dumps(payload),'synthetic','none','development_fixture_not_human_approved',store.now()))
         app.conn.commit()

@@ -1,0 +1,76 @@
+[
+  {
+    "question_id": "m2_signature_qe_factor_zero",
+    "prompt": "Solve x² = 5x. Find every distinct real solution.",
+    "problem": {
+      "answer_precision": "exact",
+      "class": 10,
+      "concept_ids": [
+        "qe03",
+        "qe04",
+        "qe05"
+      ],
+      "givens": {
+        "a": 1,
+        "b": -5,
+        "c": 0
+      },
+      "language": "en",
+      "number_domain": "real",
+      "task_type": "quadratic_solve"
+    },
+    "answer_contract": {
+      "allowed_kinds": [
+        "finite_set"
+      ],
+      "format": "typed_JSON; explicit_multiplication; sqrt_or_half_integer_powers; bounded_integer_powers",
+      "number_domain": "real",
+      "precision": "exact",
+      "reasoning_assessed_separately": true,
+      "required_units_by_kind": {},
+      "schema_id": "urn:socratic:typed-answer:1",
+      "set_semantics": "unordered_distinct_values; empty_list_for_no_admissible_values"
+    },
+    "hint_stages": [
+      {
+        "stage": 1,
+        "style": "socratic_question",
+        "contains_worked_solution": false,
+        "prompt": "What factor is shared by the terms once you move them to one side?"
+      },
+      {
+        "stage": 2,
+        "style": "socratic_question",
+        "contains_worked_solution": false,
+        "prompt": "How can you use that shared factor without dividing by an expression that might vanish?"
+      },
+      {
+        "stage": 3,
+        "style": "socratic_question",
+        "contains_worked_solution": false,
+        "prompt": "How will you check that your method preserves every possible solution of the original equation?"
+      }
+    ],
+    "difficulty": {
+      "level": "easy",
+      "status": "developer_proposed_not_human_rated",
+      "basis": {}
+    },
+    "chapter": "quadratic_equations",
+    "family_id": "quadratic_solve",
+    "supporting_passage_ids": [
+      "normalized:qe04"
+    ],
+    "review_status": "pending_human_review",
+    "authorship": "developer_authored_milestone2_signature_candidate",
+    "mode_policy": {
+      "tutor_visible": true,
+      "allowed_modes": [
+        "practice"
+      ],
+      "full_worked_solution_visible": false,
+      "answer_key_visibility": "grading_service_only",
+      "hint_policy": "staged_socratic_questions"
+    }
+  }
+]

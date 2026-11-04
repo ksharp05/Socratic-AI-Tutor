@@ -382,7 +382,8 @@ class TutorApp:
                   "set_id": item["set_id"], "set_payload_sha256": item["set_payload_sha256"],
                   "concept_ids": item["problem"]["concept_ids"], "kind": item["answer_contract"]["allowed_kinds"][0],
                   "hint_stages": item["hint_stages"], "hint_stage": 0, "attempts": 0,
-                  "supporting_passage_ids": [f"normalized:{c}" for c in item["problem"]["concept_ids"] if f"normalized:{c}" in self.cards]}
+                  "supporting_passage_ids": [pid for pid in item.get("supporting_passage_ids", [])
+                                             if pid in self.cards and self.cards[pid].get("chapter") == chapter]}
         instruction = ("Answer like 'x = 2 or x = -3' (or 'no real roots')." if active['kind'] == 'finite_set'
                        else "Give an exact value, for example -5, 3/4 or sqrt(3)/2.")
         text = (f"Practice ({item['difficulty']['level']}): {item['prompt']}\n"

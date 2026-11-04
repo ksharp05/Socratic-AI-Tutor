@@ -15,6 +15,7 @@ services:
         required: false
     environment:
       TUTOR_LLM: ${TUTOR_LLM:-stub}
+      TUTOR_CONTEXTUAL_HINTS: ${TUTOR_CONTEXTUAL_HINTS:-0}
       TUTOR_API_TOKENS: ${TUTOR_API_TOKENS:-}
       TUTOR_ENV: ${TUTOR_ENV:-development}  # set to production to refuse the public dev tokens
       TUTOR_VAR_DIR: /app/var
