@@ -1,0 +1,131 @@
+{
+  "artifact_type": "committed_signature_api_development_evidence",
+  "code_commit": "b4c4a71f1b361f5497aa744e09f5be4ebec03c0f",
+  "git_clean_at_smoke": true,
+  "milestone_acceptance": "not_verified",
+  "model_mode": "synthetic_client_no_live_provider",
+  "provider_calls": 0,
+  "synthetic_client_invocations": 2,
+  "human_review": false,
+  "independent_evaluation": false,
+  "candidate": {
+    "question_id": "m2_signature_qe_factor_zero",
+    "review_status": "pending_human_review",
+    "allowed_modes": [
+      "practice"
+    ]
+  },
+  "observations": {
+    "synthetic_teacher_publication": true,
+    "hint_citations": [
+      {
+        "passage_id": "normalized:qe04",
+        "reference_sha256": "b927cdf8994f5a70f7c170277475a26630009768375e6f8b43371baff62389ab"
+      }
+    ],
+    "wrong_attempt": {
+      "route": "grade",
+      "scorable": true,
+      "correct": false,
+      "suspected_misconception": "qe_m04"
+    },
+    "scripted_correct_attempt_accepted": true,
+    "edit_revocation_route": "question_revoked",
+    "student_trace_status": 403,
+    "trace_event_kinds": {
+      "decision": 13,
+      "tool": 35,
+      "llm": 2,
+      "v02_generation": 2
+    },
+    "scripted_correct_answer_is_not_a_learning_measure": true,
+    "token_usage_fields_are_synthetic": true
+  },
+  "raw_local_evidence": "Directions/git_delivery/signature-api-b243a345b009/evidence.json",
+  "raw_evidence_sha256": "eb7d2df4bc0073d5ff67125c11ed0b09fe2e066c1dac602aaa648ae91897f86f",
+  "test_logs": [
+    {
+      "path": "Directions/git_delivery/m2_signature_full_02.log",
+      "sha256": "de2abaff89259a477099869dfe3ac9bd071d3563b568acf296127a2633960e38",
+      "passed": 424,
+      "observed_exit_code": 0
+    },
+    {
+      "path": "Directions/git_delivery/m2_signature_full_team_02.log",
+      "sha256": "06dc5cf3921eb4668beff0e888c8075d38a396c666c66fdd6da7acfa68174431",
+      "passed": 424,
+      "observed_exit_code": 0
+    }
+  ],
+  "full_test_working_file_sha256": {
+    ".env.example": "dcf737ece42479f52486eff3f1d8434435af2c3f3c3203799cad99a63e5792c5",
+    "docker-compose.yml": "e3165a506700662bed42590556b3c67cdf75e6e6e18372d976c446d01d295202",
+    "src/tutor/app.py": "34f89604a54627c2158407618d186f9fd6a61e1fe7b4d251fbe18d27ed67b62a",
+    "src/tutor/llm.py": "f365d379289bb2ea1d9404df7c0d9316b368f252b9cb087fb2538f986fa2eafc",
+    "src/tutor/question_catalog.py": "23d31748465eab2057356a3f105fe6547447e8197de13545209d83b081022206",
+    "src/tutor_api/main.py": "16f326a96d2ba9ae65f0bb88211c4fff7a0327f01c8db9cc2bf27dd860b7d742",
+    "src/tutor_api/traces.py": "46a7f3f7c390f291c106d9515ffb7bc9a6ed8a8b4dd23c87c37428cb63c18932",
+    "src/tutor_eval/harness.py": "bbc065b2d8c9b1aacb798559dac8664b0e4d197f8b03728c397b06e09de3b783",
+    "src/tutor_eval/security.py": "2350e295bc08c821b253acebf8f284986f626c4e52cdc387fb89b12e0d615767",
+    "src/v02_integration/runtime.py": "492df58e32e5c80346e3db7818eae26f82344577ef08f1bc67b3ced5d6c4660b",
+    "src/socrates_beta/static/app.js": "4586f9333f3bc8065b3cc708df4c18c44d3aec33434ca720341516557d6c086d",
+    "ui/app.py": "63fdf6e59dbd7834271f07344014d60aa0192be9d35ff873b60deeb77ad737de",
+    "tests/test_m2_signature_api.py": "e58bd109dee5aa927a76569413fc032bd8cab68326bbd7a9fb413e5e5134f29b",
+    "content/milestone2_dev/practice_items.json": "3863b827c7c17d6193527220bf1a7cba02186cc19048c27ed5ada992c54f344e",
+    "scripts/m2/signature_api_smoke.py": "f290d8e8c8ccce90dc69108693670edddad4de6f4f7083e6f6bc031f03ed8a63",
+    "scripts/m2/quadratic_probe.py": "02135842f15a29aab1972582056e8a76f2b17192d3b5e12ea0df3a18f7ebcb73"
+  },
+  "current_working_file_sha256": {
+    ".env.example": "dcf737ece42479f52486eff3f1d8434435af2c3f3c3203799cad99a63e5792c5",
+    "docker-compose.yml": "e3165a506700662bed42590556b3c67cdf75e6e6e18372d976c446d01d295202",
+    "src/tutor/app.py": "34f89604a54627c2158407618d186f9fd6a61e1fe7b4d251fbe18d27ed67b62a",
+    "src/tutor/llm.py": "f365d379289bb2ea1d9404df7c0d9316b368f252b9cb087fb2538f986fa2eafc",
+    "src/tutor/question_catalog.py": "23d31748465eab2057356a3f105fe6547447e8197de13545209d83b081022206",
+    "src/tutor_api/main.py": "16f326a96d2ba9ae65f0bb88211c4fff7a0327f01c8db9cc2bf27dd860b7d742",
+    "src/tutor_api/traces.py": "46a7f3f7c390f291c106d9515ffb7bc9a6ed8a8b4dd23c87c37428cb63c18932",
+    "src/tutor_eval/harness.py": "bbc065b2d8c9b1aacb798559dac8664b0e4d197f8b03728c397b06e09de3b783",
+    "src/tutor_eval/security.py": "2350e295bc08c821b253acebf8f284986f626c4e52cdc387fb89b12e0d615767",
+    "src/v02_integration/runtime.py": "492df58e32e5c80346e3db7818eae26f82344577ef08f1bc67b3ced5d6c4660b",
+    "src/socrates_beta/static/app.js": "4586f9333f3bc8065b3cc708df4c18c44d3aec33434ca720341516557d6c086d",
+    "ui/app.py": "63fdf6e59dbd7834271f07344014d60aa0192be9d35ff873b60deeb77ad737de",
+    "tests/test_m2_signature_api.py": "e58bd109dee5aa927a76569413fc032bd8cab68326bbd7a9fb413e5e5134f29b",
+    "content/milestone2_dev/practice_items.json": "af6dccb5fd11258bda8f95f9519ef859d70d481d43d7d00b7b0073b91f41d462",
+    "scripts/m2/signature_api_smoke.py": "f290d8e8c8ccce90dc69108693670edddad4de6f4f7083e6f6bc031f03ed8a63",
+    "scripts/m2/quadratic_probe.py": "02135842f15a29aab1972582056e8a76f2b17192d3b5e12ea0df3a18f7ebcb73"
+  },
+  "git_blob_sha256": {
+    ".env.example": "ec264b502dff26f43e114ada87c6d0b8baa1e45a6a7f318f2127ef30e0a7de53",
+    "docker-compose.yml": "b057ef18c4f0baf5f9b992b6608b3e794afc7ff2016069360263b94d5cc42997",
+    "src/tutor/app.py": "6efb2bd264c807499a57c6bcfaf9a82fc32ea5776643e08eddc4da911bf73f91",
+    "src/tutor/llm.py": "4638df007b8fea305263aa3f157b05fe1b29b0e379502cd06d015262570cf0ff",
+    "src/tutor/question_catalog.py": "68fbfec597da4af7995ffe2b777f37e60b9411c8b97762a5d13538840986ec7a",
+    "src/tutor_api/main.py": "e7d5a37473956817bae022e88676947a9d79e1c0ee2085e9c02cb3c3dab4a1e3",
+    "src/tutor_api/traces.py": "2a3ee479ca33b657f4899135a5d9294d60bf5934072028b88ed409284b22e256",
+    "src/tutor_eval/harness.py": "ca92b876079453999791029022b9f2646ebfad3be60d6f8e1ffcf8389d048af0",
+    "src/tutor_eval/security.py": "6180457101d2babc26ca81c9ca047cd098252820acdbbade713cde989d3cd516",
+    "src/v02_integration/runtime.py": "22c2c95f6b6c9aadd5fc34223cd60dd0ff4edfaaaed5aadbde3bfa1ff1cdd0c6",
+    "src/socrates_beta/static/app.js": "b2df7afe9225ca844228f9f75cb8381aba6164e3c5c8e8eb361b1bbc95a0e283",
+    "ui/app.py": "8748cbf849f3017ab2dab0960a75e2c1d0572156ff88da6145c86ea9eab46ee3",
+    "tests/test_m2_signature_api.py": "c0f3b61f47304ed804470bff83c8a6aeff1cc1a1c1b44f08e11075580ddc484e",
+    "content/milestone2_dev/practice_items.json": "af6dccb5fd11258bda8f95f9519ef859d70d481d43d7d00b7b0073b91f41d462",
+    "scripts/m2/signature_api_smoke.py": "4e48f8f7406ce5f0e7d8b9f0a7a782f48a010e03aa77d20fff41be38c2d03215",
+    "scripts/m2/quadratic_probe.py": "4d9bf72f49cb753655e3410c02dec4c8fa078c003ae642a8bd2076e94814a640"
+  },
+  "formatting_after_full_suites": {
+    "file": "content/milestone2_dev/practice_items.json",
+    "before_sha256": "3863b827c7c17d6193527220bf1a7cba02186cc19048c27ed5ada992c54f344e",
+    "after_sha256": "af6dccb5fd11258bda8f95f9519ef859d70d481d43d7d00b7b0073b91f41d462",
+    "change": "CRLF to LF for the new JSON file, matching preserved-byte content conventions",
+    "json_semantics_equal": true,
+    "frozen_data_changed": false,
+    "full_tests_preceded_this_formatting_only_change": true
+  },
+  "post_formatting_focused_passed": 19,
+  "post_formatting_log": "Directions/git_delivery/m2_signature_focused_lf_01.log",
+  "browser_observation": "Directions/git_delivery/signature-api-c5b26b4e75c1/browser_observation.json",
+  "limitations": [
+    "No live-provider or educator-reviewed signature demonstration.",
+    "Earlier C1/C2 comparisons used the base tutor and do not evaluate this opted-in API adapter.",
+    "Docker/fresh-machine, independent evaluation and human acceptance remain open."
+  ]
+}

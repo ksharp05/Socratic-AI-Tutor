@@ -1,6 +1,6 @@
 # Milestone 2 status and engineering decision
 
-**Date:** 4 November 2026. **Latest implementation:** `98cb00f3cd5a16fdd1412f80c61bc2c726aa602f` on local branch `milestone-2`. **Decision:** continue local development testing; **Milestone 2 acceptance is not verified**. This is an engineering assessment, not teacher sign-off or a course decision. Nothing was pushed during this work.
+**Date:** 4 November 2026. **Latest implementation:** `b4c4a71f1b361f5497aa744e09f5be4ebec03c0f` on local branch `milestone-2`. **Decision:** continue local development testing; **Milestone 2 acceptance is not verified**. This is an engineering assessment, not teacher sign-off or a course decision. Nothing was pushed during this work.
 
 ## What works in the local development path
 
@@ -8,9 +8,11 @@ The authenticated connected graph supports English-medium Class 10 Quadratic Equ
 
 Ambiguous registered right-triangle answers can now lead to a short reasoning exchange: the learner states the reference angle and side lengths, chooses the ordered sides for the ratio, and finally submits a numeric value to the checker. Reasoning statements do not create correctness scores or mastery gains. This is a bounded English parser, not arbitrary reasoning or general conversational understanding. [Supported forms and limits](TRIANGLE_REASONING.md).
 
-The final source tree passed **407 offline tests in each project copy**, using existing Windows Python environments, synthetic identities and the stub model. Those suites ran before the code commit; no code changed between the passing runs and that commit. They do not prove a clean installation, container behavior, educational quality or live-model performance.
+The final code revision passed **424 offline tests in each project copy**, using existing Windows Python environments and synthetic/stub clients. A later CRLF-to-LF normalization affected only the new practice JSON; parsed equality and 19 affected checks passed afterward. A clean-commit API smoke then passed on the code checkpoint above, with two labelled synthetic client invocations and zero provider calls. These results do not prove a clean installation, container behavior, educational quality or live-model performance.
 
-The latest change adds teacher-authorized graph learner deletion, a Data requests screen, interruption recovery and a policy describing actual retained data. Twenty focused synthetic checks and the full suites cover isolation, legacy/registered checkpoints, pending writes, retry/restart and cross-process locking. A separate local API example demonstrates redaction, rejected student deletion, a completed teacher receipt and an unchanged peer. This is logical deletion: backups, exported copies and the separate anonymous beta profile remain. The minimal deletion record blocks reuse of stale credentials. [Memory policy](../MEMORY_POLICY.md) and [lifecycle evidence](LEARNER_DATA_LIFECYCLE.md).
+The earlier privacy change adds teacher-authorized graph learner deletion, a Data requests screen, interruption recovery and a policy describing actual retained data. Twenty focused synthetic checks and the full suites cover isolation, legacy/registered checkpoints, pending writes, retry/restart and cross-process locking. A separate local API example demonstrates redaction, rejected student deletion, a completed teacher receipt and an unchanged peer. This is logical deletion: backups, exported copies and the separate anonymous beta profile remain. The minimal deletion record blocks reuse of stale credentials. [Memory policy](../MEMORY_POLICY.md) and [lifecycle evidence](LEARNER_DATA_LIFECYCLE.md).
+
+The registered `x² = 5x` candidate now follows the normal teacher publication/API path. An explicit contextual hint option supplies bounded English generation, and teachers can inspect a projected session trace. The base configuration still uses template practice hints; stub mode stays offline with the option enabled. The candidate remains pending human review. An assistant-operated local browser inspected synthetic model/tool/guard events and citation metadata; the temporary server processes were stopped. [Signature runbook](SIGNATURE_API_PATH.md) and [committed evidence](SIGNATURE_API_EVIDENCE.json). This supplies integration mechanics; the live-model signature gate remains open.
 
 ## Earlier clean committed comparison
 
