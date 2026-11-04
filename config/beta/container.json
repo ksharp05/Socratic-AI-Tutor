@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "app_root": "/app",
+  "data_directory": "/app/var/beta",
+  "max_live_calls": 0
+}

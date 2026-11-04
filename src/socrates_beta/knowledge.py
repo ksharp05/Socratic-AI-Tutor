@@ -11,6 +11,7 @@ from .ports import Scope
 EXTRA_STOP=set('know understand get need explain simple english mean means difference between like example please still confused tell help think happens happen work works make makes use used can want would us them they their'.split())
 ALIASES={'photosyntesis':'photosynthesis','photosyntheis':'photosynthesis','co2':'carbon dioxide','a.p.':'arithmetic progression',
          'ap':'arithmetic progression','q.e.':'quadratic','trig':'trigonometry','dna copying':'dna replication'}
+TRIG_SPELLINGS={'sine':'sin','cosine':'cos','tangent':'tan'}
 SAFE_ID=re.compile(r'^[a-z0-9][a-z0-9_-]{2,79}$')
 
 
@@ -101,6 +102,8 @@ class SqliteKnowledge:
         q=query.casefold()
         for a,b in ALIASES.items():q=re.sub(r'(?<!\w)'+re.escape(a)+r'(?!\w)',b,q)
         terms=[t for t in query_terms(q) if t not in EXTRA_STOP]
+        # Keep the learner's English spelling and add mathematical abbreviations.
+        terms=[variant for term in terms for variant in ((term, TRIG_SPELLINGS[term]) if term in TRIG_SPELLINGS else (term,))]
         if 'arithmetic progression' in q:terms.append('ap')
         fixed=[]
         for t in terms:
@@ -123,6 +126,8 @@ class SqliteKnowledge:
         for p in rows:
             expanded=p['text'].casefold()
             for acronym,meaning in ALIASES.items():expanded+=' '+re.sub(r'(?<!\w)'+re.escape(acronym)+r'(?!\w)',meaning,p['text'].casefold())
+            for spelled,short in TRIG_SPELLINGS.items():
+                if re.search(r'(?<!\w)(?:'+re.escape(spelled)+'|'+re.escape(short)+r')(?!\w)', expanded):expanded+=' '+spelled+' '+short
             words=set(re.findall('[a-z0-9]+',expanded))
             p['query_coverage']=sum(t in words for t in terms)/len(terms)
             p['retrieval_score']=round(-p['rank']*(.5+p['query_coverage']),4)

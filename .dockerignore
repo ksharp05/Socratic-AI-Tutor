@@ -3,6 +3,10 @@
 **/.env
 .venv*
 # Local state, private data and the frozen dataset build
+Directions/
+heldout_private/
+.workspace_migration/
+config/beta/local.json
 var/
 data/
 socratic_tutor_dataset*
@@ -21,3 +25,7 @@ dist/
 tmp/
 Docs/
 tests/
+tests_*/
+submission_verify/
+video_review/
+reference/

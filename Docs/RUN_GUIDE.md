@@ -158,3 +158,21 @@ foreach ($concept in @('ap03', 'tr01')) {
 Open [the connected tutor](http://127.0.0.1:8771/beta/#connected) and enter `local-student`. Choose quadratic equations, arithmetic progressions, or trigonometry and ask a question. Start a new conversation to change the chapter. Normalized references display their textbook anchors and pending review status. Checked practice is available in all three chapters after separate teacher publication. The development quiz is available in each chapter after separate quiz-mode publication; completing an AP/trigonometry quiz creates that chapter’s graph plan. For AP or trigonometry, a teacher can create and review a proposal using concept `ap03` or `tr01` in the teacher interface, selecting `practice` or `quiz`; approval publishes that exact selected payload. [Chapter quizzes and plans](m2/CHAPTER_QUIZZES_AND_PLANS.md). See [chapter practice](m2/CHAPTER_PRACTICE.md). The two approvals above cover quadratics only and are separate because practice and quiz items have different permitted modes; AP/trigonometry need separate approvals. Signing out does not delete its data; the anonymous beta profile is a separate record. Press **Ctrl+C** in the server window to stop the server. The isolated graph database remains in `Directions\connected_demo_state`; the beta configuration selects its own dataset and beta storage.
 
 The local browser walkthrough was verified with a synthetic index and the stub model; this exact command against your existing dataset has not been verified as a fresh-machine setup. Questions approved by the example are for development and do not constitute educator review. See [connected journey and limitations](m2/CONNECTED_GRAPH_JOURNEY.md).
+
+
+## Integrated Compose preparation
+
+The following is an **unverified Docker path**: Docker was unavailable on the development computer, so a clean-machine build and Compose health check remain required. It uses the integrated `/beta` mount and an authorised prepared index. Obtain the expected SHA-256 separately from a trusted source; do not rely only on a hash computed from an untrusted input. In PowerShell from the checkout containing the Docker files:
+
+```powershell
+$env:TUTOR_INDEX_PATH = 'C:\path\to\authorized\knowledge.sqlite'
+$env:TUTOR_INDEX_SHA256 = '<trusted-lowercase-sha256>'
+$env:TUTOR_DATASET_ID = 'local-prepared-index'
+$env:TUTOR_API_TOKENS = 'local-student:student:L-DEMO,local-teacher:teacher:T-DEMO'
+docker compose -f docker-compose.yml -f docker-compose.integrated.yml up --build --wait
+Invoke-RestMethod http://127.0.0.1:8000/health/ready
+```
+
+Replace the placeholders. The example tokens are for isolated local development; use separately provisioned credentials for a real deployment. Open `http://127.0.0.1:8000/beta/#connected` for the connected browser or `http://127.0.0.1:8501` for the Streamlit teacher interface. Publish separate practice and quiz proposals for each chapter as described above. The existing Compose ports bind on the host interfaces, so use this development configuration only on a trusted local network.
+
+To stop the stack without deleting its persistent volume, run `docker compose -f docker-compose.yml -f docker-compose.integrated.yml down`. Keep the same index path, ID and hash for restarts; the startup refuses to replace a different active dataset. The index is mounted read-only and is not copied into the image. The overlay forces offline stub mode. [Details and limitations](m2/INTEGRATED_COMPOSE.md).

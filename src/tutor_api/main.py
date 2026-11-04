@@ -94,7 +94,8 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
     token_map = load_tokens(tokens)
     metrics = Metrics()
     lock = threading.RLock()
-    state: dict = {"tutor": tutor, "owned": tutor is None, "trace_id": 0}
+    state: dict = {"tutor": tutor, "owned": tutor is None, "trace_id": 0, "beta": None}
+    require_beta = os.environ.get("TUTOR_REQUIRE_BETA") == "1"
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -254,6 +255,36 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         t = state["tutor"]
         return {"status": "ok" if t is not None else "starting", "llm": t.llm.label if t is not None else None}
 
+    @api.get("/health/ready")
+    def readiness() -> JSONResponse:
+        """Check local graph state and the mounted beta's registered index, without revealing paths."""
+        checks = {"graph": "unavailable", "beta": "not_configured"}
+        try:
+            with lock:
+                t = state["tutor"]
+                if t is None:
+                    raise RuntimeError("graph is starting")
+                t.conn.execute("SELECT 1").fetchone()
+                t.checkpointer.conn.execute("SELECT 1").fetchone()
+                if not {"quadratic_equations", "arithmetic_progressions", "trigonometry"} <= {c.get("chapter") for c in t.cards.values()}:
+                    raise RuntimeError("missing chapter references")
+                checks["graph"] = "ready"
+                beta = state["beta"]
+                if beta is None:
+                    if require_beta:
+                        checks["beta"] = "unavailable"
+                        raise RuntimeError("beta not configured")
+                else:
+                    checks["beta"] = "unavailable"
+                    knowledge = beta.state.services["registry"].knowledge()
+                    with knowledge.connect() as conn:
+                        if conn.execute("SELECT count(*) FROM passages").fetchone()[0] < 1:
+                            raise RuntimeError("empty beta index")
+                    checks["beta"] = "ready"
+        except Exception:
+            return JSONResponse({"status": "not_ready", "components": checks}, status_code=503)
+        return JSONResponse({"status": "ready", "components": checks})
+
     @api.get("/metrics")
     def metrics_endpoint() -> Response:
         if state["tutor"] is not None:
@@ -404,7 +435,7 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
 
     if beta_config := os.environ.get('TUTOR_BETA_CONFIG'):
         from .beta import mount_beta
-        mount_beta(api, beta_config, tutor_provider=_tutor)
+        state["beta"] = mount_beta(api, beta_config, tutor_provider=_tutor)
 
     return api
 

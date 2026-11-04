@@ -1,0 +1,25 @@
+# Merge with docker-compose.yml to mount a separately supplied prepared index.
+services:
+  api:
+    environment:
+      TUTOR_LLM: stub
+      TUTOR_BETA_LIVE: "0"
+      TUTOR_BETA_CONFIG: /app/config/beta/container.json
+      TUTOR_BETA_WORKSPACE: /app
+      SOCRATES_SOURCE_WORKSPACE: /app
+      TUTOR_REQUIRE_BETA: "1"
+      TUTOR_CONTAINER_INDEX: /sources/knowledge.sqlite
+      TUTOR_INDEX_SHA256: ${TUTOR_INDEX_SHA256:?Set the trusted index SHA-256}
+      TUTOR_DATASET_ID: ${TUTOR_DATASET_ID:-local-prepared-index}
+    volumes:
+      - type: bind
+        source: ${TUTOR_INDEX_PATH:?Set the path to an authorized prepared index}
+        target: /sources/knowledge.sqlite
+        read_only: true
+    entrypoint: ["python", "-m", "socrates_beta.container_entrypoint"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 40s
+      retries: 5

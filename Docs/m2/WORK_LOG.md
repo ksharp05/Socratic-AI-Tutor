@@ -134,3 +134,10 @@ The shared checkout also passed **317 offline tests** with its vendored maths pa
 A separate, provisional six-question AP/trigonometry quiz pack requires exact-payload teacher approval and remains distinct from practice-only content. Completed chapter quizzes update separate learner/chapter plans in the same SQLite transaction as the result ledger; quadratic plans remain in the existing table. Synthetic tests check both chapters, learner isolation, atomic failure, replay and legacy-store upgrade. A stub localhost browser checked an AP quiz, plan explanation and refresh recovery. Live model, human content review, independent evaluation, multi-host behavior and fresh Compose remain open. [Details](CHAPTER_QUIZZES_AND_PLANS.md).
 
 The final canonical and shared-checkout four-suite runs each passed **324 offline tests**. The shared run used its vendored maths package and canonical local data. Logs are in ignored `Directions/git_delivery/`.
+
+
+## Integrated startup preparation — 4 November
+
+Added an offline integrated Compose overlay, hash-pinned read-only prepared-index registration and graph/beta readiness check. Local synthetic tests cover registration, rejection without overwriting, index tampering and a real localhost startup/approval/practice smoke. The existing local index was checked in a separate registry; its trigonometry English-alias retrieval miss was reproduced and fixed without editing the index. Docker is unavailable, so the container build and fresh-machine acceptance remain open. [Details](INTEGRATED_COMPOSE.md).
+
+The final canonical and shared-checkout four-suite runs each passed **333 offline tests**, including the synthetic localhost startup smoke; the shared run used its vendored maths package. The final expanded sine/cosine/tangent alias check passed separately in both copies. Logs are in ignored `Directions/git_delivery/`. Docker and a second machine remain unverified.
