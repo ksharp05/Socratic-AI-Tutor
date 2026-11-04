@@ -1,13 +1,33 @@
-# M3/M4 checkpoint
+# M3/M4 checkpoint - v2 safety exception
 
-Status: implementation validated locally on Beta; ready for committed engineering-freeze runs. Final source passed 483 four-suite regression tests (`Directions/git_delivery/m3_full_team_02.log`, 104.21 s); three hand-calculated analysis tests also pass. Initial six two-card configs passed; final committed smoke, CI-equivalent checks and full matrix are next.
+The active user goal is to complete actionable M3 behaviour freeze and M4 E1–E4 results, data sufficiency, citation/safety/cost analysis, while the user sleeps. Keep work local on Beta. A one-time continuation is scheduled in this chat for 6:32 am IST on 5 November after the reported 6:31 am account reset. Do not spend the reset credit or change plans.
 
-Goal: reproducible C1/C2 baseline, runnable E1–E4, citation/safety/cost analysis and data sufficiency. Keep work local. The original preregistration remains a draft; do not fabricate R2 approval, human lesson review, calibration or independent authorship.
+## Current state
 
-Implemented: isolated contextual C0/C1/C2, memory-off and registered-practice telling arms; unreviewed candidate-only playbook hook; durable pre-request provider budget with retries disabled; provider cost telemetry adapted from R3 commit 39a0c44; failure/timeout/contamination excluded from the success proxy and leak turns deduplicated; citation snapshots retained per harness turn.
+- V1 implementation `b4c290b`, local tag `beta-m3-behaviour-v1`, is preserved. It passed 483 regression tests + 3 analysis tests, all six final two-card smoke configs and three CI evaluation gates. Baseline remote Actions is confirmed successful for 3dd518a (41908712265); unpushed Beta has no remote CI run.
+- V1 full offline matrix completed: 224 tutoring sessions, 160 safety cases, zero execution errors. Evidence is `Directions/m3_runs/offline/INDEX.json`, `ANALYSIS.json` and `ANALYSIS.md`; the blank-rater packet is beside them. One known development urgent case failed routing with guards on and off. No provider calls occurred.
+- V2 adds explicit first-person unsafe/not-safe recogniser phrases and regression checks. It also delivers the six existing source/tool-result cases through isolated returned-data overlays. Files/keys are untouched, delivery hashes are recorded, and semantic expectations stay unmeasured where code cannot establish them. The protocol documents both deviations; original v1 outcomes are not relabelled.
+- Use **`--revision v2` for all new smoke/offline/pilot/live and analysis commands**. V2 artifacts go under `Directions/m3_runs/v2/`; v1 stays where it is. No data, attack payload, seed, expected label or run count changed.
 
-Prepared existing development data under ignored `Directions/m3_data/development-v1/`: 16 source cards, six quadratic/five AP/five trig; 22 pairs/44 quiz items; no practice-record overlap; 17 seeded misconceptions; 160 development golden cases available. Candidate final has 24 cards/30 pairs but has not been exported or run. More synthetic variants do not supply independent authorship or human evidence.
+## Execution next
 
-Next: run all six final smoke configs in `eval/configs/m3_smoke_*.toml`; validate the simulator; run CI checks locally and baseline remote CI is confirmed successful for 3dd518a (Actions 41908712265), while unpushed Beta has no remote run; commit/tag the engineering behaviour freeze and record hashes; run full offline matrix; then the four-session C1/C2 live pilot (two cards per arm, hard cap 30 total requests, estimated below USD 0.05) and predeclared live matrix if the pilot is healthy. E1/E3 use seeds 1,2,3; E4 uses seed 1 with the matched C2 subset reused. All 16 development cards are predeclared, without performance-based selection. Candidate lessons are unreviewed and cannot establish final E3 acceptance. Produce explicit missing-human/data gates and a review packet.
+Run final full tests and committed v2 smoke/CI checks, then tag the committed source as `beta-m3-behaviour-v2`. Run:
 
-Provider calls added in this continuation so far: zero. Prior usage 98/1000. Shared live ledger is `Directions/m3_runs/provider_budget.json`, max 902 further attempts and USD 1 accounted upper bound; never reset or bypass it. Each live batch needs a stated estimate and a hard cap. Model fixed to openai/gpt-4.1-mini, template simulator, code-only scoring until human calibration. A one-time scheduled continuation in this chat is set for 6:32 am IST on 5 November, after the reported 6:31 am usage reset. It should resume this checkpoint, avoid duplicate completed runs, and verify current limits before work.
+```
+python scripts/m3/run_matrix.py --stage offline --revision v2 --security
+python scripts/m3/analyse.py --stage offline --revision v2
+python scripts/m3/run_matrix.py --stage pilot --revision v2 --arms c1 c2 --max-calls 902
+python scripts/m3/analyse.py --stage pilot --revision v2
+```
+
+Inspect the pilot before the full live matrix. The pilot is four sessions, at most 30 provider attempts total, estimated below USD 0.05; it shares the global ledger. If healthy, announce the next batch cap and cost estimate, then run `--stage live --revision v2 --max-calls 902 --security` and analyse it. All 16 predeclared development cards are retained; E1 and E3 use seeds 1,2,3, E4 uses seed 1 with the matched C2 subset reused. Failures/timeouts/contamination cannot become successes. Source/config/data-aware resumption refuses ambiguous/interrupted evidence. Inspect partial sessions, never silently repeat or drop them.
+
+## Budget and data
+
+Provider calls remain **98/1,000** (zero new as of this checkpoint). Shared durable wallet: `Directions/m3_runs/provider_budget.json`, max 902 further attempts and USD 1 accounting cap. Never reset, delete or bypass it. Retries disabled; max 240 output tokens; fixed openai/gpt-4.1-mini; template simulator; no judge calls. Provider cost is used if exposed, otherwise labelled token estimates/conservative reservations.
+
+Existing development export: `Directions/m3_data/development-v1/`; 16 source cards (6 QE,5 AP,5 trig), 22 pairs/44 quiz items, 17 seeded misconception types, 160 development golden cases. No practice-record overlap. Simulator validation passes 24/24 card/misconception pairs; five are not observable in assigned quiz scores, eight seeded types are outside runtime diagnosis. Candidate final: 24 cards/30 pairs, not exported/run. More synthetic variants do not supply independent or human-reviewed data.
+
+## Remaining reporting and gates
+
+Finish actual live/code results with exact run IDs, paired student-cluster bootstrap intervals, seed spread, mechanical citation checks, supported/unsupported safety bounds and cost coverage. Prepare the final report and blank human-review packet; preserve any existing rater files rather than overwriting them on analysis reruns. The original final preregistration stays draft: do not invent R2 approval, accepted/rejected human lessons, calibrated raters/judge, independent final authorship or real learning. Candidate-v1 playbook is explicitly unreviewed and exploratory. M3/M4 final acceptance still depends on those external gates, even after the development engineering work is complete.

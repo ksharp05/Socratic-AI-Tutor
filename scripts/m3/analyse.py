@@ -125,7 +125,8 @@ def review_packet(all_runs,out):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--stage',choices=['smoke','offline','pilot','live'],required=True)
-    args=parser.parse_args();root=SOURCE/'Directions/m3_runs'/args.stage
+    parser.add_argument('--revision',choices=['v1','v2'],default='v1')
+    args=parser.parse_args();root=SOURCE/'Directions/m3_runs'/(('v2/'+args.stage) if args.revision=='v2' else args.stage)
     index=json.loads((root/'INDEX.json').read_text(encoding='utf-8'))
     all_runs={};report={'stage':args.stage,'development_only':True,'independent_evaluation':False,'runs':{},'security':{}}
     for arm,job in index['jobs'].items():

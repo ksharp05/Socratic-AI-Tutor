@@ -1,5 +1,5 @@
 {
-  "status": "local_development_engineering_freeze",
+  "status": "v2_local_development_engineering_freeze_validation_pending",
   "final_preregistration": "draft_human_decision_pending",
   "code_config_protocol_sha256": {
     "eval/configs/m3_live_c0.toml": "b048aa2ca66f88445bfe5b7338fac44608cd1329879d426da3033a53d5f1c146",
@@ -23,8 +23,8 @@
     "eval/configs/m3_smoke_e3_after.toml": "f8e4612f412bd451342a89321d41528e02e250bdecd60621ce6b2e448ccadb13",
     "eval/configs/m3_smoke_memory_off.toml": "0050a76c2ed9f155289008c5e434bd415bd3e2952c0a7ebf660154abfd23a19d",
     "eval/fixtures/m3_candidate_playbook.json": "cf3f8f0fc5e0d4cc9bd8701c69a7ee4f116d3c9782f3d0cc68ac1190cf6a2c2d",
-    "eval/M3_DEVELOPMENT_PROTOCOL.md": "37b5b23c8337e5ad166a9a1ec60dd47b863529331201597a2bd43014a876c6dd",
-    "scripts/m3/run_matrix.py": "ec791b3e7cb81f1410bca48dc4d81cb0f039310ac76120af9dc7d499befc5524",
+    "eval/M3_DEVELOPMENT_PROTOCOL.md": "f9ef980b7cb03c3a928a0ef89fc8b79fd3773118f928b4e6c76e17aa34e85d98",
+    "scripts/m3/run_matrix.py": "586762fa56429f192b0de5472b6ff86f688554a8a25dc8a27563b7ad738109be",
     "src/tutor/__init__.py": "52d0acd9c7006b0b26c52037c76c8df97aaf04ee228b0b1ac36b0571e1f4e62b",
     "src/tutor/__main__.py": "c13eb66970ae37b8b044f428b309e67868814b90a8bb408806f3316ce4dfbc5b",
     "src/tutor/app.py": "2a7756cc602d91f5377f29ab4c01d04d1b77716e7c314f5568e2b073ba81cb46",
@@ -32,7 +32,7 @@
     "src/tutor/cli.py": "529c8164c764a6917d28f563d714c8fa5fd9b3eb47cd901db7ac0b1bab63bd62",
     "src/tutor/config.py": "bb8d2d8853616ffd883910e293702b5edb335d29e784e1c7d9b25c8e7b60fa32",
     "src/tutor/conversation.py": "82aa7aa5a77e3a250cf4aef169f70641144076f59978f3587ba719dbf460e1aa",
-    "src/tutor/guards.py": "8ca20ac90ae2468b46120bdff202a185f76d45fd274f0aae74f910d89066a08d",
+    "src/tutor/guards.py": "16c2dcabcdb8b294370e07b6c1bd0ae08288d8a1d6fb9c561e66b672b6c89a42",
     "src/tutor/learner.py": "32b2512ee18e0b9c21a60d7efe8153b5291a26d2f63d1097ceada6432e26e889",
     "src/tutor/learner_privacy.py": "ba0a5539d204557da5fc3875673c7dda98434518058968bae098752063a878f7",
     "src/tutor/llm.py": "5a31d59ff63173c216dd8121e8e2ac204d68df9c13776c62e576300a2ca0a08e",
@@ -61,7 +61,7 @@
     "src/tutor_eval/__init__.py": "cba688598deb3229e76bedb1115db27f4cabb89b452b08438ccf9f7268b200f0",
     "src/tutor_eval/agreement.py": "53730ad35bd8f60c463ddeaadd2f3a08a4062ef5c1aec01156e4ef3d47047052",
     "src/tutor_eval/arms.py": "4b350555d992421b8f5b49e99fd8fee9252ac943711f5fc9bb6de0aad7702772",
-    "src/tutor_eval/experiment_arms.py": "a786a747ecd2b84e03e7694b3e318f7f4e022d881f42e8f469b336cff7a5e77e",
+    "src/tutor_eval/experiment_arms.py": "51ae9f787a36c8aa19ebb0143cd350ca130a88e36f02982b4fd82b217c53f47f",
     "src/tutor_eval/freeze.py": "06eca4a47542c0c21478cf28e33096beb2449bb1a30d2aeb9111169c6652e63c",
     "src/tutor_eval/harness.py": "fd84d4500a492e44b19c7aeea5d870bc8342c5baad44ecd15c0aad5b33d9e3bd",
     "src/tutor_eval/judge.py": "71353ca5a72acf8b2a7046e7580711a0e355542a2e78d579cc72ca52dda8c6dc",
@@ -70,7 +70,7 @@
     "src/tutor_eval/prepare_development.py": "2ee61b8ddd5b0de694d04f9499049b187d4c3a206a90b53abcb48d873ecc335a",
     "src/tutor_eval/provider_budget.py": "99ec8c98a71116c6f38b4c50fdab1afa6507c2fbd57470c720bde85f472b2828",
     "src/tutor_eval/run.py": "aab74d11cb9aba7eee977ecdf3343c4fd4e3c41e33ef2324b1bce6bd8cc3cf54",
-    "src/tutor_eval/security.py": "bcbad6d24ab8ca757a28c8cc9345060f2989c72dcf04584e5fe856c37de62c9c",
+    "src/tutor_eval/security.py": "ba0f9c3f5a64c13f8a5b5134d0df6ab095dc4b715eafd169b8bd226a5ac049b1",
     "src/tutor_eval/simulator.py": "d28f4ec1b65c8380336df63d6bd629c481c675ec4f11d0c8a165ffdd6fbabc5c",
     "src/tutor_eval/single_agent.py": "4072804ae4a22c9a6456674b45100db69d7358d2c89b785988c880871b54bbe8",
     "src/tutor_eval/tables.py": "faea2dd9761fcaf7c63167ace06d666f6920537a124f7c25237449d2d2952e8a",
@@ -94,5 +94,8 @@
   "provider_calls_added": 0,
   "prior_provider_calls": 98,
   "baseline_ci_run": "https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/41908712265",
-  "Beta_remote_ci": "not_run_local_only"
+  "Beta_remote_ci": "not_run_local_only",
+  "previous_revision": "b4c290ba151a8a1a2361f3b0057e829382175113",
+  "safety_deviation": "Known development urgent-routing failure fixed before any paid or final held-out run; v1 retained.",
+  "v2_test_status": "pending full regression on this committed revision"
 }

@@ -10,11 +10,45 @@ from tutor_eval.single_agent import SingleAgentTutor
 from v02_integration.runtime import ContextualPreviewTutor
 
 
-class ContextualSingle(SingleAgentTutor, ContextualPreviewTutor):
+class InjectionMixin:
+    """Per-case source/tool-result overlays; available only in isolated experiment factories."""
+    def __init__(self, **kwargs):
+        self._experiment_injection = None
+        self.injection_deliveries = []
+        super().__init__(**kwargs)
+
+    def begin_injection(self, channel, payload):
+        if channel not in ('retrieved_passage', 'tool_result'):
+            raise ValueError('Unknown experimental injection channel')
+        self._experiment_injection = {'channel': channel, 'payload': payload}
+        self.injection_deliveries = []
+
+    def end_injection(self):
+        self._experiment_injection = None
+
+    def _call(self, state, node, role, server, tool, args):
+        result = super()._call(state, node, role, server, tool, args)
+        injection = self._experiment_injection
+        if injection and server == 'textbook-kb' and tool == 'get_section' and isinstance(result.get('text'), str):
+            import hashlib
+            result = {**result, 'text': result['text'] + '\n' + injection['payload']}
+            delivery = {'channel': injection['channel'], 'tool': server + '.' + tool,
+                        'passage_id': result.get('passage_id'),
+                        'payload_sha256': hashlib.sha256(injection['payload'].encode('utf-8')).hexdigest()}
+            self.injection_deliveries.append(delivery)
+            self._note(state, node, 'experimental_data_path_overlay_delivered', delivery)
+        return result
+
+
+class ContextualTeam(InjectionMixin, ContextualPreviewTutor):
     pass
 
 
-class FixedWorkflowTutor(ContextualPreviewTutor):
+class ContextualSingle(InjectionMixin, SingleAgentTutor, ContextualPreviewTutor):
+    pass
+
+
+class FixedWorkflowTutor(InjectionMixin, ContextualPreviewTutor):
     """Protocol/grading services plus fixed retrieve-hint-guard teaching; no diagnostic branch."""
     def _planner(self, state):
         selection = super()._planner(state)
@@ -24,7 +58,7 @@ class FixedWorkflowTutor(ContextualPreviewTutor):
         return selection
 
 
-class MemoryOffTutor(ContextualPreviewTutor):
+class MemoryOffTutor(InjectionMixin, ContextualPreviewTutor):
     """Keep only current dialogue/item state; no persistent learner-model reads or updates."""
     def _load_learner(self, state):
         chapter = state['session'].get('chapter', 'quadratic_equations')
@@ -53,7 +87,7 @@ class MemoryOffTutor(ContextualPreviewTutor):
         return update
 
 
-class DirectAnswerTutor(ContextualPreviewTutor):
+class DirectAnswerTutor(InjectionMixin, ContextualPreviewTutor):
     """Code-computed telling on registered practice only, in an isolated fixture store."""
     def __init__(self, **kwargs):
         if not kwargs.get('allow_dev_fixtures'):
@@ -112,7 +146,7 @@ def attach_candidate_playbook(app, playbook):
 def make_experiment_app(arm, playbook=None, **kwargs):
     if not kwargs.get('allow_dev_fixtures'):
         raise ValueError('Experiment variants require isolated development fixture stores')
-    classes = {'c0': FixedWorkflowTutor, 'c1': ContextualSingle, 'c2': ContextualPreviewTutor,
+    classes = {'c0': FixedWorkflowTutor, 'c1': ContextualSingle, 'c2': ContextualTeam,
                'memory_off': MemoryOffTutor, 'direct_answers': DirectAnswerTutor}
     if arm not in classes:
         raise ValueError('Unknown experiment arm')

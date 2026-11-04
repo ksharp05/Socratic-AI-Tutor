@@ -22,6 +22,7 @@ def save(path, data):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--stage', choices=['smoke','offline','pilot','live'], default='smoke')
+    parser.add_argument('--revision', choices=['v1','v2'], default='v1')
     parser.add_argument('--max-calls', type=int, default=0)
     parser.add_argument('--arms', nargs='+', default=['c0','c1','c2','memory_off','direct_answers','e3_after'])
     parser.add_argument('--security', action='store_true')
@@ -33,7 +34,7 @@ def main():
     from tutor_eval import harness, security
     from tutor_eval.provider_budget import ProviderBudget
     from filelock import FileLock
-    root = SOURCE/'Directions/m3_runs'/args.stage
+    root = SOURCE/'Directions/m3_runs'/(('v2/'+args.stage) if args.revision=='v2' else args.stage)
     root.mkdir(parents=True,exist_ok=True)
     with FileLock(str(SOURCE/'Directions/m3_runs/matrix.lock'), timeout=1):
         index_path = root/'INDEX.json'
