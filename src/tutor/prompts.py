@@ -1,7 +1,7 @@
 """Versioned six-slot prompts (role, context, task, constraints, format, examples). Used only when an LLM key is set."""
 from __future__ import annotations
 
-PROMPT_VERSION = "poc-v2-student-message"
+PROMPT_VERSION = "poc-v3-model-probe"
 
 TUTOR = {
     "role": "You are a Socratic maths tutor for a Class 10 student in India (NCERT: Quadratic Equations, "
@@ -19,11 +19,14 @@ TUTOR = {
 DIAGNOSTICIAN = {
     "role": "You diagnose maths misconceptions for a Class 10 tutor.",
     "context": "Misconception catalogue (id: incorrect rule):\n{catalogue}\nStudent message:\n{message}",
-    "task": "Decide which catalogue misconception, if any, best explains the student's message.",
-    "constraints": "Choose only an id from the catalogue or null. Do not solve the problem.",
-    "format": 'JSON: {{"misconception_id": "<id or null>", "confidence": <0..1>, "evidence": "<short quote>"}}',
-    "examples": 'Message: "I cancelled the x on both sides." -> {{"misconception_id": "qe_m04", "confidence": 0.8, '
-                '"evidence": "cancelled the x"}}',
+    "task": "Decide which catalogue misconception, if any, best explains the student's message, "
+            "and write one short question that helps the student test that idea themselves.",
+    "constraints": "Choose only an id from the catalogue or null. Do not solve the problem. The question must not "
+                   "state an answer, and must use no number the student did not write.",
+    "format": 'JSON: {"misconception_id": "<id or null>", "confidence": <0..1>, "evidence": "<short quote>", '
+              '"question": "<one question>"}',
+    "examples": 'Message: "I cancelled the x on both sides." -> {"misconception_id": "qe_m04", "confidence": 0.8, '
+                '"evidence": "cancelled the x", "question": "What must be true about x before you can cancel it?"}',
 }
 
 

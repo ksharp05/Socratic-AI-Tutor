@@ -254,10 +254,19 @@ class TutorApp:
         self._note(state, "planner", "route", {"route": route})
         return {"route": route}
 
+    def _safe_question(self, text: object, message: str) -> str | None:
+        """Model wording with no checked key behind it: one short question and no number the student didn't write."""
+        text = text.strip() if isinstance(text, str) else ""
+        numbers = set(re.findall(r"\d+(?:\.\d+)?", text)) - set(re.findall(r"\d+(?:\.\d+)?", message))
+        if not text.endswith("?") or text.count("?") != 1 or len(text.split()) > 40 or numbers or guards.generic_leak(text):
+            return None
+        return text
+
     def _diagnose(self, state: TutorState) -> dict:
         mid = state["focus_misconception"]
         mis = self.misconceptions[mid]
         evidence = ["keywords in the student's message"]
+        question = None
         if self.llm.enabled and not state.get("unverified_own_problem"):
             permitted = {m:v for m,v in self.misconceptions.items()
                          if self.concepts[v['concept_id']]['chapter'] == state['session'].get('chapter','quadratic_equations')}
@@ -270,6 +279,7 @@ class TutorApp:
                 if verdict.get("misconception_id") in permitted:
                     mid, mis = verdict["misconception_id"], self.misconceptions[verdict["misconception_id"]]
                     evidence.append(f"LLM: {verdict.get('evidence', '')}"[:120])
+                    question = self._safe_question(verdict.get("question"), state["messages"][-1]["content"])
             except Exception:
                 pass
         self._call(state, "diagnose", "diagnostician", "learner-store", "read_learner",
@@ -277,7 +287,7 @@ class TutorApp:
         flagged = state["learner"]["misconceptions"].get(mid)
         opener = ("We've seen this idea trip you up before, so let's check it carefully. " if flagged
                   else "Good question, let's check one thing first. ")
-        text = f"{opener}{mis['diagnostic_probe']}"
+        text = f"{opener}{question or mis['diagnostic_probe']}"
         diagnosis = {"misconception_id": mid, "status": "confirmed" if flagged else "suspected", "evidence": evidence}
         return {"draft": {"text": text, "citations": [], "kind": "probe", "misconception_id": mid},
                 "diagnosis": diagnosis, "focus_misconception": mid, "probe_asked_for": mid, "hint_stage": 0}
