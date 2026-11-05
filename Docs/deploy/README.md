@@ -163,3 +163,8 @@ The tests use FastAPI's `TestClient` and the stub model. CI installs the `api` e
   - the Grafana leak alert and its webhook (`POST /alerts/grafana`);
   - the `eval` Compose service;
   - concurrent turns.
+
+
+## Local candidate browser check - 6 November 2026
+
+The updated student chat was checked in an in-app browser against isolated, stub-only local API/UI servers: chapter selection/pinning, AP probe/self-correction, per-turn reference display, new session/chapter switch, and trigonometry chat. Desktop (1280px) and mobile (390px) checks showed no horizontal overflow. Five new real API/AppTest learner checks also cover stream failures and restoring a saved reply without replay. This is assistant-operated development acceptance, not an independent member installation or human teaching review. See `Docs/product_quality/v1/CURRENT_CHECKPOINT.json`; temporary test servers were stopped.

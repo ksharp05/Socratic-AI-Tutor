@@ -460,3 +460,33 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Scope:** three existing development cards/chapters, seed 1, eight turns, fixed gpt-4.1-mini; template voice, no judge.
 - **Outcome:** 3 sessions, 8 requests, provider USD 0.0023812; 5/5 tutor-route turns called the model, zero errors/full detected leaks, seven mechanically verified citation snapshots. Zero diagnosis hits/success proxies; mean synthetic quiz change -0.667.
 - **Decision:** paid tutor paths pass; quality/final gates remain open. Preserve as a small development pilot, not an efficacy estimate. No further pilot sessions scheduled; Beta remains local.
+
+### 2026-11-06 · pq_v1_smoke_c1-20261106-010549-e2d1fdc7257b · Product candidate C1/C2 stub qualification
+
+- **Source:** clean `3fa40759c41e2c8e6404925c3238c65e36431a8f`; manifest `9dfe32d934008a146137e98fe75d4edf7f84eac654256a33938221ee9b87d040`; configuration `8405c156a71ccb20768c8b31f30a32282e729ceb5fdc3a16448425afe45fce21`.
+- **Outcome:** 3 development sessions, zero provider calls, gate pass; paired smoke/full trajectories match.
+- **Decision:** reproducibility qualification only; three seed repeats do not create independent cards or evidence of human learning.
+
+### 2026-11-06 · pq_v1_smoke_c2-20261106-010555-e8a6b458224d · Product candidate C1/C2 stub qualification
+
+- **Source:** clean `3fa40759c41e2c8e6404925c3238c65e36431a8f`; manifest `3985e547683acfe2329ceeac62f15e36393e944607e8bc348b644af2e5669b38`; configuration `be790860d3c7b7dc95c179d3841b1894418f66f60dcd04b2be81b220977a360e`.
+- **Outcome:** 3 development sessions, zero provider calls, gate pass; paired smoke/full trajectories match.
+- **Decision:** reproducibility qualification only; three seed repeats do not create independent cards or evidence of human learning.
+
+### 2026-11-06 · pq_v1_offline_c1-20261106-010557-bccd0481ad7b · Product candidate C1/C2 stub qualification
+
+- **Source:** clean `3fa40759c41e2c8e6404925c3238c65e36431a8f`; manifest `b1b7e3db5302fa2d4c3a916f782efe01c7b64c47340bb1e0172831589110bd9d`; configuration `66c11f5d237bf58fa4c335cfa958198d33f22cc3cdb10211aa9a392e754e64e2`.
+- **Outcome:** 48 development sessions, zero provider calls, gate pass; paired smoke/full trajectories match.
+- **Decision:** reproducibility qualification only; three seed repeats do not create independent cards or evidence of human learning.
+
+### 2026-11-06 · pq_v1_offline_c2-20261106-010638-2d334dfd8c92 · Product candidate C1/C2 stub qualification
+
+- **Source:** clean `3fa40759c41e2c8e6404925c3238c65e36431a8f`; manifest `09a8ae43bcc8a49659850b73ef7f2c5a09dbd3339363072bb8356590e0b5b568`; configuration `e4652d885d8d3953ad6711522a6f2ee32ab32938b7a8d4acec699732e20bc2d2`.
+- **Outcome:** 48 development sessions, zero provider calls, gate pass; paired smoke/full trajectories match.
+- **Decision:** reproducibility qualification only; three seed repeats do not create independent cards or evidence of human learning.
+
+### 2026-11-06 · public-product-quality-v1 · Eight fixed public learner journeys
+
+- **Source:** clean `e6796bf`; frozen public protocol in `scripts/product_quality/run_public_journeys.py`, separate offline-first qualification.
+- **Outcome:** eight offline and live cases passed; 14 live turns, nine requests, USD 0.0023244, zero errors/refusals, four accepted buffered practice generations, nine mechanical citation snapshots. All costs match trace and wallet.
+- **Decision:** bounded product development, AI-authored cases/synthetic approval fixtures, not final E1-E4 or human review. Existing batches and wallets preserved; no further requests scheduled for completed cases.

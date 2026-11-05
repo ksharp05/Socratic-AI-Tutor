@@ -7,7 +7,6 @@ CODE=Path(__file__).resolve().parents[2]
 SOURCE=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path.cwd())).resolve()
 ROOT=SOURCE/'Directions/product_quality/v1'
 sys.path.insert(0,str(CODE/'src'))
-from tutor import topic_sources
 
 def load(path):return json.loads(path.read_text(encoding='utf-8'))
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -72,7 +71,7 @@ def main():
             'citation_snapshots_mechanically_verified':snapshots,'guarded_turns_checked':12,
             'approved_question_displays_without_output_guard':2,'local_CI':ci,'source_files_archived':len(live['source_sha256'])},
         'public_source_scope':{'public_practice_items':len(public),'public_practice_by_chapter':dict(Counter(i['chapter'] for i in public)),
-            'loaded_catalogue_types':len(topic_sources.misconceptions()),'previous_loaded_types':9,'public_statement_examples_checked':20,
+            'loaded_catalogue_types':len(load(snapshot/'content/poc/misconceptions.json'))+sum(json.loads(line)['chapter'] in ('arithmetic_progressions','trigonometry') for line in (snapshot/'content/dataset-v0.10.0/misconceptions.jsonl').read_text(encoding='utf-8-sig').splitlines()),'previous_loaded_types':9,'public_statement_examples_checked':20,
             'checked_AP_error_adapter_task_families':['ap_term','ap_sum','ap_first','ap_difference','ap_count','ap_mean','ap_ledger_term'],
             'connected_AP_practice_families':['ap_term','ap_sum'],
             'interpretation':'Catalogue/public-example coverage is not measured diagnosis accuracy. Five AP adapters remain unit-tested but outside connected practice.'},
@@ -119,6 +118,15 @@ Two deterministic acknowledgement turns still carry the tutor route without mode
 
 Runtime changes are at `8716bcf`; exact local CI and live evidence use clean `{live['git'][:7]}`. All 87 captured source/config/data files are preserved privately with exact hashes. `RESULTS.json` has the receipts and limits; `scripts/product_quality/report_results.py` verifies saved evidence offline. Never rerun completed live jobs merely to regenerate reporting.
 """
+    current_path=out/'CURRENT_CHECKPOINT.json'
+    if current_path.exists():
+        current=load(current_path)
+        update=("The learner interface now exposes all three chapters, pins the chapter per conversation, keeps references with each reply, and restores saved replies after lost acknowledgements without automatic replay. "
+                f"The final connected-app/UI suite passes {current['latest_complete_Main_suite_after_UI']['passed']} tests, including five new learner UI regressions; the earlier four-suite runtime check passed 647. "
+                "Assistant-operated browser checks at 1280/390 pixels used isolated stub data, showed no horizontal overflow, and added no provider calls. Temporary servers were stopped.\n\n"
+                "Fresh current-candidate C1/C2 stub qualification has 96 sessions plus six matching smokes. Both arms have development recall 0.208, precision 0.625, success proxy 4/48 and synthetic mean gain 0.167; all 240 citation snapshots match mechanically. "
+                "The older stub recall was 0.083. These are descriptive development results from only 16 shared cards with three seed repeats; they do not establish independent generalization, a C2 advantage or human learning. See CURRENT_CHECKPOINT.json.\n\n")
+        text=text.replace('The local Beta candidate',update+'The local Beta candidate',1)
     (out/'README.md').write_text(text,encoding='utf-8')
     for name in ['README.md','RESULTS.json']:
         p=SOURCE/'Docs/product_quality/v1'/name;p.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(out/name,p)

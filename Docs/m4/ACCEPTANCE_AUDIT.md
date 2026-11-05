@@ -1,3 +1,5 @@
+Current local product/UI and fresh stub C1/C2 qualification: see `Docs/product_quality/v1/README.md` and `CURRENT_CHECKPOINT.json`. They do not replace the historical paid study or close human/final gates.
+
 # M3/M4 acceptance audit - 5 November 2026
 
 Current candidate work and remaining role decisions are now tracked in [the v3 checkpoint](../m3/v3/STATUS.md) and [team actions](../m3/v3/TEAM_ACTIONS.md). This file preserves the earlier v2 audit.
