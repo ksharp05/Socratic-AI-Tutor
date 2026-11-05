@@ -18,6 +18,7 @@ MODEL = "openai/gpt-4.1-mini"
 class _FakeOpenRouter(BaseHTTPRequestHandler):
     def do_POST(self):
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        _FakeOpenRouter.last_body = body
         if self.headers.get("Authorization") != f"Bearer {GOOD_KEY}":
             self._send(401, {"error": {"message": "User not found.", "code": 401}})
         elif body["model"] != MODEL:
@@ -26,7 +27,8 @@ class _FakeOpenRouter(BaseHTTPRequestHandler):
             self._send(200, {"id": "gen-1", "object": "chat.completion", "created": 0, "model": MODEL,
                              "choices": [{"index": 0, "finish_reason": "stop",
                                           "message": {"role": "assistant", "content": "ready"}}],
-                             "usage": {"prompt_tokens": 12, "completion_tokens": 1, "total_tokens": 13}})
+                             "usage": {"prompt_tokens": 12, "completion_tokens": 1, "total_tokens": 13,
+                                       "cost": 0.0000042}})
 
     def _send(self, status: int, payload: dict) -> None:
         data = json.dumps(payload).encode()
@@ -100,3 +102,13 @@ def test_a_rejected_key_falls_back_to_templates_and_says_so(fake_api, monkeypatc
     assert "key was rejected" in llm.errors[0]
     row = conn.execute("SELECT outcome FROM trace_events WHERE kind='llm'").fetchone()
     assert row["outcome"] == "error"
+
+
+def test_a_live_call_records_its_cost(fake_api, monkeypatch, tmp_path):
+    monkeypatch.setenv("LLM_API_KEY", GOOD_KEY)
+    conn = store.connect(tmp_path / "llm.db")
+    llm = LLM(conn, mode="auto")
+    assert llm.complete(session_id="s1", node="tutor", role="tutor", system="Be brief.", user="Hi") == "ready"
+    assert _FakeOpenRouter.last_body["usage"] == {"include": True}  # usage accounting was requested
+    row = conn.execute("SELECT detail FROM trace_events WHERE kind='llm'").fetchone()
+    assert json.loads(row["detail"]) == {"tokens_in": 12, "tokens_out": 1, "cost_usd": 0.0000042}
