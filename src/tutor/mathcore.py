@@ -133,10 +133,12 @@ def diagnose_response(problem: dict, key: dict, typed: dict) -> list[dict]:
     if problem["task_type"] != "quadratic_solve" or typed.get("kind") != "finite_set":
         return []
     truth, given = _as_set(key["values"]), _as_set(typed["values"])
+    g = problem["givens"]
+    if truth and g.get("b") and given == _as_set([f"-({v})" for v in key["values"]]):
+        return [{"misconception_id": "qe_m02", "rule": "dropped the sign of b, so every root changed sign"}]
     if given == truth or not given or not given < truth:
         return []
     found = []
-    g = problem["givens"]
     if g.get("b") == 0 and len(truth) == 2 and all(not v.startswith("-") for v in given):
         found.append({"misconception_id": "qe_m05", "rule": "kept only the positive square root"})
     if g.get("c") == 0 and "0" in truth and "0" not in given:

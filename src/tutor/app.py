@@ -29,12 +29,12 @@ from .toolbus import CallContext, ToolBus, ToolCallError
 
 MIS_KEYWORDS = {
     "qe_m01": [r"\bx\s*(\^|squared|²)\b.*\bquadratic\b", r"\bany equation\b.*\bquadratic\b"],
-    "qe_m02": [r"\bcoefficient\b", r"\bsign\b.*\b(b|c)\b"],
-    "qe_m03": [r"\ba\s*=\s*0\b", r"\ba is (zero|0)\b"],
+    "qe_m02": [r"\bcoefficient\b", r"\bsign\b.*\b(b|c)\b", r"\bb (is|is recorded as|=|equals) \d"],
+    "qe_m03": [r"\ba\s*=\s*0\b", r"\ba is (zero|0)\b", r"\b0\s*\*?\s*x\s*(\^\s*2|²)", r"\bdivid\w*\b.*\b2a\b"],
     "qe_m04": [r"\bdivid\w*\b.*\bby x\b", r"\bcancel\w*\b.*\bx\b", r"\bonly one (root|factor|answer)\b",
                r"\bdivided both sides\b"],
     "qe_m05": [r"\bsquare root\b", r"√", r"\bsqrt\b", r"\bonly (the )?positive\b"],
-    "qe_m06": [r"±", r"\bplus[- ]minus\b"],
+    "qe_m06": [r"±", r"\bplus[- ]minus\b", r"\bplus branch\b", r"\bonly\b.*\bplus\b"],
 }
 PRACTICE_REQUEST = re.compile(r"^/practice\b|\b(practice|another (one|question)|next question|give me a (question|problem))\b", re.I)
 QUIZ_REQUEST = re.compile(r"^/quiz\b|\b(start|take) (a |the )?quiz\b", re.I)
