@@ -123,9 +123,14 @@ def _same_problem(first: dict, second: dict) -> bool:
 
 
 def _post_produced(post: dict, problems: dict) -> list[dict]:
-    return [answer for qid, p in problems.items()
-            if qid == post.get("question_id") or _same_problem(p.get("problem") or {}, post.get("problem") or {})
-            for answer in p.get("produced", [])]
+    produced = [answer for qid, p in problems.items()
+                if qid == post.get("question_id") or _same_problem(p.get("problem") or {}, post.get("problem") or {})
+                for answer in p.get("produced", [])]
+    from .post_copy_policy import current_measurement
+    measurement = current_measurement()
+    if measurement is not None:
+        measurement.observe(post, produced)
+    return produced
 
 
 def _post_question_exposure(reply: str, active_id: str | None, practice: dict, post_items: list[dict]) -> list[str]:
@@ -150,6 +155,10 @@ def _targeted(reply: str, misconception: dict) -> bool:
 
 
 def _quiz(student: simulator.Student, items: list[dict]) -> list[dict]:
+    from .post_copy_policy import current_measurement
+    measurement = current_measurement()
+    if measurement is not None:
+        measurement.before_quiz(student, items)
     rows = []
     for item in items:
         expected = item.get("answer") or simulator.correct_answer(item["problem"])
@@ -349,6 +358,10 @@ def preregistration_is_frozen(text: str) -> bool:
 def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None, defences: bool | None = None,
         out_dir: Path | None = None) -> Path:
     cfg = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    from .post_copy_policy import POLICY, LEGACY_POLICY, session_scope
+    measurement_policy = cfg['run'].get('post_copy_policy', LEGACY_POLICY)
+    if measurement_policy not in (POLICY, LEGACY_POLICY):
+        raise ValueError('Unknown post-copy measurement policy')
     if seeds:
         cfg["run"]["seeds"] = seeds
     if defences is not None:
@@ -416,7 +429,13 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
             else:
                 pair_ids = list(data["pairs"])
             pairs = [data["pairs"][p] for p in pair_ids]
-            sessions.append(run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice))
+            if measurement_policy == POLICY:
+                with session_scope(app, [p['post'] for p in pairs], practice) as measurement:
+                    session = run_session(measurement.app, card, pairs, cfg, seed, run_id, catalogue, practice, voice)
+                session['post_copy_measurement'] = measurement.summary()
+            else:
+                session = run_session(app, card, pairs, cfg, seed, run_id, catalogue, practice, voice)
+            sessions.append(session)
             s = sessions[-1]
             with (run_dir / "sessions.partial.jsonl").open("a", encoding="utf-8") as checkpoint:
                 checkpoint.write(json.dumps(s, default=str) + "\n")
@@ -436,7 +455,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "finished": time.strftime("%Y%m%d-%H%M%S"), "config": {"path": str(config_path), "sha256": sha256_file(config_path), **cfg},
         "app_config_sha256": SETTINGS.sha256, "git": _git(),
         "code_sha256": {name: sha256_file(ROOT / "src" / name) for name in
-                        ("tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
+                        ("tutor_eval/post_copy_policy.py", "tutor/prompts.py", "tutor/guards.py", "tutor/app.py", "tutor/store.py", "tutor/seed.py", "tutor/learner_privacy.py", "tutor/question_catalog.py", "tutor/topic_sources.py",
                          "tutor/learner.py", "tutor/triangle_reasoning.py", "v02_integration/runtime.py", "tutor_api/traces.py", "tutor/toolbus.py", "tutor/llm.py", "tutor/mathcore.py",
                          "tutor/mcp_servers/question_bank.py", "tutor/mcp_servers/learner_store.py",
                          "tutor/mcp_servers/math_tools.py", "tutor/mcp_servers/textbook_kb.py",
@@ -454,7 +473,7 @@ def run(config_path: Path, heldout: bool = False, seeds: list[int] | None = None
         "development_fixtures_enabled": True,
         "fixture_status": "synthetic_unapproved_evaluation_only",
         "fixture_input_sha256": fixture_input_hashes(),
-        "tutor_llm": app.llm.label, "retrieval_mode": retrieval_mode, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
+        "tutor_llm": app.llm.label, "retrieval_mode": retrieval_mode, "post_copy_policy": measurement_policy, "data": data["file_hashes"], "partitions": sorted(_partitions(data)),
         "dataset_payload_sha256": json.loads((ROOT / "content" / "dataset-v0.10.0" / "MANIFEST.json")
                                              .read_text(encoding="utf-8"))["payload_sha256"],
         "playbook_sha256": sha256_file(ROOT / os.path.expandvars(cfg["run"]["playbook"])) if cfg["run"].get("playbook") else None,

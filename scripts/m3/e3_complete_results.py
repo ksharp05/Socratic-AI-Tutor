@@ -8,6 +8,8 @@ from pathlib import Path
 import shutil
 import statistics
 import sys
+import subprocess
+import re
 
 CODE = Path(__file__).resolve().parents[2]
 SOURCE = Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE', Path.cwd())).resolve()
@@ -59,7 +61,12 @@ def main():
     later = load(Path(index['jobs']['e3_after_remaining4']['run']) / 'manifest.json')
     changed = sorted(name for name, digest in earlier['code_sha256'].items() if later['code_sha256'].get(name) != digest)
     assert set(changed) == {'tutor_eval/harness.py', 'tutor_eval/provider_budget.py'}
-    assert all(later['code_sha256'][name] == sha(CODE / 'src' / name) for name in changed)
+    for name in changed:
+        revision=later['git']['commit']
+        assert re.fullmatch(r'[0-9a-f]{40}',revision)
+        blob=subprocess.check_output(['git','-C',str(CODE),'show',revision+':src/'+name])
+        candidates={hashlib.sha256(blob).hexdigest(),hashlib.sha256(blob.replace(b'\r\n',b'\n').replace(b'\n',b'\r\n')).hexdigest()}
+        assert later['code_sha256'][name] in candidates, name
     assert earlier['data'] == later['data'] and earlier['fixture_input_sha256'] == later['fixture_input_sha256']
     assert earlier['app_config_sha256'] == later['app_config_sha256'] and earlier['playbook_sha256'] == later['playbook_sha256']
     assert not later['git']['uncommitted_changes']

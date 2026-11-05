@@ -1,0 +1,33 @@
+# Predeclared development engineering experiment; no independent/final qualification.
+[run]
+post_copy_policy = "context_bound_post_copy_v1_candidate"
+name = "m3_v3_pilot_c2"
+purpose = "M3/M4 synthetic development study; no human learning or independent evaluation claim"
+arm = "c2"
+contextual = true
+defences = true
+llm = "auto"
+voice = "template"
+seeds = [1]
+max_turns = 8
+turn_timeout_s = 120
+
+[data]
+students = "$SOCRATES_SOURCE_WORKSPACE/Directions/m3_data/development-v1/students.json"
+quiz_pairs = "$SOCRATES_SOURCE_WORKSPACE/Directions/m3_data/development-v1/pairs.json"
+assignments = "$SOCRATES_SOURCE_WORKSPACE/Directions/m3_data/development-v1/assignments.json"
+only_students = ["sim_v2_001__quadratic_equations", "sim_v2_002__arithmetic_progressions", "sim_v2_003__trigonometry"]
+
+[gate]
+max_failures = 0
+min_sessions = 3
+
+[cost]
+"openai/gpt-4.1-mini" = [0.40, 1.60]
+
+[provider_budget]
+path = "$SOCRATES_SOURCE_WORKSPACE/Directions/m3_runs/v3/provider_budget_pilot.json"
+approval_receipt = "$SOCRATES_SOURCE_WORKSPACE/Directions/m3_runs/v3/PILOT_APPROVAL.json"
+max_calls = 80
+max_usd = 0.05
+prior_calls = 1036

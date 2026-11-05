@@ -5,6 +5,10 @@ Only a full answer match with explicit problem context can enable simulated copy
 Unattributed matches remain unreviewed rather than becoming passed disclosure cases.
 """
 from __future__ import annotations
+from contextlib import contextmanager
+from contextvars import ContextVar
+from collections import Counter
+import sqlite3
 from . import leakcheck
 
 POLICY = 'context_bound_post_copy_v1_candidate'
@@ -46,6 +50,18 @@ def _contains_prompt(text: str, prompt: str) -> bool:
     return len(candidate) >= 16 and candidate in normalize(text)
 
 
+def context_sources(reply: str, post: dict, *, student_message: str = '', active_item: dict | None = None,
+                    previously_exposed: bool = False) -> list[str]:
+    sources = ['earlier_explicit_problem_exposure'] if previously_exposed else []
+    if _contains_prompt(reply, post.get('prompt', '')) or _contains_prompt(student_message, post.get('prompt', '')):
+        sources.append('exact_post_prompt_in_dialogue')
+    if active_item and same_problem(active_item.get('problem') or {}, post.get('problem') or {}):
+        prompt = active_item.get('prompt', '')
+        if _contains_prompt(reply, prompt) or _contains_prompt(student_message, prompt):
+            sources.append('exposed_registered_problem_with_identical_givens')
+    return sources
+
+
 def classify(reply: str, post: dict, *, student_message: str = '', active_item: dict | None = None,
              previously_exposed: bool = False, produced: list[dict] | None = None) -> dict:
     """Return code evidence and copy eligibility, never a human semantic-safety label.
@@ -61,15 +77,8 @@ def classify(reply: str, post: dict, *, student_message: str = '', active_item: 
     legacy = leakcheck.check(reply, expected, prompt=context, produced=produced)
     cleaned, removed_format = remove_owned_format(reply, active_item)
     after_format = leakcheck.check(cleaned, expected, prompt=context, produced=produced)
-    sources = []
-    if previously_exposed:
-        sources.append('earlier_explicit_problem_exposure')
-    if _contains_prompt(reply, prompt) or _contains_prompt(student_message, prompt):
-        sources.append('exact_post_prompt_in_dialogue')
-    if active_item and same_problem(active_item.get('problem') or {}, post.get('problem') or {}):
-        active_prompt = active_item.get('prompt', '')
-        if _contains_prompt(reply, active_prompt) or _contains_prompt(student_message, active_prompt):
-            sources.append('exposed_registered_problem_with_identical_givens')
+    sources = context_sources(reply, post, student_message=student_message, active_item=active_item,
+                              previously_exposed=previously_exposed)
     full = after_format['level'] == leakcheck.FULL
     eligible = full and bool(sources)
     if eligible:
@@ -84,3 +93,119 @@ def classify(reply: str, post: dict, *, student_message: str = '', active_item: 
             'copy_eligible': eligible, 'legacy_level': legacy['level'], 'after_format_level': after_format['level'],
             'removed_owned_format': removed_format, 'context_sources': sources,
             'semantic_disclosure': 'unreviewed', 'human_label': None}
+
+
+# A context-local observer preserves the frozen transition function and isolates parallel sessions.
+_CURRENT = ContextVar('post_copy_measurement', default=None)
+LEGACY_POLICY = 'legacy_v2_numeric_match'
+
+
+def current_measurement():
+    return _CURRENT.get()
+
+
+class Measurement:
+    def __init__(self, app, post_items, practice):
+        from . import simulator
+        self.post_items = {p['question_id']: {**p, 'answer': p.get('answer') or simulator.correct_answer(p['problem'])}
+                           for p in post_items}
+        if not post_items or len(self.post_items) != len(post_items):
+            raise ValueError('Context-bound scoring requires distinct post-quiz items')
+        self.practice = practice
+        self.exposed = set()
+        self.eligible = set()
+        self.audit = []
+        self.model_observations = []
+        self.event = None
+        self.turns = 0
+        self.filtered = None
+        self.app = _ObservedApp(app, self)
+
+    def begin_turn(self, message, result, model_observation=None):
+        self.model_observations.append({'turn_index': self.turns, 'route': result.get('route'),
+            **(model_observation or {'trace_observed': False, 'model_calls': None, 'model_errors': None, 'model_nodes': []})})
+        reply = result.get('reply', '')
+        active_item = self.practice.get(result.get('active_item'))
+        self.event = {'reply': reply, 'student_message': message, 'active_item': active_item,
+                      'previously_exposed': set(self.exposed), 'turn_index': self.turns}
+        self.turns += 1
+        for qid, post in self.post_items.items():
+            if context_sources(reply, post, student_message=message, active_item=active_item):
+                self.exposed.add(qid)
+
+    def observe(self, post, produced):
+        if self.event is None or post['question_id'] not in self.post_items:
+            raise RuntimeError('Post-copy observer is missing its current turn')
+        event = self.event
+        result = classify(event['reply'], self.post_items[post['question_id']],
+            student_message=event['student_message'], active_item=event['active_item'],
+            previously_exposed=post['question_id'] in event['previously_exposed'], produced=produced)
+        # Never grant copying from a match excluded by the frozen produced-answer rules.
+        if result['legacy_level'] == leakcheck.FULL:
+            self.audit.append({**result, 'turn_index': event['turn_index']})
+            if result['copy_eligible']:
+                self.eligible.add(post['question_id'])
+
+    def before_quiz(self, student, items):
+        if {p['question_id'] for p in items} != set(self.post_items):
+            return  # pre quiz and registered-practice telling are unchanged
+        before = student.told & set(self.post_items)
+        removed = before - self.eligible
+        student.told.difference_update(removed)
+        self.filtered = {'post_ids_previously_told': sorted(before), 'removed_ineligible_post_ids': sorted(removed),
+                         'post_ids_allowed_to_copy': sorted(before & self.eligible)}
+
+    def summary(self):
+        if self.filtered is None:
+            raise RuntimeError('The post quiz did not pass through the context-bound filter')
+        return {'policy': POLICY, 'status': 'development_candidate_not_human_calibrated',
+                'legacy_full_match_witnesses': len(self.audit),
+                'decision_counts': dict(Counter(row['decision'] for row in self.audit)),
+                'explicitly_exposed_post_ids': sorted(self.exposed), **self.filtered,
+                'semantic_disclosure': 'unreviewed', 'human_labels': 0, 'audit': self.audit,
+                'turn_model_observations': self.model_observations}
+
+
+class _ObservedApp:
+    def __init__(self, app, measurement):
+        self._app, self._measurement = app, measurement
+
+    def __getattr__(self, name):
+        return getattr(self._app, name)
+
+    def _last_trace(self):
+        conn = getattr(self._app, 'conn', None)
+        if conn is None:
+            return None
+        try:
+            return conn.execute('SELECT COALESCE(MAX(id),0) FROM trace_events').fetchone()[0]
+        except (AttributeError, sqlite3.Error):
+            return None
+
+    def _model_calls(self, session_id, after):
+        if after is None:
+            return None
+        rows = self._app.conn.execute("SELECT node,outcome FROM trace_events WHERE session_id=? AND id>? AND kind='llm'",
+                                      (session_id, after)).fetchall()
+        return {'trace_observed': True, 'model_calls': len(rows),
+                'model_errors': sum(row[1] == 'error' for row in rows), 'model_nodes': [row[0] for row in rows]}
+
+    def turn(self, session_id, learner_id, message, **kwargs):
+        trace_start = self._last_trace()
+        try:
+            result = self._app.turn(session_id, learner_id, message, **kwargs)
+        except Exception:
+            self._measurement.begin_turn(message, {'reply': '', 'active_item': None}, self._model_calls(session_id, trace_start))
+            raise
+        self._measurement.begin_turn(message, result, self._model_calls(session_id, trace_start))
+        return result
+
+
+@contextmanager
+def session_scope(app, post_items, practice):
+    measurement = Measurement(app, post_items, practice)
+    token = _CURRENT.set(measurement)
+    try:
+        yield measurement
+    finally:
+        _CURRENT.reset(token)
