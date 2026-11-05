@@ -1,6 +1,9 @@
 """Tutor turns reach the model, with templates as the fallback. A fake replaces the model, so nothing leaves the machine."""
 import json
 
+from tutor import prompts
+
+
 def _fake_model(app, monkeypatch, reply):
     calls = []
 
@@ -34,16 +37,55 @@ def _verdict(question):
     return json.dumps({"misconception_id": "qe_m04", "confidence": 0.9, "evidence": "divided", "question": question})
 
 
+def _probe(app):
+    state = {"focus_misconception": "qe_m04", "messages": [{"content": "I divided both sides by x and lost a root"}],
+             "session": {"session_id": "s-probe", "learner_id": "L-A"}, "learner": {"misconceptions": {}}}
+    return app._diagnose(state)["draft"]["text"]
+
+
 def test_the_model_writes_the_diagnosis_probe(app, monkeypatch):
     _fake_model(app, monkeypatch, _verdict("What must be true about x before you divide by it?"))
-    result = app.turn("s-model-probe", "L-B", "I divided both sides by x and lost a root")
-    assert result["route"] == "diagnose"
-    assert "What must be true about x before you divide by it?" in result["reply"]
+    assert "What must be true about x before you divide by it?" in _probe(app)
 
 
 def test_a_probe_with_a_new_number_falls_back_to_the_catalogue(app, monkeypatch):
     _fake_model(app, monkeypatch, _verdict("Have you tried x = 0?"))
-    result = app.turn("s-model-probe-leak", "L-B", "I divided both sides by x and lost a root")
-    assert result["route"] == "diagnose"
-    assert "x = 0" not in result["reply"]
-    assert app.misconceptions["qe_m04"]["diagnostic_probe"] in result["reply"]
+    text = _probe(app)
+    assert "x = 0" not in text
+    assert app.misconceptions["qe_m04"]["diagnostic_probe"] in text
+
+
+def test_a_long_or_two_question_model_turn_keeps_its_template(app, monkeypatch):
+    _fake_model(app, monkeypatch, "Why? And what next?")
+    result = app.turn("s-model-shape", "L-A", "What does the discriminant tell us?")
+    assert result["reply"].startswith("Let's think it through.")
+
+
+def test_the_turn_shape_rule_ignores_citations(app):
+    assert app._turn_shape_ok("What does that value measure? [normalized:qe04]")
+    assert app._turn_shape_ok("What does that value measure [normalized:qe04]?")
+    assert not app._turn_shape_ok("That value measures the roots.")
+    assert not app._turn_shape_ok("word " * 61 + "?")
+
+
+def test_a_diagnosed_wrong_attempt_asks_one_question(app, monkeypatch, published_set):
+    real_call = app._call
+
+    def call(state, node, role, server, tool, args):
+        if tool == "diagnose_response":
+            return {"candidates": [{"misconception_id": "qe_m04", "rule": "test"}]}
+        return real_call(state, node, role, server, tool, args)
+
+    monkeypatch.setattr(app, "_call", call)
+    app.turn("s-one-question", "L-B", "practice")
+    result = app.turn("s-one-question", "L-B", "x = 100")
+    assert result["route"] == "grade"
+    assert result["reply"].startswith("Not quite")
+    assert result["reply"].split("(Study plan")[0].count("?") == 1
+
+
+def test_a_tutor_turn_names_a_policy_style(app, monkeypatch):
+    calls = _fake_model(app, monkeypatch, "What does that value measure?")
+    app.turn("s-model-style", "L-A", "What does the discriminant tell us?")
+    assert "reverse_question" in calls[0]["user"]
+    assert "reverse_question" in prompts.STYLES
