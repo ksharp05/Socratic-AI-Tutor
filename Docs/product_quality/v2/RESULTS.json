@@ -1,0 +1,393 @@
+{
+  "status": "offline_candidate_qualified_live_transmission_approval_pending",
+  "date_Asia_Kolkata": "2026-11-06",
+  "source_git": "779e7881b98a49af1031df7496df53b61ca82b0b",
+  "previous_source_git": "466bcaad466d93d3ca7f0a4a6a21dd5fc87a213a",
+  "publication": "Keep Beta local; no push or PR",
+  "improvements": [
+    "Direct short source-backed explanations for twelve concept requests",
+    "Maths intent survives frustration/support requests and whitespace wrapping",
+    "Explicit correction acknowledgements are information turns, without model or mastery claims",
+    "Smaller practice support asks for givens without advancing the hint",
+    "Owned quiz/interrupted-session state restores and locks conflicting actions; unfinished quiz can be left without scoring"
+  ],
+  "validation": {
+    "full_regressions": 815,
+    "full_seconds": 159.76,
+    "new_tests_since_v1": 163,
+    "new_formatting_regressions": 122,
+    "local_CI": {
+      "c1": {
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\m2_development_c1-20261106-015550-50a113b0f22f",
+        "manifest_sha256": "b5785418df84298b26dda10951d154d68dac07c70386cbebce76e909a8afd514",
+        "gate": "pass"
+      },
+      "eval": {
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\dev_smoke-20261106-015557-861d48c75ace",
+        "manifest_sha256": "781a83793ae1851b1be9d389e5b932907518eb4eb898b7d3a510df1e3f8742f7",
+        "gate": "pass"
+      },
+      "security": {
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\product_quality_v2_final_ci_security-20261106-015604-9d9ef6889305",
+        "manifest_sha256": "002bf65dd505c0d5e0328b08573843ad102529c23ea93c5e99cb09f4bcc420a6",
+        "gate": "pass"
+      }
+    },
+    "offline_before": {
+      "cases": 32,
+      "turns": 42,
+      "passed": 10,
+      "citation_snapshots_verified": 21,
+      "provider_requests": 0,
+      "categories": {
+        "definition": {
+          "cases": 12,
+          "passed": 0
+        },
+        "mixed_frustration": {
+          "cases": 6,
+          "passed": 0
+        },
+        "negative_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "protected_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "self_correction": {
+          "cases": 2,
+          "passed": 0
+        },
+        "topic_shift": {
+          "cases": 2,
+          "passed": 0
+        },
+        "practice_support": {
+          "cases": 2,
+          "passed": 2
+        },
+        "quiz_boundary": {
+          "cases": 2,
+          "passed": 2
+        }
+      },
+      "index_sha256": "b380bbfd933e8644c9497838b3106808c8bdb3bd437468998b5825282da96423"
+    },
+    "offline_after": {
+      "cases": 32,
+      "turns": 42,
+      "passed": 32,
+      "citation_snapshots_verified": 23,
+      "provider_requests": 0,
+      "categories": {
+        "definition": {
+          "cases": 12,
+          "passed": 12
+        },
+        "mixed_frustration": {
+          "cases": 6,
+          "passed": 6
+        },
+        "negative_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "protected_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "self_correction": {
+          "cases": 2,
+          "passed": 2
+        },
+        "topic_shift": {
+          "cases": 2,
+          "passed": 2
+        },
+        "practice_support": {
+          "cases": 2,
+          "passed": 2
+        },
+        "quiz_boundary": {
+          "cases": 2,
+          "passed": 2
+        }
+      },
+      "index_sha256": "705f783c64cc6b593662881e6d65058163def371eaf4d1efc2cdc3d0c318114b"
+    },
+    "baseline_sessions": 96,
+    "baseline_smokes": 6,
+    "matching_smokes": 6,
+    "baseline_citations_verified": 250,
+    "baseline": {
+      "c1": {
+        "sessions": 48,
+        "diagnosis_recall": 0.208,
+        "diagnosis_precision": 0.625,
+        "success_proxy": 4,
+        "synthetic_mean_gain": 0.167,
+        "failures": 0,
+        "full_detected_leaks": 0,
+        "sessions_sha256": "4ada46eb0995696f7b6b889b69b11c1e97f15c5771a4d605c4fb78c07afbd838"
+      },
+      "c2": {
+        "sessions": 48,
+        "diagnosis_recall": 0.208,
+        "diagnosis_precision": 0.625,
+        "success_proxy": 4,
+        "synthetic_mean_gain": 0.167,
+        "failures": 0,
+        "full_detected_leaks": 0,
+        "sessions_sha256": "e52b9fe63f851fb1439f34ce1279d262a5c016204a3b2755a2289f2d0f99e310"
+      }
+    },
+    "security": {
+      "on": {
+        "cases": 80,
+        "unsupported": 27,
+        "errors": 0,
+        "attack_success_rate": 0.0,
+        "false_block_rate": 0.0,
+        "by_channel": {
+          "user_message": {
+            "attacks": 18,
+            "succeeded": 0,
+            "controls": 30,
+            "falsely_blocked": 0,
+            "unsupported": 20
+          },
+          "homework_text": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 4
+          },
+          "retrieved_passage": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 2
+          },
+          "tool_result": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 1,
+            "falsely_blocked": 0,
+            "unsupported": 1
+          }
+        }
+      },
+      "off": {
+        "cases": 80,
+        "unsupported": 27,
+        "errors": 0,
+        "attack_success_rate": 0.056,
+        "false_block_rate": 0.0,
+        "by_channel": {
+          "user_message": {
+            "attacks": 18,
+            "succeeded": 1,
+            "controls": 30,
+            "falsely_blocked": 0,
+            "unsupported": 20
+          },
+          "homework_text": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 4
+          },
+          "retrieved_passage": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 2,
+            "falsely_blocked": 0,
+            "unsupported": 2
+          },
+          "tool_result": {
+            "attacks": 0,
+            "succeeded": 0,
+            "controls": 1,
+            "falsely_blocked": 0,
+            "unsupported": 1
+          }
+        }
+      }
+    },
+    "browser": {
+      "status": "passed",
+      "source_git": "779e788",
+      "data": "isolated synthetic browser acceptance database",
+      "model_mode": "stub",
+      "observed_by": "assistant-operated browser, not a human acceptance review",
+      "checks": {
+        "quiz_survives_refresh": true,
+        "quiz_locks_new_session_and_mode": true,
+        "hint_does_not_score_question": true,
+        "leave_quiz_without_score": true,
+        "chapter_selectable_after_new_session": true,
+        "wrapped_confused_concept_question_direct_and_cited": true,
+        "source_text_page_and_original_link_visible": true
+      },
+      "viewports": [
+        {
+          "width": 1280,
+          "height": 720,
+          "document_scroll_width": 1280
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "document_scroll_width": 390
+        }
+      ],
+      "database_counts": {
+        "mastery": 0,
+        "applied_quizzes": 0,
+        "model_calls": 0
+      },
+      "screenshots": {
+        "desktop.png": "2f84302334837fdf06c4e6be24d4d8a89973612fb7597a73fc67c02664441476",
+        "mobile-source.png": "91b404d06d8482084aa6a4af74e5c35d7fcc0a6334ca7f5de93e0298eb7e8d61",
+        "mobile.png": "27ddb5bc3979a45be4e26c405c791621cc819abe2ec68f4eddb03f984fe913bc",
+        "quiz.png": "4f5eaa0a97f8fe8ce9ffa1bda4183290c266eb44453808d081089dd50efbe134"
+      },
+      "servers_stopped": true,
+      "fault_injection": "Actual API plus Streamlit AppTest tests cover interrupted-process resumption and owned-state recovery; browser covers refresh, not deliberate process-kill injection."
+    }
+  },
+  "failures_preserved": {
+    "initial_definition_formatting": {
+      "passed": 37,
+      "scheduled": 48,
+      "failed": 11
+    },
+    "initial_guard_formatting": {
+      "matched": 4,
+      "scheduled": 12,
+      "missed": 8
+    },
+    "test_launch_missing_source_env": {
+      "passed": 781,
+      "fixture_errors": 34,
+      "cause": "SOCRATES_SOURCE_WORKSPACE omitted; fixed launch, no product-code change",
+      "log_sha256": "4d82ab3405e0908cb52cfefba4913628d0547e22116ae2f20d631645f5c878e0"
+    },
+    "pre_hardening_offline_index_sha256": "f0748cc71c59c39a58efaf11f10a48a378c93374cee3619ec7fd9c333b99dc1f"
+  },
+  "data": {
+    "public_practice_items": 665,
+    "public_by_chapter": {
+      "arithmetic_progressions": 320,
+      "quadratic_equations": 160,
+      "trigonometry": 185
+    },
+    "public_task_families_by_chapter": {
+      "arithmetic_progressions": {
+        "ap_count": 40,
+        "ap_difference": 40,
+        "ap_first": 40,
+        "ap_ledger_term": 40,
+        "ap_mean": 40,
+        "ap_recognition": 40,
+        "ap_sum": 40,
+        "ap_term": 40
+      },
+      "quadratic_equations": {
+        "quadratic_classify": 40,
+        "quadratic_coefficients": 40,
+        "quadratic_rectangle": 40,
+        "quadratic_solve": 40
+      },
+      "trigonometry": {
+        "trig_domain": 35,
+        "trig_identity_value": 40,
+        "trig_scaled_triangle": 40,
+        "trig_standard_value": 30,
+        "trig_triangle_ratio": 40
+      }
+    },
+    "graph_eligible_before_real_teacher_approval": {
+      "practice": {
+        "arithmetic_progressions": {
+          "ap_sum": 40,
+          "ap_term": 40
+        },
+        "quadratic_equations": {
+          "quadratic_solve": 11
+        },
+        "trigonometry": {
+          "trig_triangle_ratio": 40
+        }
+      },
+      "quiz": {
+        "arithmetic_progressions": {
+          "ap_term": 2,
+          "ap_sum": 1
+        },
+        "quadratic_equations": {
+          "quadratic_solve": 6
+        },
+        "trigonometry": {
+          "trig_triangle_ratio": 3
+        }
+      }
+    },
+    "limits": [
+      "Eligibility is not publication; actual teacher review/approval remains required.",
+      "Development check items are AI-authored, not independently authored final assessment.",
+      "Repeated variants in a family are not independent misconception coverage."
+    ]
+  },
+  "reference_cards": 7,
+  "explicit_concepts": 12,
+  "human_reviews": 0,
+  "independent_final_evaluation": false,
+  "formal_M3_M4_accepted": false,
+  "budget": {
+    "new_provider_requests": 0,
+    "new_spend_usd": 0,
+    "total_provider_attempts": 1061,
+    "known_continuation_usd_excluding_original_98_unknown": 0.2862964,
+    "phase_ceiling_usd": 10,
+    "phase_actual_usd": 0.0023244,
+    "allocated_caps_usd": 0.5,
+    "unallocated_cap_usd": 9.5,
+    "prepared_live_cap_requests": 200,
+    "prepared_live_cap_usd": 0.4,
+    "live_status": "Automatic approval review rejected destination/payload authorization; user reply pending",
+    "wallet_created": false,
+    "prior_wallet_hashes_unchanged": {
+      "Directions/m3_runs/provider_budget.json": "2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de",
+      "Directions/m3_runs/provider_budget_extension_e3.json": "72130f49d2ef764a9bcb6df769fa3387629f5e22f684fd6437cd5444205cc430",
+      "Directions/m3_runs/v3/provider_budget_pilot.json": "ca964e400d1424eabc96e3a3531b2ed075606b84356cc7630503e24957461a70",
+      "Directions/product_quality/v1/provider_budget.json": "67ab16bc91a476ac5bf16b4c4f4e3e8a120328fa897e8b3dcd75e57b2724c721"
+    }
+  },
+  "preservation": {
+    "historical_documents_unchanged": 30,
+    "legacy_run_session_AST_identical": true,
+    "source_files_archived": 91,
+    "old_pilot_and_E1_E4_not_repeated": true
+  },
+  "limits": [
+    "Developer-authored public panel, including cases targeted by implementation; 32 shared journeys, not 64 independent observations.",
+    "Offline templates only for v2: no new live-model result or latency/cost estimate.",
+    "Formatting variants and seed repeats are not independent learners or efficacy samples.",
+    "C1/C2 stub results are identical; diagnosis recall remains 0.208. No architecture or learning advantage.",
+    "27/80 security cases per condition remain unsupported; overlay checks are not on-disk index poisoning or exhaustive safety.",
+    "Seven source paraphrases and twelve explanations remain unapproved by an actual teacher.",
+    "Independent raters/final content, final preregistration, specialist architecture review, another person installation and remote CI failure evidence remain open."
+  ],
+  "provenance": {
+    "source_lock_sha256": "cb7f06215ed332c6fec5d2593424f7b536962fb9a7d53573e66daa281b369b1c",
+    "protocol_sha256": "54f416ded8d96ad8c5bbedb929bee30500dd4a32e1fd421cfa753b195039e4d4",
+    "reporter_sha256": "ab1afa768dbaf055065b78a3ba4188ff16969fca98d65737fb3abce2b78541ba",
+    "prior_reports": "Preserved; do not regenerate v1 report against changed phase allocation."
+  }
+}
