@@ -108,3 +108,13 @@ def test_support_and_source_request_paraphrases_keep_grounded_definition(app,pre
     assert out['route']=='converse' and out['diagnosis'] is None
     assert app.history('phrasing')[-1]['citations']
     assert out['reply'].count('?')==1
+
+
+@pytest.mark.parametrize('question',['What makes an equation quadratic?','What makes an equation quadratic instead of cubic?'])
+def test_quadratic_definition_excludes_higher_degree_equations(app,question):
+    # A cubic can contain a nonzero squared term too: that condition alone is insufficient.
+    out=app.turn('degree-boundary','public-v2',question,chapter='quadratic_equations')
+    assert out['route']=='converse' and out['diagnosis'] is None
+    assert 'highest remaining power of the variable is two' in out['reply']
+    assert 'nonzero coefficient of the squared term' in out['reply']
+    assert out['reply'].count('?')==1 and out['checks']['ok']

@@ -310,7 +310,7 @@
       "cues": [
         "\\bquadratic\\b"
       ],
-      "definition": "A quadratic equation has a nonzero coefficient of the squared term after like terms have been collected.",
+      "definition": "A quadratic equation has a nonzero coefficient of the squared term after like terms have been collected. Its highest remaining power of the variable is two.",
       "question": "Which power remains highest after you collect like terms?"
     }
   ]
