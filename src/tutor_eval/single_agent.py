@@ -13,6 +13,7 @@ from tutor.app import TutorApp, TutorState
 
 
 class SingleAgentTutor(TutorApp):
+    supports_model_diagnosis = False
     def _diagnose(self, state: TutorState) -> dict:
         # Deterministic diagnosis hypothesis. The single tutor model is reserved for
         # the tutoring action, so this baseline never calls the C2 diagnostician model.

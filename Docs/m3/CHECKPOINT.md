@@ -1,3 +1,9 @@
+# Publishing checkpoint — v3 LangGraph candidate
+
+6 November 2026. The user now explicitly requests **push everything to GitHub** and a mobile-accessible link. This supersedes Keep Beta local for publication; no merge is requested. Push project source and aggregate reports, excluding .env/keys, private/frozen data, local SQLite and raw experiment logs. Current v3 changes pass **1053** four-suite regressions and 236 focused checks. New graph proposal/verification/clarification is opt-in; C1 remains unchanged; AP practice eligibility is 331. See Docs/product_quality/v3/STATUS.md. No new provider requests: total 1097, phase actual USD 0.0107708. The 312-case generator is prepared but not run; publishing/mobile preview takes priority. Preserve all historical ledgers/data/reports and honest review limits.
+
+---
+
 # Current checkpoint — product v2 complete as a local review candidate
 
 **6 November 2026.** Start with **Docs/product_quality/v2/README.md**, **CURRENT_CHECKPOINT.json**, **RESULTS.json** and **DATA_SUFFICIENCY.md**. Final runtime **2af7ecf**, local tag **beta-product-quality-v2-candidate**. Qualified matched live/baseline source is **779e788**; the final revision completes the existing quadratic source explanation and is separately qualified offline. Keep **Beta local**, cwd canonical D:; no push/PR.

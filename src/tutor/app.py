@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import operator
+import os
 import re
 import sqlite3
 import uuid
@@ -19,7 +20,7 @@ from filelock import Timeout
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
-from . import approval_token, concept_help, conversation, diagnosis_evidence, guards, learner, prompts, store
+from . import approval_token, concept_help, conversation, diagnosis_evidence, diagnostic_workflow, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
@@ -61,6 +62,8 @@ class TutorState(TypedDict, total=False):
     diagnosis: dict | None
     acknowledged_probe: str | None
     concept_help_id: str | None
+    diagnostic_proposal: dict | None
+    verified_proposal: dict | None
     route: str
     draft: dict | None
     checks: dict
@@ -86,13 +89,16 @@ class ApprovalState(TypedDict, total=False):
 
 
 class TutorApp:
+    supports_model_diagnosis = True
     def __init__(self, *, defences: bool = True, llm_mode: str | None = None, extra_items: list[dict] | None = None,
                  db_name: str = "tutor.db", checkpoint_name: str = "checkpoints.db",
-                 allow_dev_fixtures: bool = False):
+                 allow_dev_fixtures: bool = False, model_diagnosis: bool | None = None):
         self.conn = store.connect(db_path(db_name))
         self.bus = ToolBus(self.conn, extra_items, allow_dev_fixtures=allow_dev_fixtures)
         self.llm = LLM(self.conn, llm_mode)
         self.defences = defences
+        selected_diagnosis = model_diagnosis if model_diagnosis is not None else os.environ.get("TUTOR_MODEL_DIAGNOSIS", "0") == "1"
+        self.model_diagnosis = self.supports_model_diagnosis and bool(selected_diagnosis)
         self.misconceptions = {m["misconception_id"]: m for m in topic_misconceptions()}
         self.cards = {c["passage_id"]: c for c in topic_cards()}
         self.concepts = {c["concept_id"]: c for c in topic_concepts()}
@@ -208,7 +214,7 @@ class TutorApp:
                 notes.append("For this unverified problem I can offer general guidance; automatic answer checking is not available here.")
         return {"messages": [{"role": "student", "content": state["incoming"]}], "incoming": "",
                 "draft": None, "checks": {}, "revision_count": 0, "grade": None, "retrieved": [], "notes": notes,
-                "diagnosis": None, "acknowledged_probe": None, "concept_help_id": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
+                "diagnosis": None, "acknowledged_probe": None, "concept_help_id": None, "diagnostic_proposal": None, "verified_proposal": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
 
     def _load_learner(self, state: TutorState) -> dict:
         lid = state["session"]["learner_id"]
@@ -234,7 +240,11 @@ class TutorApp:
         kind = conversation.intent(text)
         definition = concept_help.match(text, chapter) if not item and not state.get("unverified_own_problem") else None
         candidates = self._keyword_candidates(text, chapter) if not item else []
-        specific_support = kind in ("frustration", "smaller_step", "citation") and bool(definition or candidates)
+        assess = (self.model_diagnosis and self.llm.enabled and not item and not quiz and not definition
+                  and not any(screen.get(flag) for flag in ('distress','role_claim','key_request','injection'))
+                  and kind in (None,'frustration','smaller_step','citation')
+                  and not PRACTICE_REQUEST.search(text) and not QUIZ_REQUEST.search(text))
+        specific_support = kind in ("frustration", "smaller_step", "citation") and bool(definition or candidates or assess)
         if screen.get("distress"):
             route = "handoff"
         elif screen.get("role_claim") or screen.get("key_request"):
@@ -270,6 +280,9 @@ class TutorApp:
                 self._note(state, "planner", "probe_distinction_acknowledged", {"misconception": focus, "mastery_updated": False})
                 return {"route": "converse", "focus_misconception": None, "probe_asked_for": None,
                         "acknowledged_probe": focus, "hint_stage": 0}
+            if assess:
+                self._note(state, 'planner', 'diagnostic_evidence_workflow', {'hypothesis_only': True})
+                return {'route':'propose_diagnosis','focus_misconception':None,'probe_asked_for':None}
             candidates = self._keyword_candidates(text, state["session"].get("chapter", "quadratic_equations"))
             flagged = [m for m, v in snapshot["misconceptions"].items() if v["status"] in ("suspected", "confirmed", "addressed")]
             cand = candidates[0] if candidates else None
@@ -304,12 +317,52 @@ class TutorApp:
             return None
         return text
 
+    def _diagnostic_catalogue(self, state):
+        chapter=state['session'].get('chapter','quadratic_equations')
+        return {mid:row for mid,row in self.misconceptions.items() if self.concepts[row['concept_id']]['chapter']==chapter}
+
+    def _propose_diagnosis(self, state: TutorState) -> dict:
+        catalogue=self._diagnostic_catalogue(state)
+        projection=[{'id':mid,'incorrect_rule':row['incorrect_rule'],'distinguishing_evidence':row.get('distinguishing_evidence'),'probe':row['diagnostic_probe']} for mid,row in catalogue.items()]
+        payload={'chapter':state['session'].get('chapter'),'latest_message':state['messages'][-1]['content'],'catalogue':projection}
+        signature=hashlib.sha256(store.dumps({'payload':payload,'turn':len(state['messages']),'model':self.llm.model,'prompt':diagnostic_workflow.PROMPT_VERSION}).encode()).hexdigest()
+        sid=state['session']['session_id']
+        previous=self.conn.execute("SELECT name,detail FROM trace_events WHERE session_id=? AND node='propose_diagnosis' AND kind='decision' AND name IN ('proposal_started','proposal_saved') ORDER BY id DESC",(sid,)).fetchall()
+        for row in previous:
+            detail=json.loads(row['detail'])
+            if detail.get('signature')!=signature:continue
+            if row['name']=='proposal_saved':
+                self._note(state,'propose_diagnosis','proposal_reused',{'signature':signature})
+                return {'diagnostic_proposal':detail.get('proposal')}
+            # Delivery may have happened before a crash; never blindly send again.
+            self._note(state,'propose_diagnosis','unknown_delivery_not_replayed',{'signature':signature})
+            return {'diagnostic_proposal':None}
+        self._note(state,'propose_diagnosis','proposal_started',{'signature':signature})
+        raw=self.llm.complete(session_id=sid,node='propose_diagnosis',role='diagnostician',system=diagnostic_workflow.SYSTEM,user=store.dumps(payload),max_tokens=350)
+        proposal=diagnostic_workflow.parse(raw)
+        self._note(state,'propose_diagnosis','proposal_saved',{'signature':signature,'proposal':proposal})
+        return {'diagnostic_proposal':proposal}
+
+    def _verify_diagnosis(self, state: TutorState) -> dict:
+        proposal,reason=diagnostic_workflow.verify(state.get('diagnostic_proposal'),state['messages'][-1]['content'],self._diagnostic_catalogue(state))
+        self._note(state,'verify_diagnosis',reason,{'accepted':bool(proposal and proposal.get('status')=='hypothesis'),'mastery_updated':False})
+        if proposal and proposal.get('status')=='hypothesis':
+            return {'route':'diagnose','verified_proposal':proposal,'focus_misconception':proposal['misconception_id']}
+        return {'route':'tutor' if proposal else 'clarify_evidence','verified_proposal':None,'focus_misconception':None,'probe_asked_for':None}
+
+    def _clarify_evidence(self, state: TutorState) -> dict:
+        return {'diagnosis':None,'draft':{'text':'Could you show the step or rule you used, so we can check it together?','kind':'info','citations':[]}}
+
     def _diagnose(self, state: TutorState) -> dict:
         mid = state["focus_misconception"]
         mis = self.misconceptions[mid]
         evidence = ["keywords in the student's message"]
         question = None
-        if self.llm.enabled and not state.get("unverified_own_problem"):
+        verified=state.get('verified_proposal')
+        if verified and verified.get('misconception_id')==mid:
+            evidence=['model hypothesis with an exact quoted learner step', 'Learner quote: '+verified['evidence']]
+            question=self._safe_question(verified.get('question'),state['messages'][-1]['content'])
+        elif self.llm.enabled and not state.get("unverified_own_problem"):
             permitted = {m:v for m,v in self.misconceptions.items()
                          if self.concepts[v['concept_id']]['chapter'] == state['session'].get('chapter','quadratic_equations')}
             catalogue = "\n".join(f"{m}: {v['incorrect_rule']}" for m, v in permitted.items())
@@ -871,6 +924,9 @@ class TutorApp:
         g.add_node("load_learner", self._load_learner)
         g.add_node("planner", self._planner)
         g.add_node("diagnose", self._diagnose)
+        g.add_node("propose_diagnosis", self._propose_diagnosis)
+        g.add_node("verify_diagnosis", self._verify_diagnosis)
+        g.add_node("clarify_evidence", self._clarify_evidence)
         g.add_node("tutor", self._tutor)
         g.add_node("tutor_extension", lambda s: self._tutor(s, extension=True))
         g.add_node("set_question", self._set_question)
@@ -891,8 +947,10 @@ class TutorApp:
         g.add_edge("input_guard", "load_learner")
         g.add_edge("load_learner", "planner")
         specialists = ["diagnose", "tutor", "tutor_extension", "set_question", "grade", "check_reasoning", "quiz_start", "quiz_answer",
-                       "refuse", "handoff", "question_revoked", "converse"]
-        g.add_conditional_edges("planner", lambda s: s["route"], {n: n for n in specialists})
+                       "refuse", "handoff", "question_revoked", "converse", "clarify_evidence"]
+        g.add_conditional_edges("planner", lambda s: s["route"], {**{n: n for n in specialists}, "propose_diagnosis":"propose_diagnosis"})
+        g.add_edge("propose_diagnosis", "verify_diagnosis")
+        g.add_conditional_edges("verify_diagnosis", lambda s:s["route"], {n:n for n in ["diagnose","tutor","clarify_evidence"]})
         for n in specialists:
             g.add_edge(n, "output_guard")
         g.add_conditional_edges("output_guard", self._after_guard,

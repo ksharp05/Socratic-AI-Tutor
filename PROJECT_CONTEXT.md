@@ -4,6 +4,10 @@ Canonical working folder: `D:\Work\IITB\Socratic Tutor`. The user explicitly sel
 
 Migration receipts under `.workspace_migration/2026-10-20/` verify 97,021 files / 4,791,938,732 bytes. The only remaining C: entries are two Windows-denied Jupyter runtime files and two inaccessible pytest caches plus parents; the 23 October retry is recorded there. Existing D: content was preserved, older conflicting Markdown is under `previous_root_files`, and the old course environment is `.venv_course_legacy`. Active Python is `.venv/Scripts/python.exe` on D:. The app's saved folder selection is separate from file relocation.
 
+## Publishing and mobile preview — 6 November 2026
+
+The user explicitly requested pushing all project changes to GitHub and a mobile-accessible preview. Publication is now authorized; earlier Keep Beta local is superseded for this push, not for automatic merging. Secrets, private data, databases and raw experiment logs stay out. The v3 opt-in LangGraph diagnostic proposal/evidence-verification/clarification path and five new AP families pass 1053 full regressions; 331 practice items are graph-eligible. See Docs/product_quality/v3/STATUS.md. New paid rounds are prepared but not started; total attempts remain 1097, phase actual USD 0.0107708 under USD 10. Publishing and mobile access are the current priority.
+
 ## Current product v2 candidate — 6 November 2026
 
 Final local runtime **2af7ecf**, tag **beta-product-quality-v2-candidate**: **817 tests**, three exact local CI gates, final 32/32 offline panel. Same fixed journeys improved **10/32 → 32/32 offline** and **20/32 → 32/32 live** on source **779e788**, which also owns 96 C1/C2 baseline sessions + six matching smokes and desktop/390px browser receipts. All 45 live/250 baseline references match mechanically. Final wording completes the quadratic definition; it is tested offline and must not inherit the older source's live label. Source archives preserve both. Diagnosis remains weak/identical at recall 0.208; formal M3/M4 approval and learning advantage are not claimed.
