@@ -134,7 +134,10 @@ def diagnose_response(problem: dict, key: dict, typed: dict) -> list[dict]:
         return []
     truth, given = _as_set(key["values"]), _as_set(typed["values"])
     g = problem["givens"]
-    if truth and g.get("b") and given == _as_set([f"-({v})" for v in key["values"]]):
+    # Only b changes when an unsigned-coefficient reading is applied here.
+    # With positive b, or negative a/c, negating roots is not that catalogue rule.
+    if (truth and g.get("a", 0) > 0 and g.get("b", 0) < 0 and g.get("c", 0) >= 0
+            and given == _as_set([f"-({v})" for v in key["values"]])):
         return [{"misconception_id": "qe_m02", "rule": "dropped the sign of b, so every root changed sign"}]
     if given == truth or not given or not given < truth:
         return []

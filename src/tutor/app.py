@@ -255,10 +255,18 @@ class TutorApp:
         return {"route": route}
 
     def _safe_question(self, text: object, message: str) -> str | None:
-        """Model wording with no checked key behind it: one short question and no number the student didn't write."""
+        """Keep generated probes conceptual; a numeric probe falls back to the checked catalogue.
+
+        There is no answer key for this wording check. Rejecting numeric content also
+        prevents signed values, fractions and number words from bypassing a digit check.
+        """
         text = text.strip() if isinstance(text, str) else ""
-        numbers = set(re.findall(r"\d+(?:\.\d+)?", text)) - set(re.findall(r"\d+(?:\.\d+)?", message))
-        if not text.endswith("?") or text.count("?") != 1 or len(text.split()) > 40 or numbers or guards.generic_leak(text):
+        number_words = re.search(r"\b(?:zero|nought|nil|one|two|three|four|five|six|seven|eight|nine|ten|"
+                                 r"eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|"
+                                 r"twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|"
+                                 r"million|billion|half|halves|quarter|quarters|dozen)\b", text, re.I)
+        numeric = any(char.isnumeric() for char in text) or number_words
+        if not text.endswith("?") or text.count("?") != 1 or len(text.split()) > 40 or numeric or guards.generic_leak(text):
             return None
         return text
 
@@ -308,16 +316,36 @@ class TutorApp:
         if reply and not self._turn_shape_ok(reply):
             self._note(state, "tutor", "model_turn_rejected", {"reason": "turn_shape"})
             return None
-        return self._real_citations(reply, passages) if reply else None
+        if not reply:
+            return None
+        cleaned = self._real_citations(reply, passages)
+        if not self._turn_shape_ok(cleaned):
+            self._note(state, "tutor", "model_turn_rejected", {"reason": "turn_shape_after_citations"})
+            return None
+        known = {p["passage_id"] for p in passages}
+        if passages and not guards.check_citations(cleaned, known)["cited"]:
+            cleaned = f"{cleaned} [{passages[0]['passage_id']}]"
+        return cleaned
 
     def _real_citations(self, text: str, passages: list[dict]) -> str:
-        """TP-T2: drop any bracket that isn't a retrieved passage, so the caller can add a real citation."""
+        """TP-T2: remove unknown citation labels while preserving mathematical brackets."""
         known = {p["passage_id"] for p in passages}
-        return re.sub(r"\s*\[([^\]]*)\]", lambda m: m.group(0) if m.group(1) in known else "", text).strip()
+        def replace(match):
+            label = match.group(1).strip()
+            if label in known:
+                return f"[{label}]"
+            return "" if self._citation_label(label) else match.group(0)
+        return re.sub(r"\[([^\[\]]*)\]", replace, text).strip()
+
+    @staticmethod
+    def _citation_label(label: str) -> bool:
+        return bool(re.match(r"(?i)^(?:(?:normalized|ncert|exemplar)\s*:|"
+                             r"(?:passage(?:[_ -]?id)?|citation|source)\s*:)", label))
 
     def _turn_shape_ok(self, text: str) -> bool:
         """TP-T1: at most 60 words and one question, ending with that question. Citations don't count."""
-        bare = re.sub(r"\[[^\]]*\]", "", text).strip().rstrip(".").rstrip()
+        bare = re.sub(r"\[([^\[\]]*)\]", lambda m: "" if self._citation_label(m.group(1).strip()) else m.group(0),
+                      text).strip().rstrip(".").rstrip()
         return len(bare.split()) <= 60 and bare.count("?") == 1 and bare.endswith("?")
 
     def _tutor(self, state: TutorState, extension: bool = False) -> dict:

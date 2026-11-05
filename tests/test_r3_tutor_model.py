@@ -97,3 +97,37 @@ def test_a_made_up_citation_is_replaced_by_a_real_one(app, monkeypatch):
     result = app.turn("s-model-cite", "L-A", "What does the discriminant tell us?")
     assert "passage_id:" not in result["reply"]
     assert re.search(r"\[(normalized|ncert|exemplar):", result["reply"])
+
+
+def test_a_probe_with_a_number_word_uses_the_catalogue(app, monkeypatch):
+    _fake_model(app, monkeypatch, _verdict("Could the missing root be zero?"))
+    assert app.misconceptions['qe_m04']['diagnostic_probe'] in _probe(app)
+
+
+def test_probe_numeric_variants_fall_back_to_conceptual_questions(app):
+    message='I have used these symbols in my working'
+    for question in ['Could it be -5?', 'Could it be 3/4?', 'Could it be ½?',
+                     'Could it be five?', 'Could it be one half?', 'Could it be ²?']:
+        assert app._safe_question(question, message) is None
+    assert app._safe_question('What must be true before that cancellation?', message)
+
+
+def test_citation_cleanup_preserves_math_brackets(app):
+    assert app._real_citations('Which values belong to [0, 1]?', []) == 'Which values belong to [0, 1]?'
+    assert app._real_citations('What does [x + 1] represent?', []) == 'What does [x + 1] represent?'
+    result=app._real_citations('Which values belong to [0, 1]? [passage_id: qe01]',
+                               [{'passage_id':'normalized:qe04'}])
+    assert '[0, 1]' in result and 'passage_id:' not in result
+
+
+def test_math_brackets_do_not_replace_the_required_citation(app, monkeypatch):
+    _fake_model(app, monkeypatch, 'Which values belong to [0, 1]?')
+    state={'learner':{'mastery':{}},'messages':[{'content':'What is an interval?'}],
+           'session':{'session_id':'s-interval','learner_id':'L-A'}}
+    result=app._model_turn(state,[{'passage_id':'normalized:qe04','text':'A registered source.'}],
+                           misconception='none',move='reverse_question')
+    assert '[0, 1]' in result and '[normalized:qe04]' in result
+
+
+def test_bracketed_prose_still_counts_toward_turn_length(app):
+    assert not app._turn_shape_ok('What follows from ['+'word '*61+']?')
