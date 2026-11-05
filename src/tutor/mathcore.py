@@ -36,7 +36,10 @@ def parse_answer(text: str, key: dict) -> dict:
     kind = key["kind"]
     raw = text.strip()
     if kind == "finite_set":
-        if _NO_ROOTS.search(raw) or (key.get("unit") == "terms" and re.search(r"\bno (?:valid |positive integer )?(?:term )?counts?\b", raw, re.I)):
+        if key.get('unit') == 'terms':
+            raw = re.sub(r"(?i)^\s*(?:there are|the count is|my answer is)\s*", "", raw)
+            raw = re.sub(r"(?i)\s+terms?\s*[.!]?\s*$", "", raw)
+        if (key.get("unit") != "terms" and _NO_ROOTS.search(raw)) or (key.get("unit") == "terms" and re.search(r"\bno (?:valid |positive integer )?(?:term )?counts?\b", raw, re.I)):
             values: list[str] = []
         else:
             body = re.sub(r"[a-zA-Z]\s*=\s*", " ", raw.replace("{", " ").replace("}", " "))
@@ -45,7 +48,7 @@ def parse_answer(text: str, key: dict) -> dict:
             values = [normalise_expression(p) for p in parts]
             values = [v for v in values if re.fullmatch(r"[0-9a-z+\-*/^().]+", v)]
             if not values:
-                return {"ok": False, "reason": "Write your roots like: x = 2 or x = -3, or say 'no real roots'."}
+                return {"ok": False, "reason": ("Write a positive integer count, or say 'no valid term count'." if key.get('unit') == 'terms' else "Write your roots like: x = 2 or x = -3, or say 'no real roots'.")}
         typed = {"kind": "finite_set", "values": values}
     elif kind == "scalar":
         # Recognise a few explicit English lead-ins without guessing at free-form reasoning.
@@ -88,6 +91,8 @@ def leak_check(text: str, key: dict) -> dict:
     if key["kind"] == "finite_set":
         values = key["values"]
         if not values:
+            if key.get('unit') == 'terms':
+                return {"leak": bool(re.search(r"(?i)\bno (?:valid |positive integer )?(?:term )?counts?\b", text)), "reason": "states that there is no valid term count"}
             return {"leak": bool(_NO_ROOTS.search(text)), "reason": "states that there are no real roots"}
         candidates = {c.strip() for c in _NUMBER_LIKE.findall(norm) if c.strip()}
         hits = [v for v in values if any(_equivalent(c, v) for c in candidates)]

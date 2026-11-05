@@ -12,7 +12,7 @@ PUBLIC_FIELDS = ('question_id','prompt','problem','answer_contract','hint_stages
 MODES = frozenset({'practice','quiz','diagnostic'})
 # Only scalar families supported by the connected graph's parser and checker.
 CONNECTED_PRACTICE_FAMILIES = {
-    'arithmetic_progressions': frozenset({'ap_term', 'ap_sum'}),
+    'arithmetic_progressions': frozenset({'ap_term', 'ap_sum', 'ap_first', 'ap_difference', 'ap_count', 'ap_mean', 'ap_ledger_term'}),
     'trigonometry': frozenset({'trig_triangle_ratio'}),
 }
 
@@ -48,7 +48,7 @@ def graph_items(poc_loader=load) -> list[dict]:
         chapter = original.get('chapter')
         problem = original.get('problem') or {}
         if (problem.get('task_type') not in CONNECTED_PRACTICE_FAMILIES.get(chapter, ())
-                or (original.get('answer_contract') or {}).get('allowed_kinds') != ['scalar']
+                or (original.get('answer_contract') or {}).get('allowed_kinds') != (['finite_set'] if problem.get('task_type') == 'ap_count' else ['scalar'])
                 or not allowed(original, 'practice')):
             continue
         qid = original['question_id']

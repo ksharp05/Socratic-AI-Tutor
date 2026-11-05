@@ -60,9 +60,9 @@ def test_teacher_approved_practice_checks_answers_and_updates_matching_concepts(
 def test_new_public_practice_pool_is_explicitly_scoped():
     from tutor.question_catalog import graph_items,allowed
     extra=[q for q in graph_items() if q['chapter'] in ('arithmetic_progressions','trigonometry') and allowed(q,'practice')]
-    assert len(extra)==120
-    assert {q['problem']['task_type'] for q in extra}=={'ap_term','ap_sum','trig_triangle_ratio'}
-    assert all(q['answer_contract']['allowed_kinds']==['scalar'] and allowed(q,'practice') and not allowed(q,'quiz') for q in extra)
+    assert len(extra)==320
+    assert {q['problem']['task_type'] for q in extra}=={'ap_term','ap_sum','ap_first','ap_difference','ap_count','ap_mean','ap_ledger_term','trig_triangle_ratio'}
+    assert all(q['answer_contract']['allowed_kinds']==(['finite_set'] if q['problem']['task_type']=='ap_count' else ['scalar']) and allowed(q,'practice') and not allowed(q,'quiz') for q in extra)
     assert all(q['review_status']=='pending_human_review' for q in extra)
 
 

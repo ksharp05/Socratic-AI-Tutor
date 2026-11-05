@@ -255,7 +255,8 @@ class TutorApp:
             route = "check_reasoning"
         elif item and HINT_REQUEST.search(text):
             route = "tutor"
-        elif item and ANSWER_LIKE.search(text.strip()):
+        elif item and (ANSWER_LIKE.search(text.strip()) or
+                       (item.get('answer_domain') == 'term_count' and (re.search(r'(?i)\bno (?:valid |positive integer )?(?:term )?counts?\b', text) or re.search(r'(?i)^\s*(?:there are|the count is)\b', text)))):
             route = "grade"
         elif definition:
             self._note(state, "planner", "source_backed_concept_help", {"concept_help_id": definition["id"]})
