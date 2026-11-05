@@ -34,6 +34,9 @@ def main():
         if sha(CODE/name)!=digest:raise RuntimeError('Source/config changed after the offline checkpoint: '+name)
     for name,digest in lock['development_data_sha256'].items():
         if sha(SOURCE/name)!=digest:raise RuntimeError('Development data changed')
+    from tutor.llm import base_url
+    if base_url().rstrip('/')!='https://openrouter.ai/api/v1':
+        raise ValueError('The approved pilot is scoped to the configured OpenRouter endpoint')
     root=SOURCE/'Directions/m3_runs/v3';receipt=load(root/'PILOT_APPROVAL.json')
     if not args.execute_live:
         print(json.dumps({'mode':'preflight_only','planned_sessions':6,'chapters':3,'arms':['c1','c2'],

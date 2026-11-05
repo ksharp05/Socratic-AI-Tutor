@@ -1,11 +1,11 @@
-"""Measurement-policy regressions for known collisions and explicit disclosures, no model calls."""
+"""Measurement-policy regressions, no model calls. Minimal identity fixtures do not grade mathematics; the end-to-end test uses the real quiz data."""
 import pytest
 from tutor_eval import post_copy_policy as policy
 
 
 def item(qid='post', answer='17', *, prompt='Find the sum of the first five terms of this progression.'):
     return {'question_id':qid,'prompt':prompt,'answer':{'kind':'scalar','value':answer},
-            'problem':{'task_type':'ap_sum','givens':{'a':1,'d':1,'n':5},'number_domain':'real'}}
+            'problem':{'task_type':'synthetic_context_identity','givens':{'fixture_answer_identity':answer},'number_domain':'real'}}
 
 
 def test_unseen_post_answer_match_does_not_enable_copying_or_become_semantic_pass():

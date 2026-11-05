@@ -1,0 +1,23 @@
+{
+  "scope": "development_catalogue_coverage_only_not_measured_accuracy",
+  "source_cards": 16,
+  "seeded_type_count": 17,
+  "loaded_runtime_types": 9,
+  "supported_seeded_types": 9,
+  "unsupported_seeded_types": [
+    "ap_m01",
+    "ap_m02",
+    "ap_m03",
+    "ap_m04",
+    "ap_m05",
+    "tr_m03",
+    "tr_m05",
+    "tr_m08"
+  ],
+  "seeded_associations": 24,
+  "supported_associations": 12,
+  "type_macro_recall_ceiling_from_catalogue_alone": 0.5294117647058824,
+  "micro_recall_ceiling_from_catalogue_alone": 0.5,
+  "cards_with_no_loaded_seeded_diagnosis": 7,
+  "interpretation": "These are optimistic structural ceilings, not achieved scores or human-learning evidence. More repetitions cannot remove the missing runtime IDs. R3/R2 should work from the public catalogue and review scope before final qualification."
+}

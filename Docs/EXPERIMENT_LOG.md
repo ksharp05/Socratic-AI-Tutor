@@ -342,3 +342,107 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Config/data:** versioned `post_copy_sensitivity.py --include-extension`; same frozen transition function, 224 existing study sessions; exact source/input hashes in `Docs/m4/POST_COPY_SENSITIVITY_E3_COMPLETE.json`.
 - **Outcome:** 224/224 baseline semantic replays matched; no new provider calls. All 48 E3 pairs matched C2; without post copying, E3-minus-C2 quiz difference is zero.
 - **Decision:** retain original primary outcomes and the 212-session analysis. This post-hoc sensitivity neither calibrates disclosure labels nor establishes human learning.
+
+### 2026-11-05 · m3_v3_offline_c0-20261105-234000-28efbc4c7625 · Version3 offline c0 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `27c44256194e1f0c341e05985e241522d6ca72a7543500aa88aedfdc22fe861f`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_c0-20261105-233940-69684c16a897 · Version3 smoke c0 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `b1d3bbe50af59db783d80b66e3ee8b1c3e3ba156d8b9761413c0a226a7464494`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_c1-20261105-234039-1819dc6da601 · Version3 offline c1 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `9fd9b9297e9e92b3d55cb1ec32be8e578b4ad9ead47e209c1290981b52435ba6`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_c1-20261105-233945-516140ce3390 · Version3 smoke c1 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `401cf097fc7b2ef4ea0142aba5e0bf53af9e33e5547fdd335b00ea4ff8efe140`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_c2-20261105-234116-738e5f8a4933 · Version3 offline c2 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `7b782914d889c97b1219af15748f5a86b36f48c3d5f247a380633e118e204770`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_c2-20261105-233948-589549d361bd · Version3 smoke c2 qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `68054e2bdc053e2fce7fe5174aae1b81640113c991b3f7f64d354d7af2d89057`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_memory_off-20261105-234155-d092797b6582 · Version3 offline memory_off qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `68eda86f5e4b7224940a1656ca61ffc582d5786a71083d39bcd0f6d0f0a84bc8`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_memory_off-20261105-233951-1ce8ff86a0b0 · Version3 smoke memory_off qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `2fcd8698f35587f26011dc5e78134eea2ccdcfef9bdf3f1c2ec4a00dcd46823c`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_direct_answers-20261105-234205-ded4792bcd13 · Version3 offline direct_answers qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `1b1c59c89a88527deb57ca747df9d0b9e53671880d2b7470d24f0378814ffdb0`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_direct_answers-20261105-233953-25f2c39d2bc3 · Version3 smoke direct_answers qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `496559b6fdd1e20d592ddd17484346af909601970aca0ff7e44291e08e1d58f9`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_e3_after-20261105-234218-22eb9ae16095 · Version3 offline e3_after qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `218a5f050ddb21d91da9b189a1b356aaed327fd5c1e8585f083630af1168fa0a`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_smoke_e3_after-20261105-233955-736991028fad · Version3 smoke e3_after qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `99741648646c5b1dde8202c54434a841bfa60678ab1aed686d11db1512bdff74`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_e2_on-20261105-234251-7408333ce16f · Version3 offline e2_on qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `dc3fb46705a8762b2b10b53f89e771213cd5cc74d6c52ef7b2a2412214ed912b`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m3_v3_offline_e2_off-20261105-234259-bcc493ecd94f · Version3 offline e2_off qualification
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest SHA-256 `0f2356697b822219855ad47e5d3dd6aafa3d22fa55b9bc7899ec1e3bb2fba6fb`.
+- **Data/config:** existing development material only, candidate context-bound post-copy policy; exact configs and hashes in `Docs/m3/v3/ENGINEERING_CHECKPOINT.json`.
+- **Outcome:** offline/stub qualification, zero provider requests. All tutor run gates passed; all security execution errors zero; unsupported semantic outcomes remain unknown.
+- **Decision:** evidence for the local engineering candidate, not new live E1-E4 results, independent safety, or human learning.
+
+### 2026-11-05 · m2_development_c1-20261105-234330-a219c5a43204 · Version3 exact CI-equivalent legacy gate
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest `ef1cebbd9af5a9e705b7a218a36a31d2be6a9f78e07bd87d026faabd24e3f4eb`.
+- **Outcome:** CLI gate exited0, stub mode, no provider requests; `v3_ci_c1.log`.
+- **Decision:** legacy default path is compatible; remote Beta CI is not yet run.
+
+### 2026-11-05 · dev_smoke-20261105-234335-57d81643ab02 · Version3 exact CI-equivalent legacy gate
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest `f697833475bf007b3c006f386042ace9276f31475a9b924af2d5ece743cfc768`.
+- **Outcome:** CLI gate exited0, stub mode, no provider requests; `v3_ci_eval.log`.
+- **Decision:** legacy default path is compatible; remote Beta CI is not yet run.
+
+### 2026-11-05 · v3_ci_security-20261105-234341-3678f144d5ae · Version3 exact CI-equivalent legacy gate
+- **Source:** clean `e79d7d3e17d9a3a2dafcff2b3e8a6a9f7d889af9`; manifest `60b6cfcd972a338ef8b4dbc6c9e3234d7f57df94206258823c37e8da687a3704`.
+- **Outcome:** CLI gate exited0, stub mode, no provider requests; `v3_ci_security.log`.
+- **Decision:** legacy default path is compatible; remote Beta CI is not yet run.
+
+### 2026-11-06 · v3-copy-policy-audit · Cached copying-rule validation
+- **Data:** all224 original recorded live trajectories, legacy baselines matched, candidate-context filter applied to the same saved tutor replies/grades; old primary results preserved.
+- **Outcome:**177 original full-match witnesses:161 owned-format matches and16 unattributed matches, all86 old copying triggers removed; actual semantic labels remain unreviewed. No new provider calls.40-item focused packet prepared, all human labels blank.
+- **Decision:** advance an opt-in development candidate for review; do not treat code controls or repeated seeds as independent final evidence.

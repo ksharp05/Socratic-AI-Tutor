@@ -1,5 +1,7 @@
 # M3/M4 acceptance audit - 5 November 2026
 
+Current candidate work and remaining role decisions are now tracked in [the v3 checkpoint](../m3/v3/STATUS.md) and [team actions](../m3/v3/TEAM_ACTIONS.md). This file preserves the earlier v2 audit.
+
 Sources: `Docs/plan/README.md` milestone table, `Docs/plan/08-schedule.md` M3 exit/Phase 3, `eval/PREREGISTRATION.md`, and `Docs/plan/05-evaluation.md`. This audit does not declare either formal milestone accepted.
 
 | Required evidence | Current authoritative evidence | Decision / next action |
