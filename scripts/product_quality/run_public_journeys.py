@@ -109,7 +109,10 @@ def run_case(case, folder, live, wallet):
             turns.append(turn)
             with (folder/'turns.jsonl').open('a', encoding='utf-8') as output:
                 output.write(json.dumps(turn)+'\n')
-            assert result.get('checks', {}).get('ok') is True, 'output guard rejected a turn'
+            checks = result.get('checks', {})
+            approved_question = (case.get('practice') and result['route'] == 'set_question'
+                                 and checks.get('skipped') is True and result.get('active_item'))
+            assert checks.get('ok') is True or approved_question, 'output guard rejected a guarded turn'
             assert turn['model']['model_errors'] == 0 and turn['model']['trace_observed']
             if not case.get('practice') and not case.get('privacy'):
                 assert result['reply'].count('?') == 1 and len(result['reply'].split()) <= 60
@@ -135,6 +138,8 @@ def run_case(case, folder, live, wallet):
         result = {'case': case['id'], 'chapter': case['chapter'], 'turns': len(turns), 'gate': 'pass',
                   'model_calls': sum(t['model']['model_calls'] for t in turns), 'citations': citations,
                   'human_reviews': 0, 'semantic_teaching_quality': 'unreviewed',
+                  'guarded_turns_checked': sum(t['checks'].get('ok') is True for t in turns),
+                  'approved_question_displays_not_output_guarded': sum(t['checks'].get('skipped') is True for t in turns),
                   'turns_sha256': sha(folder/'turns.jsonl'), 'trace_sha256': sha(folder/'trace.json')}
         save(folder/'RESULT.json', result)
         return result
