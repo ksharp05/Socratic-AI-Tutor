@@ -1,5 +1,6 @@
 """Tutor turns reach the model, with templates as the fallback. A fake replaces the model, so nothing leaves the machine."""
 import json
+import re
 
 from tutor import prompts
 
@@ -89,3 +90,10 @@ def test_a_tutor_turn_names_a_policy_style(app, monkeypatch):
     app.turn("s-model-style", "L-A", "What does the discriminant tell us?")
     assert "reverse_question" in calls[0]["user"]
     assert "reverse_question" in prompts.STYLES
+
+
+def test_a_made_up_citation_is_replaced_by_a_real_one(app, monkeypatch):
+    _fake_model(app, monkeypatch, "What does that value measure? [passage_id: qe01]")
+    result = app.turn("s-model-cite", "L-A", "What does the discriminant tell us?")
+    assert "passage_id:" not in result["reply"]
+    assert re.search(r"\[(normalized|ncert|exemplar):", result["reply"])

@@ -308,7 +308,12 @@ class TutorApp:
         if reply and not self._turn_shape_ok(reply):
             self._note(state, "tutor", "model_turn_rejected", {"reason": "turn_shape"})
             return None
-        return reply
+        return self._real_citations(reply, passages) if reply else None
+
+    def _real_citations(self, text: str, passages: list[dict]) -> str:
+        """TP-T2: drop any bracket that isn't a retrieved passage, so the caller can add a real citation."""
+        known = {p["passage_id"] for p in passages}
+        return re.sub(r"\s*\[([^\]]*)\]", lambda m: m.group(0) if m.group(1) in known else "", text).strip()
 
     def _turn_shape_ok(self, text: str) -> bool:
         """TP-T1: at most 60 words and one question, ending with that question. Citations don't count."""
