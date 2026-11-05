@@ -19,6 +19,10 @@ def cards():
             if item.get('chapter') in ('arithmetic_progressions','trigonometry'):
                 if item['passage_id'] in seen:raise ValueError('Duplicate source card ID')
                 seen.add(item['passage_id']);result.append(item)
+    from .concept_help import cards as concept_cards
+    for item in concept_cards():
+        if item['passage_id'] in seen:raise ValueError('Duplicate supplemental source card ID')
+        seen.add(item['passage_id']);result.append(item)
     return result
 
 

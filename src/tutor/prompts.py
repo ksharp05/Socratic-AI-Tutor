@@ -1,7 +1,7 @@
 """Versioned six-slot prompts (role, context, task, constraints, format, examples). Used only when an LLM key is set."""
 from __future__ import annotations
 
-PROMPT_VERSION = "poc-v6-conceptual-probes"
+PROMPT_VERSION = "poc-v7-grounded-concept-support"
 
 # TP-T4: the six explanation styles in the teaching policy. Each tutor turn uses one.
 STYLES = {

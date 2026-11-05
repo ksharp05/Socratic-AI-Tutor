@@ -78,3 +78,19 @@ def reply(kind: str, *, plan: dict | None, next_step: str | None, in_quiz: bool)
     if in_quiz:
         return text + " This is a quiz, so there are no hints; answer as best you can, or leave the quiz without a score."
     return f"{text} {next_step}" if next_step else text
+
+
+def small_step(chapter: str) -> str:
+    return {
+        "arithmetic_progressions": "Which quantity is the first term, and what is the common difference?",
+        "trigonometry": "Which angle is the reference angle in this question?",
+        "quadratic_equations": "Which terms or factors can you identify before calculating?",
+    }[chapter]
+
+
+def clarify_step(chapter: str) -> str:
+    return {
+        "arithmetic_progressions": "Are you recognising a progression, finding a term, or finding a sum?",
+        "trigonometry": "Is the difficult part choosing the reference angle, naming the sides, or choosing a ratio?",
+        "quadratic_equations": "Is the difficult part arranging the equation, choosing a method, or checking possible solutions?",
+    }[chapter]

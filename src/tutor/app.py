@@ -19,7 +19,7 @@ from filelock import Timeout
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
-from . import approval_token, conversation, diagnosis_evidence, guards, learner, prompts, store
+from . import approval_token, concept_help, conversation, diagnosis_evidence, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
@@ -60,6 +60,7 @@ class TutorState(TypedDict, total=False):
     hint_stage: int
     diagnosis: dict | None
     acknowledged_probe: str | None
+    concept_help_id: str | None
     route: str
     draft: dict | None
     checks: dict
@@ -206,7 +207,7 @@ class TutorApp:
                 notes.append("For this unverified problem I can offer general guidance; automatic answer checking is not available here.")
         return {"messages": [{"role": "student", "content": state["incoming"]}], "incoming": "",
                 "draft": None, "checks": {}, "revision_count": 0, "grade": None, "retrieved": [], "notes": notes,
-                "diagnosis": None, "acknowledged_probe": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
+                "diagnosis": None, "acknowledged_probe": None, "concept_help_id": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
 
     def _load_learner(self, state: TutorState) -> dict:
         lid = state["session"]["learner_id"]
@@ -228,6 +229,11 @@ class TutorApp:
         screen = state.get("screen") or {}
         mode = state["session"].get("mode", "practice")
         item, quiz = state.get("active_item"), state.get("quiz")
+        chapter = state["session"].get("chapter", "quadratic_equations")
+        kind = conversation.intent(text)
+        definition = concept_help.match(text, chapter) if not item and not state.get("unverified_own_problem") else None
+        candidates = self._keyword_candidates(text, chapter) if not item else []
+        specific_support = kind in ("frustration", "smaller_step", "citation") and bool(definition or candidates)
         if screen.get("distress"):
             route = "handoff"
         elif screen.get("role_claim") or screen.get("key_request"):
@@ -238,7 +244,7 @@ class TutorApp:
             route = "quiz_answer"
         elif QUIZ_REQUEST.search(text) or (mode == "quiz" and not quiz):
             route = "quiz_start"
-        elif conversation.intent(text) and not (item and (item.get("reasoning_probe") or ANSWER_LIKE.search(text.strip()))):
+        elif kind and not specific_support and not (item and (item.get("reasoning_probe") or ANSWER_LIKE.search(text.strip()))):
             # About the session (plan, frustration, how the app works), not a maths step: answer what was asked.
             route = "converse"
         elif PRACTICE_REQUEST.search(text):
@@ -250,13 +256,17 @@ class TutorApp:
             route = "tutor"
         elif item and ANSWER_LIKE.search(text.strip()):
             route = "grade"
+        elif definition:
+            self._note(state, "planner", "source_backed_concept_help", {"concept_help_id": definition["id"]})
+            return {"route": "converse", "concept_help_id": definition["id"],
+                    "focus_misconception": None, "probe_asked_for": None, "hint_stage": 0}
         else:
             snapshot = state["learner"]
             focus = state.get("focus_misconception")
             if (not item and not state.get("unverified_own_problem") and focus
                     and diagnosis_evidence.acknowledges_distinction(text, focus)):
                 self._note(state, "planner", "probe_distinction_acknowledged", {"misconception": focus, "mastery_updated": False})
-                return {"route": "tutor", "focus_misconception": None, "probe_asked_for": None,
+                return {"route": "converse", "focus_misconception": None, "probe_asked_for": None,
                         "acknowledged_probe": focus, "hint_stage": 0}
             candidates = self._keyword_candidates(text, state["session"].get("chapter", "quadratic_equations"))
             flagged = [m for m, v in snapshot["misconceptions"].items() if v["status"] in ("suspected", "confirmed", "addressed")]
@@ -302,6 +312,9 @@ class TutorApp:
                          if self.concepts[v['concept_id']]['chapter'] == state['session'].get('chapter','quadratic_equations')}
             catalogue = "\n".join(f"{m}: {v['incorrect_rule']}" for m, v in permitted.items())
             system, user = prompts.render(prompts.DIAGNOSTICIAN, catalogue=catalogue, message=state["messages"][-1]["content"])
+            user += "\nObserved candidate to check, not a proven cause: " + json.dumps({
+                "id": mid, "distinguishing_evidence": mis.get("distinguishing_evidence"),
+                "catalogue_probe": mis["diagnostic_probe"]})
             raw = self.llm.complete(session_id=state["session"]["session_id"], node="diagnose", role="diagnostician",
                                     system=system, user=user)
             try:
@@ -325,6 +338,8 @@ class TutorApp:
         flagged = state["learner"]["misconceptions"].get(mid)
         opener = ("We've seen this idea trip you up before, so let's check it carefully. " if flagged
                   else "Good question, let's check one thing first. ")
+        if conversation.intent(state["messages"][-1]["content"]) == "frustration":
+            opener = "Let's take it one step at a time. "
         text = f"{opener}{question or mis['diagnostic_probe']}"
         diagnosis = {"misconception_id": mid, "status": "suspected", "provisional": True, "evidence": evidence}
         return {"draft": {"text": text, "citations": [], "kind": "probe", "misconception_id": mid},
@@ -383,13 +398,7 @@ class TutorApp:
         mid = state.get("focus_misconception")
         strict = state.get("revision_count", 0) > 0
         stage = state.get("hint_stage", 0)
-        if state.get("acknowledged_probe") and not item:
-            mis = self.misconceptions[state["acknowledged_probe"]]
-            passages = self._passages_for(state, "tutor", mis["correct_reasoning"])
-            cite = f" [{passages[0]['passage_id']}]" if passages else ""
-            text = f"You've identified the distinction to check. Type 'practice' to try it on an approved question{cite}. Shall we try one?"
-            style = "acknowledged_distinction"
-        elif state.get("unverified_own_problem") and not item:
+        if state.get("unverified_own_problem") and not item:
             # Never return a whole retrieved passage or model-generated solution for
             # an unverified learner problem. A generic question does not expose a key.
             query = (self.concepts[self.misconceptions[mid]["concept_id"]]["title"]
@@ -636,16 +645,38 @@ class TutorApp:
 
     def _converse(self, state: TutorState) -> dict:
         kind = conversation.intent(state["messages"][-1]["content"])
+        if state.get("concept_help_id"):
+            entry = concept_help.by_id(state["concept_help_id"])
+            ref = self._call(state, "converse", "tutor", "textbook-kb", "get_section", {"passage_id": entry["passage_id"]})
+            registered = self.cards.get(entry["passage_id"], {})
+            intact = (ref.get("passage_id") == entry["passage_id"] and ref.get("chapter") == entry["chapter"]
+                      and ref.get("text") == registered.get("text")
+                      and (ref.get("source") or {}).get("source_sha256") == (registered.get("source_anchor") or {}).get("source_sha256")
+                      and entry["definition"] in ref.get("text", ""))
+            if not intact:
+                return {"draft": {"text": "I can't verify that explanation in the available reference. Could you rephrase your question?", "kind": "info", "citations": []}}
+            lead = "Let's take it one step at a time: " if kind == "frustration" else ""
+            text = f"{lead}{entry['definition']} [{ref['passage_id']}] {entry['question']}"
+            return {"draft": {"text": text, "kind": "info", "citations": [ref["passage_id"]], "style": "source_backed_concept"}, "retrieved": [dict(ref)]}
+        if state.get("acknowledged_probe"):
+            mis = self.misconceptions[state["acknowledged_probe"]]
+            passages = self._passages_for(state, "converse", mis["correct_reasoning"])
+            cite = f" [{passages[0]['passage_id']}]" if passages else ""
+            text = f"You've identified the distinction to check. Type 'practice' to try it on an approved question{cite}. Shall we try one?"
+            return {"draft": {"text": text, "kind": "info", "citations": [p["passage_id"] for p in passages], "style": "acknowledged_distinction"}, "retrieved": [dict(p) for p in passages]}
         item = state.get("active_item")
         if item and item.get("reasoning_probe"):
             next_step = "Name the reference angle and the opposite, adjacent and hypotenuse lengths from the question."
         elif item:
             stages = item["hint_stages"]
-            next_step = f"Hint: {stages[min(item.get('hint_stage', 0), len(stages) - 1)]['prompt']}"
+            if kind in ("frustration", "smaller_step"):
+                next_step = conversation.small_step(state["session"].get("chapter", "quadratic_equations"))
+            else:
+                next_step = f"Hint: {stages[min(item.get('hint_stage', 0), len(stages) - 1)]['prompt']}"
         elif state.get("unverified_own_problem"):
             next_step = "What first step could you try, and what assumption would it require?"
         else:
-            next_step = None
+            next_step = conversation.clarify_step(state["session"].get("chapter", "quadratic_equations")) if kind in ("frustration", "smaller_step") else None
         text = conversation.reply(kind, plan=state.get("plan"), next_step=next_step, in_quiz=bool(state.get("quiz")))
         self._note(state, "converse", "intent", {"intent": kind})
         return {"draft": {"text": text, "citations": [], "kind": "info"}}

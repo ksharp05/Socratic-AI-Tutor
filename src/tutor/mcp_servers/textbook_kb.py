@@ -29,6 +29,19 @@ def _tokenise(text: str) -> str:
     return re.sub(r"[^a-z0-9 ]+", " ", text)
 
 
+def _passage(card: dict, score: float | None = None) -> dict:
+    anchor = card.get("source_anchor") or {}
+    out = {"passage_id": card["passage_id"], "concept_id": card["concept_id"], "title": card["title"],
+           "text": card["text"], "chapter": card["chapter"], "class": card["class"], "kind": "card",
+           "review_status": card.get("human_review_status", "pending"),
+           "source": {"source_id": anchor.get("source_id"), "source_sha256": anchor.get("source_sha256"),
+                      "url": anchor.get("source_url"), "page": anchor.get("source_printed_page"),
+                      "pdf_page": anchor.get("source_pdf_page"), "section": anchor.get("source_section")}}
+    if score is not None:
+        out["score"] = round(float(score), 3)
+    return out
+
+
 def build(retrieval: dict | None = None) -> FastMCP:
     """`retrieval` overrides the [retrieval] table of config/app.toml (used by tests)."""
     cfg = SETTINGS.raw.get("retrieval", {}) if retrieval is None else retrieval
@@ -46,18 +59,6 @@ def build(retrieval: dict | None = None) -> FastMCP:
         retriever = bm25s.BM25()
         retriever.index(bm25s.tokenize(corpus, stopwords="en", show_progress=False), show_progress=False)
         chapters[chapter] = (subset, retriever)
-
-    def _passage(card: dict, score: float | None = None) -> dict:
-        anchor = card.get("source_anchor") or {}
-        out = {"passage_id": card["passage_id"], "concept_id": card["concept_id"], "title": card["title"],
-               "text": card["text"], "chapter": card["chapter"], "class": card["class"], "kind": "card",
-               "review_status": card.get("human_review_status", "pending"),
-               "source": {"source_id": anchor.get("source_id"), "source_sha256": anchor.get("source_sha256"),
-                          "url": anchor.get("source_url"), "page": anchor.get("source_printed_page"),
-                          "pdf_page": anchor.get("source_pdf_page"), "section": anchor.get("source_section")}}
-        if score is not None:
-            out["score"] = round(float(score), 3)
-        return out
 
     mcp = FastMCP("textbook-kb")
 
@@ -88,6 +89,8 @@ def build(retrieval: dict | None = None) -> FastMCP:
 def _build_hybrid(cfg: dict) -> FastMCP:
     from ..retrieval.hybrid import KINDS, build_retriever
 
+    from ..concept_help import cards as concept_cards
+    supplements = {c["passage_id"]: c for c in concept_cards()}
     retriever, notices = build_retriever(cfg, ROOT)
     notice = " ".join(notices) or None
     mcp = FastMCP("textbook-kb")
@@ -111,6 +114,8 @@ def _build_hybrid(cfg: dict) -> FastMCP:
     @mcp.tool(annotations=READ)
     def get_section(passage_id: str) -> dict:
         """Fetch one passage (card or section) by its ID."""
+        if passage_id in supplements:
+            return _passage(supplements[passage_id])
         passage = retriever.get(passage_id)
         if passage is None:
             raise ToolError(f"NOT_FOUND: no passage {passage_id}")

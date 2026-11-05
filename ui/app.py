@@ -55,8 +55,9 @@ def stream_chat(text: str, mode: str):
     try:
         with requests.post(f"{API}/chat/stream", json=body, headers=headers, stream=True, timeout=TIMEOUT) as response:
             if response.status_code >= 400:
-                st.session_state["chat_error"] = ("I couldn't send that message. Check your access or start a new conversation, "
-                                                  "then try again.")
+                st.session_state["chat_error"] = ("This conversation needs recovery before you continue." if response.status_code == 409 else
+                                                  "I couldn't send that message. Check your access and try again.")
+                st.session_state["needs_recovery_check"] = True
                 return
             event = None
             for line in response.iter_lines(decode_unicode=True):
@@ -73,12 +74,19 @@ def stream_chat(text: str, mode: str):
                     elif event == "done":
                         st.session_state["session_id"] = data["session_id"]
                         st.session_state["last_result"] = data
+                        was_quiz = st.session_state.get("quiz_active", False)
+                        st.session_state["quiz_active"] = bool(data.get("quiz_active"))
+                        if was_quiz and not data.get("quiz_active"):
+                            st.session_state["pending_mode"] = "practice"
                     elif event == "error":
                         st.session_state["chat_error"] = "That turn was interrupted. Try resuming it before sending the same message again."
+                        st.session_state["needs_recovery_check"] = True
     except (requests.RequestException, ValueError):
         st.session_state["chat_error"] = "The connection was interrupted. Try resuming this conversation before sending the same message again."
+        st.session_state["needs_recovery_check"] = True
     if not st.session_state.get("last_result") and not st.session_state.get("chat_error"):
         st.session_state["chat_error"] = "The reply did not finish. Try resuming this conversation."
+        st.session_state["needs_recovery_check"] = True
 
 
 def display_reply(content: str, references: list[dict]) -> str:
@@ -149,20 +157,62 @@ def learner_overview(learner_id: str) -> None:
                 st.markdown(f"{i}. **{step['concept_id']}** {step.get('title', '')}: {step.get('action', '')}")
 
 
+def restore_active_conversation() -> None:
+    """Restore only the signed-in learner's server-owned unfinished conversation."""
+    if st.session_state.get("active_checked") and not st.session_state.pop("needs_recovery_check", False):
+        return
+    active = call("GET", "/chat/active")
+    st.session_state["active_checked"] = True
+    st.session_state["interrupted"] = bool(active and active.get("interrupted"))
+    if not active or not active.get("session_id"):
+        return
+    history = call("GET", "/chat/" + quote(active["session_id"], safe="") + "/history")
+    if history:
+        st.session_state["session_id"] = active["session_id"]
+        st.session_state["messages"] = history.get("messages", [])
+        st.session_state["chat_chapter"] = history["chapter"]
+        st.session_state["quiz_active"] = bool(active.get("quiz_active"))
+        if active.get("interrupted"):
+            st.session_state["chat_error"] = "A previous turn was interrupted. Resume it before sending another message."
+
+
 def student_chat() -> None:
+    restore_active_conversation()
+    if "pending_mode" in st.session_state:
+        st.session_state["chat_mode"] = st.session_state.pop("pending_mode")
+    if st.session_state.get("quiz_active"):
+        st.session_state["chat_mode"] = "quiz"
     st.header("Chat with your tutor")
     st.caption("Work through one step at a time. Ask a question, try a hint, or practise a checked problem.")
     controls = st.columns([2, 1, 1])
-    if controls[2].button("New session"):
-        for key in ("session_id", "messages", "plan", "last_citations", "last_result", "chat_error"):
+    unfinished = bool(st.session_state.get("quiz_active") or st.session_state.get("interrupted"))
+    if controls[2].button("New session", disabled=unfinished):
+        for key in ("session_id", "messages", "plan", "last_citations", "last_result", "chat_error", "quiz_active", "interrupted"):
             st.session_state.pop(key, None)
     chapter = controls[0].selectbox("Chapter", list(CHAPTER_LABELS), format_func=CHAPTER_LABELS.get,
                                   key="chat_chapter", disabled=bool(st.session_state.get("session_id")),
                                   help="Start a new session to switch chapters.")
     mode = controls[1].radio("Mode", ["practice", "quiz"], horizontal=True,
-                            format_func=lambda value: "Practice" if value == "practice" else "Quiz", key="chat_mode")
+                            format_func=lambda value: "Practice" if value == "practice" else "Quiz", key="chat_mode",
+                            disabled=bool(st.session_state.get("quiz_active")))
     if mode == "quiz":
         st.caption("Quiz mode uses approved questions and does not give hints.")
+    if st.session_state.get("quiz_active"):
+        st.info("Finish this quiz or leave it without a score before starting a new conversation.")
+        if st.button("Leave quiz without scoring", disabled=bool(st.session_state.get("interrupted"))):
+            out = call("POST", "/chat/leave", json={"session_id": st.session_state["session_id"]})
+            if out:
+                history = call("GET", "/chat/" + quote(st.session_state["session_id"], safe="") + "/history")
+                if history:
+                    st.session_state["messages"] = history.get("messages", [])
+                st.session_state["quiz_active"] = False
+                st.session_state["last_result"] = None
+                st.session_state["pending_mode"] = "practice"
+                st.session_state["chat_error"] = None
+                st.rerun()
+    health = call("GET", "/health")
+    if health and not health.get("model_enabled"):
+        st.caption("Reference mode: source explanations and checked practice are available without a live tutor.")
     with st.expander("Conversation details and recovery"):
         st.caption(f"Conversation reference: {st.session_state.get('session_id', 'not started')}")
         if st.button("Resume interrupted turn", disabled=not st.session_state.get("session_id")):
@@ -175,6 +225,9 @@ def student_chat() -> None:
                 if history:
                     st.session_state["messages"] = history.get("messages", [])
                     st.session_state["chat_error"] = None
+                    st.session_state["interrupted"] = False
+                    st.session_state["active_checked"] = False
+                    st.rerun()
     chat_col, side = st.columns([3, 1])
     with chat_col:
         messages = st.session_state.setdefault("messages", [])
@@ -190,7 +243,8 @@ def student_chat() -> None:
                 show_references(refs)
         if st.session_state.get("chat_error"):
             st.error(st.session_state["chat_error"])
-        if prompt := st.chat_input("Ask a question, enter an answer, or type 'practice'"):
+        if prompt := st.chat_input("Ask a question, enter an answer, or type 'practice'",
+                                   disabled=bool(st.session_state.get("interrupted"))):
             messages.append({"role": "student", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)
