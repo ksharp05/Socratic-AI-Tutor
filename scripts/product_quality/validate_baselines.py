@@ -1,6 +1,6 @@
 """Fresh stub-only C1/C2 reproducibility qualification; never reruns old experiments."""
 from __future__ import annotations
-import hashlib,json,os,subprocess,sys
+import argparse,hashlib,json,os,subprocess,sys
 from pathlib import Path
 CODE=Path(__file__).resolve().parents[2]
 SOURCE=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path.cwd())).resolve()
@@ -15,7 +15,10 @@ def save(p,v):p.write_text(json.dumps(v,indent=2)+'\n',encoding='utf-8')
 def main():
     assert subprocess.check_output(['git','-C',str(CODE),'branch','--show-current'],text=True).strip()=='Beta'
     assert not subprocess.check_output(['git','-C',str(CODE),'status','--porcelain'],text=True).strip()
-    root=SOURCE/'Directions/product_quality/v1/c1_c2_baseline'
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',choices=['v1','v2'],default='v1')
+    args=parser.parse_args()
+    root=SOURCE/f'Directions/product_quality/{args.version}/c1_c2_baseline'
     if root.exists():raise RuntimeError('Inspect existing evidence; no silent repeat')
     root.mkdir();index={'status':'running','purpose':'Current public-rule candidate stub qualification, no live E1 result','jobs':{},'replays':{},'provider_requests':0}
     save(root/'INDEX.json',index)
