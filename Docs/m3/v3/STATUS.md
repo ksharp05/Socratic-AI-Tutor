@@ -2,6 +2,12 @@
 
 The integrated local Beta candidate on `e79d7d3` passes **554 regressions**, all six three-chapter smoke configurations (18 sessions), the full **224-session offline tutoring matrix** and **160 offline security cases**, with zero execution failures. No provider calls were added. These are stub qualification results, not new live E1-E4 results.
 
+## Live pilot update - 6 November 2026
+
+The approved six-session pilot is complete on clean `a9ee2ba`: **16 requests / USD 0.0047916**, all 10 tutor-route turns made model calls, zero provider/execution errors and zero detected full leaks. All 14 citation snapshots match mechanically. Both conditions still have zero diagnosis hits, zero qualified success proxies and the same -0.667 synthetic quiz change. See [PILOT_RESULTS.md](PILOT_RESULTS.md). The user explicitly chose to keep Beta local.
+
+`ENGINEERING_CHECKPOINT.json` preserves the pre-pilot lock and its then-pending fields; `PILOT_RESULTS.json` records the actual approval, completed live evidence and current usage. The user subsequently authorized up to USD 10 for the next product-development phase. Diagnosis coverage/elicitation and useful follow-up are the next engineering priorities; human review and specialist acceptance remain open.
+
 ## Reproducibility and scoring repair
 
 All 18 smoke trajectories match their corresponding full-run trajectories, including 6/6 C1/C2 sessions. Identifiers/timing/tool-log timing are excluded. The original frozen transition function is unchanged; all 224 saved live simulator baselines still reproduce. The repair is opt-in and keeps legacy flags visible while filtering post copying through explicit question context.
@@ -25,7 +31,7 @@ The 16 development source cards contain 17 seeded types and 24 card/type associa
 
 R3 and R2 should review the public catalogue, distinguishing evidence and supported task families, complete or explicitly scope the runtime adapters, and keep diagnosis design separate from simulator rules. Existing broad practice/textbook holdings are not equivalent to connected runtime coverage. Independent final-content authorship/new hidden attacks and human relevance/faithfulness labels remain required.
 
-## The next executable step
+## Pilot plan preserved as history (now completed)
 
 A six-session C1/C2 development pilot is prepared: three existing cards (one per chapter), seed 1, eight turns, fixed gpt-4.1-mini, template voice, no judge. New per-turn telemetry checks actual model calls on tutor-route turns rather than a positive session total. The runner defaults to preflight; execution refuses a pending receipt. Proposed separate cap: **80 requests / USD 0.05**. The prior E3 allowance is purpose-specific and is not reused. Both existing wallets remain byte-identical.
 

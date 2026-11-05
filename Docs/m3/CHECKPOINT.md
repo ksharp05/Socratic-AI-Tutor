@@ -1,6 +1,16 @@
-# Current M3/M4 checkpoint - v3 offline validation ready
+# Current M3/M4 checkpoint - v3 pilot complete; product quality work next
 
 The user resumed work toward M3/M4 after PRs 2/3 merged. Continue on local **Beta** in `D:\Work\IITB\Socratic Tutor Main`; project cwd is canonical `D:\Work\IITB\Socratic Tutor`. Do not push Beta without the separate publishing request. Start at **`Docs/m3/v3/STATUS.md`** and **`TEAM_ACTIONS.md`**.
+
+## Latest update - approved pilot complete; product quality work authorized
+
+The user approved **80 requests / USD 0.05** for the prepared pilot and explicitly answered **Keep Beta local**. All six sessions finished on clean `a9ee2ba`, using **16 requests / USD 0.0047916**, with no errors, refusals or in-flight requests. All 10 tutor-route turns made model calls; all 48 turn traces and 14 citation snapshots were verified. Total usage is **1,052**; known continuation cost is **USD 0.2839720**, excluding the original 98 requests whose money is unknown. Original/E3 wallet hashes remain unchanged; the new pilot wallet hash is `ca964e400d1424eabc96e3a3531b2ed075606b84356cc7630503e24957461a70`. No pilot sessions remain and unused allowance must not drive repeats.
+
+The quality result is weak: both arms have zero diagnosis hits, zero success proxies and mean synthetic quiz change -2/3, with no C2 advantage in three matched pairs. No explicit diagnose-route turn occurred. The pilot accepts paid tutor paths only; it does not establish product quality, specialist architecture or learning. See `Docs/m3/v3/PILOT_RESULTS.md/json`; rerun only the offline reporter `scripts/m3/report_v3_pilot.py` to verify saved evidence. The original `report_v3.py` builds the pre-pilot lock and now intentionally refuses an existing pilot wallet; never remove/reset a wallet to regenerate it.
+
+The user then said “I think if we even reach around 10 dollars it will be fine I think”, “so work accordingly”, and “I want really nice product”. Treat **USD 10 as the ceiling for the next development phase**, spend in smaller durably capped batches, keep Beta local, and prioritize public-catalogue diagnosis/elicitation and useful learner follow-up before more expensive repeats. Preserve the v3 runtime/tag and old studies; new product changes are candidate work requiring fresh validation. Do not fabricate R3/R2 authorship or review; team ownership/review remains explicit. No final-study or human approvals are granted by budget authorization.
+
+The sections below preserve the pre-pilot offline checkpoint and historical prepared plan. Their pending-approval language is superseded by this actual user decision and completed pilot evidence.
 
 ## What is now done
 

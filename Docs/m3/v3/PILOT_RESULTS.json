@@ -1,0 +1,165 @@
+{
+  "status": "completed_path_acceptance_pass_quality_and_final_gates_open",
+  "reported_date_Asia_Kolkata": "2026-11-06",
+  "runtime_commit": "a9ee2baf612da08336c673257a22796f8fecae06",
+  "runtime_candidate_tag": "beta-m3-behaviour-v3-candidate",
+  "engineering_checkpoint_git_blob_sha256": "ba6adb15273816da4e94d7fa17d7d1a51f32b19dad1950521393614aab78c6f3",
+  "source_config_files_verified_against_recorded_commit": 100,
+  "scope": "six development pilot sessions; three existing cards, one per chapter, one seed, template voice, no judge",
+  "conditions": [
+    {
+      "condition": "c1",
+      "sessions": 3,
+      "turns": 24,
+      "model_calls": 8,
+      "provider_reported_usd": 0.0024104,
+      "tutor_route_turns": 5,
+      "tutor_route_turns_with_model_call": 5,
+      "route_counts": {
+        "tutor": 5,
+        "set_question": 9,
+        "grade": 9,
+        "check_reasoning": 1
+      },
+      "all_turn_traces_observed": true,
+      "failures": 0,
+      "timeouts": 0,
+      "provider_errors": 0,
+      "detected_full_leak_turns": 0,
+      "legacy_quiz_match_flags": 5,
+      "removed_ineligible_post_copies": 2,
+      "retained_post_copies": 0,
+      "unreviewed_post_match_decisions": {
+        "match_only_in_owned_format": 4,
+        "unattributed_full_answer_match": 1
+      },
+      "diagnosis_recall": 0.0,
+      "sessions_with_diagnosis_hit": 0,
+      "success_proxy": 0,
+      "mean_synthetic_quiz_change": -0.6666666666666666,
+      "checked_practice": {
+        "submitted": 9,
+        "checked_correct": 5,
+        "not_checked": 0,
+        "grading_disagreements": 0
+      },
+      "citations": {
+        "turns": 24,
+        "turns_with_source_id": 7,
+        "turns_with_snapshot": 7,
+        "snapshots": 7,
+        "valid_snapshot_hash": 7,
+        "same_chapter": 7,
+        "registered_source_text_match": 7,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "engineering_gate": "pass"
+    },
+    {
+      "condition": "c2",
+      "sessions": 3,
+      "turns": 24,
+      "model_calls": 8,
+      "provider_reported_usd": 0.0023812,
+      "tutor_route_turns": 5,
+      "tutor_route_turns_with_model_call": 5,
+      "route_counts": {
+        "tutor": 5,
+        "set_question": 9,
+        "grade": 9,
+        "check_reasoning": 1
+      },
+      "all_turn_traces_observed": true,
+      "failures": 0,
+      "timeouts": 0,
+      "provider_errors": 0,
+      "detected_full_leak_turns": 0,
+      "legacy_quiz_match_flags": 5,
+      "removed_ineligible_post_copies": 2,
+      "retained_post_copies": 0,
+      "unreviewed_post_match_decisions": {
+        "match_only_in_owned_format": 4,
+        "unattributed_full_answer_match": 1
+      },
+      "diagnosis_recall": 0.0,
+      "sessions_with_diagnosis_hit": 0,
+      "success_proxy": 0,
+      "mean_synthetic_quiz_change": -0.6666666666666666,
+      "checked_practice": {
+        "submitted": 9,
+        "checked_correct": 5,
+        "not_checked": 0,
+        "grading_disagreements": 0
+      },
+      "citations": {
+        "turns": 24,
+        "turns_with_source_id": 7,
+        "turns_with_snapshot": 7,
+        "snapshots": 7,
+        "valid_snapshot_hash": 7,
+        "same_chapter": 7,
+        "registered_source_text_match": 7,
+        "semantic_faithfulness": "unmeasured_requires_human_review"
+      },
+      "engineering_gate": "pass"
+    }
+  ],
+  "receipts": [
+    {
+      "condition": "c1",
+      "run_id": "m3_v3_pilot_c1-20261106-001116-2ca0ead6e16b",
+      "git": {
+        "commit": "a9ee2baf612da08336c673257a22796f8fecae06",
+        "uncommitted_changes": false
+      },
+      "manifest_sha256": "5386472f9be95ce680c34c861773cd530ea93345c53643f9da90dd8a88acb081",
+      "sessions_sha256": "9ff3b76d620e396b54ce9f22966c7299b973040df6b0871571ca1833b6fcb5d1",
+      "config_sha256": "3e19528a3750148b92edd4ca059ce0f74f13ee59728447b98a6044023c75ac93",
+      "dataset_payload_sha256": "49862eeaace8edc53b31849813e4f46195dbbe1c619948cb7614327a47afaf26"
+    },
+    {
+      "condition": "c2",
+      "run_id": "m3_v3_pilot_c2-20261106-001131-0f660d370c7d",
+      "git": {
+        "commit": "a9ee2baf612da08336c673257a22796f8fecae06",
+        "uncommitted_changes": false
+      },
+      "manifest_sha256": "0855bc453c6005fe21d95fb82a01fb378219e4acce9da8cc337db9dd53afdacf",
+      "sessions_sha256": "8d8f5279cff636d9965a35329ad2d07c981daac22bcd4db7851d112ec5a84e3f",
+      "config_sha256": "3c132f5d568335fe5a16fb59138850e4406d147a7275fa72a811c1305edb05e4",
+      "dataset_payload_sha256": "49862eeaace8edc53b31849813e4f46195dbbe1c619948cb7614327a47afaf26"
+    }
+  ],
+  "paired_descriptive_comparison": {
+    "matched_pairs": 3,
+    "student_clusters": 3,
+    "C2_minus_C1_mean_synthetic_quiz_change": 0.0,
+    "inference": "too small and development-only for efficacy or independent qualification; no C0 arm"
+  },
+  "budget": {
+    "approved_max_requests": 80,
+    "approved_max_usd": 0.05,
+    "requests_used": 16,
+    "provider_reported_usd": 0.0047916,
+    "provider_cost_coverage": 16,
+    "provider_errors": 0,
+    "refused": 0,
+    "in_flight": 0,
+    "prior_attempts": 1036,
+    "total_provider_attempts": 1052,
+    "known_continuation_usd_excluding_original_98_unknown": 0.283972,
+    "pilot_ledger_sha256": "ca964e400d1424eabc96e3a3531b2ed075606b84356cc7630503e24957461a70",
+    "approval_receipt_sha256": "c6b4cd2a7d2e52cec228b030bd23870cc739f5ae283ba9da2cb76fea5bf08146",
+    "original_and_E3_ledger_hashes_unchanged": {
+      "provider_budget.json": "2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de",
+      "provider_budget_extension_e3.json": "72130f49d2ef764a9bcb6df769fa3387629f5e22f684fd6437cd5444205cc430"
+    },
+    "remaining_allowance": "unused; all six authorized sessions complete, no more requests scheduled or repurposed"
+  },
+  "publication": "user explicitly chose Keep Beta local; not pushed, no draft PR",
+  "human_reviews": 0,
+  "semantic_citation_faithfulness": "unreviewed",
+  "formal_M3_M4_accepted": false,
+  "next_priority": "R3/R2 public-catalogue coverage and diagnosis journey review, measurement decision, independent content and human review",
+  "report_script_sha256": "5f46b303d0b0ce2797de9c9e8a68942f8374dd9b8a544a6559c3eb898725122a"
+}

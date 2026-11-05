@@ -446,3 +446,17 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Data:** all224 original recorded live trajectories, legacy baselines matched, candidate-context filter applied to the same saved tutor replies/grades; old primary results preserved.
 - **Outcome:**177 original full-match witnesses:161 owned-format matches and16 unattributed matches, all86 old copying triggers removed; actual semantic labels remain unreviewed. No new provider calls.40-item focused packet prepared, all human labels blank.
 - **Decision:** advance an opt-in development candidate for review; do not treat code controls or repeated seeds as independent final evidence.
+
+### 2026-11-06 · m3_v3_pilot_c1-20261106-001116-2ca0ead6e16b · Version 3 approved live c1 path pilot
+
+- **Source:** clean `a9ee2baf612da08336c673257a22796f8fecae06`; manifest `5386472f9be95ce680c34c861773cd530ea93345c53643f9da90dd8a88acb081`, configuration `3e19528a3750148b92edd4ca059ce0f74f13ee59728447b98a6044023c75ac93`.
+- **Scope:** three existing development cards/chapters, seed 1, eight turns, fixed gpt-4.1-mini; template voice, no judge.
+- **Outcome:** 3 sessions, 8 requests, provider USD 0.0024104; 5/5 tutor-route turns called the model, zero errors/full detected leaks, seven mechanically verified citation snapshots. Zero diagnosis hits/success proxies; mean synthetic quiz change -0.667.
+- **Decision:** paid tutor paths pass; quality/final gates remain open. Preserve as a small development pilot, not an efficacy estimate. No further pilot sessions scheduled; Beta remains local.
+
+### 2026-11-06 · m3_v3_pilot_c2-20261106-001131-0f660d370c7d · Version 3 approved live c2 path pilot
+
+- **Source:** clean `a9ee2baf612da08336c673257a22796f8fecae06`; manifest `0855bc453c6005fe21d95fb82a01fb378219e4acce9da8cc337db9dd53afdacf`, configuration `3c132f5d568335fe5a16fb59138850e4406d147a7275fa72a811c1305edb05e4`.
+- **Scope:** three existing development cards/chapters, seed 1, eight turns, fixed gpt-4.1-mini; template voice, no judge.
+- **Outcome:** 3 sessions, 8 requests, provider USD 0.0023812; 5/5 tutor-route turns called the model, zero errors/full detected leaks, seven mechanically verified citation snapshots. Zero diagnosis hits/success proxies; mean synthetic quiz change -0.667.
+- **Decision:** paid tutor paths pass; quality/final gates remain open. Preserve as a small development pilot, not an efficacy estimate. No further pilot sessions scheduled; Beta remains local.
