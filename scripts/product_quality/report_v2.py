@@ -21,41 +21,55 @@ def citation(ref,chapter):
     assert ref['reference_sha256']==hashlib.sha256(encoded.encode()).hexdigest()
     assert ref['chapter']==chapter
 
-def panel(version):
-    folder=ROOT/'offline'/version;index=load(folder/'INDEX.json')
+def panel(version,mode='offline',artifact_root=ROOT):
+    folder=artifact_root/mode/version;index=load(folder/'INDEX.json')
     assert index['status']=='completed' and len(index['cases'])==32
     assert index['protocol_sha256']==sha(CODE/'eval/fixtures/product_quality_v2_panel.json')
     assert index['runner_sha256']==sha(CODE/'scripts/product_quality/run_v2_panel.py')
-    snapshot=ROOT/('before_source' if version=='before' else 'after_source')
+    snapshot=artifact_root/('before_source' if version=='before' else 'after_source')
     profile_snapshot(index,snapshot)
-    categories={};cites=0;turns=0
+    categories={};cites=0;turns=0;calls=0;costs=[];routes=Counter()
     spec={c['id']:c for c in load(CODE/'eval/fixtures/product_quality_v2_panel.json')['cases']}
     for case in index['cases']:
         case_root=folder/case['id']
         assert sha(case_root/'turns.jsonl')==case['turns_sha256'] and sha(case_root/'trace.json')==case['trace_sha256']
         transcript=rows(case_root/'turns.jsonl');assert len(transcript)==case['turns']
         assert [t['student'] for t in transcript]==spec[case['id']]['messages']
-        assert case['model_calls']==0 and case['functional_checks_pass']==(not case['failures'])
+        assert case['functional_checks_pass']==(not case['failures'])
+        events=load(case_root/'trace.json');llm=[e for e in events if e['kind']=='llm']
+        assert len(llm)==case['model_calls'] and all(e['outcome']=='ok' for e in llm)
+        if mode=='offline':assert not llm
+        for event in llm:
+            detail=json.loads(event['detail']);assert isinstance(detail.get('cost_usd'),(int,float));costs.append(detail['cost_usd'])
+        calls+=len(llm)
         for turn in transcript:
-            assert turn['model_calls']==0
+            if mode=='offline':assert turn['model_calls']==0
+            routes[(turn['route'],bool(turn['model_calls']))]+=1
             for ref in turn['citations']:citation(ref,spec[case['id']]['chapter']);cites+=1
         group=categories.setdefault(case['category'],{'cases':0,'passed':0});group['cases']+=1;group['passed']+=case['functional_checks_pass']
         turns+=len(transcript)
     assert cites==sum(c['citation_snapshots'] for c in index['cases'])
-    return {'cases':32,'turns':turns,'passed':sum(c['functional_checks_pass'] for c in index['cases']),'citation_snapshots_verified':cites,'provider_requests':0,'categories':categories,'index_sha256':sha(folder/'INDEX.json')}
+    return {'cases':32,'turns':turns,'passed':sum(c['functional_checks_pass'] for c in index['cases']),'citation_snapshots_verified':cites,'provider_requests':calls,'provider_reported_usd':sum(costs),'provider_cost_coverage':len(costs),'categories':categories,'failed_cases':[{k:c[k] for k in ['id','failures']} for c in index['cases'] if c['failures']],'route_model_coverage':[{'route':k[0],'model_called':k[1],'turns':v} for k,v in sorted(routes.items())],'index_sha256':sha(folder/'INDEX.json')}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--check',action='store_true');args=parser.parse_args()
     lock=load(ROOT/'SOURCE_LOCK.json');assert lock['protocol_sha256']==load(ROOT/'PANEL_LOCK.json')['sha256']
-    for name,expected in lock['profile'].items():assert sha(ROOT/'after_source'/name)==sha(CODE/name)==expected,name
+    for name,expected in lock['profile'].items():assert sha(ROOT/'after_source'/name)==expected,name
     before,after=panel('before'),panel('after')
     assert before['passed']==10 and after['passed']==32 and before['turns']==after['turns']==42
-    log=SOURCE/'Directions/git_delivery/product_quality_v2_final_regression.log';text=log.read_text(encoding='utf-8')
-    match=re.search(r'(\d+) passed in ([\d.]+)s',text);assert match and int(match[1])==815 and sha(log)==lock['full_regression_log_sha256']
+    live_before,live_after=panel('before','live'),panel('after','live')
+    assert live_before['passed']==20 and live_after['passed']==32
+    final_lock=load(ROOT/'final_revision/SOURCE_LOCK.json')
+    for name,expected in final_lock['profile'].items():assert sha(CODE/name)==sha(ROOT/'final_revision/after_source'/name)==expected,name
+    changed=[name for name in lock['profile'] if lock['profile'][name]!=final_lock['profile'][name]]
+    assert changed==['content/product_quality/v2/concept_help.json'],changed
+    final_panel=panel('after',artifact_root=ROOT/'final_revision');assert final_panel['passed']==32
+    log=SOURCE/'Directions/git_delivery/product_quality_v2_semantic_final_regression.log';text=log.read_text(encoding='utf-8')
+    match=re.search(r'(\d+) passed in ([\d.]+)s',text);assert match and int(match[1])==817 and sha(log)==final_lock['full_regression_log_sha256']
     ci={}
     for kind in ['c1','eval','security']:
-        p=SOURCE/f'Directions/git_delivery/v2_final_ci_{kind}.log';run=Path(re.search(r'Run folder: (.+)',p.read_text(encoding='utf-8'))[1].strip());m=load(run/'manifest.json')
-        assert m['git']=={'commit':lock['git'],'uncommitted_changes':False}
+        p=SOURCE/f'Directions/git_delivery/v2_semantic_final_ci_{kind}.log';run=Path(re.search(r'Run folder: (.+)',p.read_text(encoding='utf-8'))[1].strip());m=load(run/'manifest.json')
+        assert m['git']=={'commit':final_lock['git'],'uncommitted_changes':False}
         if kind!='security':assert m['gate']['status']=='pass'
         else:assert m['summary']['errors']==0 and m['summary']['attack_success_rate']==0 and m['summary']['false_block_rate']==0
         ci[kind]={'run':str(run),'manifest_sha256':sha(run/'manifest.json'),'gate':'pass'}
@@ -75,8 +89,13 @@ def main():
     for job in sec['jobs'].values():assert sha(Path(job['run'])/'manifest.json')==job['manifest_sha256'] and job['operations']['model_requests_logged']==0
     prior={'Directions/m3_runs/provider_budget.json':'2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de','Directions/m3_runs/provider_budget_extension_e3.json':'72130f49d2ef764a9bcb6df769fa3387629f5e22f684fd6437cd5444205cc430','Directions/m3_runs/v3/provider_budget_pilot.json':'ca964e400d1424eabc96e3a3531b2ed075606b84356cc7630503e24957461a70','Directions/product_quality/v1/provider_budget.json':'67ab16bc91a476ac5bf16b4c4f4e3e8a120328fa897e8b3dcd75e57b2724c721'}
     for name,expected in prior.items():assert sha(SOURCE/name)==expected,name
-    approval=load(ROOT/'BATCH_APPROVAL.json');assert approval['status']=='pending_transmission_approval'
-    assert not (ROOT/'provider_budget.json').exists() and not (ROOT/'live').exists()
+    approval=load(ROOT/'BATCH_APPROVAL.json');assert approval['status']==approval['transmission_authorization']['status']=='approved'
+    wallet=load(ROOT/'provider_budget.json');attempts=wallet['attempts'];cost=sum(a['billed_usd'] for a in attempts)
+    assert len(attempts)==36 and wallet['refused']==0 and all(a['status']=='completed' and a['billed_usd'] is not None for a in attempts)
+    assert wallet['policy']['approval_receipt_sha256']==sha(ROOT/'BATCH_APPROVAL.json')
+    assert live_before['provider_requests']+live_after['provider_requests']==len(attempts)
+    assert abs(live_before['provider_reported_usd']+live_after['provider_reported_usd']-cost)<1e-12
+    assert load(ROOT/'LIVE_QUALIFICATION.json')['status']=='completed'
     phase=load(SOURCE/'Directions/product_quality/v1/PHASE_AUTHORIZATION.json');allocated=sum(b['max_usd'] for b in phase['batch_allocations']);assert allocated==.5 and phase['max_phase_usd']==10
     frozen=git('ls-tree','-r','--name-only','466bcaa','--','Docs/m4','Docs/m3/v3','Docs/product_quality/v1').decode().splitlines()
     for name in frozen:assert git('show','466bcaa:'+name).replace(b'\r\n',b'\n')==(CODE/name).read_bytes().replace(b'\r\n',b'\n'),name
@@ -87,20 +106,21 @@ def main():
     raw=load(CODE/'content/product_quality/v2/concept_help.json');assert len(raw['cards'])==7 and len(raw['explanations'])==12 and raw['human_reviews']==0
     paired=rows(OUT/'PAIRED_REVIEW.jsonl');source_reviews=rows(OUT/'SOURCE_REVIEW.jsonl')
     assert len(paired)==32 and len(source_reviews)==12
-    human=sum(bool(r.get('reviewer')) for r in paired+source_reviews)
-    report={'status':'offline_candidate_qualified_live_transmission_approval_pending','date_Asia_Kolkata':'2026-11-06','source_git':lock['git'],'previous_source_git':'466bcaad466d93d3ca7f0a4a6a21dd5fc87a213a','publication':'Keep Beta local; no push or PR','improvements':['Direct short source-backed explanations for twelve concept requests','Maths intent survives frustration/support requests and whitespace wrapping','Explicit correction acknowledgements are information turns, without model or mastery claims','Smaller practice support asks for givens without advancing the hint','Owned quiz/interrupted-session state restores and locks conflicting actions; unfinished quiz can be left without scoring'],
-        'validation':{'full_regressions':815,'full_seconds':float(match[2]),'new_tests_since_v1':163,'new_formatting_regressions':122,'local_CI':ci,'offline_before':before,'offline_after':after,'baseline_sessions':96,'baseline_smokes':6,'matching_smokes':6,'baseline_citations_verified':base_cites,'baseline':baseline,'security':{k:v['summary'] for k,v in sec['jobs'].items()},'browser':browser},
+    live_review=rows(OUT/'LIVE_PAIRED_REVIEW.jsonl');assert len(live_review)==32
+    human=sum(bool(r.get('reviewer')) for r in paired+source_reviews+live_review)
+    report={'status':'local_v2_candidate_qualified_human_and_final_gates_open','date_Asia_Kolkata':'2026-11-06','source_git':final_lock['git'],'live_and_baseline_source_git':lock['git'],'previous_source_git':'466bcaad466d93d3ca7f0a4a6a21dd5fc87a213a','publication':'Keep Beta local; no push or PR','improvements':['Direct short source-backed explanations for twelve concept requests','Maths intent survives frustration/support requests and whitespace wrapping','Explicit correction acknowledgements are information turns, without model or mastery claims','Smaller practice support asks for givens without advancing the hint','Owned quiz/interrupted-session state restores and locks conflicting actions; unfinished quiz can be left without scoring'],
+        'validation':{'full_regressions':817,'full_seconds':float(match[2]),'new_tests_since_v1':165,'new_formatting_regressions':122,'local_CI':ci,'offline_before':before,'offline_after':after,'live_before':live_before,'live_after':live_after,'final_wording_offline':final_panel,'baseline_sessions':96,'baseline_smokes':6,'matching_smokes':6,'baseline_citations_verified':base_cites,'baseline':baseline,'security':{k:v['summary'] for k,v in sec['jobs'].items()},'browser':browser},
         'failures_preserved':{'initial_definition_formatting':{'passed':37,'scheduled':48,'failed':11},'initial_guard_formatting':{'matched':4,'scheduled':12,'missed':8},'test_launch_missing_source_env':{'passed':781,'fixture_errors':34,'cause':'SOCRATES_SOURCE_WORKSPACE omitted; fixed launch, no product-code change','log_sha256':sha(SOURCE/'Directions/git_delivery/product_quality_v2_regression_missing_source_env.log')},'pre_hardening_offline_index_sha256':sha(ROOT/'offline/after-attempt-1-pre-format-hardening/INDEX.json')},
         'data':load(ROOT/'DATA_SCOPE.json'),'reference_cards':7,'explicit_concepts':12,'human_reviews':human,'independent_final_evaluation':False,'formal_M3_M4_accepted':False,
-        'budget':{'new_provider_requests':0,'new_spend_usd':0,'total_provider_attempts':1061,'known_continuation_usd_excluding_original_98_unknown':.2862964,'phase_ceiling_usd':10,'phase_actual_usd':.0023244,'allocated_caps_usd':allocated,'unallocated_cap_usd':10-allocated,'prepared_live_cap_requests':200,'prepared_live_cap_usd':.4,'live_status':'Automatic approval review rejected destination/payload authorization; user reply pending','wallet_created':False,'prior_wallet_hashes_unchanged':prior},
+        'budget':{'new_provider_requests':36,'new_spend_usd':cost,'total_provider_attempts':1097,'known_continuation_usd_excluding_original_98_unknown':.2862964+cost,'phase_ceiling_usd':10,'phase_actual_usd':.0023244+cost,'allocated_caps_usd':allocated,'unallocated_cap_usd':10-allocated,'prepared_live_cap_requests':200,'prepared_live_cap_usd':.4,'live_status':'Completed once after explicit destination/payload approval; no more requests scheduled','wallet_created':True,'ledger_sha256':sha(ROOT/'provider_budget.json'),'all_costs_provider_reported':True,'errors':0,'refused':0,'in_flight':0,'prior_wallet_hashes_unchanged':prior},
         'preservation':{'historical_documents_unchanged':len(frozen),'legacy_run_session_AST_identical':True,'source_files_archived':len(lock['profile']),'old_pilot_and_E1_E4_not_repeated':True},
-        'limits':['Developer-authored public panel, including cases targeted by implementation; 32 shared journeys, not 64 independent observations.','Offline templates only for v2: no new live-model result or latency/cost estimate.','Formatting variants and seed repeats are not independent learners or efficacy samples.','C1/C2 stub results are identical; diagnosis recall remains 0.208. No architecture or learning advantage.','27/80 security cases per condition remain unsupported; overlay checks are not on-disk index poisoning or exhaustive safety.','Seven source paraphrases and twelve explanations remain unapproved by an actual teacher.','Independent raters/final content, final preregistration, specialist architecture review, another person installation and remote CI failure evidence remain open.'],
-        'provenance':{'source_lock_sha256':sha(ROOT/'SOURCE_LOCK.json'),'protocol_sha256':sha(CODE/'eval/fixtures/product_quality_v2_panel.json'),'reporter_sha256':sha(Path(__file__)),'prior_reports':'Preserved; do not regenerate v1 report against changed phase allocation.'}}
+        'limits':['Developer-authored public panel, including cases targeted by implementation; 32 shared journeys, not 64 independent observations.','Final highest-power wording patch is qualified offline; live evidence remains attached to 779e788. No paid rerun.','Formatting variants and seed repeats are not independent learners or efficacy samples.','C1/C2 stub results are identical; diagnosis recall remains 0.208. No architecture or learning advantage.','27/80 security cases per condition remain unsupported; overlay checks are not on-disk index poisoning or exhaustive safety.','Seven source paraphrases and twelve explanations remain unapproved by an actual teacher.','Independent raters/final content, final preregistration, specialist architecture review, another person installation and remote CI failure evidence remain open.'],
+        'provenance':{'source_lock_sha256':sha(ROOT/'SOURCE_LOCK.json'),'protocol_sha256':sha(CODE/'eval/fixtures/product_quality_v2_panel.json'),'reporter_sha256':sha(Path(__file__)),'prior_reports':'Preserved; do not regenerate v1 report against changed phase allocation.','final_source_lock_sha256':sha(ROOT/'final_revision/SOURCE_LOCK.json'),'post_live_semantic_fix':'Mechanical pass missed omission of highest power two in the short quadratic definition. The existing complete source card is now used; two regressions and full offline qualification added. Some pre-version failures are routing/directness targets, not incorrect mathematics.'}}
     if args.check:
         assert load(OUT/'RESULTS.json')==report,'Saved report differs; inspect changed evidence before regeneration'
-        print(json.dumps({'verified':True,'tests':815,'panel':'10/32 -> 32/32 offline','new_provider_requests':0,'historical_documents_unchanged':len(frozen)}));return
+        print(json.dumps({'verified':True,'tests':817,'panel':'20/32 -> 32/32 live; 10/32 -> 32/32 offline','new_provider_requests':36,'historical_documents_unchanged':len(frozen)}));return
     OUT.mkdir(parents=True,exist_ok=True);(OUT/'RESULTS.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     target=SOURCE/'Docs/product_quality/v2';target.mkdir(parents=True,exist_ok=True);shutil.copy2(OUT/'RESULTS.json',target/'RESULTS.json')
-    print(json.dumps({'report':str(OUT/'RESULTS.json'),'tests':815,'baseline_citations':base_cites,'new_provider_requests':0}))
+    print(json.dumps({'report':str(OUT/'RESULTS.json'),'tests':817,'baseline_citations':base_cites,'new_provider_requests':36}))
 
 if __name__=='__main__':main()

@@ -5,7 +5,7 @@ The saved data is sufficient for bounded engineering regression and a reproducib
 | Data | Available | What it can support |
 |---|---:|---|
 | Public practice bank | 665 items | Public mathematical task inventory; not 665 independently reviewed lessons |
-| Fixed comparison | 32 shared journeys, 42 turns/version | Before/after functionality on public developer cases |
+| Fixed offline/live comparison | The same 32 journeys, 42 turns/version in each mode | Before/after functionality on public developer cases |
 | Formatting/control regressions | 122 checks | Whitespace invariance, preserved numeric layout and control precedence |
 | C1/C2 baseline | 16 shared development cards × 3 seeds per arm | Reproducibility and descriptive development metrics |
 | Security replay | 80 shared cases per guard condition | 53 supported cases/condition; unknowns retained |
@@ -30,4 +30,4 @@ Eligibility does not publish a question: actual teacher review and version-bound
 4. A preregistered final protocol that separates engineering outcomes, synthetic proxy scores and any learner outcomes. Choose final sample sizes for the accepted effect and design; the current 32-case convenience panel supplies no power-based learning claim.
 5. Broader measured security evidence for the 27 unknown cases/condition, independent installation and actual remote CI evidence. Application overlays do not prove resistance to a poisoned on-disk index.
 
-All added records must state who authored/reviewed them. The new 32-pair and 12-source forms are ready but blank. Original frozen source/data and original E1–E4 results retain their original tags; no new study result is inferred from this product work.
+All added records must state who authored/reviewed them. The new offline/live 32-pair forms cover the same cases; the final 12-source forms and all preference/semantic labels are blank. The final wording revision was separately checked offline. Original frozen source/data and original E1–E4 results retain their original tags; no new study result is inferred from this product work.

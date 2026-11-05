@@ -1,7 +1,8 @@
 {
-  "status": "offline_candidate_qualified_live_transmission_approval_pending",
+  "status": "local_v2_candidate_qualified_human_and_final_gates_open",
   "date_Asia_Kolkata": "2026-11-06",
-  "source_git": "779e7881b98a49af1031df7496df53b61ca82b0b",
+  "source_git": "2af7ecfd46e754580ecad4a589ffba0d8fcb28b8",
+  "live_and_baseline_source_git": "779e7881b98a49af1031df7496df53b61ca82b0b",
   "previous_source_git": "466bcaad466d93d3ca7f0a4a6a21dd5fc87a213a",
   "publication": "Keep Beta local; no push or PR",
   "improvements": [
@@ -12,24 +13,24 @@
     "Owned quiz/interrupted-session state restores and locks conflicting actions; unfinished quiz can be left without scoring"
   ],
   "validation": {
-    "full_regressions": 815,
-    "full_seconds": 159.76,
-    "new_tests_since_v1": 163,
+    "full_regressions": 817,
+    "full_seconds": 165.22,
+    "new_tests_since_v1": 165,
     "new_formatting_regressions": 122,
     "local_CI": {
       "c1": {
-        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\m2_development_c1-20261106-015550-50a113b0f22f",
-        "manifest_sha256": "b5785418df84298b26dda10951d154d68dac07c70386cbebce76e909a8afd514",
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\m2_development_c1-20261106-021604-30b3c0137462",
+        "manifest_sha256": "34345ed66deb91ea4d6754418ba158a6b23d2f2240f1521d825742eed9fb9703",
         "gate": "pass"
       },
       "eval": {
-        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\dev_smoke-20261106-015557-861d48c75ace",
-        "manifest_sha256": "781a83793ae1851b1be9d389e5b932907518eb4eb898b7d3a510df1e3f8742f7",
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\dev_smoke-20261106-021611-cd4d1bcf7980",
+        "manifest_sha256": "8214bbdd75a3ef600efafc8f1665bfceca5ae1f81d469e2ce6eb45f593a7c765",
         "gate": "pass"
       },
       "security": {
-        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\product_quality_v2_final_ci_security-20261106-015604-9d9ef6889305",
-        "manifest_sha256": "002bf65dd505c0d5e0328b08573843ad102529c23ea93c5e99cb09f4bcc420a6",
+        "run": "D:\\Work\\IITB\\Socratic Tutor Main\\var\\runs\\product_quality_v2_semantic_final_ci_security-20261106-021617-3d3085e61e86",
+        "manifest_sha256": "9d0e2fe2e3ebc42a22356aacb4cc5d7c416186e0c75dffa02782f03a7f4580e7",
         "gate": "pass"
       }
     },
@@ -39,6 +40,8 @@
       "passed": 10,
       "citation_snapshots_verified": 21,
       "provider_requests": 0,
+      "provider_reported_usd": 0,
+      "provider_cost_coverage": 0,
       "categories": {
         "definition": {
           "cases": 12,
@@ -73,6 +76,174 @@
           "passed": 2
         }
       },
+      "failed_cases": [
+        {
+          "id": "hypotenuse",
+          "failures": [
+            "0:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        },
+        {
+          "id": "hypotenuse-paraphrase",
+          "failures": [
+            "0:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        },
+        {
+          "id": "opposite",
+          "failures": [
+            "0:direct_explanation_terms:opposite,angle"
+          ]
+        },
+        {
+          "id": "adjacent",
+          "failures": [
+            "0:direct_explanation_terms:adjacent,hypotenuse"
+          ]
+        },
+        {
+          "id": "sine",
+          "failures": [
+            "0:direct_explanation_terms:sine,opposite,hypotenuse"
+          ]
+        },
+        {
+          "id": "cosine",
+          "failures": [
+            "0:direct_explanation_terms:cosine,adjacent,hypotenuse"
+          ]
+        },
+        {
+          "id": "tangent",
+          "failures": [
+            "0:direct_explanation_terms:tangent,opposite,adjacent"
+          ]
+        },
+        {
+          "id": "common-difference",
+          "failures": [
+            "0:direct_explanation_terms:difference,term"
+          ]
+        },
+        {
+          "id": "progression",
+          "failures": [
+            "0:direct_explanation_terms:term,fixed"
+          ]
+        },
+        {
+          "id": "term-and-sum",
+          "failures": [
+            "0:direct_explanation_terms:term,sum"
+          ]
+        },
+        {
+          "id": "coefficient",
+          "failures": [
+            "0:direct_explanation_terms:coefficient,factor"
+          ]
+        },
+        {
+          "id": "quadratic",
+          "failures": [
+            "0:direct_explanation_terms:squared,nonzero"
+          ]
+        },
+        {
+          "id": "frustrated-ap",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "lost-ap",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "frustrated-reciprocal",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "frustrated-tangent",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "confused-definition",
+          "failures": [
+            "0:missing_reference",
+            "0:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        },
+        {
+          "id": "simpler-definition",
+          "failures": [
+            "0:missing_reference",
+            "0:direct_explanation_terms:difference,term"
+          ]
+        },
+        {
+          "id": "ap-correction",
+          "failures": [
+            "1:information_route"
+          ]
+        },
+        {
+          "id": "trig-correction",
+          "failures": [
+            "1:information_route"
+          ]
+        },
+        {
+          "id": "ap-topic-shift",
+          "failures": [
+            "1:direct_explanation_terms:term,sum"
+          ]
+        },
+        {
+          "id": "trig-topic-shift",
+          "failures": [
+            "1:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        }
+      ],
+      "route_model_coverage": [
+        {
+          "route": "converse",
+          "model_called": false,
+          "turns": 11
+        },
+        {
+          "route": "diagnose",
+          "model_called": false,
+          "turns": 4
+        },
+        {
+          "route": "quiz_answer",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "quiz_start",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "set_question",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": false,
+          "turns": 21
+        }
+      ],
       "index_sha256": "b380bbfd933e8644c9497838b3106808c8bdb3bd437468998b5825282da96423"
     },
     "offline_after": {
@@ -81,6 +252,8 @@
       "passed": 32,
       "citation_snapshots_verified": 23,
       "provider_requests": 0,
+      "provider_reported_usd": 0,
+      "provider_cost_coverage": 0,
       "categories": {
         "definition": {
           "cases": 12,
@@ -115,7 +288,351 @@
           "passed": 2
         }
       },
+      "failed_cases": [],
+      "route_model_coverage": [
+        {
+          "route": "converse",
+          "model_called": false,
+          "turns": 23
+        },
+        {
+          "route": "diagnose",
+          "model_called": false,
+          "turns": 8
+        },
+        {
+          "route": "quiz_answer",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "quiz_start",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "set_question",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": false,
+          "turns": 5
+        }
+      ],
       "index_sha256": "705f783c64cc6b593662881e6d65058163def371eaf4d1efc2cdc3d0c318114b"
+    },
+    "live_before": {
+      "cases": 32,
+      "turns": 42,
+      "passed": 20,
+      "citation_snapshots_verified": 22,
+      "provider_requests": 23,
+      "provider_reported_usd": 0.0051912,
+      "provider_cost_coverage": 23,
+      "categories": {
+        "definition": {
+          "cases": 12,
+          "passed": 9
+        },
+        "mixed_frustration": {
+          "cases": 6,
+          "passed": 0
+        },
+        "negative_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "protected_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "self_correction": {
+          "cases": 2,
+          "passed": 0
+        },
+        "topic_shift": {
+          "cases": 2,
+          "passed": 1
+        },
+        "practice_support": {
+          "cases": 2,
+          "passed": 2
+        },
+        "quiz_boundary": {
+          "cases": 2,
+          "passed": 2
+        }
+      },
+      "failed_cases": [
+        {
+          "id": "tangent",
+          "failures": [
+            "0:direct_explanation_terms:opposite,adjacent"
+          ]
+        },
+        {
+          "id": "common-difference",
+          "failures": [
+            "0:direct_explanation_terms:difference,term"
+          ]
+        },
+        {
+          "id": "quadratic",
+          "failures": [
+            "0:direct_explanation_terms:squared,nonzero"
+          ]
+        },
+        {
+          "id": "frustrated-ap",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "lost-ap",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "frustrated-reciprocal",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "frustrated-tangent",
+          "failures": [
+            "0:diagnosis_target"
+          ]
+        },
+        {
+          "id": "confused-definition",
+          "failures": [
+            "0:missing_reference",
+            "0:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        },
+        {
+          "id": "simpler-definition",
+          "failures": [
+            "0:missing_reference",
+            "0:direct_explanation_terms:difference,term"
+          ]
+        },
+        {
+          "id": "ap-correction",
+          "failures": [
+            "1:information_route"
+          ]
+        },
+        {
+          "id": "trig-correction",
+          "failures": [
+            "1:information_route"
+          ]
+        },
+        {
+          "id": "trig-topic-shift",
+          "failures": [
+            "1:direct_explanation_terms:hypotenuse,right angle"
+          ]
+        }
+      ],
+      "route_model_coverage": [
+        {
+          "route": "converse",
+          "model_called": false,
+          "turns": 11
+        },
+        {
+          "route": "diagnose",
+          "model_called": true,
+          "turns": 4
+        },
+        {
+          "route": "quiz_answer",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "quiz_start",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "set_question",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": true,
+          "turns": 19
+        }
+      ],
+      "index_sha256": "cd6a96b1678c5b568d46b3b0df9a69ef569d84f2ff852993935ee993bb66654e"
+    },
+    "live_after": {
+      "cases": 32,
+      "turns": 42,
+      "passed": 32,
+      "citation_snapshots_verified": 23,
+      "provider_requests": 13,
+      "provider_reported_usd": 0.0032552,
+      "provider_cost_coverage": 13,
+      "categories": {
+        "definition": {
+          "cases": 12,
+          "passed": 12
+        },
+        "mixed_frustration": {
+          "cases": 6,
+          "passed": 6
+        },
+        "negative_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "protected_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "self_correction": {
+          "cases": 2,
+          "passed": 2
+        },
+        "topic_shift": {
+          "cases": 2,
+          "passed": 2
+        },
+        "practice_support": {
+          "cases": 2,
+          "passed": 2
+        },
+        "quiz_boundary": {
+          "cases": 2,
+          "passed": 2
+        }
+      },
+      "failed_cases": [],
+      "route_model_coverage": [
+        {
+          "route": "converse",
+          "model_called": false,
+          "turns": 23
+        },
+        {
+          "route": "diagnose",
+          "model_called": true,
+          "turns": 8
+        },
+        {
+          "route": "quiz_answer",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "quiz_start",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "set_question",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": true,
+          "turns": 5
+        }
+      ],
+      "index_sha256": "8d7c65f2e2eddfb2ba1a5ad9c9f47c04d42ec3c124b28805ec204dc7d71d3139"
+    },
+    "final_wording_offline": {
+      "cases": 32,
+      "turns": 42,
+      "passed": 32,
+      "citation_snapshots_verified": 23,
+      "provider_requests": 0,
+      "provider_reported_usd": 0,
+      "provider_cost_coverage": 0,
+      "categories": {
+        "definition": {
+          "cases": 12,
+          "passed": 12
+        },
+        "mixed_frustration": {
+          "cases": 6,
+          "passed": 6
+        },
+        "negative_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "protected_control": {
+          "cases": 3,
+          "passed": 3
+        },
+        "self_correction": {
+          "cases": 2,
+          "passed": 2
+        },
+        "topic_shift": {
+          "cases": 2,
+          "passed": 2
+        },
+        "practice_support": {
+          "cases": 2,
+          "passed": 2
+        },
+        "quiz_boundary": {
+          "cases": 2,
+          "passed": 2
+        }
+      },
+      "failed_cases": [],
+      "route_model_coverage": [
+        {
+          "route": "converse",
+          "model_called": false,
+          "turns": 23
+        },
+        {
+          "route": "diagnose",
+          "model_called": false,
+          "turns": 8
+        },
+        {
+          "route": "quiz_answer",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "quiz_start",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "set_question",
+          "model_called": false,
+          "turns": 2
+        },
+        {
+          "route": "tutor",
+          "model_called": false,
+          "turns": 5
+        }
+      ],
+      "index_sha256": "f6d1d3cd05c0d93ac456581271113c97f9c1c6a0a70439de1b015bbb424241e3"
     },
     "baseline_sessions": 96,
     "baseline_smokes": 6,
@@ -350,18 +867,23 @@
   "independent_final_evaluation": false,
   "formal_M3_M4_accepted": false,
   "budget": {
-    "new_provider_requests": 0,
-    "new_spend_usd": 0,
-    "total_provider_attempts": 1061,
-    "known_continuation_usd_excluding_original_98_unknown": 0.2862964,
+    "new_provider_requests": 36,
+    "new_spend_usd": 0.0084464,
+    "total_provider_attempts": 1097,
+    "known_continuation_usd_excluding_original_98_unknown": 0.2947428,
     "phase_ceiling_usd": 10,
-    "phase_actual_usd": 0.0023244,
+    "phase_actual_usd": 0.0107708,
     "allocated_caps_usd": 0.5,
     "unallocated_cap_usd": 9.5,
     "prepared_live_cap_requests": 200,
     "prepared_live_cap_usd": 0.4,
-    "live_status": "Automatic approval review rejected destination/payload authorization; user reply pending",
-    "wallet_created": false,
+    "live_status": "Completed once after explicit destination/payload approval; no more requests scheduled",
+    "wallet_created": true,
+    "ledger_sha256": "1800803a04c6ff12d1f6729f02a772d178f60b53a1bb15882f02697d90c4ce98",
+    "all_costs_provider_reported": true,
+    "errors": 0,
+    "refused": 0,
+    "in_flight": 0,
     "prior_wallet_hashes_unchanged": {
       "Directions/m3_runs/provider_budget.json": "2b0e529b378dfc7c68be4375a89a859b9c3c173dbc23f543a602c2c0cdd8b9de",
       "Directions/m3_runs/provider_budget_extension_e3.json": "72130f49d2ef764a9bcb6df769fa3387629f5e22f684fd6437cd5444205cc430",
@@ -377,7 +899,7 @@
   },
   "limits": [
     "Developer-authored public panel, including cases targeted by implementation; 32 shared journeys, not 64 independent observations.",
-    "Offline templates only for v2: no new live-model result or latency/cost estimate.",
+    "Final highest-power wording patch is qualified offline; live evidence remains attached to 779e788. No paid rerun.",
     "Formatting variants and seed repeats are not independent learners or efficacy samples.",
     "C1/C2 stub results are identical; diagnosis recall remains 0.208. No architecture or learning advantage.",
     "27/80 security cases per condition remain unsupported; overlay checks are not on-disk index poisoning or exhaustive safety.",
@@ -387,7 +909,9 @@
   "provenance": {
     "source_lock_sha256": "cb7f06215ed332c6fec5d2593424f7b536962fb9a7d53573e66daa281b369b1c",
     "protocol_sha256": "54f416ded8d96ad8c5bbedb929bee30500dd4a32e1fd421cfa753b195039e4d4",
-    "reporter_sha256": "ab1afa768dbaf055065b78a3ba4188ff16969fca98d65737fb3abce2b78541ba",
-    "prior_reports": "Preserved; do not regenerate v1 report against changed phase allocation."
+    "reporter_sha256": "ee9ea1c6704d11a770c85709cb0df57ab68dce8976f3b5350a8b063ded7d8793",
+    "prior_reports": "Preserved; do not regenerate v1 report against changed phase allocation.",
+    "final_source_lock_sha256": "5a5677870da5fb0a675b44467562d91330a9134dc0a521fd9d75c571651386e8",
+    "post_live_semantic_fix": "Mechanical pass missed omission of highest power two in the short quadratic definition. The existing complete source card is now used; two regressions and full offline qualification added. Some pre-version failures are routing/directness targets, not incorrect mathematics."
   }
 }
