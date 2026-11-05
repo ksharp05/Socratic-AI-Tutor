@@ -81,3 +81,23 @@ def test_calibration_helper_refuses_existing_output_before_any_other_read(tmp_pa
     out=tmp_path/'existing';out.mkdir();protected=out/'rater_a.csv';protected.write_text('human data')
     with pytest.raises(ValueError,match='preserved'):calibration.prepare(tmp_path/'missing',out)
     assert protected.read_text()=='human data'
+
+
+def test_complete_e3_merge_keeps_all_unique_matched_student_seed_pairs():
+    spec=importlib.util.spec_from_file_location('m3_complete_report',ROOT/'scripts/m3/e3_complete_results.py')
+    report=importlib.util.module_from_spec(spec);spec.loader.exec_module(report)
+    baseline=[{'student':'a','seed':1},{'student':'b','seed':1},{'student':'a','seed':2}]
+    result=report.merge_candidate(baseline,[[baseline[2],baseline[1]],[baseline[0]]])
+    assert [(s['student'],s['seed']) for s in result]==[('a',1),('a',2),('b',1)]
+
+
+def test_complete_e3_merge_rejects_duplicate_missing_or_unmatched_evidence():
+    import pytest
+    spec=importlib.util.spec_from_file_location('m3_complete_report_guard',ROOT/'scripts/m3/e3_complete_results.py')
+    report=importlib.util.module_from_spec(spec);spec.loader.exec_module(report)
+    a={'student':'a','seed':1};b={'student':'b','seed':1};extra={'student':'x','seed':1}
+    for baseline,chunks,error in [([a,b],[[a],[a,b]],'Duplicate'),
+                                  ([a,b],[[a]],'Incomplete'),
+                                  ([a,b],[[a,extra]],'Incomplete'),
+                                  ([a,a],[[a]],'Duplicate')]:
+        with pytest.raises(ValueError,match=error):report.merge_candidate(baseline,chunks)

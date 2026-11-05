@@ -1,0 +1,7 @@
+condition,sessions,success_proxy,diagnosis_recall,quiz_mean_gain,full_leak_turns,partial_leak_turns,provider_requests,provider_usd,flagged_quiz_sessions
+c0,48,2,0.042,0.375,0,0,194,0.0545376,19
+c1,48,2,0.042,0.375,0,0,194,0.0542736,19
+c2,48,2,0.042,0.354,0,0,194,0.0542768,18
+memory_off,16,1,0.042,0.375,0,0,63,0.0175956,6
+direct_answers,16,0,0.042,0.375,38,4,13,0.0035124,5
+e3_after_full,48,2,0.042,0.375,0,0,194,0.0714812,19

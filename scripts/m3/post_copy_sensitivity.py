@@ -6,6 +6,7 @@ This is exploratory sensitivity, not a new experimental condition or a corrected
 """
 from __future__ import annotations
 import ast
+import argparse
 from contextlib import nullcontext
 import hashlib
 import json
@@ -104,6 +105,9 @@ def gain(session):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--include-extension', action='store_true', help='Versioned full E3 report including the approved last twelve sessions')
+    include_extension = parser.parse_args().include_extension
     root = SOURCE / 'Directions/m3_runs/v2'
     wallet = SOURCE / 'Directions/m3_runs/provider_budget.json'
     before = sha(wallet)
@@ -126,7 +130,7 @@ def main():
     results = []; aggregate = []; manifests = []
     index = load(root / 'live/INDEX.json')
     for arm, job in index['jobs'].items():
-        if arm.startswith('e2_') or job.get('status') != 'completed':
+        if arm.startswith('e2_') or job.get('status') != 'completed' or (arm == 'e3_after_remaining4' and not include_extension):
             continue
         directory = Path(job['run']); manifest = load(directory / 'manifest.json')
         recorded_rows = rows(directory / 'sessions.jsonl'); arm_rows = []
@@ -158,19 +162,32 @@ def main():
         print('Reproduced and replayed', arm, len(arm_rows), flush=True)
     assert sha(wallet) == before
     groups = {arm: [r for r in results if r['condition'] == arm] for arm in index['jobs'] if not arm.startswith('e2_')}
+    if include_extension:
+        from e3_complete_results import merge_candidate
+        groups['e3_after_full'] = merge_candidate(groups['c2'], [groups['e3_after_budget_tranche12'], groups['e3_after_remaining4']])
+        full = groups['e3_after_full']
+        aggregate = [r for r in aggregate if r['condition'] not in ['e3_after_budget_tranche12', 'e3_after_remaining4']]
+        aggregate.append({'condition': 'e3_after_full', 'sessions': len(full),
+            'original_mean_gain': statistics.fmean(r['original_gain'] for r in full),
+            'without_post_copy_mean_gain': statistics.fmean(r['without_post_copy_gain'] for r in full),
+            'changed_session_scores': sum(r['original_gain'] != r['without_post_copy_gain'] for r in full),
+            'original_copied_post_items': sum(r['copied_post_items_original'] for r in full)})
     comparisons = {}
     for label, left, right, seed in [('C2_minus_C1', 'c1', 'c2', None), ('C2_minus_C0', 'c0', 'c2', None),
             ('E3_tranche_minus_matched_C2', 'c2', 'e3_after_budget_tranche12', None),
             ('memory_on_minus_off', 'memory_off', 'c2', 1), ('telling_minus_hints', 'c2', 'direct_answers', 1)]:
         comparisons[label] = paired(groups[left], groups[right], lambda row: row['without_post_copy_gain'], seed)
+    if include_extension:
+        comparisons['E3_full_minus_C2'] = paired(groups['c2'], groups['e3_after_full'], lambda row: row['without_post_copy_gain'])
+    report_name = 'POST_COPY_SENSITIVITY_E3_COMPLETE' if include_extension else 'POST_COPY_SENSITIVITY'
     private = {'method': 'post_hoc_fixed_trajectory_disable_all_post_quiz_copying',
         'baseline_reproductions': len(results), 'provider_calls': 0, 'original_ledger_sha256': before,
         'original_run_session_AST_matches_frozen_commit': True, 'original_outcomes_unchanged': True,
         'script_sha256': sha(Path(__file__)), 'conditions': aggregate, 'paired_quiz_gain_sensitivity': comparisons,
         'inputs': manifests, 'sessions': results}
-    (root / 'validation/POST_COPY_SENSITIVITY.json').write_text(json.dumps(private, indent=2) + '\n', encoding='utf-8')
+    (root / ('validation/' + report_name + '.json')).write_text(json.dumps(private, indent=2) + '\n', encoding='utf-8')
     public = {k: v for k, v in private.items() if k != 'sessions'}
-    out = CODE / 'Docs/m4/POST_COPY_SENSITIVITY.json'
+    out = CODE / ('Docs/m4/' + report_name + '.json')
     out.write_text(json.dumps(public, indent=2) + '\n', encoding='utf-8')
     lines = ['# Post-quiz copying sensitivity - exploratory offline replay', '',
         f"The simulator replay matched all {len(results)} recorded student-message sequences, diagnoses/clearing, practice summaries and pre/post quiz answers while consuming the recorded tutor replies and grades. It uses the frozen run_session transition function. This does not verify that a live tutor would regenerate those replies. Timing/tool traces are excluded, and no tutor or model is invoked.", '',
@@ -186,8 +203,8 @@ def main():
         lo, hi = row['cluster_bootstrap_ci95']
         lines.append(f"| {label} | {row['matched_sessions']}/{row['student_clusters']} | {row['difference']:.4f} | [{lo:.4f}, {hi:.4f}] |")
     lines += ['', 'This is a post-hoc sensitivity, not a preregistered comparison, a rerun of the tutor, a human learning estimate or a replacement for the original primary results. Disabling all post copying can remove genuine as well as false disclosure; it is not a calibrated detector. Skipped copying branches normally skip random draws, so later quiz-item draws can also change. Shared simulator/kernel assumptions remain. Validate a revised contextual disclosure rule separately before a fresh qualified study.', '',
-        'Original transcripts, manifests, labels, study results and provider ledger are unchanged. Exact input hashes and aggregate results are in POST_COPY_SENSITIVITY.json; per-session audit records remain private.']
-    report = CODE / 'Docs/m4/POST_COPY_SENSITIVITY.md'
+        'Original transcripts, manifests, labels, study results and provider ledger are unchanged. Exact input hashes and aggregate results are in the matching JSON file; per-session audit records remain private.']
+    report = CODE / ('Docs/m4/' + report_name + '.md')
     report.write_text('\n'.join(lines) + '\n', encoding='utf-8')
     for p in [out, report]: shutil.copy2(p, SOURCE / 'Docs/m4' / p.name)
     print(json.dumps({'baseline_reproductions': len(results), 'conditions': aggregate, 'provider_calls': 0}, indent=2))

@@ -329,3 +329,16 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Data:** the six completed live tutoring conditions, 212 development sessions; exact manifest/session-file hashes in `Docs/m4/POST_COPY_SENSITIVITY.json`.
 - **Outcome:** 212/212 baseline semantic reproductions; corrupt student input rejected; 83 copied post items match flag unions exactly. Disabling post copying leaves C0/C1/C2 mean gain at 0.104 each; matched arm differences and intervals in the linked JSON. Zero provider requests.
 - **Decision:** exploratory sensitivity only; preserve original primary outcomes. The apparent C2/E3 quiz differences do not survive this intervention. This does not calibrate disclosure labels or establish learning. Final protocol/review and E3 extra-call approval remain pending.
+
+### 2026-11-05 · m3_live_e3_remaining4-20261105-074756-8c7792e028ac · Approved E3 completion, last twelve development sessions
+- **Config:** `eval/configs/m3_live_e3_remaining4.toml`, SHA-256 `98aeda46c6c09b1b9f021419e85119d9fd386584926e9480f661c8fba9751d19`; openai/gpt-4.1-mini, template voice, seeds 1/2/3, eight turns.
+- **Approval:** explicit submitted user answer, up to 50 extra requests / additional USD 0.03, solely to finish the original E3 cohort. Private receipt hash `e2c3f5a954df88d0b1b7b5e37e8a576b6467d435c33f1e9e55cad68dcc8044a8`. Original 1,000-request ledger preserved byte-for-byte.
+- **Data:** four remaining development source cards, 12 sessions, no final/held-out export or run. Same source/data/app config/playbook as the original tranche; only previously committed approval/budget plumbing differs.
+- **Source:** clean commit `a46367500581c356cd2e6ac22558798ea39cbfc4`; manifest SHA-256 `5e1dd7c471eccf109dfa5c69c5ab25a803fd53154f05a0675548bdba2abf8ae5`.
+- **Outcome:** 12/12 sessions, gate pass, zero failures/timeouts/model errors, 36 provider attempts, USD 0.0132756 provider-reported, all costs exposed.
+- **Decision:** combine with the preserved original 36 sessions after exact unique student/seed matching to all 48 C2 sessions. Complete-development results and post-copy sensitivity are separately versioned in `Docs/m4/E3_COMPLETE_RESULTS.md`. No new human approval, independent content or learning effect is inferred.
+
+### 2026-11-05 · m3-post-copy-sensitivity-e3-complete · Full development cohort saved-trajectory analysis
+- **Config/data:** versioned `post_copy_sensitivity.py --include-extension`; same frozen transition function, 224 existing study sessions; exact source/input hashes in `Docs/m4/POST_COPY_SENSITIVITY_E3_COMPLETE.json`.
+- **Outcome:** 224/224 baseline semantic replays matched; no new provider calls. All 48 E3 pairs matched C2; without post copying, E3-minus-C2 quiz difference is zero.
+- **Decision:** retain original primary outcomes and the 212-session analysis. This post-hoc sensitivity neither calibrates disclosure labels nor establishes human learning.
