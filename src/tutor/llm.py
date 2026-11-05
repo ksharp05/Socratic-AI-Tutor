@@ -78,7 +78,7 @@ class LLM:
         try:
             reply = self._chat().invoke([("system", system), ("user", user)])
             usage = getattr(reply, "usage_metadata", None) or {}
-            billed = reply.response_metadata.get("token_usage") or {}  # the raw usage, which keeps OpenRouter's cost
+            billed = (getattr(reply, "response_metadata", None) or {}).get("token_usage") or {}  # the raw usage, which keeps OpenRouter's cost
             store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=self.model,
                         latency_ms=(time.perf_counter() - started) * 1000,
                         detail={"tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens"),
