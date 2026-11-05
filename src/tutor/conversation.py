@@ -44,6 +44,7 @@ POLICY = {
 
 
 def intent(text: str) -> str | None:
+    text = " ".join(text.split())
     for name, pattern in INTENTS:
         if pattern.search(text):
             return name

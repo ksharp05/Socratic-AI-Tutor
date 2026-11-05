@@ -56,7 +56,7 @@ QUESTION_START = re.compile(r'^(?:is|are|can|could|what|why|how|does|do|which)\b
 
 
 def candidates(text: str, chapter: str, available_ids: set[str]) -> list[str]:
-    text = text.replace('²', '^2').replace('θ', 'theta').replace('−', '-').lower().strip()[:10000]
+    text = ' '.join(text.replace('²', '^2').replace('θ', 'theta').replace('−', '-').lower().split())[:10000]
     # A learner explicitly correcting a claim should not inherit the earlier error.
     text = re.split(r'\b(?:but|however|actually|now i (?:know|understand))\b', text)[-1].strip()
     if not text or CORRECT_NEGATIONS.search(text) or (text.endswith('?') and QUESTION_START.match(text)):
@@ -96,5 +96,6 @@ CORRECTED_STATEMENTS = {
 
 def acknowledges_distinction(text: str, mid: str) -> bool:
     """Recognize a few explicit corrections; never grade mastery or resolve a cause."""
+    text = ' '.join(text.split())
     pattern = CORRECTED_STATEMENTS.get(mid)
     return bool(pattern and re.search(pattern, text.replace('−', '-'), re.I))

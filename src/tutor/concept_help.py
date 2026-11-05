@@ -20,6 +20,7 @@ def by_id(identifier):
     return copy.deepcopy(next((e for e in _load()['explanations'] if e['id']==identifier),None))
 
 def match(text,chapter):
+    text = " ".join(text.split())
     if any(c.isnumeric() for c in text) or re.search(r'[=^]|\bsqrt\b|\b(?:calculate|solve|answer key|final answer)\b',text,re.I):return None
     if not re.search(r'\b(?:what|which side|define|explain|meaning|difference between)\b',text,re.I):return None
     return copy.deepcopy(next((e for e in _load()['explanations'] if e['chapter']==chapter and any(re.search(cue,text,re.I) for cue in e['cues'])),None))

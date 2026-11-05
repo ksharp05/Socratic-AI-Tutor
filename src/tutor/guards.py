@@ -12,7 +12,7 @@ PII_PATTERNS = [
     (re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b"), "[email]"),
     (re.compile(r"\b\d{4}\s?\d{4}\s?\d{4}\b"), "[id-number]"),          # Aadhaar-like
     (re.compile(r"(?<!\d)(?:\+?91[\s-]?)?[6-9]\d{9}(?!\d)"), "[phone]"),
-    (re.compile(r"\b(my name is|i am called|this is)\s+[A-Z][a-z]+", re.I), r"\1 [name]"),
+    (re.compile(r"\b(my\s+name\s+is|i\s+am\s+called|this\s+is)\s+[A-Z][a-z]+", re.I), r"\1 [name]"),
 ]
 DISTRESS = re.compile(r"\b(kill myself|end my life|want to die|hurt myself|self[- ]harm|suicid\w*|no reason to live|"
                       r"can'?t go on|hopeless|i (?:feel|am) unsafe|i (?:do not|don['’]?t) feel safe|mar jana|jeena nahi)\b", re.I)
@@ -32,7 +32,7 @@ HANDOFF_MESSAGE = ("I'm really sorry you're feeling this way. You don't have to 
 
 def unverified_own_problem(text: str) -> bool:
     """Flag common user-supplied maths problems; this conservative rule is not exhaustive."""
-    normal = unicodedata.normalize("NFKC", text)
+    normal = " ".join(unicodedata.normalize("NFKC", text).split())
     has_variable = bool(re.search(r"(?i)(?<![a-z])[a-z](?:\s*(?:\^|\*\*)?\s*\d+)?(?![a-z])", normal))
     explicit_task = bool(re.search(r"(?i)\b(?:solve|calculate|evaluate|find|determine|what is|what are)\b", normal))
     explicit_variable = bool(re.search(r"(?i)(?<![a-z])[xyz](?:\s*(?:\^|\*\*)?\s*\d+)?(?![a-z])", normal))
@@ -49,13 +49,15 @@ def screen_input(text: str) -> dict:
         if pattern.search(redacted):
             pii.append(repl)
             redacted = pattern.sub(repl, redacted)
+    # Analyse a flat copy; retain line breaks in the redacted message and maths.
+    flag_text = " ".join(normal.split())
     return {
         "text": redacted,
         "pii_redacted": pii,
-        "distress": bool(DISTRESS.search(normal)),
-        "role_claim": bool(ROLE_CLAIM.search(normal)),
-        "key_request": bool(KEY_REQUEST.search(normal)),
-        "injection": bool(INJECTION.search(normal)),
+        "distress": bool(DISTRESS.search(flag_text)),
+        "role_claim": bool(ROLE_CLAIM.search(flag_text)),
+        "key_request": bool(KEY_REQUEST.search(flag_text)),
+        "injection": bool(INJECTION.search(flag_text)),
         "unverified_own_problem": unverified_own_problem(normal),
     }
 

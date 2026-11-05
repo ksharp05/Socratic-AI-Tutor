@@ -124,6 +124,7 @@ class TutorApp:
     def _keyword_candidates(self, text: str, chapter: str = "quadratic_equations") -> list[str]:
         if chapter != "quadratic_equations":
             return diagnosis_evidence.candidates(text, chapter, set(self.misconceptions))
+        text = " ".join(text.split())
         scored = []
         # A topic mention is not a wrong claim. Keep broad legacy keyword lists
         # for compatibility, but require actual distinguishing evidence to probe.
