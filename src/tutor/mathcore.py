@@ -36,7 +36,7 @@ def parse_answer(text: str, key: dict) -> dict:
     kind = key["kind"]
     raw = text.strip()
     if kind == "finite_set":
-        if _NO_ROOTS.search(raw):
+        if _NO_ROOTS.search(raw) or (key.get("unit") == "terms" and re.search(r"\bno (?:valid |positive integer )?(?:term )?counts?\b", raw, re.I)):
             values: list[str] = []
         else:
             body = re.sub(r"[a-zA-Z]\s*=\s*", " ", raw.replace("{", " ").replace("}", " "))
@@ -63,7 +63,8 @@ def parse_answer(text: str, key: dict) -> dict:
 
 def _display(typed: dict) -> str:
     if typed["kind"] == "finite_set":
-        return "{" + ", ".join(typed["values"]) + "}" if typed["values"] else "no real roots"
+        empty = "no positive integer term count" if typed.get("unit") == "terms" else "no real roots"
+        return "{" + ", ".join(typed["values"]) + "}" if typed["values"] else empty
     return str(typed.get("value"))
 
 
@@ -109,8 +110,67 @@ def _as_set(values: list[str]) -> set[str]:
     return out
 
 
+def _ap_candidates(problem: dict, key: dict, typed: dict) -> list[dict]:
+    """Exact public-catalogue error hypotheses, never proof of a mental cause."""
+    task, g = problem["task_type"], problem["givens"]
+    if task == "ap_count" and key.get("kind") == typed.get("kind") == "finite_set":
+        values = typed.get("values", [])
+        if len(values) != 1 or _as_set(values) == _as_set(key["values"]):
+            return []
+        answer = str(values[0])
+    elif key.get("kind") == typed.get("kind") == "scalar":
+        answer = str(typed.get("value", ""))
+        if _equivalent(answer, str(key["value"])):
+            return []
+    else:
+        return []
+    found = []
+
+    def exact(name):
+        return mk.exact(str(g[name]))
+
+    def add(mid, value, rule):
+        # Different public rules may predict the same response. Return all of
+        # them; the tutor must ask for reasoning rather than select one cause.
+        if _equivalent(answer, str(value)):
+            found.append({"misconception_id": mid, "rule": rule})
+
+    try:
+        if task in ("ap_term", "ap_sum"):
+            a, d, n = exact("a"), exact("d"), exact("n")
+            term = a + (n - 1) * d
+            total = n * (2 * a + (n - 1) * d) / 2
+            add("ap_m03", a + n * d if task == "ap_term" else n * (2 * a + n * d) / 2,
+                "used n gaps instead of n minus one")
+            add("ap_m04", total if task == "ap_term" else term,
+                "interchanged a single term and an accumulated sum")
+        elif task == "ap_first":
+            add("ap_m03", exact("term") - exact("n") * exact("d"), "used n gaps when recovering the first term")
+        elif task == "ap_difference":
+            delta = exact("term_n") - exact("term_m")
+            gap = exact("n") - exact("m")
+            if gap:
+                add("ap_m02", -delta / gap, "reversed the ordered term subtraction")
+                add("ap_m07", delta, "treated the change across several positions as one jump")
+        elif task == "ap_count" and exact("d"):
+            gaps = (exact("last") - exact("a")) / exact("d")
+            position = gaps + 1
+            add("ap_m08", gaps, "counted gaps instead of inclusive term positions")
+            if position.is_integer is not True or position <= 0:
+                add("ap_m06", position, "accepted a nonpositive or fractional term position")
+        elif task == "ap_mean":
+            add("ap_m09", mk.exact(f"sqrt(({g['left']})*({g['right']}))"), "used a geometric mean for an additive progression")
+        elif task == "ap_ledger_term":
+            add("ap_m04", exact("prefix_sum"), "used the accumulated total as a single term")
+    except (KeyError, ValueError, TypeError, ZeroDivisionError):
+        return []
+    return found
+
+
 def diagnose_response(problem: dict, key: dict, typed: dict) -> list[dict]:
     """Return supported rules matching a wrong answer; callers must handle ambiguity."""
+    if problem.get("task_type", "").startswith("ap_"):
+        return _ap_candidates(problem, key, typed)
     if problem.get("task_type") == "trig_triangle_ratio" and typed.get("kind") == "scalar" and key.get("kind") == "scalar":
         if _equivalent(str(typed.get("value", "")), str(key["value"])):
             return []

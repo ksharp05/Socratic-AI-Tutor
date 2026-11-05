@@ -40,12 +40,26 @@ def concepts():
 
 
 def misconceptions():
-    """Public provisional rules supported by checked trigonometry practice."""
+    """Register public AP/trigonometry hypotheses without inferring teaching approval.
+
+    A catalogue entry supplies vocabulary and a probe, not proof of a learner's
+    misconception. Numerical adapters and statement evidence remain separately
+    checked, and all catalogue review/author fields are preserved.
+    """
     result = list(load('misconceptions'))
+    seen = {item['misconception_id'] for item in result}
+    known_concepts = {item['concept_id'] for item in concepts()}
     with (ROOT / 'content/dataset-v0.10.0/misconceptions.jsonl').open(encoding='utf-8-sig') as f:
         for line in f:
-            if line.strip():
-                item = json.loads(line)
-                if item['misconception_id'] in ('tr_m01','tr_m02','tr_m04'):
-                    result.append(item)
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            if item.get('chapter') not in ('arithmetic_progressions', 'trigonometry'):
+                continue
+            if item['misconception_id'] in seen:
+                raise ValueError('Duplicate misconception ID')
+            if item['concept_id'] not in known_concepts:
+                raise ValueError('Misconception references an unavailable concept')
+            seen.add(item['misconception_id'])
+            result.append(item)
     return result

@@ -19,7 +19,7 @@ from filelock import Timeout
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
-from . import approval_token, conversation, guards, learner, prompts, store
+from . import approval_token, conversation, diagnosis_evidence, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
 from .question_catalog import allowed
@@ -59,6 +59,7 @@ class TutorState(TypedDict, total=False):
     probe_asked_for: str | None
     hint_stage: int
     diagnosis: dict | None
+    acknowledged_probe: str | None
     route: str
     draft: dict | None
     checks: dict
@@ -119,9 +120,25 @@ class TutorApp:
         store.trace(self.conn, session_id=state["session"]["session_id"], node=node, role="graph", kind="decision",
                     name=decision, detail=detail)
 
-    def _keyword_candidates(self, text: str) -> list[str]:
+    def _keyword_candidates(self, text: str, chapter: str = "quadratic_equations") -> list[str]:
+        if chapter != "quadratic_equations":
+            return diagnosis_evidence.candidates(text, chapter, set(self.misconceptions))
         scored = []
+        # A topic mention is not a wrong claim. Keep broad legacy keyword lists
+        # for compatibility, but require actual distinguishing evidence to probe.
+        distinguishing = {
+            "qe_m01": r"(?:any equation|x\s*(?:\^2|²).*=.*x\s*(?:\^2|²)).*quadratic",
+            "qe_m02": r"(?:ignore|drop|unsigned).*sign|\bb\s*(?:is recorded as|is|=|equals)\s*\d",
+            "qe_m03": r"(?:divid.*2a|quadratic formula)",
+            "qe_m04": r"(?:divid|cancel).*\bx\b|only one (?:root|factor|answer)",
+            "qe_m05": r"only (?:the )?positive|discard.*negative|ignore.*negative",
+            "qe_m06": r"only.*plus|plus branch|ignore.*minus",
+        }
         for mid, patterns in MIS_KEYWORDS.items():
+            if not re.search(distinguishing[mid], text, re.I):
+                continue
+            if re.search(r"(?:do not|don't|never) (?:divide|cancel)|x\s*(?:!=|≠)\s*0|non.?zero", text, re.I) and mid == "qe_m04":
+                continue
             hits = sum(1 for p in patterns if re.search(p, text, re.I))
             if hits and mid in self.misconceptions:
                 scored.append((hits, mid))
@@ -189,7 +206,7 @@ class TutorApp:
                 notes.append("For this unverified problem I can offer general guidance; automatic answer checking is not available here.")
         return {"messages": [{"role": "student", "content": state["incoming"]}], "incoming": "",
                 "draft": None, "checks": {}, "revision_count": 0, "grade": None, "retrieved": [], "notes": notes,
-                "diagnosis": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
+                "diagnosis": None, "acknowledged_probe": None, "unverified_own_problem": own_problem, "question_revoked": revoked}
 
     def _load_learner(self, state: TutorState) -> dict:
         lid = state["session"]["learner_id"]
@@ -235,8 +252,13 @@ class TutorApp:
             route = "grade"
         else:
             snapshot = state["learner"]
-            candidates = (self._keyword_candidates(text)
-                          if state["session"].get("chapter", "quadratic_equations") == "quadratic_equations" else [])
+            focus = state.get("focus_misconception")
+            if (not item and not state.get("unverified_own_problem") and focus
+                    and diagnosis_evidence.acknowledges_distinction(text, focus)):
+                self._note(state, "planner", "probe_distinction_acknowledged", {"misconception": focus, "mastery_updated": False})
+                return {"route": "tutor", "focus_misconception": None, "probe_asked_for": None,
+                        "acknowledged_probe": focus, "hint_stage": 0}
+            candidates = self._keyword_candidates(text, state["session"].get("chapter", "quadratic_equations"))
             flagged = [m for m, v in snapshot["misconceptions"].items() if v["status"] in ("suspected", "confirmed", "addressed")]
             cand = candidates[0] if candidates else None
             concept = self.misconceptions[cand]["concept_id"] if cand else None
@@ -284,10 +306,18 @@ class TutorApp:
                                     system=system, user=user)
             try:
                 verdict = json.loads(re.search(r"\{.*\}", raw or "", re.S).group(0))
-                if verdict.get("misconception_id") in permitted:
-                    mid, mis = verdict["misconception_id"], self.misconceptions[verdict["misconception_id"]]
-                    evidence.append(f"LLM: {verdict.get('evidence', '')}"[:120])
-                    question = self._safe_question(verdict.get("question"), state["messages"][-1]["content"])
+                quote = verdict.get("evidence")
+                confidence = verdict.get("confidence")
+                message = state["messages"][-1]["content"]
+                # The model may word a probe for the observed rule. It cannot
+                # relabel the learner or supply evidence absent from the message.
+                supported = (verdict.get("misconception_id") == mid and mid in permitted
+                             and isinstance(quote, str) and quote.strip()
+                             and quote.strip().casefold() in message.casefold()
+                             and type(confidence) in (int, float) and 0.6 <= confidence <= 1)
+                if supported:
+                    evidence.append(f"LLM quote: {quote.strip()}"[:120])
+                    question = self._safe_question(verdict.get("question"), message)
             except Exception:
                 pass
         self._call(state, "diagnose", "diagnostician", "learner-store", "read_learner",
@@ -296,7 +326,7 @@ class TutorApp:
         opener = ("We've seen this idea trip you up before, so let's check it carefully. " if flagged
                   else "Good question, let's check one thing first. ")
         text = f"{opener}{question or mis['diagnostic_probe']}"
-        diagnosis = {"misconception_id": mid, "status": "confirmed" if flagged else "suspected", "evidence": evidence}
+        diagnosis = {"misconception_id": mid, "status": "suspected", "provisional": True, "evidence": evidence}
         return {"draft": {"text": text, "citations": [], "kind": "probe", "misconception_id": mid},
                 "diagnosis": diagnosis, "focus_misconception": mid, "probe_asked_for": mid, "hint_stage": 0}
 
@@ -353,7 +383,13 @@ class TutorApp:
         mid = state.get("focus_misconception")
         strict = state.get("revision_count", 0) > 0
         stage = state.get("hint_stage", 0)
-        if state.get("unverified_own_problem") and not item:
+        if state.get("acknowledged_probe") and not item:
+            mis = self.misconceptions[state["acknowledged_probe"]]
+            passages = self._passages_for(state, "tutor", mis["correct_reasoning"])
+            cite = f" [{passages[0]['passage_id']}]" if passages else ""
+            text = f"You've identified the distinction to check. Type 'practice' to try it on an approved question{cite}. Shall we try one?"
+            style = "acknowledged_distinction"
+        elif state.get("unverified_own_problem") and not item:
             # Never return a whole retrieved passage or model-generated solution for
             # an unverified learner problem. A generic question does not expose a key.
             query = (self.concepts[self.misconceptions[mid]["concept_id"]]["title"]
@@ -391,7 +427,12 @@ class TutorApp:
             style = self._best_style(snapshot, mid) or ("reverse_question" if stage == 0 else "counterexample")
             ladder = mis["hint_ladder"]
             step = ladder[min(stage, len(ladder) - 1)]
-            if style == "counterexample" and not strict:
+            if concept.get("chapter") != "quadratic_equations":
+                # Chapter-specific catalogue guidance; do not reuse a quadratic
+                # factor/root story for AP or trigonometry.
+                lead = step.rstrip(".?") + "."
+                text = f"{lead} {mis['diagnostic_probe']}{cite}"
+            elif style == "counterexample" and not strict:
                 text = f"{step} Try a value that makes one factor zero and check the original equation.{cite} What do you notice?"
             else:
                 text = f"{step} {concept['hint']}{cite} What would you check next?"
@@ -449,7 +490,10 @@ class TutorApp:
                   "hint_stages": item["hint_stages"], "hint_stage": 0, "attempts": 0,
                   "supporting_passage_ids": [pid for pid in item.get("supporting_passage_ids", [])
                                              if pid in self.cards and self.cards[pid].get("chapter") == chapter]}
-        instruction = ("Answer like 'x = 2 or x = -3' (or 'no real roots')." if active['kind'] == 'finite_set'
+        count_answer = chapter == "arithmetic_progressions" and active['kind'] == 'finite_set'
+        active["answer_domain"] = "term_count" if count_answer else "mathematics"
+        instruction = ("Give each possible positive integer count, or say 'no valid term count'." if count_answer else
+                       "Answer like 'x = 2 or x = -3' (or 'no real roots')." if active['kind'] == 'finite_set'
                        else "Give an exact value, for example -5, 3/4 or sqrt(3)/2.")
         text = (f"Practice ({item['difficulty']['level']}): {item['prompt']}\n"
                 f"{instruction} Type 'hint' if you're stuck.")
@@ -465,13 +509,15 @@ class TutorApp:
                                             "set_id": item["set_id"], "set_payload_sha256": item["set_payload_sha256"],
                                             "kind": item["kind"]}}
         if not result["scorable"]:
-            example = "'x = 2 or x = -3'" if item['kind'] == 'finite_set' else "'-5' or '3/4'"
+            example = ("a positive integer count, or 'no valid term count'" if item.get('answer_domain') == 'term_count' else
+                       "'x = 2 or x = -3'" if item['kind'] == 'finite_set' else "'-5' or '3/4'")
             update["draft"] = {"text": f"I couldn't read that as an answer ({result['reason']}). "
                                        f"Try again, for example {example}.", "citations": [], "kind": "info"}
             return update
         if result["correct"]:
             update["active_item"] = None
-            followup = ("how did you make sure you didn't miss a root?" if item['kind'] == 'finite_set'
+            followup = ("how did you check which term positions are allowed?" if item.get('answer_domain') == 'term_count' else
+                        "how did you make sure you didn't miss a root?" if item['kind'] == 'finite_set'
                         else "how did you check your reasoning?")
             update["draft"] = {"text": f"Correct: {result['parsed']}. In one sentence, {followup}",
                                "citations": [], "kind": "feedback"}
@@ -486,13 +532,16 @@ class TutorApp:
         trig = state["session"].get("chapter") == "trigonometry"
         if trig:
             update["focus_misconception"] = None
-        if diag and (not trig or len(diag) == 1):
+        if diag and len(diag) == 1:
             mid = diag[0]["misconception_id"]
             update["diagnosis"] = {"misconception_id": mid, "status": "suspected", "evidence": [f"candidate rule on {item['question_id']}: {diag[0]['rule']}"]}
             update["focus_misconception"] = mid
             # TP-H4: one question aimed at the likely mistake, not the probe plus the next hint.
-            hint = (self.misconceptions[mid]['diagnostic_probe'] if trig else
+            hint = (self.misconceptions[mid]['diagnostic_probe'] if mid.startswith(('tr_', 'ap_')) else
                     self.concepts[self.misconceptions[mid]['concept_id']]['diagnostic_probe'])
+        if not trig and len(diag) > 1:
+            hint = "Different reasoning steps can lead to that value. Which formula and substitutions did you use?"
+            update["focus_misconception"] = None
         if trig and len(diag) > 1:
             item["reasoning_probe"] = True
             hint = "That value can result from more than one step. Which angle did you use, and which sides did you label opposite and adjacent?"
@@ -662,7 +711,7 @@ class TutorApp:
         call = lambda tool, args: self._call(state, "update_memory", "study_planner", "learner-store", tool, args)  # noqa: E731
         grade, draft, diag = state.get("grade"), state.get("draft") or {}, state.get("diagnosis")
         if diag and draft.get("kind") in ("probe", "feedback") and diag.get("evidence"):
-            status = ("suspected" if diag["misconception_id"].startswith("tr_") else
+            status = ("suspected" if diag.get("provisional") or diag["misconception_id"].startswith(("tr_", "ap_")) else
                       "confirmed" if snapshot["misconceptions"].get(diag["misconception_id"]) else "suspected")
             call("record_misconception", {"learner_id": lid, "misconception_id": diag["misconception_id"],
                                           "status": status, "evidence_ref": "; ".join(diag["evidence"])[:200]})
@@ -670,7 +719,7 @@ class TutorApp:
             if state["session"].get("chapter", "quadratic_equations") == "quadratic_equations" and plan and mis_concept not in [s["concept_id"] for s in plan.get("steps", [])]:
                 replan_reason = f"new misconception {diag['misconception_id']} on {mis_concept}"
         if (draft.get("kind") == "hint" and draft.get("misconception_id")
-                and not draft["misconception_id"].startswith("tr_") and draft.get("style") not in ("extension",)):
+                and not draft["misconception_id"].startswith(("tr_", "ap_")) and draft.get("style") not in ("extension",)):
             call("record_misconception", {"learner_id": lid, "misconception_id": draft["misconception_id"],
                                           "status": "addressed", "evidence_ref": f"targeted hint ({draft['style']})"})
         graded = []
@@ -693,7 +742,7 @@ class TutorApp:
                 if not g["correct"] and plan and cid in plan.get("mastered", []):
                     replan_reason = f"contradiction: failed {cid}, which the plan assumed was mastered"
             focus = state.get("focus_misconception")
-            if focus and not focus.startswith("tr_") and grade and g is grade:
+            if focus and not focus.startswith(("tr_", "ap_")) and grade and g is grade:
                 style = next((s["style"] for s in snapshot.get("styles", []) if s["misconception_id"] == focus), None)
                 call("record_explanation", {"learner_id": lid, "misconception_id": focus,
                                             "style": style or "reverse_question", "success": bool(g["correct"])})

@@ -28,7 +28,7 @@ class SingleAgentTutor(TutorApp):
         return {'draft': {'text': opener + mis['diagnostic_probe'], 'citations': [],
                           'kind': 'probe', 'misconception_id': mid},
                 'diagnosis': {'misconception_id': mid,
-                              'status': 'confirmed' if flagged else 'suspected',
+                              'status': 'suspected', 'provisional': True,
                               'evidence': evidence},
                 'focus_misconception': mid, 'probe_asked_for': mid, 'hint_stage': 0}
 
