@@ -20,7 +20,6 @@ from analyse import citation_audit
 from tutor import store
 from tutor.question_catalog import graph_items, allowed
 from tutor.seed import seed_learner
-from tutor_eval.post_copy_policy import session_scope
 from tutor_eval.provider_budget import ProviderBudget, attach_budget
 from v02_integration.runtime import ContextualPreviewTutor
 
@@ -95,20 +94,25 @@ def run_case(case, folder, live, wallet):
             app.decide(proposal['set_id'], 'approve', 'synthetic-validation-fixture-only')
             messages = ['practice', wrong, 'hint']
         turns = []
-        with session_scope(app, [], {}) as observed:
-            for i, message in enumerate(messages):
-                result = observed.app.turn(sid, lid, message, chapter=case['chapter'])
-                stored = app.history(sid)[-1]
-                turn = {'index': i, 'student': message, 'tutor': result['reply'], 'route': result['route'],
-                        'diagnosis': result.get('diagnosis'), 'checks': result.get('checks'),
-                        'citations': stored.get('citations', []), 'model': observed.model_observations[-1]}
-                turns.append(turn)
-                with (folder/'turns.jsonl').open('a', encoding='utf-8') as output:
-                    output.write(json.dumps(turn)+'\n')
-                assert result.get('checks', {}).get('ok') is True, 'output guard rejected a turn'
-                assert turn['model']['model_errors'] == 0 and turn['model']['trace_observed']
-                if not case.get('practice') and not case.get('privacy'):
-                    assert result['reply'].count('?') == 1 and len(result['reply'].split()) <= 60
+        for i, message in enumerate(messages):
+            before = app.conn.execute('SELECT coalesce(max(id), 0) FROM trace_events WHERE session_id=?', (sid,)).fetchone()[0]
+            result = app.turn(sid, lid, message, chapter=case['chapter'])
+            events = [dict(r) for r in app.conn.execute('SELECT * FROM trace_events WHERE session_id=? AND id>? ORDER BY id', (sid, before))]
+            calls = [r for r in events if r['kind'] == 'llm']
+            observed = {'turn_index': i, 'route': result['route'], 'trace_observed': bool(events),
+                        'model_calls': len(calls), 'model_errors': sum(r['outcome'] == 'error' for r in calls),
+                        'model_nodes': [r['node'] for r in calls]}
+            stored = app.history(sid)[-1]
+            turn = {'index': i, 'student': message, 'tutor': result['reply'], 'route': result['route'],
+                    'diagnosis': result.get('diagnosis'), 'checks': result.get('checks'),
+                    'citations': stored.get('citations', []), 'model': observed}
+            turns.append(turn)
+            with (folder/'turns.jsonl').open('a', encoding='utf-8') as output:
+                output.write(json.dumps(turn)+'\n')
+            assert result.get('checks', {}).get('ok') is True, 'output guard rejected a turn'
+            assert turn['model']['model_errors'] == 0 and turn['model']['trace_observed']
+            if not case.get('practice') and not case.get('privacy'):
+                assert result['reply'].count('?') == 1 and len(result['reply'].split()) <= 60
         if case.get('diagnosis'):
             index = 1 if case.get('practice') else 0
             assert turns[index]['diagnosis']['misconception_id'] == case['diagnosis']
