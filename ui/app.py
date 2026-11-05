@@ -7,13 +7,20 @@ from __future__ import annotations
 
 import json
 import os
-from urllib.parse import quote
+import re
+import uuid
+from urllib.parse import quote, urlsplit
 
 import requests
 import streamlit as st
 
 API = os.environ.get("TUTOR_API_URL", "http://localhost:8000").rstrip("/")
 TIMEOUT = 120
+CHAPTER_LABELS = {
+    "quadratic_equations": "Quadratic Equations",
+    "arithmetic_progressions": "Arithmetic Progressions",
+    "trigonometry": "Introduction to Trigonometry",
+}
 
 st.set_page_config(page_title="Socratic Tutor", page_icon="ðŸ“", layout="wide")
 
@@ -37,29 +44,61 @@ def call(method: str, path: str, **kwargs):
 
 
 def stream_chat(text: str, mode: str):
-    """POST /chat/stream and yield reply chunks; keeps plan, citations and the final result in session state."""
-    body = {"text": text, "mode": mode, "session_id": st.session_state.get("session_id")}
+    """Stream one request; keep a known reference for recovery and source snapshots."""
+    st.session_state.setdefault("session_id", uuid.uuid4().hex)
+    body = {"text": text, "mode": mode, "session_id": st.session_state["session_id"],
+            "chapter": st.session_state.get("chat_chapter", "quadratic_equations")}
     headers = {"Authorization": f"Bearer {st.session_state['token']}"}
     st.session_state["last_citations"] = []
-    with requests.post(f"{API}/chat/stream", json=body, headers=headers, stream=True, timeout=TIMEOUT) as r:
-        if r.status_code >= 400:
-            yield f"Error {r.status_code}: {r.text}"
-            return
-        event = None
-        for line in r.iter_lines(decode_unicode=True):
-            if line.startswith("event: "):
-                event = line[7:]
-            elif line.startswith("data: "):
-                data = json.loads(line[6:])
-                if event == "token":
-                    yield data["text"]
-                elif event == "plan":
-                    st.session_state["plan"] = data
-                elif event == "citation":
-                    st.session_state["last_citations"].append(data)
-                elif event == "done":
-                    st.session_state["session_id"] = data["session_id"]
-                    st.session_state["last_result"] = data
+    st.session_state["last_result"] = None
+    st.session_state["chat_error"] = None
+    try:
+        with requests.post(f"{API}/chat/stream", json=body, headers=headers, stream=True, timeout=TIMEOUT) as response:
+            if response.status_code >= 400:
+                st.session_state["chat_error"] = ("I couldn't send that message. Check your access or start a new conversation, "
+                                                  "then try again.")
+                return
+            event = None
+            for line in response.iter_lines(decode_unicode=True):
+                if line.startswith("event: "):
+                    event = line[7:]
+                elif line.startswith("data: "):
+                    data = json.loads(line[6:])
+                    if event == "token":
+                        yield data["text"]
+                    elif event == "plan":
+                        st.session_state["plan"] = data
+                    elif event == "citation":
+                        st.session_state["last_citations"].append(data)
+                    elif event == "done":
+                        st.session_state["session_id"] = data["session_id"]
+                        st.session_state["last_result"] = data
+                    elif event == "error":
+                        st.session_state["chat_error"] = "That turn was interrupted. Try resuming it before sending the same message again."
+    except (requests.RequestException, ValueError):
+        st.session_state["chat_error"] = "The connection was interrupted. Try resuming this conversation before sending the same message again."
+    if not st.session_state.get("last_result") and not st.session_state.get("chat_error"):
+        st.session_state["chat_error"] = "The reply did not finish. Try resuming this conversation."
+
+
+def display_reply(content: str, references: list[dict]) -> str:
+    """Readable source labels; preserve the saved raw response and maths brackets."""
+    labels = {ref["passage_id"]: f"Reference {index}" for index, ref in enumerate(references, 1)}
+    return re.sub(r"\[((?:normalized|ncert|exemplar):[^]\s]+)\]",
+                  lambda match: f"[{labels[match[1]]}]" if match[1] in labels else match[0], content)
+
+
+def show_references(references: list[dict]) -> None:
+    for index, ref in enumerate(references, 1):
+        with st.expander(f"Reference {index}: {ref.get('title') or 'Chapter material'}"):
+            st.markdown(ref.get("text") or "")
+            source = ref.get("source") or {}
+            location = source.get("page") or source.get("pdf_page")
+            if location is not None:
+                st.caption(f"Page {location}")
+            url = source.get("url") or ""
+            if urlsplit(url).scheme in ("http", "https") and urlsplit(url).netloc:
+                st.markdown(f"[Open original reference]({url})")
 
 
 # ---------------------------------------------------------------------- sign-in
@@ -112,43 +151,66 @@ def learner_overview(learner_id: str) -> None:
 
 def student_chat() -> None:
     st.header("Chat with your tutor")
-    top = st.columns([2, 1, 1])
-    mode = top[0].radio("Mode", ["practice", "quiz"], horizontal=True)
-    if top[1].button("New session"):
-        for k in ("session_id", "messages", "plan", "last_citations", "last_result"):
-            st.session_state.pop(k, None)
-    if top[2].button("Resume interrupted turn") and st.session_state.get("session_id"):
-        out = call("POST", "/chat/resume", json={"session_id": st.session_state["session_id"]})
-        if out:
-            st.toast("Resumed." if out["resumed"] else "Nothing to resume.")
-            if out["resumed"]:
-                st.session_state.setdefault("messages", []).append({"role": "tutor", "content": out["reply"]})
-    st.caption(f"Session: {st.session_state.get('session_id', 'new')}  Â·  try /practice or /quiz")
-
+    st.caption("Work through one step at a time. Ask a question, try a hint, or practise a checked problem.")
+    controls = st.columns([2, 1, 1])
+    if controls[2].button("New session"):
+        for key in ("session_id", "messages", "plan", "last_citations", "last_result", "chat_error"):
+            st.session_state.pop(key, None)
+    chapter = controls[0].selectbox("Chapter", list(CHAPTER_LABELS), format_func=CHAPTER_LABELS.get,
+                                  key="chat_chapter", disabled=bool(st.session_state.get("session_id")),
+                                  help="Start a new session to switch chapters.")
+    mode = controls[1].radio("Mode", ["practice", "quiz"], horizontal=True,
+                            format_func=lambda value: "Practice" if value == "practice" else "Quiz", key="chat_mode")
+    if mode == "quiz":
+        st.caption("Quiz mode uses approved questions and does not give hints.")
+    with st.expander("Conversation details and recovery"):
+        st.caption(f"Conversation reference: {st.session_state.get('session_id', 'not started')}")
+        if st.button("Resume interrupted turn", disabled=not st.session_state.get("session_id")):
+            out = call("POST", "/chat/resume", json={"session_id": st.session_state["session_id"]})
+            if out:
+                st.toast("Resumed." if out["resumed"] else "Nothing to resume.")
+                # The server may have finished before the connection dropped.
+                # Reload its saved reply even when no graph nodes need resuming.
+                history = call("GET", "/chat/" + quote(st.session_state["session_id"], safe="") + "/history")
+                if history:
+                    st.session_state["messages"] = history.get("messages", [])
+                    st.session_state["chat_error"] = None
     chat_col, side = st.columns([3, 1])
     with chat_col:
-        for m in st.session_state.setdefault("messages", []):
-            with st.chat_message("user" if m["role"] == "student" else "assistant"):
-                st.markdown(m["content"])
-        if prompt := st.chat_input("Ask a question or answer the tutor"):
-            st.session_state["messages"].append({"role": "student", "content": prompt})
+        messages = st.session_state.setdefault("messages", [])
+        if not messages:
+            examples = {"quadratic_equations": "Why might dividing by x lose a possible solution?",
+                        "arithmetic_progressions": "Can an arithmetic progression decrease?",
+                        "trigonometry": "How do I choose the opposite and adjacent sides?"}
+            st.info(f"Start with a question about {CHAPTER_LABELS[chapter]}. For example: {examples[chapter]}")
+        for message in messages:
+            with st.chat_message("user" if message["role"] == "student" else "assistant"):
+                refs = message.get("citations", [])
+                st.markdown(display_reply(message["content"], refs))
+                show_references(refs)
+        if st.session_state.get("chat_error"):
+            st.error(st.session_state["chat_error"])
+        if prompt := st.chat_input("Ask a question, enter an answer, or type 'practice'"):
+            messages.append({"role": "student", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)
             with st.chat_message("assistant"):
                 reply = st.write_stream(stream_chat(prompt, mode))
-            st.session_state["messages"].append({"role": "tutor", "content": reply})
-        for c in st.session_state.get("last_citations", []):
-            with st.expander(f"Source: {c.get('title') or c['passage_id']}"):
-                st.caption(c["passage_id"])
-                st.markdown(c.get("text") or "")
+            if st.session_state.get("last_result") and not st.session_state.get("chat_error"):
+                messages.append({"role": "tutor", "content": reply,
+                                 "citations": list(st.session_state.get("last_citations", []))})
+            st.rerun()
     with side:
+        st.subheader("Your next steps")
         plan = st.session_state.get("plan")
-        st.subheader("Study plan")
-        if plan:
-            for i, step in enumerate(plan.get("steps", []), 1):
-                st.markdown(f"{i}. **{step['concept_id']}** {step.get('action', '')}")
+        if plan and plan.get("steps"):
+            for index, step in enumerate(plan["steps"], 1):
+                st.markdown(f"**{index}. {step.get('title') or 'Chapter practice'}**")
+                st.write(step.get("action", "practise").replace("_", " ").capitalize())
+                if step.get("why"):
+                    st.caption(step["why"])
         else:
-            st.caption("Appears after your first turn.")
+            st.caption("Try a short quiz to build a plan from your checked work.")
 
 
 def teacher_approvals() -> None:
