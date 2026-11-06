@@ -16,7 +16,7 @@ def main():
     assert subprocess.check_output(['git','-C',str(CODE),'branch','--show-current'],text=True).strip()=='Beta'
     assert not subprocess.check_output(['git','-C',str(CODE),'status','--porcelain'],text=True).strip()
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version',choices=['v1','v2'],default='v1')
+    parser.add_argument('--version',choices=['v1','v2','v3'],default='v1')
     args=parser.parse_args()
     root=SOURCE/f'Directions/product_quality/{args.version}/c1_c2_baseline'
     if root.exists():raise RuntimeError('Inspect existing evidence; no silent repeat')

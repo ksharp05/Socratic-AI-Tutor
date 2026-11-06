@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main, milestone-2, Beta]
+    paths-ignore: ["Docs/**", "PROJECT_CONTEXT.md"]
 
 jobs:
   test:
@@ -19,7 +20,8 @@ jobs:
             pyproject.toml
             requirements-beta.txt
       - run: pip install -e ".[dev,api,ui]" -r requirements-beta.txt
-      - run: pytest -q tests tests_beta tests_book_pipeline tests_integration_v02
+      # External corpus artifacts stay local; portable tests and synthetic imports remain mandatory.
+      - run: pytest -q --strict-markers -m "not local_corpus" tests tests_beta tests_book_pipeline tests_integration_v02
         env:
           TUTOR_LLM: stub
       - name: Portable index registration (synthetic data)

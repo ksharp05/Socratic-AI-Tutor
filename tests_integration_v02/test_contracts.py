@@ -1,4 +1,5 @@
 import os
+import pytest
 import copy,csv,json,tempfile,unittest
 from pathlib import Path
 from v02_integration.audit import digest,load_json,read_rows,COLLECTIONS,priority_queue,text_profile,csv_view
@@ -9,6 +10,7 @@ from v02_integration.math_audit import check_reference,expression
 ROOT=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path(__file__).resolve().parents[1])).resolve()
 SOURCE=ROOT/'Directions/socratic_tutor_dataset_expanded_v0_2'
 
+@pytest.mark.local_corpus
 class SnapshotContract(unittest.TestCase):
  @classmethod
  def setUpClass(cls):

@@ -40,3 +40,4 @@ where = ["src"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = ["local_corpus: requires authorized external book/dataset artifacts in the canonical workspace; run locally, never upload those artifacts to CI"]
