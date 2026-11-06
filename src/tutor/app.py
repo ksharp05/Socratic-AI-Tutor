@@ -468,6 +468,7 @@ class TutorApp:
         if item["question_id"] not in revisit:
             revisit = revisit + [item["question_id"]]
             self._note(state, "after_last_hint", "marked_for_revisit", {"question_id": item["question_id"]})
+            self._save_revisit(state, "record_revisit", item["question_id"])
         example = self._parallel_example(state, item)
         if example:
             return f"You've used every hint on this one, so I'll bring it back later. Here's a worked example.\n{example}", revisit
@@ -475,6 +476,30 @@ class TutorApp:
         return (f"You've used every hint on this one, so I'll bring it back later. Type 'practice' for a different "
                 f"question, or try once more: {last}"), revisit
 
+    def _marked(self, state: TutorState) -> set[str]:
+        """Questions marked for revisit, in this session or saved from an earlier one."""
+        saved = state["learner"].get("revisit_items", [])
+        return set(state.get("revisit", [])) | {row["question_ref"] for row in saved}
+
+    def _save_revisit(self, state: TutorState, tool: str, question_id: str) -> None:
+        """TP-A3: keep the mark across sessions. A question the store won't accept stays marked for this session only."""
+        try:
+            self._call(state, "after_last_hint", "study_planner", "learner-store", tool,
+                       {"learner_id": state["session"]["learner_id"], "question_ref": question_id})
+        except ToolCallError as exc:
+            if exc.code != "INVALID_INPUT":
+                raise
+
+    def _due_revisit(self, state: TutorState, chapter: str, attempted: list[str]) -> list[dict]:
+        """TP-A3: questions saved earlier for this chapter, not tried yet this session and still published."""
+        saved = {row["question_ref"] for row in state["learner"].get("revisit_items", [])
+                 if row["chapter"] == chapter} - set(attempted)
+        if not saved:
+            return []
+        items = self._call(state, "set_question", "question_setter", "question-bank", "list_published",
+                           {"mode": "practice"})["items"]
+        return [i for i in items if i["question_id"] in saved]
+    
     def _parallel_example(self, state: TutorState, item: dict) -> str | None:
         """TP-A2: R4's checked example, shown word for word. None means use the last-hint fallback."""
         ctx = self._ctx_for(state, "after_last_hint")
@@ -591,9 +616,10 @@ class TutorApp:
             items = self._call(state, "set_question", "question_setter", "question-bank", "list_published", {"mode": "practice"})["items"]
             items = [i for i in items if i.get("chapter") == chapter]
         attempted = state.get("attempted", [])
-        # TP-A3: once new questions run out, items marked for revisit come back first.
-        fresh = ([i for i in items if i["question_id"] not in attempted]
-                 or [i for i in items if i["question_id"] in state.get("revisit", [])] or items)
+        # TP-A3: questions saved in an earlier session come first; this session's marks wait until new ones run out.
+        fresh = (self._due_revisit(state, chapter, attempted)
+                 or [i for i in items if i["question_id"] not in attempted]
+                 or [i for i in items if i["question_id"] in self._marked(state)] or items)
         if not fresh:
             return {"draft": {"text": "There are no teacher-approved practice sets yet. Your teacher needs to approve "
                                       "one in the teacher view first.", "citations": [], "kind": "info"}}
@@ -631,6 +657,8 @@ class TutorApp:
             return update
         if result["correct"]:
             update["active_item"] = None
+            if item["question_id"] in self._marked(state):
+                self._save_revisit(state, "resolve_revisit", item["question_id"])
             update["revisit"] = [q for q in state.get("revisit", []) if q != item["question_id"]]
             followup = ("how did you check which term positions are allowed?" if item.get('answer_domain') == 'term_count' else
                         "how did you make sure you didn't miss a root?" if item['kind'] == 'finite_set'
