@@ -204,6 +204,13 @@ def diagnose_response(problem: dict, key: dict, typed: dict) -> list[dict]:
     if (truth and g.get("a", 0) > 0 and g.get("b", 0) < 0 and g.get("c", 0) >= 0
             and given == _as_set([f"-({v})" for v in key["values"]])):
         return [{"misconception_id": "qe_m02", "rule": "dropped the sign of b, so every root changed sign"}]
+    discriminant = g.get("b", 0) ** 2 - 4 * g.get("a", 0) * g.get("c", 0)
+    if given == _as_set([str(discriminant)]) and not given <= truth:
+        return [{"misconception_id": "qe_m07", "rule": "reported the discriminant as a root"}]
+    if len(truth) == 1 and len(given) == 2 and truth < given:
+        return [{"misconception_id": "qe_m08", "rule": "gave two different values for a repeated root"}]
+    if not truth and len(given) == 2 and all(v.startswith("-") for v in given):
+        return [{"misconception_id": "qe_m09", "rule": "read a negative discriminant as two negative roots"}]
     if given == truth or not given or not given < truth:
         return []
     found = []
