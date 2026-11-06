@@ -463,14 +463,32 @@ class TutorApp:
         return item.get("stages_used", 0) >= len(item["hint_stages"]) and item["attempts"] >= 2
 
     def _after_last_hint(self, state: TutorState, item: dict) -> tuple[str, list[str]]:
-        """TP-A3: never show the item's solution; mark it for later. TP-A2's parallel example needs R4's generator."""
+        """TP-A2 and TP-A3: never show the item's solution; show a checked example and mark the item for later."""
         revisit = state.get("revisit", [])
         if item["question_id"] not in revisit:
             revisit = revisit + [item["question_id"]]
             self._note(state, "after_last_hint", "marked_for_revisit", {"question_id": item["question_id"]})
+        example = self._parallel_example(state, item)
+        if example:
+            return f"You've used every hint on this one, so I'll bring it back later. Here's a worked example.\n{example}", revisit
         last = item["hint_stages"][-1]["prompt"]
         return (f"You've used every hint on this one, so I'll bring it back later. Type 'practice' for a different "
                 f"question, or try once more: {last}"), revisit
+
+    def _parallel_example(self, state: TutorState, item: dict) -> str | None:
+        """TP-A2: R4's checked example, shown word for word. None means use the last-hint fallback."""
+        ctx = self._ctx_for(state, "after_last_hint")
+        ctx.parallel_example_for = item["question_id"]
+        try:
+            result = self.bus.call(ctx, "tutor", "math-tools", "generate_parallel_example",
+                                    {"question_ref": item["question_id"]})
+        except ToolCallError:
+            return None
+        finally:
+            ctx.parallel_example_for = None
+        if not result.get("available"):
+            return None
+        return result["example"]["presentation"]
 
     def _tutor(self, state: TutorState, extension: bool = False) -> dict:
         snapshot, item = state["learner"], state.get("active_item")
@@ -645,9 +663,15 @@ class TutorApp:
         if trig and len(diag) > 1:
             item["reasoning_probe"] = True
             hint = "That value can result from more than one step. Which angle did you use, and which sides did you label opposite and adjacent?"
+        passages = []
         if finished and not item.get("reasoning_probe"):
             hint, update["revisit"] = self._after_last_hint(state, item)
-        update["draft"] = {"text": f"Not quite: you gave {result['parsed']}. {hint}", "citations": [], "kind": "feedback",
+            for pid in item.get("supporting_passage_ids", [])[:1]:
+                passages.append(self._call(state, "tutor", "tutor", "textbook-kb", "get_section", {"passage_id": pid}))
+            update["retrieved"] = [dict(p) for p in passages]
+        cite = f" [{passages[0]['passage_id']}]" if passages else ""
+        update["draft"] = {"text": f"Not quite: you gave {result['parsed']}. {hint}{cite}",
+                           "citations": [p["passage_id"] for p in passages], "kind": "feedback",
                            "misconception_id": update.get("focus_misconception")}
         return update
 
