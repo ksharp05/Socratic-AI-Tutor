@@ -2,6 +2,7 @@ from __future__ import annotations
 import json,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
+from tutor.guards import RISK_PATTERN
 from .ports import Scope
 from .topics import broad_topic,discovery_question,navigation_reply
 
@@ -22,8 +23,12 @@ In science, never suggest tasting, touching, or smelling chemicals to identify t
 and classroom-supervised methods instead. Do not make practical tasting instructions from textbook descriptions.
 Avoid the words correct and incorrect even as conversational modifiers; give the source-backed distinction instead. Never claim that this conversation proves learning or mastery.
 '''
-DISTRESS=re.compile(r'\b(kill myself|end my life|want to die|hurt myself|self[- ]harm|suicid\w*|no reason to live|jeena nahi|mar jana)\b',re.I)
-DISTRESS_REPLY='Your safety comes first. Please contact a trusted adult nearby now. If you are in immediate danger, contact your local emergency service. Can you reach someone who can stay with you?'
+# Explicit risk phrases only (policy TP-D2), shared with the core tutor guard. Everyday stress
+# such as "I'm stressed about boards" is Tier 1 and keeps tutoring.
+DISTRESS=re.compile(RISK_PATTERN,re.I)
+DISTRESS_REPLY=("Your safety comes first. Please contact a trusted adult nearby now. "
+                "You can also call Tele-MANAS, India's free 24x7 mental health helpline, on 14416 or 1-800-891-4416. "
+                "If you are in immediate danger, contact your local emergency service. Can you reach someone who can stay with you?")
 ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)',re.I)
 SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.t (?:know|understand|get)|no idea|not sure|still unclear)\b",re.I)
 

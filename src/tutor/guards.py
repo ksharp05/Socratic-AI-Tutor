@@ -14,8 +14,26 @@ PII_PATTERNS = [
     (re.compile(r"(?<!\d)(?:\+?91[\s-]?)?[6-9]\d{9}(?!\d)"), "[phone]"),
     (re.compile(r"\b(my\s+name\s+is|i\s+am\s+called|this\s+is)\s+[A-Z][a-z]+", re.I), r"\1 [name]"),
 ]
-DISTRESS = re.compile(r"\b(kill myself|end my life|want to die|hurt myself|self[- ]harm|suicid\w*|no reason to live|"
-                      r"can'?t go on|hopeless|i (?:feel|am) unsafe|i (?:do not|don['’]?t) feel safe|mar jana|jeena nahi)\b", re.I)
+# Explicit self-harm/suicide phrases in English, Hinglish and Hindi (policy TP-D2). Shared with the
+# beta chat, which uses only these; bare "die" is never matched so maths wording ("a die is thrown") passes.
+_NOT = r"(?:do not|don['’]?t|dont|no longer|never)"
+RISK_PATTERN = (
+    r"\b(?:"
+    r"kill(?:ing)? myself|end(?:ing)? (?:my (?:own )?life|it all)|tak(?:e|ing) my (?:own )?life|"
+    r"(?:want|wanna|going|planning|ready) to die|wish i (?:was|were) dead|better off dead|"
+    r"wish i (?:had )?never (?:been born|existed)|"
+    rf"{_NOT} want to (?:live|be alive|exist|wake up)|"
+    r"(?:no|not any|don['’]?t see (?:a|any)) (?:point|reason) (?:in |of )?(?:living|being alive|to live)|"
+    r"not worth living|can['’]?t go on (?:living|anymore|like this)|"
+    r"(?:hurt(?:ing)?|harm(?:ing)?|cut(?:ting)?) myself|self[- ]?harm\w*|suicid\w*|"
+    r"(?:feel|feeling) (?:so |really |completely |totally )?hopeless|"
+    r"jee?na nahi|jina nahi|marr? jaa?n[ae]|marr? jaa?u|marna chaht[ai]|khud ?kushi|aa?tmahatya"
+    r")\b"
+    r"|आत्महत्या|खुदकुशी|मरना चाहत|मर जाना|जीना नहीं"
+)
+# The core tutor also keeps its broader earlier terms (bare "hopeless", "can't go on", feeling unsafe).
+DISTRESS = re.compile(r"\b(?:no reason to live|can'?t go on|hopeless|i (?:feel|am) unsafe|"
+                      r"i (?:do not|don['’]?t) feel safe|mar jana|jeena nahi)\b|" + RISK_PATTERN, re.I)
 ROLE_CLAIM = re.compile(r"\b(i am|i'm|im|this is)\s+(the|your|a)?\s*(teacher|admin|developer|principal)\b", re.I)
 KEY_REQUEST = re.compile(r"\b(answer key|answers? to (all|the) (quiz|questions)|show (me )?(the )?answers?|"
                          r"give me (the )?(final )?answer|solutions? (manual|key))\b", re.I)
