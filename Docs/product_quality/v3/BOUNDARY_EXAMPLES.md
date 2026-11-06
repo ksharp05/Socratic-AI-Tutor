@@ -26,7 +26,7 @@ This is the explicit parallel-cases-v1 signature, not every possible mathematica
 
 ## Qualification
 
-387 focused service/case/tool tests pass. The final four-suite and CI results are recorded in BOUNDARY_EXAMPLES.json and the current checkpoint.
+387 focused service/case/tool tests pass. All 2,173 local four-suite tests pass. [GitHub CI 42241832120](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42241832120) passes on source dd309a7: 2,139 portable tests, two synthetic registry tests and all three smoke gates. The 34 external-corpus cases pass locally.
 
 A seeded audit covers 900 distinct valid synthetic inputs, 100 per family. It returns 782 checked examples, 117 invariant-answer fallbacks and one bounded-search/guard fallback. Available examples have zero case mismatches, independent-answer failures or active-guard failures; all 782 appended-text mutations are rejected. Audit-row timing is median 3.492 ms, p95 282.611 ms, maximum 357.283 ms; this includes verification and corruption checks and is not hosted learner latency.
 

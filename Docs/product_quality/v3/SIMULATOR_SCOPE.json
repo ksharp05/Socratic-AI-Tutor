@@ -58,6 +58,14 @@
     "tests/test_simulator_protocol_v2.py": "40014ce96b5e65a608812eeda307920ecd8c2872f99382c8a4a4832843636a60"
   },
   "remote_ci": {
-    "status": "not_started"
+    "status": "completed",
+    "conclusion": "success",
+    "source_sha": "dd309a7f00a34aa259d35435bb907be475ef8d06",
+    "run_id": 42241832120,
+    "url": "https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42241832120",
+    "portable_tests_passed": 2139,
+    "external_corpus_deselected": 34,
+    "synthetic_registry_tests_passed": 2,
+    "all_three_smoke_gates": "passed"
   }
 }
