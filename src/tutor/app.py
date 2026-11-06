@@ -36,6 +36,13 @@ MIS_KEYWORDS = {
                r"\bdivided both sides\b"],
     "qe_m05": [r"\bsquare root\b", r"√", r"\bsqrt\b", r"\bonly (the )?positive\b"],
     "qe_m06": [r"±", r"\bplus[- ]minus\b", r"\bplus branch\b", r"\bonly\b.*\bplus\b"],
+    "qe_m07": [r"\bdiscriminant\b(?:\s+\w+){0,2}\s+(?:is|equals)\s+(?:a |an |the )?(?:root|solution|answer)",
+               r"\bd\s*=\s*(\d+).{0,40}\b(?:solution|root|answer)\b.{0,10}\bx\s*=\s*\1\b"],
+    "qe_m08": [r"\b(?:repeated|equal|double)\s+(?:real\s+)?roots?\b.{0,30}\b(?:two|2)\s+(?:different|distinct)\b",
+               r"\bd\s*=\s*0\b.{0,30}\b(?:two|2)\s+(?:different|distinct)\b"],
+    "qe_m09": [r"\b(?:negative discriminant|d\s*<\s*0)[^;.]{0,40}\b(?:negative (?:real )?(?:roots?|solutions?|answers?)|below zero)\b"],
+    "qe_m10": [r"\bnegative (?:length|width|height|time|speed|age|area)\b.{0,30}\b(?:retain|keep|kept|accept|valid)\w*",
+               r"\bevery\b.{0,20}\broots?\b.{0,30}\baccept\w*"],
 }
 PRACTICE_REQUEST = re.compile(r"^/practice\b|\b(practice|another (one|question)|next question|give me a (question|problem))\b", re.I)
 QUIZ_REQUEST = re.compile(r"^/quiz\b|\b(start|take) (a |the )?quiz\b", re.I)
@@ -142,6 +149,8 @@ class TutorApp:
             "qe_m04": r"(?:divid|cancel).*\bx\b|only one (?:root|factor|answer)",
             "qe_m05": r"only (?:the )?positive|discard.*negative|ignore.*negative",
             "qe_m06": r"only.*plus|plus branch|ignore.*minus",
+            # qe_m07-m10 keywords are already specific claims, so any match counts.
+            "qe_m07": ".", "qe_m08": ".", "qe_m09": ".", "qe_m10": ".",
         }
         for mid, patterns in MIS_KEYWORDS.items():
             if not re.search(distinguishing[mid], text, re.I):

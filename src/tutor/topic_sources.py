@@ -9,6 +9,10 @@ CHAPTERS = {'quadratic_equations': 'Quadratic Equations',
             'trigonometry': 'Introduction to Trigonometry'}
 
 
+# Discriminant and word-problem concepts, loaded for diagnosis only; the study plan's graph doesn't use them.
+EXTRA_QUADRATIC_CONCEPTS = ('qe06', 'qe08')
+
+
 def cards():
     # Keep the existing quadratic POC behavior; add only public AP/trig cards.
     result=list(load('cards'));seen={item['passage_id'] for item in result}
@@ -35,7 +39,7 @@ def concepts():
             if not line.strip():
                 continue
             item = json.loads(line)
-            if item.get('chapter') in ('arithmetic_progressions', 'trigonometry'):
+            if item.get('chapter') in ('arithmetic_progressions', 'trigonometry') or item['concept_id'] in EXTRA_QUADRATIC_CONCEPTS:
                 if item['concept_id'] in seen:
                     raise ValueError('Duplicate concept ID')
                 seen.add(item['concept_id'])
@@ -58,7 +62,8 @@ def misconceptions():
             if not line.strip():
                 continue
             item = json.loads(line)
-            if item.get('chapter') not in ('arithmetic_progressions', 'trigonometry'):
+            if (item.get('chapter') not in ('arithmetic_progressions', 'trigonometry')
+                    and item['concept_id'] not in EXTRA_QUADRATIC_CONCEPTS):
                 continue
             if item['misconception_id'] in seen:
                 raise ValueError('Duplicate misconception ID')
