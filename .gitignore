@@ -29,3 +29,16 @@ data/models/
 /config/beta/local.json
 
 .venv_beta/
+
+# Vercel credentials and deployment-local state
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.vercel/
+
+.env*
+
+!.env.example
+!.env.sample
+!.env.template

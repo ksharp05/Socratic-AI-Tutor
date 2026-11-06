@@ -27,6 +27,10 @@ class CheckedMaths:
                 if item['question_id'] in self.items or not allowed(item,'quiz') or allowed(item,'practice'):
                     raise ValueError('Invalid or duplicate development-check question')
                 self.items[item['question_id']]=item
+        for item in json.loads((Path(app_root)/'content/milestone2_dev/practice_items.json').read_text(encoding='utf-8-sig')):
+            if item['question_id'] in self.items or not allowed(item,'practice') or allowed(item,'quiz'):
+                raise ValueError('Invalid or duplicate development practice question')
+            self.items[item['question_id']]=item
         self.keys={};self.lock=threading.RLock()
     def eligible(self,scope,concept=None):
         if scope.grade!=10 or scope.subject.casefold()!='mathematics':return []
@@ -56,6 +60,8 @@ class CheckedMaths:
             return typed
         if kind in ('scalar','finite_set'):
             template={'kind':kind,'values':[]} if kind=='finite_set' else {'kind':kind,'value':'0'}
+            unit=item['answer_contract'].get('required_units_by_kind',{}).get(kind)
+            if unit:template['unit']=unit
             result=self.core.parse_answer(raw,template)
             if not result['ok']:raise ValueError('Use comma-separated roots, an exact value, or no real roots')
             typed=result['typed']

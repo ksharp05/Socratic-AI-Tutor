@@ -1,5 +1,5 @@
 from __future__ import annotations
-import hashlib,hmac,json,secrets,time,uuid,os
+import hashlib,hmac,json,secrets,time,uuid,os,re
 from pathlib import Path
 from typing import Literal
 from fastapi import FastAPI,HTTPException,Request
@@ -11,9 +11,10 @@ from . import __version__
 from .bootstrap import bootstrap
 from .repository import Repository,BetaBusy
 from .ports import Scope
-from .dialogue import DialogueService
+from .dialogue import DialogueService,DISTRESS
 from .maths import CheckedMaths,AssessmentService
 from .study import StudyService
+from .transport import BrowserTransport
 
 ROOT=Path(os.environ.get('SOCRATES_SOURCE_WORKSPACE',Path(__file__).resolve().parents[2])).resolve()
 
@@ -35,10 +36,14 @@ class ReviewIn(Closed):rating:Literal['again','hard','good','easy']
 class PrefsIn(Closed):
     grade:int=Field(ge=8,le=12);subject:str=Field(min_length=1,max_length=80)
     goal:str=Field(default='Understand the topic',max_length=160);minutes:int=Field(default=25,ge=10,le=120)
+    model_consent:bool=False
 
 
-def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False,tutor_provider=None):
+def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False,tutor_provider=None,browser_secret=None):
     settings=json.loads(Path(config or ROOT/'config/beta/local.json').read_text(encoding='utf-8-sig')) if not isinstance(config,dict) else config
+    transport=BrowserTransport.configured(settings.get('public_origin'),testing=testing,additional_origins=settings.get('additional_origins',()))
+    if settings.get('assessment_policy') not in (None,'reference_checked_beta'):
+        raise ValueError('Unknown beta assessment policy')
     data=Path(settings.get('data_directory','Directions/beta_data'))
     if not data.is_absolute():data=ROOT/data
     data.mkdir(parents=True,exist_ok=True)
@@ -51,7 +56,11 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         language=TeamLanguage(app_root,settings.get('max_live_calls',60),audit_directory=settings.get('audit_directory'))
     maths=maths or CheckedMaths(app_root)
     dialogue=DialogueService(repo,registry,language)
-    if tutor_provider is not None:
+    if settings.get('assessment_policy')=='reference_checked_beta':
+        if tutor_provider is not None:raise ValueError('Reference beta publication does not imply graph teacher approval')
+        from .reference_policy import ReferenceCheckedAssessmentService
+        assess=ReferenceCheckedAssessmentService(repo,maths)
+    elif tutor_provider is not None:
         from .approval import ApprovedAssessmentService,ApprovalUnavailable
         assess=ApprovedAssessmentService(repo,maths,tutor_provider)
     else:
@@ -59,14 +68,16 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     study=StudyService(repo,registry)
     app=FastAPI(title='Socrates beta',version=__version__,docs_url='/api/docs' if testing else None,redoc_url=None)
     app.state.services={'repo':repo,'registry':registry,'dialogue':dialogue,'assessment':assess,'study':study,'language':language,'maths':maths}
-    app.add_middleware(TrustedHostMiddleware,allowed_hosts=['localhost','127.0.0.1']+(['testserver'] if testing else []))
-    secret_path=data/'browser.secret'
-    if not secret_path.exists():
-        try:
-            with secret_path.open('xb') as f:f.write(secrets.token_bytes(32))
-        except FileExistsError:pass
-    secret=secret_path.read_bytes()
-    if len(secret)!=32:raise ValueError('Invalid browser ownership secret')
+    if browser_secret is not None:
+        secret=browser_secret
+    else:
+        secret_path=data/'browser.secret'
+        if not secret_path.exists():
+            try:
+                with secret_path.open('xb') as f:f.write(secrets.token_bytes(32))
+            except FileExistsError:pass
+        secret=secret_path.read_bytes()
+    if not isinstance(secret,bytes) or len(secret)!=32:raise ValueError('Invalid browser ownership secret')
     def sign(owner):return owner+'.'+hmac.new(secret,owner.encode(),hashlib.sha256).hexdigest()
     def owner(request):return request.state.owner
     def session_public(s):return {k:s[k] for k in ('id','dataset','scope','title','created','updated')}
@@ -79,17 +90,18 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
             if request.headers.get('content-type','').split(';')[0]!='application/json' or request.headers.get('x-socrates-request')!='1':
                 return JSONResponse({'detail':'Expected a same-origin JSON request'},status_code=403)
             origin=request.headers.get('origin')
-            if origin and origin!=f'{request.url.scheme}://{request.url.netloc}':
+            if origin and (origin not in transport.origins if transport.origin else origin!=f'{request.url.scheme}://{request.url.netloc}'):
                 return JSONResponse({'detail':'Origin mismatch'},status_code=403)
         cookie=request.cookies.get('socrates_beta_profile','');parts=cookie.split('.')
-        valid=len(parts)==2 and len(parts[0])==32 and hmac.compare_digest(sign(parts[0]),cookie)
+        valid=len(parts)==2 and bool(re.fullmatch('[0-9a-f]{32}',parts[0])) and bool(re.fullmatch('[0-9a-f]{64}',parts[1])) and hmac.compare_digest(sign(parts[0]),cookie)
         request.state.owner=parts[0] if valid else uuid.uuid4().hex
         try:response=await call_next(request)
         except Exception:return JSONResponse({'detail':'The beta could not complete this request. Please try again.'},status_code=500)
-        if not valid:response.set_cookie('socrates_beta_profile',sign(request.state.owner),httponly=True,samesite='strict',max_age=30*86400)
+        if not valid:response.set_cookie('socrates_beta_profile',sign(request.state.owner),httponly=True,samesite='strict',secure=transport.secure_cookie,max_age=30*86400)
         response.headers['Cache-Control']='no-store'
         response.headers['X-Content-Type-Options']='nosniff'
         response.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"
+        if transport.secure_cookie:response.headers['Strict-Transport-Security']='max-age=31536000'
         return response
     if tutor_provider is not None:
         @app.exception_handler(ApprovalUnavailable)
@@ -107,14 +119,16 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         entry=registry.entries();k=registry.knowledge()
         return {'status':'ok','version':__version__,'dataset':entry['active'],'dataset_integrity':'verified',
            'language':language.health() if language and hasattr(language,'health') else {'mode':'live' if language else 'offline'},
-           'beta':True,'graph_journey':tutor_provider is not None,'maths_practice_items':sum('practice' in q.get('mode_policy',{}).get('allowed_modes',[]) for q in maths.items.values()),
-           'assessment_policy':'teacher_published' if tutor_provider is not None else 'development_unapproved'}
+           'beta':True,'graph_journey':tutor_provider is not None,'maths_practice_items':sum('practice' in q.get('mode_policy',{}).get('allowed_modes',[]) and (not hasattr(assess,'qualified') or q['question_id'] in assess.qualified) for q in maths.items.values()),
+           'assessment_policy':getattr(assess,'POLICY',None) or ('teacher_published' if tutor_provider is not None else 'development_unapproved'),
+           'reference_checked_items':len(getattr(assess,'qualified',{}))}
     @app.get('/api/bootstrap')
     def initial(request:Request):
         entry=registry.public();k=registry.knowledge()
         return {'version':__version__,'library':entry,'catalogue':k.catalogue(),'profile':repo.profile(owner(request))['preferences'],
           'dashboard':study.dashboard(owner(request)),'language':health()['language'],
-          'assessment_policy':health()['assessment_policy'],'graph_journey':health()['graph_journey'],'beta':True}
+          'assessment_policy':health()['assessment_policy'],'graph_journey':health()['graph_journey'],
+          'model_consent_required':bool(settings.get('require_live_consent') and language),'beta':True}
     @app.get('/api/library/{dataset_id}')
     def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
     @app.post('/api/preferences')
@@ -137,6 +151,8 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
                     'assessment':assess.public(active) if active and not paused else None,'assessment_paused':paused}
     @app.post('/api/chat')
     def chat(body:ChatIn,request:Request):
+        if settings.get('require_live_consent') and language and not DISTRESS.search(body.text) and not repo.profile(owner(request))['preferences'].get('model_consent'):
+            raise HTTPException(403,'Confirm live model use in Learning preferences before sending a chat message.')
         return dialogue.turn(owner(request),body.session_id,body.text,body.request_id)
     @app.post('/api/practice')
     def practice(body:StartIn,request:Request):
@@ -198,4 +214,5 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         with repo.owner_guard(owner(request)):
             repo.forget(owner(request));return {'deleted':True}
     app.mount('/assets',StaticFiles(directory=Path(__file__).with_name('static')),name='assets')
+    app.add_middleware(TrustedHostMiddleware,allowed_hosts=list(transport.hosts))
     return app

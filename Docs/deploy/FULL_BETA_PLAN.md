@@ -1,3 +1,12 @@
+# Current deployment
+
+6 November 2026: the native saved-progress beta is deployed on Vercel with Neon Free Postgres.
+See [VERCEL_BETA.md](VERCEL_BETA.md) for the actual release, verification and remaining limits.
+Hosted live models and R3 graph integration remain disabled/pending. The earlier preparation
+plan below is historical and does not describe the deployed storage choice.
+
+---
+
 # Full beta deployment preparation
 
 The user selected a full beta with saved progress. The existing Socrates beta in src/socrates_beta already has a native browser UI, signed browser ownership, SQLite sessions/cards/reviews and an integrated /beta mount in the tutor API. The stashed stateless Vercel reference preview is not this release.

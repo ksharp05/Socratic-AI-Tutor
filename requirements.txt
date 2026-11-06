@@ -1,0 +1,6 @@
+# Minimal native beta runtime; existing project dependencies remain unchanged.
+fastapi==0.162.0
+uvicorn==0.54.0
+filelock==4.2.6
+sympy==1.14.0
+psycopg[binary]==3.3.8
