@@ -1,3 +1,117 @@
+# Current checkpoint - live Vercel beta and topic/source fixes
+
+**6 November 2026.** Continue Beta in Main with canonical D: cwd. The live native beta is at
+**https://socratic-tutor-beta.vercel.app/beta/** on Vercel Hobby + Neon Free. The user-reported
+trigonometry opening and topic-discovery failures are fixed and verified on the public site.
+User explicitly approved encrypted production key storage, OpenRouter payload transfer for
+consenting visitors, and a **200-request / USD 0.50 hosted lease inside the USD 10 phase**.
+All changes and a short release note are being published to Beta; exact source/CI is recorded next.
+
+Start with Docs/deploy/VERCEL_BETA.md, VERCEL_QUALIFICATION.json and
+Docs/releases/2026-11-06-beta.md. **2,564 full local tests pass** on this release.
+Real Postgres concurrency, cap, pause, unknown-outcome, no-reset, profile isolation, consent,
+deletion and local/hosted double-spend protections pass. JS syntax checks pass.
+The saved-progress baseline also passed 36 HTTPS checks across a real redeployment and
+GitHub CI 42256373547 on b2e2038 (2,503 portable + two registry + three smoke gates).
+Current release CI must be verified on the new source, not inferred from that earlier run.
+
+Live development smoke: 12 initial replies accepted format/citation checks; assistant review
+found weak quadratic/source explanations, retained honestly. Eight targeted post-fix live
+questions then passed with correct source notes. These are same-assistant development checks,
+not independent final assessment, teacher review or learning evidence.
+Eight new immutable-version public OpenStax-based notes supplement the unchanged frozen
+reference pack. Distinct citation IDs and pack hashes preserve old source access and identify
+the current teaching material. Definitions require highest-power/degree-two qualifications;
+unsupported graph claims fail closed. Reference-note citations open HTML sections, not fake PDF pages.
+
+Latest deployed release: dpl_GPVxmXTLwLtMybFFDX9KvY6MP7CZ, READY, Python3.12 in sin1.
+Signed browser ownership and all learner state live in Postgres with a stable Vercel secret.
+The public index alone is cached under /tmp. Progress is per browser cookie (30 days), not
+an account shared across devices. No Render resource or paid hosting plan exists.
+The old stateless Vercel preview stash remains preserved. Actual browser/mobile visual acceptance
+is pending because the computer-use surface failed; automated HTTPS checks are not a substitute.
+
+**Accounted phase spend USD 0.15739205 / USD 10** at the latest sync:
+22 hosted attempts, USD 0.01326 provider-reported, no unknown reserved call.
+Prior 1,218 historical/current attempts remain preserved; cumulative known count is 1,240.
+The active lease hosted-vercel-live-02 remains RUNNING with its USD0.50 cap reserved.
+All old wallets remain closed/unchanged. Do not repeat paid acceptance scripts, reset the DB
+ledger, spend the same allocation locally, release its cap or create another phase batch.
+First run Directions/deployment/live_chat_02/sync_hosted_usage.py before later accounting.
+A trusted operator can pause the DB lease; generic close/reuse is deliberately blocked.
+Remote close/rotation needs dedicated pause/reconciliation tooling and is not automated.
+
+Private grants, credentials, raw outputs/logs, synthetic cookies and receipts stay under
+Directions/deployment/live_chat_02; none are in GitHub or deployment source uploads.
+Source pack/course PDFs/frozen studies/tags/human review forms remain preserved.
+R3 graph integration remains contributor-owned and pending; no competing R3 pipeline was added.
+Reference/machine practice publication is explicit (331 practice + 12 development-check items);
+formal M3/M4 independent/human acceptance remains separate.
+
+Vercel CLI65.12.1, the official global plugin and shared MCP OAuth are configured.
+Native MCP doc-search/list-teams checks still need a chat tool reload; actual CLI team access
+and deployment are verified. The old one-time quota-reset automation completed and was deleted;
+no automatic future restart is currently scheduled.
+
+Next: finish exact-source release CI and checkpoint publication; then mobile/browser usability
+acceptance and broader independent source/learner evaluation. R3's contributor integrates graph work.
+
+---
+
+# Current checkpoint - saved-progress beta deployed on Vercel
+
+**6 November 2026.** Continue Beta in Main with canonical D: cwd. Published release source:
+**b2e2038139da29b428c8a7e1040d9b9b9d4e7d30**. Public link:
+**https://socratic-tutor-beta.vercel.app/beta/**. Vercel Hobby + Neon free_v3 in Singapore
+serve the existing native UI with durable Postgres learner progress. No Render resource or paid
+hosting plan was created. The old stateless preview stash remains preserved.
+
+Start with Docs/deploy/VERCEL_BETA.md and VERCEL_QUALIFICATION.json. **2,537 full local tests pass**,
+including real loopback Postgres acceptance. The first full run omitted the canonical external-corpus
+environment variable and had 34 fixture errors; its log is preserved. The corrected full run passes.
+**18 pre-redeployment + 18 post-redeployment HTTPS checks pass**: preferences, conversations,
+active practice and flashcard reviews survive a real Vercel redeployment; concurrent duplicate
+grading is idempotent, another browser profile cannot read the session, and forgetting deletes
+all synthetic owned rows, confirmed directly in Postgres. All 138 files returned in Vercel's
+authenticated deployed-source manifest match the published runtime bytes. Private receipts,
+initial failures, raw logs, synthetic cookies and credentials stay under Directions/deployment/full_beta_01.
+GitHub CI [42256373547](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42256373547) is successful on b2e2038: 2,503 portable tests, 34 corpus cases excluded, two registry checks and all three smoke gates. A user-reported broad-topic defect is now fixed on the live site; the subsequent live-chat budget candidate is under verification.
+
+The cloud uses a stable secret from Vercel and an explicit database migration. Only the rebuildable
+public reference index is cached under /tmp. Browser ownership cookies are Secure, HttpOnly and
+SameSite Strict; exact-origin and host checks are active. Human approval flags were not fabricated:
+the explicitly labelled reference/machine policy qualifies 331 practice items plus 12 separate
+development-check items. This is not teacher review, independent final authorship or efficacy evidence.
+
+**Hosted live models are disabled; no provider key was uploaded or request sent.** Conversations
+use labelled source-reading fallbacks. The persistent-disk budget helper is not used by serverless
+functions. Before hosted generation, implement and qualify an atomic database-backed grant tied
+to the existing global USD 10 ledger, disable retries, preserve uncertain reservations, add a pause
+control and obtain any required explicit hosted payload/destination approval plus visitor consent.
+R3 connected-graph integration remains contributor-owned/pending; no competing R3 pipeline was added.
+
+Saved progress belongs to this browser cookie, not a cross-device account; another browser/device
+starts a separate profile. Actual browser visual/mobile usability acceptance remains pending because
+the computer-use tool failed to initialize. The public HTTPS link works without Vercel login.
+The Git-author deployment block was resolved after the user connected their GitHub account in Vercel.
+
+Vercel CLI65.12.1, the official global Vercel plugin and shared MCP OAuth are configured.
+Native MCP documentation-search/list-teams checks remain pending a chat tool reload; CLI team
+inspection and actual deployment are verified. Do not claim those MCP tools were invoked.
+
+Provider accounting is unchanged: 1,218 total attempts, phase reported USD 0.09403805,
+**accounted USD 0.14413205 / USD 10**, remaining USD 9.85586795. All original wallets remain
+closed and unchanged; no new allocation or duplicate experiment was started. Frozen studies,
+reports, tags, private data, original course PDFs and blank human reviews are preserved.
+Publication is authorized. The old one-time resumption automation completed and was deleted;
+no automatic future restart is currently scheduled.
+
+Next: finish the release CI receipt, then qualify mobile/browser usability and the durable hosted
+provider budget if continuing the live beta. R3's contributor integrates the graph services.
+Formal M3/M4 independent/human acceptance remains separate.
+
+---
+
 # Current checkpoint - case-preserving examples and simulator protocol
 
 **6 November 2026.** Continue Beta in Main; cwd canonical D:. Latest published code is **dd309a7f00a34aa259d35435bb907be475ef8d06**. **2,173 local full four-suite tests pass** (387 focused example/case checks, 336 protocol checks). GitHub CI [42241832120](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42241832120) is successful on that exact source: 2,139 portable tests, two synthetic registry tests and all three smoke gates pass; 34 external-corpus cases pass locally. Private ACTIVE_CONTINUATION.json identifies any active work; do not start duplicate qualification, baseline or provider jobs.

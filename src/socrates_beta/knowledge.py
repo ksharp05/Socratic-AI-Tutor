@@ -8,7 +8,7 @@ from ncert_pipeline.catalogue import sha256,read_json
 from ncert_pipeline.retrieval import query_terms
 from .ports import Scope
 
-EXTRA_STOP=set('know understand get need explain simple english mean means difference between like example please still confused tell help think happens happen work works make makes use used can want would us them they their'.split())
+EXTRA_STOP=set('on know understand get need explain simple english mean means difference between like example please still confused tell help think happens happen work works make makes use used can want would us them they their'.split())
 ALIASES={'photosyntesis':'photosynthesis','photosyntheis':'photosynthesis','co2':'carbon dioxide','a.p.':'arithmetic progression',
          'ap':'arithmetic progression','q.e.':'quadratic','trig':'trigonometry','dna copying':'dna replication'}
 TRIG_SPELLINGS={'sine':'sin','cosine':'cos','tangent':'tan'}
@@ -114,6 +114,14 @@ class SqliteKnowledge:
         return list(dict.fromkeys(fixed))[:12]
     def search(self,query,scope: Scope,limit=3):
         if type(scope.grade) is not int or not 8<=scope.grade<=12:raise ValueError('Unsupported grade')
+        from .topics import broad_topic
+        opening=broad_topic(self,query,scope)
+        if opening:
+            # Resolve broad chapter names via admitted concepts even when the
+            # literal chapter title is absent from the reference passage text.
+            ids=list(dict.fromkeys(pid for node in opening for pid in node.get('passage_ids',[])))
+            passages=[self.passage(pid) for pid in ids]
+            return [p for p in passages if p is not None][:max(1,min(limit,6))]
         terms=self.terms(query)
         if not terms:return []
         args=[' OR '.join('"'+t+'"' for t in terms),scope.grade,scope.subject.casefold()]
@@ -167,8 +175,8 @@ class SqliteKnowledge:
         for r in rows:
             r['id']=f"reading:{r['book']}:{r['unit_file_index']}"
             r['kind']='reading';r['prerequisites']=[]
-            title=r['title'].split(' — ',1)[-1]
-            r['title']=titles.get((r['book'],r['unit_file_index'])) or (title if ' — ' in r['title'] else (f"{title} · Reading {r['unit_file_index']}" if r['unit_file_index'] is not None else title))
+            title=r['title'].split(' â€” ',1)[-1]
+            r['title']=titles.get((r['book'],r['unit_file_index'])) or (title if ' â€” ' in r['title'] else (f"{title} Â· Reading {r['unit_file_index']}" if r['unit_file_index'] is not None else title))
         return rows
 
 

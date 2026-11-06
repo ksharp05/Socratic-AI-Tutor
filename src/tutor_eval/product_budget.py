@@ -65,6 +65,8 @@ class ProductPhase:
             phase=read(self.phase_path);self._check(phase)
             entry=next(b for b in phase['batch_allocations'] if b['batch']==budget.slug)
             if entry['status']!='running':raise ValueError('Batch already closed')
+            if entry.get('remote_allocation'):
+                raise ValueError('Hosted allocation must be paused and reconciled with dedicated remote-close tooling; generic cap release is forbidden')
             data=read(budget.path)
             if any(a['status']=='reserved' for a in data['attempts']):raise ValueError('In-flight requests prevent closing')
             snap=budget.snapshot();accounted=snap['accounted_usd']
@@ -82,6 +84,7 @@ class PhaseWallet:
         with self.phase.lock:
             phase=read(self.phase.phase_path);self.phase._check(phase)
             entry=next(b for b in phase['batch_allocations'] if b['batch']==self.slug)
+            if entry.get('remote_allocation'):raise BudgetExceeded('Hosted allocation cannot also spend through a local wallet')
             if entry['status']!='running' or entry['max_usd']!=self.wallet.policy['max_usd']:raise BudgetExceeded('Batch is not open')
             return self.wallet.reserve(messages,max_tokens)
     def finish(self,*args,**kwargs):return self.wallet.finish(*args,**kwargs)

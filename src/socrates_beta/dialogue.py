@@ -3,12 +3,14 @@ import json,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
 from .ports import Scope
+from .topics import broad_topic,discovery_question,navigation_reply
 
 PROMPT=SYSTEM+'''
 This is Socrates beta. When a learner makes a factual misconception, explain the supported distinction without
 assigning a correctness score. A cited fact must retain qualifiers in its source, particularly the highest
-nonzero power in a quadratic after collecting terms. For a quadratic definition mention the nonzero squared
-coefficient after simplifying; merely containing a squared term is insufficient.
+nonzero power in a quadratic after collecting terms. For a quadratic definition explicitly state that the highest nonzero power is two after collecting terms.
+Having a nonzero squared coefficient alone is insufficient if higher powers remain.
+Do not add facts about graphs, parabolas or the x-axis unless the supplied excerpts describe them.
 Keep analogies brief and preserve causal mechanism. The supplied teaching move guides the next question,
 but honour the learner's explicit request for simpler wording or a different approach. Do not ask them to invent
 an example if they just said they don't understand the underlying word. Use a concrete, smaller question.
@@ -74,11 +76,14 @@ class DialogueService:
             reply='We can take this one step at a time. Which idea would you like to explore?';move='social'
         elif re.search(r'(?i)\b(?:today.s weather|current price|latest news|stock price|live score|uploaded image|attached diagram|diagram i sent)\b',message):
             reply="I can work from the textbook text here, but I don't have live information or an attached image to inspect. Which written detail can we work through?";move='unsupported_input'
+        elif discovery_question(message):
+            reply=navigation_reply(adapter,scope);move='topic_navigation'
         else:
             uncertain=bool(SMALL.search(message));analogy=bool(re.search(r'\b(analogy|everyday example|simple example)\b',message,re.I))
             followup=uncertain or analogy or bool(re.search(r'(?i)\b(simpler|say that again|why that|what do you mean|explain again|why is that)\b',message))
             correction=re.search(r'(?i)\b(?:i meant|i mean|instead explain|switch to|new topic[: ]+)\s*(.+)',message)
             new_topic=bool(re.match(r'(?i)^(?:explain|what (?:is|are)|how (?:does|do|is)|why (?:does|do|is|are)|tell me about)\b',message)) and not followup
+            new_topic=new_topic or bool(broad_topic(adapter,message,scope))
             if correction:
                 state.update(focus=correction[1],stuck=0,active_problem=False);move='acknowledge_correction'
             elif not state['focus'] or new_topic:
@@ -93,7 +98,7 @@ class DialogueService:
             if active:state['active_problem']=True
             passages=adapter.search(state['focus'],scope,limit=3)
             if not passages:
-                reply="I don't have a usable passage for that in this class and subject yet. Which textbook topic or reading are you studying?";move='missing_evidence'
+                reply=navigation_reply(adapter,scope,missing=True);move='missing_evidence'
             elif state['active_problem']:
                 reply="Let's keep the final answer for you to find. You can use checked practice for supported maths questions. What quantities are given, and what is your first step?";move='active_problem_coaching'
             elif self.language is None:
@@ -109,9 +114,13 @@ class DialogueService:
                         reply,citations=validate_reply(json.loads(raw),passages,recent)
                         if scope.subject.casefold() in ('science','chemistry') and unsafe_chemical_guidance(reply):
                             raise ValueError('unsafe_chemical_identification')
-                        if scope.subject.casefold()=='mathematics' and any(p['id']=='normalized:qe01' for p in passages):
-                            if re.search(r'quadratic (?:means|expression (?:always|is)|polynomial is)',reply,re.I) and not re.search(r'non.?zero|highest|after (?:simplif|collect)',reply,re.I):
-                                raise ValueError('missing_quadratic_qualifier')
+                        if scope.subject.casefold()=='mathematics':
+                            if any(p['id'].endswith(':qe01') for p in passages):
+                                defining=re.search(r'quadratic(?: equations?| polynomials?| expressions?)? (?:is|are|means|has|have|if|when)|(?:polynomial|equation|expression) is quadratic|making it a quadratic',reply,re.I)
+                                degree=re.search(r'highest.{0,45}(?:two|2|squared)|degree.{0,12}(?:two|2|second)',reply,re.I)
+                                if defining and not degree:raise ValueError('missing_quadratic_qualifier')
+                            if re.search(r'\b(graph|parabola|x.axis|U.shaped)\b',reply,re.I) and not any(re.search(r'\b(graph|parabola|x.axis)\b',p['text'],re.I) for p in passages):
+                                raise ValueError('unsupported_graph_fact')
                         return reply,citations
                     try:reply,citations=generate_checked(PROMPT)
                     except ValueError as first:
@@ -122,18 +131,18 @@ class DialogueService:
                         repaired=True
                     status='live_accepted'
                 except Exception as exc:
-                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsafe_chemical_identification'}
+                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification'}
                     error=str(exc) if type(exc) is ValueError and str(exc) in safe else type(exc).__name__
                     reply,citations=self.fallback(passages,state,recent);status='provider_failed_source_fallback'
         sources=[self.citation(p) for p in passages if p['id'] in citations]
         state['last_passages']=[p['id'] for p in passages]
         result={'reply':reply,'citations':sources,'move':move,'provider_status':status,'validation_error':error,
           'verification':'not_assessed','format_repaired':repaired,'repair_reason':repair_reason,'dataset_id':session['dataset'],'latency_ms':round((time.monotonic()-start)*1000),
-          'retrieval':{'hits':len(passages),'ids':[p['id'] for p in passages]},'human_review_status':'pending'}
+          'retrieval':{'hits':len(passages),'ids':[p['id'] for p in passages]},'human_review_status':'pending','reference_bundle':getattr(adapter,'reference_bundle',None)}
         self.repo.save_turn(sid,request_id,message,result,state)
         if sources:
             p=next(p for p in passages if p['id']==sources[0]['id'])
-            node=p['id'].split(':',1)[1] if p['id'].startswith('normalized:') else f"reading:{p['book']}:{p['unit_file_index']}"
+            node=p.get('concept_id') or (p['id'].split(':',1)[1] if p['id'].startswith('normalized:') else f"reading:{p['book']}:{p['unit_file_index']}")
             self.repo.observe(owner,sid,node,'explored',{'dataset':session['dataset'],'passage_id':p['id']})
         return result
     @staticmethod
@@ -147,7 +156,7 @@ class DialogueService:
                  if len(sentence.split())>=6 and not re.search(r'\b(tast\w*|smell\w*|swallow\w*|ingest\w*)\b',sentence,re.I)]
         if options:p,fact=next(((candidate,sentence) for candidate,sentence in options if len(sentence.split())<=37),options[0])
         else:fact='We can inspect the cited passage together and begin with one small detail.'
-        if len(fact.split())>37:fact=' '.join(fact.split()[:34])+'…'
+        if len(fact.split())>37:fact=' '.join(fact.split()[:34])+'â€¦'
         prompts=['Which part of this idea would you like to examine first?',
                  'Which word in this passage should we unpack together?',
                  'What is one detail you can pick out from this passage?',

@@ -73,3 +73,19 @@ def test_non_course_model_is_rejected_before_client_or_request(phase):
     llm=SimpleNamespace(enabled=True,model='openai/gpt-4.1',_chat=lambda:pytest.fail('Must reject before constructing a provider client'))
     with pytest.raises(ValueError,match='course allowlist'):attach_product_budget(llm,wallet)
     assert wallet.snapshot()['provider_attempts']==0
+
+
+def test_hosted_allocation_cannot_also_spend_locally(phase):
+    wallet=phase.allocate('hosted-one','synthetic hosted lease',max_usd=.5,max_calls=5)
+    state=read(phase.phase_path);state['batch_allocations'][0]['remote_allocation']='hosted-one';save(phase.phase_path,state)
+    with pytest.raises(BudgetExceeded,match='local wallet'):wallet.reserve([('user','must not send')],100)
+    assert wallet.snapshot()['provider_attempts']==0
+
+
+def test_hosted_cap_cannot_be_released_while_remote_service_is_active(phase):
+    wallet=phase.allocate('hosted-one','synthetic hosted lease',max_usd=.5,max_calls=5)
+    state=read(phase.phase_path);state['batch_allocations'][0]['remote_allocation']='hosted-one';save(phase.phase_path,state)
+    with pytest.raises(ValueError,match='remote-close'):phase.close(wallet)
+    state=read(phase.phase_path)
+    assert state['batch_allocations'][0]['status']=='running' and state['batch_allocations'][0]['max_usd']==.5
+    with pytest.raises(ValueError):phase.allocate('another-lease','must not reuse hosted cap')

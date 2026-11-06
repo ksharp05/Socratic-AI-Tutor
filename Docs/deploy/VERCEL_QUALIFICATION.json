@@ -1,26 +1,76 @@
 {
   "date": "2026-11-06",
   "origin": "https://socratic-tutor-beta.vercel.app",
-  "deployment_id": "dpl_GGjBBF4umEGKf4dpLKmtorUhhkwn",
+  "deployment_id": "dpl_GPVxmXTLwLtMybFFDX9KvY6MP7CZ",
   "state": "READY",
   "hosting_plan": "Vercel Hobby",
   "database_plan": "Neon free_v3",
   "storage": "Postgres",
   "region": "sin1",
-  "local_tests_passed": 2537,
-  "https_checks_before": 18,
-  "https_checks_after": 18,
-  "progress_survived_redeployment": true,
-  "concurrent_duplicate_grading": "one checked observation; identical replay response",
+  "local_tests_passed": 2564,
+  "javascript_syntax": "pass",
+  "exact_reported_conversation": "pass",
+  "live": true,
+  "model": "openai/gpt-4.1-mini",
+  "destination": "https://openrouter.ai/api/v1",
+  "explicit_production_transfer_approval": true,
+  "visitor_consent_required": true,
+  "consent_withdrawal": "pass",
+  "global_live_lease": {
+    "calls": 200,
+    "usd": 0.5,
+    "inside_phase_ceiling_usd": 10,
+    "status": "running",
+    "local_reuse_and_generic_close": "forbidden"
+  },
+  "last_usage_snapshot": {
+    "synced_at_utc": "2026-11-06T17:35:44.833784+00:00",
+    "allocation": "hosted-vercel-live-02",
+    "provider_attempts": 22,
+    "accounted_batch_usd": 0.01326,
+    "provider_reported_batch_usd": 0.01326,
+    "accounted_phase_usd": 0.15739205,
+    "unallocated_cap_usd": 9.35586795,
+    "phase_ceiling_usd": 10,
+    "live_allocation_cap_usd": 0.5,
+    "max_calls": 200,
+    "allocation_status": "running",
+    "unknown_reserved_attempts": 0
+  },
+  "reference_notes": {
+    "version": "teaching-notes-v1",
+    "count": 8,
+    "frozen_base_pack_unchanged": true,
+    "human_review": "pending"
+  },
+  "initial_live_development": {
+    "replies": 12,
+    "format_and_citation_ids": "accepted",
+    "semantic_limit": "Review found weak definitions/source use; initial outputs retained, not relabelled as semantic successes"
+  },
+  "post_source_fix_development": {
+    "replies": 8,
+    "live_accepted": 8,
+    "source_notes_open": "pass",
+    "independent_evaluation": false
+  },
+  "saved_progress_baseline": {
+    "local_tests": 2537,
+    "https_checks": 36,
+    "ci": {
+      "source": "b2e2038139da29b428c8a7e1040d9b9b9d4e7d30",
+      "run_id": 42256373547,
+      "conclusion": "success",
+      "portable_passed": 2503,
+      "external_corpus_deselected": 34,
+      "registry_passed": 2,
+      "all_three_smoke_gates": "passed"
+    }
+  },
   "manual_browser_visual": false,
   "mobile_usability": "pending",
-  "live_model": false,
-  "provider_requests": 0,
-  "provider_accounted_usd": 0.14413205,
-  "provider_ceiling_usd": 10,
   "R3_graph_integration": false,
   "human_teaching_review": "pending",
-  "independent_final_evaluation": "pending",
   "remote_ci": "pending release publication",
-  "private_receipts": "Directions/deployment/full_beta_01"
+  "private_receipts": "Directions/deployment/live_chat_02"
 }

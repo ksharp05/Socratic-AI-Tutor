@@ -85,6 +85,7 @@ class HostedLanguage:
         if inner.max_retries or root.max_retries:
             raise ValueError("Deployment provider retries are not disabled")
         self.delegate.chat=CappedClient(inner,budget,cap=240)
+        self.delegate.limit=budget.policy["max_calls"]
         self.budget=budget
 
     def generate(self,system,context):

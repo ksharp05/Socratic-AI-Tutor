@@ -28,3 +28,6 @@
 !config/app.toml
 !content/poc
 !content/poc/practice.json
+!content/beta_references
+!content/beta_references/v1
+!content/beta_references/v1/notes.json

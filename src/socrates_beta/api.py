@@ -50,6 +50,9 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     app_root=Path(settings.get('app_root',ROOT.with_name('Socratic Tutor Main')))
     if not app_root.is_absolute():app_root=(Path(__file__).resolve().parents[2]/app_root).resolve()
     registry=registry or bootstrap(ROOT,app_root,data)
+    if settings.get('assessment_policy')=='reference_checked_beta':
+        from .reference_notes import SupplementedRegistry
+        registry=SupplementedRegistry(registry,app_root)
     repo=repository or Repository(data/'beta.sqlite')
     if live and language is None:
         from .language import TeamLanguage

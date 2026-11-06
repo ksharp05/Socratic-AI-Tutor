@@ -1,0 +1,71 @@
+{
+  "version": "teaching-notes-v1",
+  "authorship": "Original plain-language reference notes based on the linked OpenStax sections; not quotations or endorsement.",
+  "human_review_status": "pending",
+  "notes": [
+    {
+      "id": "beta-reference-v1:qe01",
+      "replaces": "normalized:qe01",
+      "concept_id": "qe01",
+      "title": "Quadratic degree after collecting terms",
+      "text": "A quadratic has highest nonzero power two after collecting terms on one side. Its standard form is ax^2 + bx + c = 0 with a nonzero. A squared term alone is insufficient if a higher power remains. If squared terms cancel, the simplified equation may be linear or constant. The coefficient is the number multiplying a power of the variable.",
+      "source_url": "https://openstax.org/books/college-algebra-2e/pages/2-5-quadratic-equations"
+    },
+    {
+      "id": "beta-reference-v1:qe03",
+      "replaces": "normalized:qe03",
+      "concept_id": "qe03",
+      "title": "What a quadratic root means",
+      "text": "A root is a value that makes the original polynomial zero when substituted. Checking a proposed root establishes that value, not that every root has been found. Distinct real roots, a repeated real root and no real roots are different cases.",
+      "source_url": "https://openstax.org/books/college-algebra-2e/pages/2-5-quadratic-equations"
+    },
+    {
+      "id": "beta-reference-v1:tr01",
+      "replaces": "normalized:tr01",
+      "concept_id": "tr01",
+      "title": "Choosing triangle sides and a reference angle",
+      "text": "For right-triangle trigonometry, first choose one acute reference angle. The hypotenuse lies across from the right angle. Of the other sides, the opposite side faces the chosen angle and the adjacent side meets it. Changing to the other acute angle swaps opposite and adjacent; the hypotenuse keeps its role.",
+      "source_url": "https://openstax.org/books/precalculus-2e/pages/5-4-right-triangle-trigonometry"
+    },
+    {
+      "id": "beta-reference-v1:tr02",
+      "replaces": "normalized:tr02",
+      "concept_id": "tr02",
+      "title": "Sine, cosine and tangent as ratios",
+      "text": "For a chosen acute angle in a right triangle, sine compares opposite length with hypotenuse length, cosine compares adjacent with hypotenuse, and tangent compares opposite with adjacent. A ratio means division of the first length by the second. Use the same reference angle when naming both sides.",
+      "source_url": "https://openstax.org/books/precalculus-2e/pages/5-4-right-triangle-trigonometry"
+    },
+    {
+      "id": "beta-reference-v1:tr03",
+      "replaces": "normalized:tr03",
+      "concept_id": "tr03",
+      "title": "Reciprocals and quotients of ratios",
+      "text": "In a right triangle, sine is opposite divided by hypotenuse; cosine is adjacent divided by hypotenuse. Where denominators are nonzero, tangent equals sine divided by cosine, while cosecant, secant and cotangent are the reciprocals of sine, cosine and tangent.",
+      "source_url": "https://openstax.org/books/precalculus-2e/pages/5-4-right-triangle-trigonometry"
+    },
+    {
+      "id": "beta-reference-v1:ap01",
+      "replaces": "normalized:ap01",
+      "concept_id": "ap01",
+      "title": "Recognising an arithmetic progression",
+      "text": "An arithmetic progression is an ordered sequence whose step from each term to the next stays constant. Compute the step by subtracting the earlier term from the next one. This common difference can be positive, negative or zero. For example, 2, 5, 8 has successive differences of three.",
+      "source_url": "https://openstax.org/books/college-algebra-2e/pages/9-2-arithmetic-sequences"
+    },
+    {
+      "id": "beta-reference-v1:ap02",
+      "replaces": "normalized:ap02",
+      "concept_id": "ap02",
+      "title": "First term and common difference",
+      "text": "The first term is the starting value. The common difference is the fixed change between neighbouring terms, found as next minus previous. Starting at ten with a difference of negative two gives ten, eight, six.",
+      "source_url": "https://openstax.org/books/college-algebra-2e/pages/9-2-arithmetic-sequences"
+    },
+    {
+      "id": "beta-reference-v1:ap03",
+      "replaces": "normalized:ap03",
+      "concept_id": "ap03",
+      "title": "Why the nth term uses n minus one",
+      "text": "With first term a and common difference d, the nth term is a + (n-1)d. Position one requires no steps from the first term; position two requires one. The index n counts position, while the term is the value at that position.",
+      "source_url": "https://openstax.org/books/college-algebra-2e/pages/9-2-arithmetic-sequences"
+    }
+  ]
+}

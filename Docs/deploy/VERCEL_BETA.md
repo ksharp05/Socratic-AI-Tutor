@@ -1,100 +1,140 @@
-# Vercel beta
+# Vercel live beta
 
-The saved-progress beta is live at **https://socratic-tutor-beta.vercel.app/beta/**.
-The native browser app supports reference conversations, source citations, checked practice,
-development diagnostics/self-checks, flashcards, plans and saved history. It is scoped to
-Class 10 Mathematics: Quadratic Equations, Arithmetic Progressions and Introduction to Trigonometry.
+**Link:** https://socratic-tutor-beta.vercel.app/beta/
 
-Vercel Hobby serves the FastAPI application in Singapore; the connected Neon **Free**
-plan stores learner profiles, conversations, assessments, observations and flashcard reviews.
-No Render service or paid hosting plan was created. The previous stateless preview remains stashed.
+The native browser app now has opt-in live language responses from
+`openai/gpt-4.1-mini` through OpenRouter, source citations, checked practice,
+development checks, flashcards, plans and saved conversations.
+Its supported content is Class 10 Mathematics: Quadratic Equations,
+Arithmetic Progressions and Introduction to Trigonometry.
+Vercel Hobby and the connected Neon Free database are in use; no Render
+resource or paid hosting plan was created.
 
-## Current release boundary
+## Current behaviour and source scope
 
-- Hosted model generation is **disabled**. Conversations use labelled source-reading fallbacks.
-  No provider key was uploaded, no new provider request was sent, and accounted development
-  spend remains USD 0.14413205 / USD 10.
-- This is the full native beta UI with durable progress, not the R3 connected graph.
-  R3 integration remains contributor-owned and pending.
-- Practice publication uses an explicitly labelled machine/reference policy: 331 practice
-  items plus 12 separate development-check items are qualified against the separately
-  implemented exact reference checker. Human teaching review and independent final evaluation
-  remain pending. Historical approval records and frozen studies were not changed.
-- Progress belongs to a signed browser cookie, valid for 30 days. The same browser can resume
-  after a deployment or function replacement. Another browser/device starts a separate profile;
-  there is no account-based cross-device synchronization. Clearing cookies loses access.
-- Forget my data removes that profile's database rows. No claim about provider/platform backup
-  retention is made.
-- Real HTTPS acceptance was automated with synthetic learners. Browser visual/mobile usability
-  acceptance is still pending because the computer-use surface was unavailable.
+Broad questions such as “Can you tell me about trigonometry” resolve through
+the scoped concept catalogue, even when the literal chapter name is absent
+from the passage text. Topic-discovery questions list the actual supported
+chapters. Out-of-scope queries do not invent a new subject.
 
-## Reproducible setup
+The frozen normalized reference pack remains unchanged. Eight separately
+versioned plain-language OpenStax-based notes provide clearer foundation
+explanations and correct an incomplete legacy quadratic definition.
+They have distinct citation IDs, an explicit pack hash, HTML source links and
+pending human-review flags. Historical citations remain resolvable.
+The notes supplement the base index; they are not a rewrite or relabeling of
+frozen data. Replies record the supplement bundle version.
 
-Use the Beta checkout. Install Vercel CLI and authenticate with the owning account.
-The owner's GitHub account must be connected in Vercel Login Connections; otherwise Vercel
-may block CLI updates on commit-author permissions.
+Quadratic definitions must retain highest-power/degree-two qualifications;
+graph facts absent from the supplied excerpts fail closed to a source-reading
+fallback. Citation ID/format checks are not full semantic entailment verification.
+The current notes and guards improve known cases; they do not establish
+independent pedagogical review or universal language correctness.
 
-1. Link the intended project: `vercel link --yes --project socratic-tutor-beta --scope ksharp0508-6488`.
-2. Inspect `vercel integration add neon --help`. The qualified setup uses
-   `free_v3`, `region=sin1`, `auth=false`. Accept provider terms manually when requested.
-   Do not duplicate an existing integration/resource or select a paid plan.
-3. Confirm the connected project has `DATABASE_URL`, `TUTOR_BROWSER_SECRET`,
-   `TUTOR_PUBLIC_ORIGIN=https://socratic-tutor-beta.vercel.app` and `TUTOR_BETA_LIVE=0`.
-   Generate the browser secret once as 32 cryptographically random bytes encoded to 64 hex
-   characters; keep the same value on subsequent releases. Never print or commit it.
-4. Pull environment values only into ignored `.env.local`. Verify names, not values.
-   Export `DATABASE_URL` privately into the migration shell, install the API extra, then run:
-   `python -c "import os; from socrates_beta.postgres import PostgresRepository; PostgresRepository(os.environ['DATABASE_URL'], migrate=True)"`.
-   Schema migration is explicit; ordinary function startup never creates or resets learner tables.
-5. Run the regression suite. Real Postgres tests accept only a loopback database named
-   `socrates_test`; set `BETA_TEST_POSTGRES_DSN` accordingly. CI starts its own disposable service.
-6. Run `vercel deploy --dry --json` and audit every selected path. The allowlist excludes
-   keys, local databases, raw experiment logs, original PDFs and private/frozen evaluation data.
-   It also excludes the research pyproject from this CLI bundle so requirements.txt supplies
-   the minimal native runtime. Git-triggered auto-deployment is not configured or qualified.
-7. Deploy using `vercel deploy --prod --yes`. Inspect the actual ready state and aliases;
-   a no-wait CLI message alone does not prove deployment success. Check the public production
-   alias without a protection bypass.
+R3's connected graph remains contributor-owned and is not enabled here.
+The explicit machine/reference publication policy qualifies 331 practice
+items and 12 separate development-check items. No teacher approval, independent
+final evaluation or learning-effectiveness result is claimed.
 
-Only the reconstructible public knowledge index is cached under /tmp. It is built from pinned,
-committed normalized maths references, retains pending human-review flags and is checked for
-integrity. Learner state and the browser secret are never placed there. A content-pack change
-needs a deliberate dataset migration: do not silently discard or relabel old learner sessions.
+## Saved progress and consent
 
-Postgres uses parameter binding and transaction-scoped advisory ownership locks compatible
-with Neon pooling. Duplicate answer submissions return the stored response and add one
-checked observation. Unknown profile/session access fails closed. Cookies are Secure,
-HttpOnly and SameSite Strict; POST requests enforce the configured exact origin and JSON header.
-Additional hosts are exact project/deployment environment values, never a wildcard vercel.app.
+Postgres stores signed browser profiles, preferences, conversations, assessments,
+observations and flashcard reviews. Progress survives function replacement
+and deployments. Only reconstructible public index data is cached under /tmp.
+
+Cookies are Secure, HttpOnly and SameSite Strict with a 30-day lifetime.
+Progress belongs to that browser profile; another device/browser gets a separate
+profile. Clearing cookies loses access. There is no account-based cross-device sync.
+The same-origin JSON boundary, exact host allowlist, profile isolation and
+forget-my-data deletion are active.
+
+Visitors must explicitly consent before chat reaches OpenRouter. Consent can be
+withdrawn in Learning preferences; subsequent model chat is rejected.
+Preferences do not clear an existing conversation unless class/subject changes.
+A distressed message uses the immediate local safety response without provider use.
+Provider/platform backup retention is not represented as application deletion.
+
+## Durable provider allowance
+
+The user specifically approved storing the existing provider key in Vercel's
+encrypted production environment and sending consenting visitor chat, redacted
+recent conversation and short public maths references to OpenRouter.
+
+The active hosted lease is **200 provider requests and USD 0.50**, reserved
+inside the existing USD 10 product-phase ceiling, not added to it.
+Every Vercel instance shares one Postgres row-lock ledger. Reservations are
+committed before network use; calls, conservative cost and unknown outcomes
+survive cold starts. Automatic SDK retries are disabled. One bounded format
+repair, when needed, is a separate counted request. Exact paid-payload replay,
+missing/changed grants and unprovisioned wallets fail closed.
+
+A trusted operator can pause with `PostgresBudget.set_paused(True)`.
+The lease cannot also spend through a local PhaseWallet, and generic phase close
+cannot release its still-active cap. Existing phase allocations/wallets remain
+unchanged. Before further allocation/closure, pause and reconcile the remote
+ledger; do not reset or silently renew the lease.
+
+At the recorded development checkpoint: **USD 0.15739205 accounted / USD 10**;
+22 hosted attempts, USD 0.01326 provider-reported, no unknown reserved call.
+Usage can increase as consenting visitors use the site. The full USD 0.50 lease
+remains reserved while it is active. Current authoritative receipts stay private
+under Directions/deployment/live_chat_02; synchronize before quoting later totals.
+
+No API key, local learner database, raw experiment log, private/frozen evaluation
+material or original course PDF is in GitHub. The deployed source allowlist
+excludes them too. Keys belong only in Vercel encrypted environment settings.
 
 ## Qualification
 
-On 6 November 2026:
+The saved-progress baseline passed 2,537 local tests, 18 pre- and 18 post-
+redeployment HTTPS checks, and successful exact-source CI
+[42256373547](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42256373547).
+Direct DB checks confirmed complete deletion of the synthetic profile.
 
-- **2,537 tests passed locally**, including the actual synthetic Postgres acceptance cases.
-- The initial full run had 34 fixture errors because the canonical external-corpus environment
-  variable was omitted. With SOCRATES_SOURCE_WORKSPACE set to the canonical workspace all pass.
-  The original failed log is retained privately.
-- **18 pre-redeployment + 18 post-redeployment HTTPS checks** passed. These include native
-  assets, source citations, secure cookies, rejected foreign origin, saved preferences/history/
-  active practice/card review after redeployment, concurrent idempotent grading, profile
-  isolation and deletion.
-- The first Neon connection rejected a startup timeout option; the adapter now uses SET LOCAL
-  inside the transaction. A deployment was blocked by Git-account attribution and succeeded
-  after the user connected GitHub. Both failure receipts are preserved privately.
-- Qualified production deployment: `dpl_GGjBBF4umEGKf4dpLKmtorUhhkwn`, Python 3.12,
-  sin1, 60-second function limit, approximately 38.8 MB function output.
-- Private receipts: Directions/deployment/full_beta_01. They contain synthetic acceptance
-  identifiers and deployment metadata and are not published. Secrets remain private.
-- Remote CI for the release commit is recorded separately after publication.
+This iteration passed **2,564 full local tests**, including hosted/local reuse
+protections. Exact-source release CI is recorded in VERCEL_QUALIFICATION.json.
+Node syntax checks pass for the consent/citation UI.
 
-Before enabling hosted live generation, implement and qualify an atomic database-backed
-provider allocation linked to the existing global USD 10 ledger, retries disabled, preserved
-reservations for uncertain calls, a pause control and explicit visitor consent. The persistent-disk
-DeploymentBudget helper is not safe for serverless functions and is not used by this deployment.
+The exact screenshot conversation passes publicly. The initial 12-turn live
+smoke passed format, citation-ID and consent/safety controls, but assistant
+review found weak source/definition behaviour; those results are retained and
+are not reclassified as semantic successes. After versioned notes and stronger
+guards, all eight targeted live questions passed; their source notes opened
+correctly and synthetic learner data was deleted. These are development checks
+by the same assistant, not independently authored final assessment.
 
-Official references:
+Actual browser/mobile visual acceptance is still pending: the computer-use
+surface failed to initialize. Automated real HTTPS checks and mobile viewport
+metadata do not substitute for that review.
+
+## Deployment operations
+
+Use the Beta checkout and owning Vercel account. Link project
+`socratic-tutor-beta` under `ksharp0508-6488`. Its owner's GitHub login must be
+connected; this resolved the observed Git-author deployment block.
+
+First bootstrap with live generation off. Verify environment key names
+(`DATABASE_URL`, `TUTOR_BROWSER_SECRET`, `TUTOR_PUBLIC_ORIGIN`, `TUTOR_BETA_LIVE`)
+after linking the existing Neon Free integration. Never print secret values or
+duplicate resources. The browser secret is 32 random bytes encoded to 64 hex
+characters and must remain stable across deployments.
+
+Schema setup is explicit with `PostgresRepository(..., migrate=True)`;
+function startup never creates or resets learner tables.
+Live activation additionally requires the explicitly approved, pre-funded grant,
+`PostgresBudget.provision`, model/key settings and visitor consent.
+Do not use the file-based DeploymentBudget in serverless functions.
+
+Run `vercel deploy --dry --json`, audit its exact public runtime file list,
+then `vercel deploy --prod --yes`. The allowlist selects the minimal
+requirements.txt runtime and excludes the research pyproject.
+Git-triggered automatic deployments are not configured or qualified.
+Inspect READY status and the anonymous production alias; no-wait CLI text alone
+does not prove success. Data and provider ledger persist across deployments.
+
 [FastAPI on Vercel](https://vercel.com/docs/frameworks/backend/fastapi),
-[storage integrations](https://vercel.com/docs/storage),
-[Neon Marketplace](https://vercel.com/marketplace/neon),
-[Git-account attribution](https://vercel.com/docs/deployments/troubleshoot-project-collaboration).
+[storage](https://vercel.com/docs/storage),
+[Neon Free integration](https://vercel.com/marketplace/neon),
+[quadratic definitions](https://openstax.org/books/college-algebra-2e/pages/2-5-quadratic-equations),
+[right-triangle ratios](https://openstax.org/books/precalculus-2e/pages/5-4-right-triangle-trigonometry),
+[arithmetic sequences](https://openstax.org/books/college-algebra-2e/pages/9-2-arithmetic-sequences).
