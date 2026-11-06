@@ -5,7 +5,7 @@
 trigonometry opening and topic-discovery failures are fixed and verified on the public site.
 User explicitly approved encrypted production key storage, OpenRouter payload transfer for
 consenting visitors, and a **200-request / USD 0.50 hosted lease inside the USD 10 phase**.
-All changes and a short release note are being published to Beta; exact source/CI is recorded next.
+Published code is **be36b8c1e701c3aa28e68cc8e1dcd328799ceb11**. The short release note and all verified changes are on Beta.
 
 Start with Docs/deploy/VERCEL_BETA.md, VERCEL_QUALIFICATION.json and
 Docs/releases/2026-11-06-beta.md. **2,564 full local tests pass** on this release.
@@ -13,7 +13,7 @@ Real Postgres concurrency, cap, pause, unknown-outcome, no-reset, profile isolat
 deletion and local/hosted double-spend protections pass. JS syntax checks pass.
 The saved-progress baseline also passed 36 HTTPS checks across a real redeployment and
 GitHub CI 42256373547 on b2e2038 (2,503 portable + two registry + three smoke gates).
-Current release CI must be verified on the new source, not inferred from that earlier run.
+Current [CI 42263327146](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42263327146) is successful on be36b8c: 2,530 portable tests, two registry checks and all three smoke gates. All 142 deployed source files match this code.
 
 Live development smoke: 12 initial replies accepted format/citation checks; assistant review
 found weak quadratic/source explanations, retained honestly. Eight targeted post-fix live
@@ -53,8 +53,8 @@ Native MCP doc-search/list-teams checks still need a chat tool reload; actual CL
 and deployment are verified. The old one-time quota-reset automation completed and was deleted;
 no automatic future restart is currently scheduled.
 
-Next: finish exact-source release CI and checkpoint publication; then mobile/browser usability
-acceptance and broader independent source/learner evaluation. R3's contributor integrates graph work.
+Release code, CI and deployment are verified. Next: mobile/browser usability acceptance
+and broader independent source/learner evaluation. R3's contributor integrates graph work.
 
 ---
 

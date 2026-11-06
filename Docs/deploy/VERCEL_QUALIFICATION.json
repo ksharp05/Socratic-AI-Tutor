@@ -24,7 +24,7 @@
     "local_reuse_and_generic_close": "forbidden"
   },
   "last_usage_snapshot": {
-    "synced_at_utc": "2026-11-06T17:35:44.833784+00:00",
+    "synced_at_utc": "2026-11-06T17:44:48.370926+00:00",
     "allocation": "hosted-vercel-live-02",
     "provider_attempts": 22,
     "accounted_batch_usd": 0.01326,
@@ -71,6 +71,28 @@
   "mobile_usability": "pending",
   "R3_graph_integration": false,
   "human_teaching_review": "pending",
-  "remote_ci": "pending release publication",
-  "private_receipts": "Directions/deployment/live_chat_02"
+  "remote_ci": {
+    "source_sha": "be36b8c1e701c3aa28e68cc8e1dcd328799ceb11",
+    "run_id": 42263327146,
+    "url": "https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42263327146",
+    "conclusion": "success",
+    "portable_tests_passed": 2530,
+    "external_corpus_deselected": 34,
+    "synthetic_registry_tests_passed": 2,
+    "all_three_smoke_gates": "passed",
+    "zip_sha256": "8a05facde17fae92ec6109b1ffbe3bbbd444ee2a2ab20e03c3e3106ce23d4c19"
+  },
+  "private_receipts": "Directions/deployment/live_chat_02",
+  "source_sha": "be36b8c1e701c3aa28e68cc8e1dcd328799ceb11",
+  "deployed_source_match": {
+    "deployment_id": "dpl_GPVxmXTLwLtMybFFDX9KvY6MP7CZ",
+    "published_source_sha": "be36b8c1e701c3aa28e68cc8e1dcd328799ceb11",
+    "matched_source_files": 142,
+    "mismatches": [],
+    "public_https": true,
+    "live": true,
+    "consent_required": true,
+    "reference_note_count": 8,
+    "reference_note_sha256": "4d32114399ec6ef00382e9f44fa41020cee75962ad43250df01c5e5ae75b47b0"
+  }
 }

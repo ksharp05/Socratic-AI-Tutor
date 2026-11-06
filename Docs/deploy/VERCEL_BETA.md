@@ -92,7 +92,10 @@ redeployment HTTPS checks, and successful exact-source CI
 Direct DB checks confirmed complete deletion of the synthetic profile.
 
 This iteration passed **2,564 full local tests**, including hosted/local reuse
-protections. Exact-source release CI is recorded in VERCEL_QUALIFICATION.json.
+protections. Exact-source [CI 42263327146](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42263327146)
+passes on be36b8c: 2,530 portable tests, two registry checks and all three
+smoke gates; 34 external-corpus cases pass locally. All 142 deployed source
+files match this published code. Receipts are recorded in VERCEL_QUALIFICATION.json.
 Node syntax checks pass for the consent/citation UI.
 
 The exact screenshot conversation passes publicly. The initial 12-turn live
