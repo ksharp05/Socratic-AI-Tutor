@@ -80,6 +80,29 @@ Usage can increase as consenting visitors use the site. The full USD 0.50 lease
 remains reserved while it is active. Current authoritative receipts stay private
 under Directions/deployment/live_chat_02; synchronize before quoting later totals.
 
+### Key expiry: 16 November 2026
+
+The hosted key is the existing course OpenRouter key. The course lists it as
+valid until **16 November 2026** ([setup guide](../SETUP.md)).
+
+After that date, provider calls will fail. Each chat reply then falls back to a
+labelled source-reading response (`provider_failed_source_fallback` in
+`src/socrates_beta/dialogue.py`), so the site keeps working without live replies.
+Reservations are committed before each network call, so expect failed attempts
+to keep counting toward the 200-request lease.
+
+Neither `/health` nor `/beta/api/health` will show the problem: both report the
+configured `TUTOR_BETA_LIVE` setting, not whether the key still works.
+
+Before 16 November, choose one of these:
+
+- pause the lease with `PostgresBudget.set_paused(True)`;
+- set `TUTOR_BETA_LIVE=0` and redeploy;
+- replace the key with another approved one.
+
+Course keys are personal, and the course tracks usage per key
+([decisions](../DECISIONS.md)).
+
 No API key, local learner database, raw experiment log, private/frozen evaluation
 material or original course PDF is in GitHub. The deployed source allowlist
 excludes them too. Keys belong only in Vercel encrypted environment settings.

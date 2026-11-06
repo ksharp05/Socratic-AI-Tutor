@@ -1,6 +1,15 @@
 # Beta continuation - 5 November 2026
 
-Current M3/M4 continuation supersedes the historical counts and CI uncertainty below: see [M3 checkpoint](../m3/CHECKPOINT.md) and [M4 results](../m4/RESULTS.md). Baseline remote Actions is verified, 1,000/1,000 provider requests are used, and 500 final local regression checks pass. E3 remains 36/48; human/final gates are open.
+> **Current state, 6 November 2026.** This page records the 5 November continuation and is kept as history. Its test counts, CI status, call budget and "Remaining work" list are out of date.
+>
+> For the current state, start with the top section of the [M3 checkpoint](../m3/CHECKPOINT.md). Then read the [Vercel beta guide](../deploy/VERCEL_BETA.md) and the [6 November release note](../releases/2026-11-06-beta.md).
+>
+> - Published code is `be36b8c`. 2,564 local tests pass, and [CI 42263327146](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42263327146) passed on that commit.
+> - The live beta is https://socratic-tutor-beta.vercel.app/beta/.
+> - Provider use is tracked against the USD 10 phase budget. USD 0.1574 was accounted on 6 November.
+> - Still open: R3 graph integration, mobile/browser visual review and independent or human evaluation.
+>
+> Earlier M4 results are in [M4 results](../m4/RESULTS.md).
 
 The user requested a new **local `Beta` branch**, created from `3dd518ac228f07e69969120c21b251eba52161b3` (the milestone-2 handoff). This replaces the older milestone-only branch instruction for this continuation. Work stays local until the Lead requests a push. The branch name is separate from the existing anonymous Socrates beta application.
 
