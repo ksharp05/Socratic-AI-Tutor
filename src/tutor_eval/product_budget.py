@@ -92,6 +92,8 @@ def attach_product_budget(llm,budget,*,cap=300,timeout=30):
     auth=read(budget.phase.authorization)
     if not llm.enabled or llm.model not in auth['models']:raise ValueError('Unapproved product model or disabled provider')
     if not 1<=cap<=3000:raise ValueError('Output cap outside approved development envelope')
+    from tutor.config import SETTINGS
+    if llm.model not in SETTINGS.llm['course_models']:raise ValueError('Product model is outside the course allowlist')
     from tutor.llm import base_url
     if base_url().rstrip('/')!=auth['destination']:raise ValueError('Provider destination mismatch')
     inner=llm._chat();root=getattr(inner,'root_client',None)

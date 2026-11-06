@@ -25,9 +25,9 @@ logging.getLogger("fastmcp").setLevel(logging.CRITICAL)
 
 PERMISSIONS: dict[str, set[tuple[str, str]]] = {
     "study_planner": {("learner-store", t) for t in
-                      ("read_learner", "update_mastery", "record_misconception", "record_explanation", "save_plan", "apply_quiz")},
+                      ("read_learner", "update_mastery", "record_misconception", "record_explanation", "save_plan", "apply_quiz", "record_revisit", "resolve_revisit")},
     "diagnostician": {("textbook-kb", "search"), ("learner-store", "read_learner"), ("math-tools", "diagnose_response"), ("math-tools", "check_triangle_labels"), ("math-tools", "check_triangle_ratio_definition")},
-    "tutor": {("textbook-kb", "search"), ("textbook-kb", "get_section")},
+    "tutor": {("textbook-kb", "search"), ("textbook-kb", "get_section"), ("math-tools", "generate_parallel_example")},
     "grader": {("math-tools", "check_equivalence"), ("math-tools", "parse_answer"), ("math-tools", "diagnose_response")},
     "question_setter": {("question-bank", "list_published"), ("question-bank", "candidate_items"),
                         ("question-bank", "propose_set"), ("math-tools", "solve")},
@@ -50,6 +50,7 @@ class CallContext:
     session_id: str | None
     learner_id: str | None = None
     node: str = ""
+    parallel_example_for: str | None = None
     calls: int = 0
     budget: int = 300
     log: list = field(default_factory=list)
@@ -121,6 +122,8 @@ class ToolBus:
         denial = None
         if (server, tool) not in PERMISSIONS.get(role, set()):
             denial = ("FORBIDDEN", f"role '{role}' may not call {server}.{tool}")
+        elif (server,tool)==('math-tools','generate_parallel_example') and (ctx.node!='after_last_hint' or ctx.parallel_example_for!=args.get('question_ref')):
+            denial = ('FORBIDDEN','A parallel example requires a code-owned after-last-hint scope for the active practice item')
         elif "learner_id" in args and ctx.learner_id and args["learner_id"] != ctx.learner_id:
             denial = ("FORBIDDEN", "a session may only touch its own learner")
         elif ctx.calls >= ctx.budget:

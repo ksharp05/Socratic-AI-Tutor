@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS explanations (learner_id TEXT, misconception_id TEXT,
 CREATE TABLE IF NOT EXISTS plans (learner_id TEXT PRIMARY KEY, plan_json TEXT, version INTEGER, updated_at REAL);
 CREATE TABLE IF NOT EXISTS topic_plans (learner_id TEXT NOT NULL, chapter TEXT NOT NULL, plan_json TEXT NOT NULL,
   version INTEGER NOT NULL, updated_at REAL NOT NULL, PRIMARY KEY (learner_id, chapter));
+CREATE TABLE IF NOT EXISTS revisit_items (learner_id TEXT NOT NULL, question_ref TEXT NOT NULL,
+  chapter TEXT NOT NULL, content_sha256 TEXT NOT NULL, status TEXT NOT NULL,
+  reason TEXT NOT NULL, created_at REAL NOT NULL, updated_at REAL NOT NULL,
+  PRIMARY KEY (learner_id, question_ref));
 CREATE TABLE IF NOT EXISTS learner_events (id INTEGER PRIMARY KEY AUTOINCREMENT, learner_id TEXT, kind TEXT,
   payload TEXT, ts REAL);
 CREATE TABLE IF NOT EXISTS keys (question_ref TEXT PRIMARY KEY, key_json TEXT, verified INTEGER);

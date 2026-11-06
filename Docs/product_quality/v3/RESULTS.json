@@ -1,0 +1,634 @@
+{
+  "scope": "AI-authored one-turn public development evidence, offline only; no human, learning or final-evaluation claim",
+  "protocol_sha256": "72e367f3fc0f58d96a78caab4b28c20bc30e297e9e60b7fee8d65847f45e2184",
+  "cases": 360,
+  "catalogue_types": 30,
+  "partitions": {
+    "development": 120,
+    "challenge": 120,
+    "confirmation": 120
+  },
+  "actual_human_reviews": 0,
+  "label_review": {
+    "author_model": "openai/gpt-6-luna",
+    "reviewer_model": "google/gemini-3.1-flash-lite",
+    "responses": 360,
+    "invalid_evidence": 1,
+    "ambiguous": 6,
+    "generator_reviewer_agreements": 347,
+    "disagreements": 6,
+    "excluded_uncertain": 7,
+    "reviews_sha256": "cfec97c73fd1780c424bbb4a9ee32761f73178c9e99e256dda0c0c21cb39e101",
+    "initial_review_failure": "One non-verbatim evidence quote; original outputs preserved, continuation sent only unreviewed groups",
+    "duplicate_provider_requests": 0
+  },
+  "variants": {
+    "before": {
+      "source_commit": "de3639711b772bd11ece98ff753845bbedca08aa",
+      "all_proposed_labels": {
+        "cases": 360,
+        "incorrect_claim_targets": 120,
+        "target_hits": 16,
+        "no_error_targets": 240,
+        "false_labels": 3,
+        "wrong_type_labels": 0
+      },
+      "ai_agreement_subset": {
+        "cases": 347,
+        "incorrect_claim_targets": 116,
+        "target_hits": 16,
+        "no_error_targets": 231,
+        "false_labels": 3,
+        "wrong_type_labels": 0
+      },
+      "partitions": {
+        "development": {
+          "cases": 120,
+          "incorrect_claim_targets": 60,
+          "target_hits": 11,
+          "no_error_targets": 60,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "challenge": {
+          "cases": 120,
+          "incorrect_claim_targets": 30,
+          "target_hits": 3,
+          "no_error_targets": 90,
+          "false_labels": 2,
+          "wrong_type_labels": 0
+        },
+        "confirmation": {
+          "cases": 120,
+          "incorrect_claim_targets": 30,
+          "target_hits": 2,
+          "no_error_targets": 90,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        }
+      },
+      "by_type": {
+        "ap_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "ap_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 3,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "qe_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "qe_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        }
+      },
+      "guard_rejections": 0,
+      "unexpected_mastery_rows": 0,
+      "citation_snapshots": 324,
+      "citation_errors": 0,
+      "model_calls": 0,
+      "results_sha256": "27dd57c0c85ea499e21e3a999ae972a83c71e20ed604852518d0bbdfba14d652"
+    },
+    "merged": {
+      "source_commit": "8240ce3151af76a1ab08ae58ca16ed6d4fd76903",
+      "all_proposed_labels": {
+        "cases": 360,
+        "incorrect_claim_targets": 120,
+        "target_hits": 19,
+        "no_error_targets": 240,
+        "false_labels": 6,
+        "wrong_type_labels": 0
+      },
+      "ai_agreement_subset": {
+        "cases": 347,
+        "incorrect_claim_targets": 116,
+        "target_hits": 19,
+        "no_error_targets": 231,
+        "false_labels": 6,
+        "wrong_type_labels": 0
+      },
+      "partitions": {
+        "development": {
+          "cases": 120,
+          "incorrect_claim_targets": 60,
+          "target_hits": 13,
+          "no_error_targets": 60,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "challenge": {
+          "cases": 120,
+          "incorrect_claim_targets": 30,
+          "target_hits": 4,
+          "no_error_targets": 90,
+          "false_labels": 5,
+          "wrong_type_labels": 0
+        },
+        "confirmation": {
+          "cases": 120,
+          "incorrect_claim_targets": 30,
+          "target_hits": 2,
+          "no_error_targets": 90,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        }
+      },
+      "by_type": {
+        "ap_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "ap_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "ap_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 3,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "qe_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "qe_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "qe_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 2,
+          "no_error_targets": 8,
+          "false_labels": 2,
+          "wrong_type_labels": 0
+        },
+        "qe_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 1,
+          "wrong_type_labels": 0
+        },
+        "qe_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m01": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m02": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 1,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m03": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m04": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m05": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m06": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m07": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m08": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m09": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        },
+        "tr_m10": {
+          "cases": 12,
+          "incorrect_claim_targets": 4,
+          "target_hits": 0,
+          "no_error_targets": 8,
+          "false_labels": 0,
+          "wrong_type_labels": 0
+        }
+      },
+      "guard_rejections": 0,
+      "unexpected_mastery_rows": 0,
+      "citation_snapshots": 318,
+      "citation_errors": 0,
+      "model_calls": 0,
+      "results_sha256": "cdf7d49f3d1f703d3b55210c3d34fae6ed73309f3589f1682492a749e16ca6aa"
+    }
+  },
+  "budget_snapshot": {
+    "total_provider_attempts": 1158,
+    "known_continuation_usd": 0.3571758,
+    "phase_provider_reported_usd": 0.0732038,
+    "phase_accounted_usd": 0.1232978,
+    "phase_ceiling_usd": 10,
+    "remaining_accounted_ceiling_usd": 9.8767022,
+    "unknown_cost_limits": [
+      "Original 98 requests have unknown money",
+      "The first v3 authoring attempt failed; USD 0.050094 reserved, no provider cost reported"
+    ]
+  },
+  "remaining_gates": [
+    "Human case, source and teaching review",
+    "R3 diagnosis quality and specialist/tool-selection acceptance",
+    "R3 integration of prepared R2/R4 services",
+    "Independent final authors and raters",
+    "Final scope, preregistration and freeze",
+    "Independent installation and release acceptance",
+    "Deployment deferred"
+  ]
+}

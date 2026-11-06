@@ -19,7 +19,7 @@ from .toolbus import ToolCallError
 
 LEARNER_TABLES = (
     "mastery", "misconceptions", "explanations", "plans", "topic_plans",
-    "learner_events", "alerts", "stuck_sessions", "stuck_alert_state",
+    "learner_events", "revisit_items", "alerts", "stuck_sessions", "stuck_alert_state",
     "applied_quizzes", "graph_session_leases", "learner_session_index", "learners",
 )
 

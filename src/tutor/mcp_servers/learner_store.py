@@ -17,6 +17,7 @@ from fastmcp.exceptions import ToolError
 from .. import learner, store
 from ..config import SETTINGS
 from ..setup_content import load
+from ..question_catalog import graph_items, allowed
 from ..topic_sources import concepts as topic_concepts, misconceptions as topic_misconceptions
 from ..store import dumps, now
 from . import READ, WRITE
@@ -25,6 +26,9 @@ STATUSES = ("suspected", "confirmed", "addressed", "resolved")
 
 
 def build(conn: sqlite3.Connection) -> FastMCP:
+    practice = {i['question_id']:i for i in graph_items() if allowed(i,'practice')}
+    def item_digest(item):
+        return hashlib.sha256(dumps(item).encode()).hexdigest()
     concepts = {c["concept_id"] for c in topic_concepts()}
     misconceptions = {m["misconception_id"] for m in topic_misconceptions()}
 
@@ -51,13 +55,53 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         plan_row = conn.execute("SELECT plan_json FROM plans WHERE learner_id=?", (learner_id,)).fetchone()
         topic_plans = {r["chapter"]: json.loads(r["plan_json"]) for r in
                        conn.execute("SELECT chapter,plan_json FROM topic_plans WHERE learner_id=?", (learner_id,))}
-        return {"learner_id": learner_id, "mastery": mastery, "misconceptions": mis, "styles": styles,
+        revisit = [dict(r) for r in conn.execute("SELECT question_ref,chapter,content_sha256,reason,created_at,updated_at FROM revisit_items WHERE learner_id=? AND status='pending' ORDER BY created_at,question_ref",(learner_id,))]
+        revisit = [r for r in revisit if r['question_ref'] in practice and r['content_sha256']==item_digest(practice[r['question_ref']])][:100]
+        return {"learner_id": learner_id, "revisit_items": revisit, "mastery": mastery, "misconceptions": mis, "styles": styles,
                 "plan": json.loads(plan_row["plan_json"]) if plan_row else None, "topic_plans": topic_plans}
 
     @mcp.tool(annotations=READ)
     def read_learner(learner_id: str) -> dict:
         """Read one learner's model: mastery, misconceptions, explanation styles that worked, and plan."""
         return _snapshot(learner_id)
+
+    @mcp.tool(annotations=WRITE)
+    def record_revisit(learner_id: str, question_ref: str, reason: str = 'after_last_hint') -> dict:
+        """Queue an eligible practice item for this learner; never changes mastery or publication."""
+        _exists(learner_id)
+        if question_ref not in practice:raise ToolError('INVALID_INPUT: revisit requires an eligible practice item')
+        if reason not in ('after_last_hint','repeated_incorrect'):raise ToolError('INVALID_INPUT: unknown revisit reason')
+        item=practice[question_ref];fingerprint=item_digest(item)
+        conn.execute('BEGIN IMMEDIATE')
+        try:
+            prior=conn.execute('SELECT * FROM revisit_items WHERE learner_id=? AND question_ref=?',(learner_id,question_ref)).fetchone()
+            if prior and prior['status']=='pending' and prior['content_sha256']==fingerprint:
+                conn.execute('COMMIT')
+                return {'ok':True,'changed':False,'question_ref':question_ref,'status':'pending'}
+            timestamp=now()
+            conn.execute('INSERT INTO revisit_items VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(learner_id,question_ref) DO UPDATE SET chapter=excluded.chapter,content_sha256=excluded.content_sha256,status=excluded.status,reason=excluded.reason,created_at=excluded.created_at,updated_at=excluded.updated_at',
+                         (learner_id,question_ref,item['chapter'],fingerprint,'pending',reason,timestamp,timestamp))
+            _event(learner_id,'revisit_marked',{'question_ref':question_ref,'chapter':item['chapter'],'content_sha256':fingerprint,'reason':reason})
+            conn.execute('COMMIT')
+            return {'ok':True,'changed':True,'question_ref':question_ref,'status':'pending'}
+        except BaseException:
+            if conn.in_transaction:conn.execute('ROLLBACK')
+            raise
+
+    @mcp.tool(annotations=WRITE)
+    def resolve_revisit(learner_id: str, question_ref: str) -> dict:
+        """Resolve this learner's queued item; the controller calls this only after checked correct work."""
+        _exists(learner_id)
+        if question_ref not in practice:raise ToolError('INVALID_INPUT: unknown practice item')
+        conn.execute('BEGIN IMMEDIATE')
+        try:
+            changed=conn.execute("UPDATE revisit_items SET status='resolved',updated_at=? WHERE learner_id=? AND question_ref=? AND status='pending' AND content_sha256=?",(now(),learner_id,question_ref,item_digest(practice[question_ref]))).rowcount
+            if changed:_event(learner_id,'revisit_resolved',{'question_ref':question_ref})
+            conn.execute('COMMIT')
+            return {'ok':True,'changed':bool(changed),'question_ref':question_ref,'status':'resolved' if changed else 'unchanged'}
+        except BaseException:
+            if conn.in_transaction:conn.execute('ROLLBACK')
+            raise
 
     @mcp.tool(annotations=WRITE)
     def update_mastery(learner_id: str, concept_id: str, p_mastery: float, evidence_ref: str) -> dict:

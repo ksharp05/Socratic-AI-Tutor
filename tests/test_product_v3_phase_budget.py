@@ -63,3 +63,13 @@ def test_chain_counts_actual_prior_attempts(phase):
 def test_sealed_batch_cannot_silently_repeat(phase):
     one=phase.allocate('batch-one','synthetic test');phase.close(one)
     with pytest.raises(ValueError):phase.allocate('batch-one','synthetic test')
+
+
+
+def test_non_course_model_is_rejected_before_client_or_request(phase):
+    from tutor_eval.product_budget import attach_product_budget
+    auth=read(phase.authorization);auth['models']={'openai/gpt-4.1':{}};save(phase.authorization,auth)
+    wallet=phase.allocate('non-course','synthetic test')
+    llm=SimpleNamespace(enabled=True,model='openai/gpt-4.1',_chat=lambda:pytest.fail('Must reject before constructing a provider client'))
+    with pytest.raises(ValueError,match='course allowlist'):attach_product_budget(llm,wallet)
+    assert wallet.snapshot()['provider_attempts']==0

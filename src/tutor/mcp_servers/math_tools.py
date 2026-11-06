@@ -14,7 +14,7 @@ from fastmcp.exceptions import ToolError
 
 from .. import mathcore
 from socratic_data import assessment_tasks, math_kernel, tasks  # mathcore registers the dataset path
-from ..question_catalog import graph_items
+from ..question_catalog import graph_items, allowed
 from ..store import dumps
 from . import READ
 
@@ -109,6 +109,15 @@ def build(conn: sqlite3.Connection, extra_items: list[dict] | None = None) -> Fa
         """Check the learner's ordered side names without returning the numeric ratio key."""
         from ..triangle_reasoning import check_ratio_definition
         return check_ratio_definition(_item(question_ref)["problem"], response)
+
+    @mcp.tool(annotations=READ)
+    def generate_parallel_example(question_ref: str) -> dict:
+        """TP-A2: return a verified different worked example; never the active item's key."""
+        from ..parallel_examples import generate
+        item = _item(question_ref)
+        if not allowed(item, 'practice'):
+            raise ToolError('FORBIDDEN: parallel examples require an eligible practice item')
+        return generate(item, _key(question_ref))
 
     @mcp.tool(annotations=READ)
     def leak_check(question_ref: str, text: str) -> dict:
