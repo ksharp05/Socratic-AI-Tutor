@@ -56,8 +56,12 @@ def build(conn: sqlite3.Connection) -> FastMCP:
         topic_plans = {r["chapter"]: json.loads(r["plan_json"]) for r in
                        conn.execute("SELECT chapter,plan_json FROM topic_plans WHERE learner_id=?", (learner_id,))}
         revisit = [dict(r) for r in conn.execute("SELECT question_ref,chapter,content_sha256,reason,created_at,updated_at FROM revisit_items WHERE learner_id=? AND status='pending' ORDER BY created_at,question_ref",(learner_id,))]
-        revisit = [r for r in revisit if r['question_ref'] in practice and r['content_sha256']==item_digest(practice[r['question_ref']])][:100]
-        return {"learner_id": learner_id, "revisit_items": revisit, "mastery": mastery, "misconceptions": mis, "styles": styles,
+        revisit = [r for r in revisit if r['question_ref'] in practice and r['content_sha256']==item_digest(practice[r['question_ref']])]
+        by_chapter = {}
+        for row in revisit:
+            by_chapter[row['chapter']] = by_chapter.get(row['chapter'], 0) + 1
+        revisit_summary = {'total': len(revisit), 'by_chapter': by_chapter, 'has_more': len(revisit) > 100}
+        return {"learner_id": learner_id, "revisit_items": revisit[:100], "revisit_summary": revisit_summary, "mastery": mastery, "misconceptions": mis, "styles": styles,
                 "plan": json.loads(plan_row["plan_json"]) if plan_row else None, "topic_plans": topic_plans}
 
     @mcp.tool(annotations=READ)

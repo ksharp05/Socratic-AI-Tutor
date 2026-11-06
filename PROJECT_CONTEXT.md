@@ -1,3 +1,23 @@
+# Current checkpoint — R4 explanations and owned revisit overview
+
+**6 November 2026.** Continue Beta in Main with canonical D: cwd. GitHub publication remains authorized, deployment deferred, R3 owned by its contributor. Start with Docs/product_quality/v3/STATUS.md, R4_REVIEW.md/json, TASK_POOL_AUDIT.md/json and TOOLS_HANDOFF.md. This supersedes older unrun-R4 and unexplained-regression statements below.
+
+New code: parallel-example-v2 provides labelled checked steps, complete zero equations and task-specific transfer questions; IDs include renderer version. All 331 public practice items retain verified nonleaking examples. A repeated 900-input audit yields 892 verified valid examples/eight rejected invalid inputs. Learner/API overview adds owned revisit counts, teacher-only item details, exact totals beyond the 100-detail cap, stale-version filtering and privacy deletion. No new R3 routing/diagnosis or production model changes; R3 integration remains pending.
+
+Validation: 1434 full four-suite tests and all three local CI gates pass. Remote CI for this continuation is pending; prior 214b7ef remote recovery is green. The initial overview test rendered Chat instead of its callable Progress page; the corrected AppTest invokes the production callable after real app/auth setup, and both role views pass. Initial failed test log is preserved. This is functional AppTest evidence, not new manual/mobile browser acceptance.
+
+R4 paired review: same 18 public examples/numbers plus 12 corrupted controls, frozen before and after. Mean AI clarity 2.611 -> 4.389. Reviewer misses four controls before/five after; one unbound quote each, contradictions retained. Code accepts 18/18 originals and rejects 12/12 controls in each round. AI cannot override verification or grant teaching approval. V2 teacher forms remain blank under r4_review_02/teacher_examples_18.json. Source files/protocols/inputs/raw outputs/budgets preserved in r4_review_01 and r4_review_02. No repeated received/uncertain requests.
+
+Baseline diagnosis decline was isolated to task-pool selection on this simulator. Cached audit: 15 changed AP trajectories/arm, nine lost hit sessions; first divergence is practice selection at turn index 1. An evaluation-only C2 ablation restores the prior 131-item scope, leaves core diagnosis/runtime/simulator/config/data/seeds unchanged, and recovers 0.208 recall/0.625 precision/gain 0.167 with all 48 trajectories identical to v2. Full 331-item scope remains 0.083/0.4/0.083 with 18 unchecked attempts. Product still has 331 items. Broader simulator/task support needs R5/R2 review; fresh-message diagnosis remains weak. See baseline_delta_audit_01 and baseline_task_pool_audit_02. Preflight 01 stopped before sessions on LF/CRLF byte comparison; normalized text fix and original error are preserved. No R3 product code was changed for the audit.
+
+Budget: 1218 total historical/current attempts, known continuation USD 0.37801005; original 98 money and first failed author request actual billing unknown. Phase reported USD 0.09403805, accounted USD 0.14413205, remaining USD 9.85586795 under the durable USD 10 cap. New R4 batches use 60 calls/USD 0.02083425, all costs covered, wallets closed. Every original wallet is unchanged; no paid job is active. R4_NEXT_BATCH.json is now completed via the two recorded rounds; never repeat them. Safe verifiers: report_r4_iteration.py --check, report_v3_fresh_cases.py --check, report_v3_baseline.py --check.
+
+Keep secrets/private data/DBs/raw logs out of GitHub. Deferred mobile/Vercel stash 9cf6a27f25999be536d61eea665bc440bb9ab019 stays untouched. Backup resumption is at 20:55 IST today, subject to availability. No new PRs were open; #1/#4/#5/#6 remain merged. Preserve all old studies/reports/tags, original data and blank human reviews.
+
+Next: publish this reviewed batch and verify actual remote CI; R3 integrates the handed-off services; R5/R2 independently review simulator coverage and evaluation scope; actual teachers/rater/final authors and release acceptance remain required. Do not author competing R3 routing or silently narrow the product to make metrics improve. Formal M3/M4 completion is not claimed.
+
+---
+
 # Current checkpoint — approved PRs merged, R2/R4 services qualified
 
 **6 November 2026.** Continue Beta in D:\Work\IITB\Socratic Tutor Main; all project commands use canonical D:\Work\IITB\Socratic Tutor. The user authorized GitHub publication, deferred deployment, and requested final-product work outside R3 while its contributor continues R3. Start with Docs/product_quality/v3/STATUS.md, RESULTS.md/json, DATA_SUFFICIENCY.md and TOOLS_HANDOFF.md. This section supersedes older local-only, unrun-generator and deployment-priority statements below.

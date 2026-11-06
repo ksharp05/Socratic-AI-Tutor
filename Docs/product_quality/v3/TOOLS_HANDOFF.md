@@ -25,3 +25,7 @@ Implementation: `src/tutor/store.py`, `src/tutor/mcp_servers/learner_store.py`, 
 ## Acceptance still required
 
 R3 supplies and reviews the routing integration; R2 reviews the memory contract and actual teacher workflow. Run integrated practice/quiz/restart/deletion checks after that change. No human acceptance, independent final evaluation or improved learning result is claimed by these tool-level checks.
+
+## Latest service revision
+
+parallel-example-v2 binds labelled explanations and task-specific transfer questions to the checked proof; example IDs include renderer version. Use the version and example_sha256 when retaining results; never relabel an old rendering as current. The read-only overview now exposes exact owned totals to students and capped item details only to teachers. R3 still needs to persist marks, resolve only after deterministic correct work, recheck publication/version and wire the example tool. See R4_REVIEW.md and TASK_POOL_AUDIT.md for current review/calibration and evaluation-scope limits.

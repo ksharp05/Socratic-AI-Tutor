@@ -10,7 +10,7 @@ from . import mathcore
 from socratic_data import math_kernel as mk
 
 SUPPORTED=frozenset({'quadratic_solve','ap_term','ap_sum','ap_first','ap_difference','ap_count','ap_mean','ap_ledger_term','trig_triangle_ratio'})
-VERSION='parallel-example-v1'
+VERSION='parallel-example-v2'
 
 def digest(value):return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 def f(value):return Fraction(str(value))
@@ -37,49 +37,133 @@ def candidate(source,index):
     problem['givens']=g;return problem
 
 
-def worked(problem,key):
-    task,g=problem['task_type'],problem['givens'];steps=[];lines=[]
-    def step(op,a,b,result,label=None):
-        data=arithmetic(op,a,b,result);steps.append(data)
-        symbols={'add':'+','subtract':'-','multiply':'*','divide':'/'}
-        right='one' if label=='one' else 'two' if label=='two' else str(b)
-        lines.append(f"{a} {symbols[op]} {right} = {result}.")
-    if task=='quadratic_solve':
-        values=sorted((f(v) for v in key['values']));r,s=values
-        prompt=f"Solve x*x - {r+s}*x = {-r*s}."
-        lines=[f"Move the constant to form x*x - {r+s}*x + {r*s}.",f"Factor: (x - {r})*(x - {s}).",'A zero product has a zero factor.',f"Example solutions: x = {r} or x = {s}."]
-        steps=[{'operation':'factor_roots','roots':[str(r),str(s)]}]
-    elif task=='ap_term':
-        prompt=f"An AP starts at {g['a']} with difference {g['d']}. Find term {g['n']}."
-        jumps=g['n']-1;change=jumps*g['d'];step('subtract',g['n'],1,jumps,'one');step('multiply',jumps,g['d'],change);step('add',g['a'],change,g['a']+change)
-    elif task=='ap_sum':
-        prompt=f"An AP starts at {g['a']} with difference {g['d']}. Add its first {g['n']} terms."
-        jumps=g['n']-1;last=g['a']+jumps*g['d'];pair=g['a']+last;product=g['n']*pair
-        step('subtract',g['n'],1,jumps,'one');step('multiply',jumps,g['d'],jumps*g['d']);step('add',g['a'],jumps*g['d'],last);step('add',g['a'],last,pair);step('multiply',g['n'],pair,product);step('divide',product,2,Fraction(product,2),'two')
-    elif task=='ap_first':
-        prompt=f"Term {g['n']} of an AP is {g['term']}, with difference {g['d']}. Find its first term."
-        jumps=g['n']-1;change=jumps*g['d'];step('subtract',g['n'],1,jumps,'one');step('multiply',jumps,g['d'],change);step('subtract',g['term'],change,g['term']-change)
-    elif task=='ap_difference':
-        prompt=f"An AP has term {g['m']} = {g['term_m']} and term {g['n']} = {g['term_n']}. Find its difference."
-        gap=g['n']-g['m'];change=g['term_n']-g['term_m'];step('subtract',g['n'],g['m'],gap);step('subtract',g['term_n'],g['term_m'],change);step('divide',change,gap,Fraction(change,gap))
-    elif task=='ap_count':
-        prompt=f"An AP starts at {g['a']}, changes by {g['d']}, and ends at {g['last']}. Count its terms."
-        change=g['last']-g['a'];gap=Fraction(change,g['d']);step('subtract',g['last'],g['a'],change);step('divide',change,g['d'],gap);step('add',gap,1,gap+1,'one')
-    elif task=='ap_mean':
-        prompt=f"Insert an arithmetic mean between {g['left']} and {g['right']}."
-        change=g['right']-g['left'];half=Fraction(change,2);step('subtract',g['right'],g['left'],change);step('divide',change,2,half,'two');step('add',g['left'],half,f(g['left'])+half)
-    elif task=='ap_ledger_term':
-        prompt=f"Prefix totals are S_{g['n']-1} = {g['previous_sum']} and S_{g['n']} = {g['prefix_sum']}. Find term {g['n']}."
-        lines.append('The later total includes one extra term.');step('subtract',g['prefix_sum'],g['previous_sum'],f(g['prefix_sum'])-f(g['previous_sum']))
+def worked(problem: dict, key: dict) -> dict:
+    """Bind each checked operation to a short explanation of its purpose."""
+    task, g = problem["task_type"], problem["givens"]
+    steps, lines = [], []
+
+    def step(operation, left, right, result, explanation):
+        steps.append(arithmetic(operation, left, right, result))
+        lines.append(explanation)
+
+    if task == "quadratic_solve":
+        r, s = sorted(f(value) for value in key["values"])
+        prompt = f"Solve x*x - {r+s}*x = {-r*s}."
+        lines = [
+            f"Put all terms on the left: x*x - {r+s}*x + {r*s} = zero.",
+            f"Factor the left side: (x - {r})*(x - {s}) = zero.",
+            "A product is zero only if at least one factor is zero.",
+            f"The example solutions are x = {r} or x = {s}.",
+        ]
+        steps = [{"operation": "factor_roots", "roots": [str(r), str(s)]}]
+        transfer = "Which factors could make a zero product in your question?"
+    elif task == "ap_term":
+        prompt = f"An AP starts at {g['a']} with difference {g['d']}. Find term {g['n']}."
+        jumps = g["n"] - 1
+        change = jumps * g["d"]
+        step("subtract", g["n"], 1, jumps,
+             f"From the first term to position {g['n']}, there are {jumps} equal jumps.")
+        step("multiply", jumps, g["d"], change,
+             f"Find the total change: {jumps} * {g['d']} = {change}.")
+        step("add", g["a"], change, g["a"] + change,
+             f"Add that change to the first term: {g['a']} + {change} = {g['a'] + change}.")
+        transfer = "How many equal jumps lead to the term in your question?"
+    elif task == "ap_sum":
+        prompt = f"An AP starts at {g['a']} with difference {g['d']}. Add its first {g['n']} terms."
+        jumps = g["n"] - 1
+        change = jumps * g["d"]
+        last = g["a"] + change
+        pair = g["a"] + last
+        product = g["n"] * pair
+        step("subtract", g["n"], 1, jumps,
+             f"To reach the last term at position {g['n']}, take {jumps} equal jumps.")
+        step("multiply", jumps, g["d"], change,
+             f"Find the change to the last term: {jumps} * {g['d']} = {change}.")
+        step("add", g["a"], change, last,
+             f"The last term is {g['a']} + {change} = {last}.")
+        step("add", g["a"], last, pair,
+             f"Pair the first and last terms: {g['a']} + {last} = {pair}.")
+        step("multiply", g["n"], pair, product,
+             f"Multiply this pair total by the term count: {g['n']} * {pair} = {product}.")
+        step("divide", product, 2, Fraction(product, 2),
+             f"This counts every term twice, so halve the total. The example sum is {Fraction(product, 2)}.")
+        transfer = "Which first and last terms would you pair in your question?"
+    elif task == "ap_first":
+        prompt = f"Term {g['n']} of an AP is {g['term']}, with difference {g['d']}. Find its first term."
+        jumps = g["n"] - 1
+        change = jumps * g["d"]
+        first = g["term"] - change
+        step("subtract", g["n"], 1, jumps,
+             f"The known term is {jumps} equal jumps after the first term.")
+        step("multiply", jumps, g["d"], change,
+             f"Find the total change across those jumps: {jumps} * {g['d']} = {change}.")
+        step("subtract", g["term"], change, first,
+             f"Undo that change to recover the first term: {g['term']} - {change} = {first}.")
+        transfer = "What total change should you subtract from your known term?"
+    elif task == "ap_difference":
+        prompt = f"An AP has term {g['m']} = {g['term_m']} and term {g['n']} = {g['term_n']}. Find its difference."
+        gap = g["n"] - g["m"]
+        change = g["term_n"] - g["term_m"]
+        difference = Fraction(change, gap)
+        step("subtract", g["n"], g["m"], gap,
+             f"Count the equal jumps between the positions: {g['n']} - {g['m']} = {gap}.")
+        step("subtract", g["term_n"], g["term_m"], change,
+             f"Find the change in term values: {g['term_n']} - {g['term_m']} = {change}.")
+        step("divide", change, gap, difference,
+             f"Divide by the jump count to find the change per jump: {change} / {gap} = {difference}.")
+        transfer = "How many equal jumps separate the known terms in your question?"
+    elif task == "ap_count":
+        prompt = f"An AP starts at {g['a']}, changes by {g['d']}, and ends at {g['last']}. Count its terms."
+        change = g["last"] - g["a"]
+        jumps = Fraction(change, g["d"])
+        count = jumps + 1
+        step("subtract", g["last"], g["a"], change,
+             f"Find the total change: {g['last']} - {g['a']} = {change}.")
+        step("divide", change, g["d"], jumps,
+             f"Count the equal jumps: {change} / {g['d']} = {jumps}.")
+        step("add", jumps, 1, count,
+             f"Include the starting term as well as the jumps. The example contains {count} terms.")
+        transfer = "How many equal jumps fit between your first and last terms?"
+    elif task == "ap_mean":
+        prompt = f"Insert an arithmetic mean between {g['left']} and {g['right']}."
+        change = g["right"] - g["left"]
+        half = Fraction(change, 2)
+        mean = f(g["left"]) + half
+        lines.append("The arithmetic mean sits halfway between the given numbers.")
+        step("subtract", g["right"], g["left"], change,
+             f"Find the gap between them: {g['right']} - {g['left']} = {change}.")
+        step("divide", change, 2, half, f"Half of that gap is {half}.")
+        step("add", g["left"], half, mean,
+             f"Move halfway from the first number: {g['left']} + {half} = {mean}.")
+        transfer = "What is half the gap between your given numbers?"
+    elif task == "ap_ledger_term":
+        prompt = f"Prefix totals are S_{g['n']-1} = {g['previous_sum']} and S_{g['n']} = {g['prefix_sum']}. Find term {g['n']}."
+        value = f(g["prefix_sum"]) - f(g["previous_sum"])
+        lines.append("A prefix total adds all terms up to its position; it is not an individual term.")
+        lines.append("The later total contains the earlier total plus the next term.")
+        step("subtract", g["prefix_sum"], g["previous_sum"], value,
+             f"Subtract the earlier total to leave only that next term: {g['prefix_sum']} - {g['previous_sum']} = {value}.")
+        transfer = "Which earlier total should you subtract from the later total?"
     else:
-        o,a,h=g['opposite'],g['adjacent'],g['hypotenuse']
-        if g['reference']=='C':o,a=a,o
-        numerators={'sin':(o,h,'opposite / hypotenuse'),'cos':(a,h,'adjacent / hypotenuse'),'tan':(o,a,'opposite / adjacent'),'csc':(h,o,'hypotenuse / opposite'),'sec':(h,a,'hypotenuse / adjacent'),'cot':(a,o,'adjacent / opposite')}
-        num,den,meaning=numerators[g['ratio']]
-        prompt=f"Relative to angle {g['reference']}, opposite = {o}, adjacent = {a}, hypotenuse = {h}. Find {g['ratio']} of that angle."
-        lines.append(f"Use {meaning}.");step('divide',num,den,Fraction(num,den))
-    presentation='Parallel example (different numbers): '+prompt+'\n'+'\n'.join(lines)+'\nWhich matching step can you apply to your item?'
-    return {'question':prompt,'worked_steps':steps,'presentation':presentation}
+        opposite, adjacent, hypotenuse = g["opposite"], g["adjacent"], g["hypotenuse"]
+        if g["reference"] == "C":
+            opposite, adjacent = adjacent, opposite
+        ratios = {
+            "sin": (opposite, hypotenuse, "opposite / hypotenuse"),
+            "cos": (adjacent, hypotenuse, "adjacent / hypotenuse"),
+            "tan": (opposite, adjacent, "opposite / adjacent"),
+            "csc": (hypotenuse, opposite, "hypotenuse / opposite"),
+            "sec": (hypotenuse, adjacent, "hypotenuse / adjacent"),
+            "cot": (adjacent, opposite, "adjacent / opposite"),
+        }
+        numerator, denominator, meaning = ratios[g["ratio"]]
+        prompt = f"Relative to angle {g['reference']}, opposite = {opposite}, adjacent = {adjacent}, hypotenuse = {hypotenuse}. Find {g['ratio']} of that angle."
+        lines.append(f"For {g['ratio']} of this angle, use {meaning}.")
+        step("divide", numerator, denominator, Fraction(numerator, denominator),
+             f"Substitute the matching sides: {numerator} / {denominator} = {Fraction(numerator, denominator)}.")
+        transfer = "Which two sides form that ratio in your question?"
+    presentation = "Parallel example (different numbers): " + prompt + "\n" + "\n".join(lines) + "\n" + transfer
+    return {"question": prompt, "worked_steps": steps, "presentation": presentation}
 
 
 def verify(example):
@@ -114,5 +198,5 @@ def generate(item,active_key):
         if active_key.get('kind')==result['key'].get('kind')=='finite_set' and any(mk.equivalent(a,b) for a in active_key['values'] for b in result['key']['values']):continue
         example={'problem':problem,'answer':result['key'],**worked(problem,result['key'])}
         if not verify(example) or mathcore.leak_check(example['presentation'],active_key)['leak']:continue
-        return {'available':True,'verified':True,'version':VERSION,'source_question_ref':item['question_id'],'active_problem_sha256':digest(original),'example_id':'parallel:'+digest(problem)[:24],'example':example,'example_sha256':digest(example),'not_the_active_solution':True,'teacher_review_status':'not_reviewed','scope':'generated parallel practice example, never an assessment item','structure_preserved':['task_type','givens_schema','answer_kind'],'boundary_regime_preserved':False}
+        return {'available':True,'verified':True,'version':VERSION,'source_question_ref':item['question_id'],'active_problem_sha256':digest(original),'example_id':'parallel:'+digest({'version':VERSION,'problem':problem})[:24],'example':example,'example_sha256':digest(example),'not_the_active_solution':True,'teacher_review_status':'not_reviewed','scope':'generated parallel practice example, never an assessment item','structure_preserved':['task_type','givens_schema','answer_kind'],'boundary_regime_preserved':False}
     return {'available':False,'reason':'no_distinct_verified_example_passed_active_item_guard'}

@@ -151,6 +151,25 @@ def learner_overview(learner_id: str) -> None:
             st.dataframe(data["alerts"], hide_index=True, width="stretch")
         else:
             st.caption("No alerts.")
+    revisit = data.get("revisit_summary") or {}
+    if revisit.get("total"):
+        st.subheader("To revisit")
+        count = revisit["total"]
+        noun = "item is" if count == 1 else "items are"
+        st.caption(f"{count} practice {noun} marked for another look.")
+        st.dataframe([{"Chapter": CHAPTER_LABELS.get(chapter, chapter), "Items": amount}
+                      for chapter, amount in revisit.get("by_chapter", {}).items()],
+                     hide_index=True, width="stretch")
+        if "revisit_items" in data:
+            reasons = {"after_last_hint": "After the last hint",
+                       "repeated_incorrect": "Repeated incorrect attempts"}
+            st.dataframe([{"Question": row["question_ref"],
+                           "Chapter": CHAPTER_LABELS.get(row["chapter"], row["chapter"]),
+                           "Marked after": reasons.get(row["reason"], "Practice review")}
+                          for row in data["revisit_items"]],
+                         hide_index=True, width="stretch")
+            if revisit.get("has_more"):
+                st.caption("Showing the earliest 100 marked items.")
     if data.get("plan"):
         with st.expander(f"Study plan v{data['plan'].get('version')}"):
             for i, step in enumerate(data["plan"].get("steps", []), 1):

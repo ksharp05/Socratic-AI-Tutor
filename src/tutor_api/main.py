@@ -455,8 +455,16 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
             alerts = ([{**dict(r), "detail": json.loads(r["detail"] or "{}")} for r in _tutor().conn.execute(
                 "SELECT ts, kind, learner_id, detail FROM alerts WHERE learner_id=? ORDER BY id", (learner_id,))]
                       if p.is_teacher else [])
-        return {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
-                "plan": model.get("plan"), "topic_plans": model.get("topic_plans", {}), "alerts": alerts}
+        result = {"learner_id": learner_id, "mastery": model["mastery"], "misconceptions": model["misconceptions"],
+                  "plan": model.get("plan"), "topic_plans": model.get("topic_plans", {}), "alerts": alerts,
+                  "revisit_summary": model.get("revisit_summary", {"total": 0, "by_chapter": {}, "has_more": False})}
+        if p.is_teacher:
+            # This overview does not publish or resume questions. Learners see
+            # counts only; teacher details exclude internal content hashes.
+            fields = ("question_ref", "chapter", "reason", "created_at")
+            result["revisit_items"] = [{key: row[key] for key in fields}
+                                       for row in model.get("revisit_items", [])]
+        return result
 
     @api.delete("/learners/{learner_id}")
     def forget_learner(learner_id: str, p: Principal = Depends(teacher)) -> dict:
