@@ -4,7 +4,7 @@
 
 New code: parallel-example-v2 provides labelled checked steps, complete zero equations and task-specific transfer questions; IDs include renderer version. All 331 public practice items retain verified nonleaking examples. A repeated 900-input audit yields 892 verified valid examples/eight rejected invalid inputs. Learner/API overview adds owned revisit counts, teacher-only item details, exact totals beyond the 100-detail cap, stale-version filtering and privacy deletion. No new R3 routing/diagnosis or production model changes; R3 integration remains pending.
 
-Validation: 1434 full four-suite tests and all three local CI gates pass. Remote CI for this continuation is pending; prior 214b7ef remote recovery is green. The initial overview test rendered Chat instead of its callable Progress page; the corrected AppTest invokes the production callable after real app/auth setup, and both role views pass. Initial failed test log is preserved. This is functional AppTest evidence, not new manual/mobile browser acceptance.
+Validation: 1434 full four-suite tests and all three local CI gates pass. Remote CI 42227085825 on published 96d7829 is green: 1400 portable tests, synthetic index registration and all three smoke gates pass; 34 corpus-dependent cases pass locally. The initial overview test rendered Chat instead of its callable Progress page; the corrected AppTest invokes the production callable after real app/auth setup, and both role views pass. Initial failed test log is preserved. This is functional AppTest evidence, not new manual/mobile browser acceptance.
 
 R4 paired review: same 18 public examples/numbers plus 12 corrupted controls, frozen before and after. Mean AI clarity 2.611 -> 4.389. Reviewer misses four controls before/five after; one unbound quote each, contradictions retained. Code accepts 18/18 originals and rejects 12/12 controls in each round. AI cannot override verification or grant teaching approval. V2 teacher forms remain blank under r4_review_02/teacher_examples_18.json. Source files/protocols/inputs/raw outputs/budgets preserved in r4_review_01 and r4_review_02. No repeated received/uncertain requests.
 
@@ -14,7 +14,9 @@ Budget: 1218 total historical/current attempts, known continuation USD 0.3780100
 
 Keep secrets/private data/DBs/raw logs out of GitHub. Deferred mobile/Vercel stash 9cf6a27f25999be536d61eea665bc440bb9ab019 stays untouched. Backup resumption is at 20:55 IST today, subject to availability. No new PRs were open; #1/#4/#5/#6 remain merged. Preserve all old studies/reports/tags, original data and blank human reviews.
 
-Next: publish this reviewed batch and verify actual remote CI; R3 integrates the handed-off services; R5/R2 independently review simulator coverage and evaluation scope; actual teachers/rater/final authors and release acceptance remain required. Do not author competing R3 routing or silently narrow the product to make metrics improve. Formal M3/M4 completion is not claimed.
+This batch is published on Beta as runtime 96d7829, with successful remote CI. Raw CI ZIP/receipt, final qualification and the no-repeat next-session docket are under Directions/product_quality/v3.
+
+Next: continue non-R3 boundary-regime and separately versioned simulator/task-support work from NEXT_SESSION_ACTIONS.json; R3 integrates the handed-off services; R5/R2 independently review simulator coverage and evaluation scope; actual teachers/rater/final authors and release acceptance remain required. Do not author competing R3 routing or silently narrow the product to make metrics improve. Formal M3/M4 completion is not claimed.
 
 ---
 
