@@ -12,6 +12,11 @@ from socratic_data.tasks import oracle_answer, primary_answer
 
 _UNICODE = {"−": "-", "–": "-", "×": "*", "·": "*", "÷": "/", "²": "^2", "³": "^3", "√": "sqrt", "π": "pi"}
 _NO_ROOTS = re.compile(r"\b(no (real )?(roots?|solutions?)|none|empty|∅)\b", re.I)
+_NO_COUNT = r"\bno (?:valid |positive integer )?(?:term )?counts?\b"
+# A student's whole answer, so "no such term in my notes, can you help?" stays a question.
+NO_TERM_ANSWER = re.compile(_NO_COUNT + r"|\bno (?:such |valid )?terms?(?: exists?)?\s*[.!]?\s*$", re.I)
+# Anywhere in a tutor reply, because saying it gives away an empty answer.
+NO_TERM_LEAK = re.compile(_NO_COUNT + r"|\bno (?:such |valid )?terms?\b", re.I)
 
 
 def compute_key(problem: dict) -> dict:
@@ -36,10 +41,11 @@ def parse_answer(text: str, key: dict) -> dict:
     kind = key["kind"]
     raw = text.strip()
     if kind == "finite_set":
+        no_term = key.get("unit") == "terms" and NO_TERM_ANSWER.search(raw)
         if key.get('unit') == 'terms':
             raw = re.sub(r"(?i)^\s*(?:there are|the count is|my answer is)\s*", "", raw)
             raw = re.sub(r"(?i)\s+terms?\s*[.!]?\s*$", "", raw)
-        if (key.get("unit") != "terms" and _NO_ROOTS.search(raw)) or (key.get("unit") == "terms" and re.search(r"\bno (?:valid |positive integer )?(?:term )?counts?\b", raw, re.I)):
+        if (key.get("unit") != "terms" and _NO_ROOTS.search(raw)) or no_term:
             values: list[str] = []
         else:
             body = re.sub(r"[a-zA-Z]\s*=\s*", " ", raw.replace("{", " ").replace("}", " "))
@@ -92,7 +98,7 @@ def leak_check(text: str, key: dict) -> dict:
         values = key["values"]
         if not values:
             if key.get('unit') == 'terms':
-                return {"leak": bool(re.search(r"(?i)\bno (?:valid |positive integer )?(?:term )?counts?\b", text)), "reason": "states that there is no valid term count"}
+                return {"leak": bool(NO_TERM_LEAK.search(text)), "reason": "states that there is no valid term count"}
             return {"leak": bool(_NO_ROOTS.search(text)), "reason": "states that there are no real roots"}
         candidates = {c.strip() for c in _NUMBER_LIKE.findall(norm) if c.strip()}
         hits = [v for v in values if any(_equivalent(c, v) for c in candidates)]
