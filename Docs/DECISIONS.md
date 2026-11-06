@@ -33,6 +33,48 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
 - **D-2 follow-ups:** which of Shivam and Sharath is R6, and whether the other takes R5b.
 
 ---
+### D-5 · 2026-11-03 · Supervisor model: anthropic/claude-haiku-5.5 (provisional)
+
+- **Decision:** `anthropic/claude-haiku-5.5` replaces `openai/gpt-4.1` (not on the course list) as the supervisor and planner model. Fallback: `openai/gpt-6-luna`. Provisional until the first `dev_live` run with agent specialists (R3 item 1) confirms its routing.
+- **Why:**
+  - Not Google (the judge's family) and not Meta (the simulator's).
+  - Fast and short: 1.06 s and 4 output tokens on the check. Reasoning-heavy models (gpt-5-mini, qwen3.7-plus, glm-5.3-flash) spent 40–230 hidden tokens on a one-word reply, which costs money and time on every turn.
+  - $0.10 in / $0.50 out per million tokens, a twentieth of gpt-4.1's price ($2 / $8). OpenRouter lists tool-calling support.
+  - The fallback gpt-6-luna has the same price but was slower (2.4 s).
+- **Also found:** `anthropic/claude-3-haiku` was retired on 10 Sep 2026 (404); it should come off `course_models`.
+- **Evidence:** `tutor check-llm --all` on 3 Nov 2026 (below); prices from OpenRouter's model list the same day.
+- **Decided by:** Poonam (R3), proposed; Lead to confirm in review.
+
+```
+Base URL: https://openrouter.ai/api/v1
+Model:    openai/gpt-4.1-mini
+  openai/gpt-6-luna … ok in 2433 ms, replied 'ready' (tokens 13 in, 5 out)
+  openai/gpt-5-mini … ok in 13741 ms, replied 'ready' (tokens 13 in, 42 out)
+  openai/gpt-5-nano … ok in 2185 ms, replied 'ready' (tokens 13 in, 143 out)
+  openai/gpt-5.4-nano … ok in 9194 ms, replied 'ready' (tokens 13 in, 5 out)
+  openai/gpt-4.1-mini … ok in 7884 ms, replied 'ready' (tokens 14 in, 2 out)
+  openai/gpt-4.1-nano … ok in 3749 ms, replied 'ready' (tokens 14 in, 2 out)
+  openai/gpt-4o-mini … ok in 1123 ms, replied 'ready' (tokens 14 in, 1 out)
+  openai/gpt-oss-120b … ok in 1437 ms, replied 'ready' (tokens 74 in, 51 out)
+  anthropic/claude-haiku-5.5 … ok in 1064 ms, replied 'ready' (tokens 18 in, 4 out)
+  anthropic/claude-3-haiku … FAILED: this key cannot reach this model; use one from course_models in config/app.toml (OpenAIModelNotFoundError: Error code: 404 - Claude 3 Haiku was deprecated on Sep 10, 2026. We recommend migrating to Claude Haiku 4.5 (openrouter.ai/anthropic/claude-haiku-4.5).)
+  google/gemini-3.1-flash-lite … ok in 650 ms, replied 'ready' (tokens 7 in, 1 out)
+  google/gemma-4-31b-it … ok in 381 ms, replied 'ready' (tokens 20 in, 2 out)
+  qwen/qwen3.7-plus … ok in 5284 ms, replied 'ready' (tokens 17 in, 230 out)
+  qwen/qwen3.6-plus … ok in 3050 ms, replied 'ready' (tokens 17 in, 124 out)
+  qwen/qwen3.8-27b … ok in 447 ms, replied 'ready' (tokens 59 in, 22 out)
+  qwen/qwen3.5-35b-a3b … ok in 2671 ms, replied 'ready' (tokens 17 in, 145 out)
+  qwen/qwen3.5-9b … ok in 3969 ms, replied 'ready' (tokens 17 in, 138 out)
+  deepseek/deepseek-v4-flash … ok in 397 ms, replied 'ready' (tokens 11 in, 2 out)
+  deepseek/deepseek-chat … ok in 1359 ms, replied 'Ready' (tokens 10 in, 2 out)
+  z-ai/glm-5.3 … ok in 439 ms, replied 'ready' (tokens 19 in, 3 out)
+  z-ai/glm-5.3-flash … ok in 7823 ms, replied 'ready' (tokens 19 in, 89 out)
+  meta-llama/llama-3.3-70b-instruct … ok in 904 ms, replied 'ready' (tokens 17 in, 2 out)
+  meta-llama/llama-3.1-70b-instruct … ok in 461 ms, replied 'Ready' (tokens 17 in, 2 out)
+  meta-llama/llama-3.1-8b-instruct … ok in 560 ms, replied 'Ready' (tokens 17 in, 2 out)
+  amazon/nova-lite-v1 … ok in 905 ms, replied 'Ready' (tokens 7 in, 2 out)
+24 of 25 models answered.
+```
 
 ### D-2 · 2026-10-31 · Role names
 - **Decision:**
