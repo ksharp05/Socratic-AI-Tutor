@@ -59,6 +59,7 @@ class TutorState(TypedDict, total=False):
     focus_misconception: str | None
     probe_asked_for: str | None
     hint_stage: int
+    revisit: list[str]
     diagnosis: dict | None
     acknowledged_probe: str | None
     concept_help_id: str | None
@@ -448,8 +449,23 @@ class TutorApp:
                       text).strip().rstrip(".").rstrip()
         return len(bare.split()) <= 60 and bare.count("?") == 1 and bare.endswith("?")
 
+    def _used_every_hint(self, item: dict) -> bool:
+        """TP-A1: all hint stages used, and at least 2 wrong attempts that could be scored."""
+        return item.get("stages_used", 0) >= len(item["hint_stages"]) and item["attempts"] >= 2
+
+    def _after_last_hint(self, state: TutorState, item: dict) -> tuple[str, list[str]]:
+        """TP-A3: never show the item's solution; mark it for later. TP-A2's parallel example needs R4's generator."""
+        revisit = state.get("revisit", [])
+        if item["question_id"] not in revisit:
+            revisit = revisit + [item["question_id"]]
+            self._note(state, "after_last_hint", "marked_for_revisit", {"question_id": item["question_id"]})
+        last = item["hint_stages"][-1]["prompt"]
+        return (f"You've used every hint on this one, so I'll bring it back later. Type 'practice' for a different "
+                f"question, or try once more: {last}"), revisit
+
     def _tutor(self, state: TutorState, extension: bool = False) -> dict:
         snapshot, item = state["learner"], state.get("active_item")
+        revisit = None
         mid = state.get("focus_misconception")
         strict = state.get("revision_count", 0) > 0
         stage = state.get("hint_stage", 0)
@@ -472,9 +488,13 @@ class TutorApp:
                 passages.append(self._call(state, "tutor", "tutor", "textbook-kb", "get_section", {"passage_id": pid}))
             stages = item["hint_stages"]
             hint = stages[min(item.get("hint_stage", 0), len(stages) - 1)]["prompt"]
-            item = {**item, "hint_stage": min(item.get("hint_stage", 0) + 1, len(stages) - 1)}
             cite = f" [{passages[0]['passage_id']}]" if passages else ""
             text, style = f"Hint: {hint}{cite}", "item_hint"
+            if self._used_every_hint(item):
+                later, revisit = self._after_last_hint(state, item)
+                text, style = f"{later}{cite}", "after_last_hint"
+            item = {**item, "hint_stage": min(item.get("hint_stage", 0) + 1, len(stages) - 1),
+                    "stages_used": min(item.get("stages_used", 0) + 1, len(stages))}
         elif extension and mid:
             concept = self.misconceptions[mid]["concept_id"]
             passages = self._passages_for(state, "tutor", self.concepts[concept]["title"])
@@ -527,6 +547,8 @@ class TutorApp:
                   "retrieved": retrieved, "hint_stage": stage + 1 if mid and not item else stage}
         if item:
             update["active_item"] = item
+        if revisit is not None:
+            update["revisit"] = revisit
         return update
 
     def _set_question(self, state: TutorState) -> dict:
@@ -542,7 +564,9 @@ class TutorApp:
             items = self._call(state, "set_question", "question_setter", "question-bank", "list_published", {"mode": "practice"})["items"]
             items = [i for i in items if i.get("chapter") == chapter]
         attempted = state.get("attempted", [])
-        fresh = [i for i in items if i["question_id"] not in attempted] or items
+        # TP-A3: once new questions run out, items marked for revisit come back first.
+        fresh = ([i for i in items if i["question_id"] not in attempted]
+                 or [i for i in items if i["question_id"] in state.get("revisit", [])] or items)
         if not fresh:
             return {"draft": {"text": "There are no teacher-approved practice sets yet. Your teacher needs to approve "
                                       "one in the teacher view first.", "citations": [], "kind": "info"}}
@@ -580,6 +604,7 @@ class TutorApp:
             return update
         if result["correct"]:
             update["active_item"] = None
+            update["revisit"] = [q for q in state.get("revisit", []) if q != item["question_id"]]
             followup = ("how did you check which term positions are allowed?" if item.get('answer_domain') == 'term_count' else
                         "how did you make sure you didn't miss a root?" if item['kind'] == 'finite_set'
                         else "how did you check your reasoning?")
@@ -587,11 +612,13 @@ class TutorApp:
                                "citations": [], "kind": "feedback"}
             return update
         item["attempts"] += 1
+        finished = self._used_every_hint(item)
         diag = self._call(state, "grade", "grader", "math-tools", "diagnose_response",
                           {"question_ref": item["question_id"], "response": text})["candidates"]
         stages = item["hint_stages"]
         hint = stages[min(item["hint_stage"], len(stages) - 1)]["prompt"]
         item["hint_stage"] = min(item["hint_stage"] + 1, len(stages) - 1)
+        item["stages_used"] = min(item.get("stages_used", 0) + 1, len(stages))
         update["active_item"] = item
         trig = state["session"].get("chapter") == "trigonometry"
         if trig:
@@ -609,6 +636,8 @@ class TutorApp:
         if trig and len(diag) > 1:
             item["reasoning_probe"] = True
             hint = "That value can result from more than one step. Which angle did you use, and which sides did you label opposite and adjacent?"
+        if finished and not item.get("reasoning_probe"):
+            hint, update["revisit"] = self._after_last_hint(state, item)
         update["draft"] = {"text": f"Not quite: you gave {result['parsed']}. {hint}", "citations": [], "kind": "feedback",
                            "misconception_id": update.get("focus_misconception")}
         return update
