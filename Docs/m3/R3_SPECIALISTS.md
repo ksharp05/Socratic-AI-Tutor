@@ -44,7 +44,7 @@ So "every tutor-route turn calls the model" holds only with `TUTOR_CONTEXTUAL_HI
 1. The model never chooses a tool. Tool selection is code, so this is not agent behaviour.
 2. The question setter makes no model call. An intro line was tried and dropped, because three tests expect no call on a practice turn.
 3. Hint and wrong-answer turns reach the model only with `TUTOR_CONTEXTUAL_HINTS=1`.
-4. R3 has not run the `dev_live` acceptance command on this code.
+4. `eval/configs/dev_live.toml` no longer runs: the harness now needs a `[provider_budget]` and template voice, so R3 has not run a live acceptance check. The nearest evidence is the Lead's v3 pilot on `a9ee2ba` with `contextual = true`: in the c2 arm, 5 of 5 tutor-route turns made model calls, with 0 errors and 0 detected full leaks. It did not exercise the `diagnose` route and predates PRs #4 and #5.
 
 ## Decisions for the Lead
 
