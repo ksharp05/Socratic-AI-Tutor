@@ -22,7 +22,7 @@ OpenStax did not review or endorse this tutor. The checker is separately impleme
 
 [GitHub CI 42236144675](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42236144675) passes on source ea438cf: 1,755 portable tests, two synthetic registry tests and all three smoke gates. The 34 external-corpus cases pass locally and stay outside GitHub.
 
-This is agreement on exact answers and known-error controls. It does not validate teaching steps, relevance, diagnosis, semantic faithfulness of citations or learning outcomes. The existing worked-example renderer still has its own checks; it has not been connected to this new checker and remains parallel-example-v2.
+This is agreement on exact answers and known-error controls. It does not validate teaching steps, relevance, diagnosis, semantic faithfulness of citations or learning outcomes. The new parallel-example-v3 service now enforces this checker in generation and proof verification. R3 has not connected that service to learner turns. Its qualification is recorded separately in BOUNDARY_EXAMPLES.md/json; the introductory standalone results above retain their original source.
 
 ## Release direction
 

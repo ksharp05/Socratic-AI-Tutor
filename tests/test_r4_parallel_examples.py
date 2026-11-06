@@ -10,13 +10,22 @@ from tutor.app import TutorApp
 ITEMS=[i for i in graph_items() if allowed(i,'practice')]
 
 @pytest.mark.parametrize('item',ITEMS,ids=lambda i:i['question_id'])
-def test_each_connected_public_item_gets_a_distinct_checked_nonleaking_example(item):
+def test_each_connected_item_gets_a_case_preserving_example_or_required_safe_fallback(item):
     key=mathcore.compute_key(item['problem']);assert key['verified']
     result=parallel_examples.generate(item,key['key'])
+    task=item['problem']['task_type'];answer=key['key']
+    # Explicit mathematical impossibilities: preserving these cases shares the active answer.
+    conflict=(task=='quadratic_solve' and (not answer['values'] or any(mk.equivalent(v,'0') for v in answer['values'])))
+    conflict=conflict or (task=='ap_count' and (not answer['values'] or any(mk.equivalent(v,'1') for v in answer['values'])))
+    conflict=conflict or (answer['kind']=='scalar' and mk.equivalent(answer['value'],'0'))
+    if conflict:
+        assert not result['available'] and result['reason']=='preserved_case_conflicts_with_active_item_guard'
+        return
     assert result['available'] and result['verified'],(item['question_id'],result)
+    assert result['version']=='parallel-example-v3' and result['boundary_regime_preserved'] is True
     e=result['example'];assert e['problem']['task_type']==item['problem']['task_type']
     assert set(e['problem']['givens'])==set(item['problem']['givens'])
-    assert parallel_examples.verify(e)
+    assert parallel_examples.verify(e,item['problem'])
     assert not mathcore.grade(e['answer'],key['key'])['correct']
     if key['key']['kind']==e['answer']['kind']=='finite_set':assert not any(mk.equivalent(a,b) for a in key['key']['values'] for b in e['answer']['values'])
     assert not mathcore.leak_check(e['presentation'],key['key'])['leak']

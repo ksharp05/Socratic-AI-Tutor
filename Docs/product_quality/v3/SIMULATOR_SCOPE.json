@@ -1,0 +1,63 @@
+{
+  "protocol": "public-practice-protocol-v2",
+  "scope": "Public eligible practice canonical-answer roundtrip; no learner sessions or learning/diagnosis estimate",
+  "items": 331,
+  "task_counts": {
+    "ap_count": 40,
+    "ap_difference": 40,
+    "ap_first": 40,
+    "ap_ledger_term": 40,
+    "ap_mean": 40,
+    "ap_sum": 40,
+    "ap_term": 40,
+    "quadratic_solve": 11,
+    "trig_triangle_ratio": 40
+  },
+  "input_manifest_sha256": "91b1706b4222171917b16da75622d9b2667dead3d9eafdb7a51f1bf30d4579ef",
+  "mathematical_support": 331,
+  "legacy_roundtrip": 322,
+  "v2_roundtrip": 331,
+  "unsupported_ids": [],
+  "source_sha256": {
+    "tutor_eval.protocol_v2": "ddaa84c5f98e77e3acf8dc49f09fcd9fab4e59392fdcb17338416fa43ba61237",
+    "tutor_eval.simulator": "d28f4ec1b65c8380336df63d6bd629c481c675ec4f11d0c8a165ffdd6fbabc5c",
+    "tutor_eval.harness": "005b6092396f523f4c2c3f699a5b10f0e9acafd7361f36cd058ac7a32d44c545",
+    "tutor_validation.exact_reference": "148166a3e76d6bf3d46ba269b34d4ba185afb58ea364279da7ac35d3eafdc2e8",
+    "tutor.mathcore": "a06f3e906428bf9fd365f2c21fa85ceb6121174e013280dd3fc017c9e384e5e9"
+  },
+  "legacy_harness_modified": false,
+  "provider_calls": 0,
+  "human_review": false,
+  "cached_unchecked_audit": {
+    "cached_unchecked": 18,
+    "counts": [
+      {
+        "task": "ap_count",
+        "route": "tutor",
+        "status": "not_checked",
+        "count": 18
+      }
+    ],
+    "scope": "Cached baseline only; no new sessions, private cards or runtime diagnosis changes."
+  },
+  "focused_tests": 336,
+  "integration_status": "Opt-in StudentV2 adapter and preflight only; legacy harness defaults unchanged. No new C1/C2 results.",
+  "R3_handoff": "Natural learner phrase 'there is no such term' remains a product language gap. Canonical formatting is not evidence that free-form language is fixed.",
+  "full_suite": {
+    "passed": 2173,
+    "duration_seconds": 172.04,
+    "scope": "All four local suites, including 34 external-corpus cases"
+  },
+  "candidate_source_sha256": {
+    "src/tutor/parallel_examples.py": "f9fee1cdcebb750bc58b72540128c717d0891a014c4fbb33e43036fa123cd489",
+    "src/tutor/parallel_regimes.py": "9b72fe33578c9608024b97339fce27918a7750b30b1380836ec52483b3ff6922",
+    "src/tutor_eval/protocol_v2.py": "ddaa84c5f98e77e3acf8dc49f09fcd9fab4e59392fdcb17338416fa43ba61237",
+    "scripts/product_quality/audit_simulator_protocol.py": "dde0809270598c11091500b719b1c268820bfd040e96de67d484063c22c663b1",
+    "tests/test_parallel_case_preservation.py": "ce48291f3decbb002f994bcf02d9298e2cd96b823c4e48115476399fed2456ad",
+    "tests/test_r4_parallel_examples.py": "f56409d1863bfa96f5a57d7e68bc2afb71946d9903a104b6fc8c7a162f4ef5c3",
+    "tests/test_simulator_protocol_v2.py": "40014ce96b5e65a608812eeda307920ecd8c2872f99382c8a4a4832843636a60"
+  },
+  "remote_ci": {
+    "status": "not_started"
+  }
+}

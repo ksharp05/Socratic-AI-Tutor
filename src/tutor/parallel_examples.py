@@ -4,13 +4,16 @@ No assessment files, simulator rules, models or active-item answer disclosures.
 R3 owns when this service is called and how the verified presentation is shown.
 """
 from __future__ import annotations
-import copy,hashlib,json
+import hashlib,json
 from fractions import Fraction
+from math import isqrt
+from tutor_validation import exact_reference as reference
+from . import parallel_regimes as regimes
 from . import mathcore
 from socratic_data import math_kernel as mk
 
 SUPPORTED=frozenset({'quadratic_solve','ap_term','ap_sum','ap_first','ap_difference','ap_count','ap_mean','ap_ledger_term','trig_triangle_ratio'})
-VERSION='parallel-example-v2'
+VERSION='parallel-example-v3'
 
 def digest(value):return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 def f(value):return Fraction(str(value))
@@ -18,24 +21,6 @@ def arithmetic(operation,left,right,result):return {'operation':operation,'left'
 def calculate(step):
     a,b=f(step['left']),f(step['right'])
     return {'add':lambda:a+b,'subtract':lambda:a-b,'multiply':lambda:a*b,'divide':lambda:a/b}[step['operation']]()
-
-def candidate(source,index):
-    task=source['task_type'];a=11+index%71;d=5+index%17;n=4+index%5
-    problem=copy.deepcopy(source)
-    if task=='quadratic_solve':
-        r,s=3+index%13,23+index%17;g={'a':1,'b':-(r+s),'c':r*s}
-    elif task in ('ap_term','ap_sum'):g={'a':a,'d':d,'n':n}
-    elif task=='ap_first':g={'d':d,'n':n,'term':a+(n-1)*d}
-    elif task=='ap_difference':
-        m=3+index%4;position=m+n;g={'m':m,'n':position,'term_m':a+(m-1)*d,'term_n':a+(position-1)*d}
-    elif task=='ap_count':g={'a':a,'d':d,'last':a+(n-1)*d}
-    elif task=='ap_mean':g={'left':a,'right':a+2*d}
-    elif task=='ap_ledger_term':g={'n':n,'previous_sum':str(Fraction((n-1)*(2*a+(n-2)*d),2)),'prefix_sum':str(Fraction(n*(2*a+(n-1)*d),2))}
-    else:
-        o,adj,h=[(5,12,13),(7,24,25),(8,15,17),(20,21,29),(9,40,41)][index%5]
-        scale=1+index//5%5;g={'opposite':o*scale,'adjacent':adj*scale,'hypotenuse':h*scale,'ratio':source['givens']['ratio'],'reference':source['givens']['reference']}
-    problem['givens']=g;return problem
-
 
 def worked(problem: dict, key: dict) -> dict:
     """Bind each checked operation to a short explanation of its purpose."""
@@ -47,16 +32,43 @@ def worked(problem: dict, key: dict) -> dict:
         lines.append(explanation)
 
     if task == "quadratic_solve":
-        r, s = sorted(f(value) for value in key["values"])
-        prompt = f"Solve x*x - {r+s}*x = {-r*s}."
-        lines = [
-            f"Put all terms on the left: x*x - {r+s}*x + {r*s} = zero.",
-            f"Factor the left side: (x - {r})*(x - {s}) = zero.",
-            "A product is zero only if at least one factor is zero.",
-            f"The example solutions are x = {r} or x = {s}.",
-        ]
-        steps = [{"operation": "factor_roots", "roots": [str(r), str(s)]}]
-        transfer = "Which factors could make a zero product in your question?"
+        a, b, c = g["a"], g["b"], g["c"]
+        discriminant = b*b - 4*a*c
+        leading = "x*x" if a == 1 else "-x*x" if a == -1 else f"{a}*x*x"
+        prompt = f"Solve {leading} + ({b})*x + ({c}) = zero over the real numbers."
+        if discriminant < 0:
+            raise ValueError("No different empty-set answer can preserve this case")
+        if isqrt(discriminant)**2 == discriminant:
+            roots = sorted(f(value) for value in key["values"])
+            r, s = (roots[0], roots[0]) if len(roots) == 1 else roots
+            factors = f"(x - ({r}))*(x - ({s}))"
+            factored = factors if a == 1 else f"-({factors})" if a == -1 else f"{a}*{factors}"
+            lines = [
+                f"Factor the left side: {factored} = zero.",
+                "The leading factor is nonzero; a product is zero only if a linear factor is zero.",
+            ]
+            if r == s:
+                lines.append(f"Both factors give the same value. There is one distinct example root: x = {r}.")
+                transfer = "What value makes the repeated factor zero in your question?"
+            else:
+                lines.append(f"The example roots are x = {r} or x = {s}.")
+                transfer = "Which factors could make a zero product in your question?"
+            steps = [{"operation": "factor_roots", "roots": [str(value) for value in roots]}]
+        else:
+            square_b, four_a = b*b, 4*a
+            four_ac, denominator = four_a*c, 2*a
+            step("multiply", b, b, square_b, f"Square the signed coefficient: ({b}) * ({b}) = {square_b}.")
+            step("multiply", 4, a, four_a, f"First compute four times the leading coefficient: 4 * ({a}) = {four_a}.")
+            step("multiply", four_a, c, four_ac, f"Then multiply by the constant: ({four_a}) * ({c}) = {four_ac}.")
+            step("subtract", square_b, four_ac, discriminant,
+                 f"The discriminant is {square_b} - ({four_ac}) = {discriminant}.")
+            step("multiply", 2, a, denominator,
+                 f"The quadratic-formula denominator is 2 * ({a}) = {denominator}.")
+            lines.append("The discriminant is positive and not a perfect square, so there are two distinct irrational real roots.")
+            lines.append(f"Use the quadratic formula: x = ({-b} - sqrt({discriminant})) / ({denominator}) or x = ({-b} + sqrt({discriminant})) / ({denominator}).")
+            steps.append({"operation": "quadratic_formula", "discriminant": str(discriminant),
+                          "denominator": str(denominator), "roots": list(key["values"])})
+            transfer = "Which signed coefficients and discriminant belong in your quadratic formula?"
     elif task == "ap_term":
         prompt = f"An AP starts at {g['a']} with difference {g['d']}. Find term {g['n']}."
         jumps = g["n"] - 1
@@ -166,37 +178,97 @@ def worked(problem: dict, key: dict) -> dict:
     return {"question": prompt, "worked_steps": steps, "presentation": presentation}
 
 
-def verify(example):
+def verify(example, source_problem=None):
+    """Validate exact maths and rendered proof; optionally bind the source case."""
     try:
-        problem,key=example['problem'],example['answer'];task=problem['task_type']
-        if task not in SUPPORTED:return False
-        check=mathcore.compute_key(problem)
-        if not check['verified'] or not mk.answers_equivalent(key,check['key']):return False
-        if worked(problem,key)!={k:example[k] for k in ('question','worked_steps','presentation')}:return False
-        for step in example['worked_steps']:
-            if step['operation']=='factor_roots':
-                roots=[f(v) for v in step['roots']];g=problem['givens']
-                if len(roots)!=2 or sum(roots)!=Fraction(-g['b'],g['a']) or roots[0]*roots[1]!=Fraction(g['c'],g['a']):return False
-            elif calculate(step)!=f(step['result']):return False
-        last=example['worked_steps'][-1]
-        if task!='quadratic_solve':
-            output={'kind':'finite_set','values':[last['result']],'unit':'terms'} if task=='ap_count' else {'kind':'scalar','value':last['result']}
-            if not mk.answers_equivalent(output,key):return False
+        problem, key = example["problem"], example["answer"]
+        task = problem["task_type"]
+        if task not in SUPPORTED:
+            return False
+        if reference.validate(problem, key)["status"] != "verified":
+            return False
+        check = mathcore.compute_key(problem)
+        if not check["verified"] or not mk.answers_equivalent(key, check["key"]):
+            return False
+        if source_problem is not None:
+            if (task != source_problem["task_type"]
+                    or set(problem["givens"]) != set(source_problem["givens"])
+                    or regimes.signature(problem) != regimes.signature(source_problem)):
+                return False
+        if worked(problem, key) != {k: example[k] for k in ("question", "worked_steps", "presentation")}:
+            return False
+        for step in example["worked_steps"]:
+            if step["operation"] == "factor_roots":
+                roots = [f(value) for value in step["roots"]]
+                if len(roots) == 1:
+                    roots *= 2
+                g = problem["givens"]
+                if (len(roots) != 2 or sum(roots) != Fraction(-g["b"], g["a"])
+                        or roots[0]*roots[1] != Fraction(g["c"], g["a"])):
+                    return False
+            elif step["operation"] == "quadratic_formula":
+                g = problem["givens"]
+                if (task != "quadratic_solve"
+                        or f(step["discriminant"]) != g["b"]**2 - 4*g["a"]*g["c"]
+                        or f(step["denominator"]) != 2*g["a"]
+                        or not mk.answers_equivalent({"kind": "finite_set", "values": step["roots"]}, key)):
+                    return False
+            elif calculate(step) != f(step["result"]):
+                return False
+        last = example["worked_steps"][-1]
+        if task != "quadratic_solve":
+            output = ({"kind": "finite_set", "values": [last["result"]], "unit": "terms"}
+                      if task == "ap_count" else {"kind": "scalar", "value": last["result"]})
+            if not mk.answers_equivalent(output, key):
+                return False
         return True
-    except (KeyError,TypeError,ValueError,ZeroDivisionError,OverflowError):return False
+    except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError, IndexError):
+        return False
 
 
-def generate(item,active_key):
-    original=item['problem'];task=original.get('task_type')
-    if task not in SUPPORTED:return {'available':False,'reason':'unsupported_task_family'}
-    checked=mathcore.compute_key(original)
-    if not checked['verified'] or not mk.answers_equivalent(active_key,checked['key']):return {'available':False,'reason':'unverified_active_problem'}
-    start=int(digest(original)[:8],16)%997
+def generate(item, active_key):
+    """Return a checked different-answer example, or an explicit safe fallback."""
+    unavailable = {"available": False, "version": VERSION}
+    try:
+        original = item["problem"]
+        task = original.get("task_type")
+        if task not in SUPPORTED:
+            return {**unavailable, "reason": "unsupported_task_family"}
+        checked = mathcore.compute_key(original)
+        if (not checked["verified"] or not mk.answers_equivalent(active_key, checked["key"])
+                or reference.validate(original, active_key)["status"] != "verified"):
+            return {**unavailable, "reason": "unverified_active_problem"}
+        if regimes.invariant_answer_conflict(original):
+            return {**unavailable, "reason": "preserved_case_conflicts_with_active_item_guard"}
+        source_case = regimes.signature(original)
+    except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError, AttributeError):
+        return {**unavailable, "reason": "unverified_active_problem"}
+    start = int(digest(original)[:8], 16) % 997
     for attempt in range(64):
-        problem=candidate(original,start+attempt);result=mathcore.compute_key(problem)
-        if not result['verified'] or mk.answers_equivalent(active_key,result['key']):continue
-        if active_key.get('kind')==result['key'].get('kind')=='finite_set' and any(mk.equivalent(a,b) for a in active_key['values'] for b in result['key']['values']):continue
-        example={'problem':problem,'answer':result['key'],**worked(problem,result['key'])}
-        if not verify(example) or mathcore.leak_check(example['presentation'],active_key)['leak']:continue
-        return {'available':True,'verified':True,'version':VERSION,'source_question_ref':item['question_id'],'active_problem_sha256':digest(original),'example_id':'parallel:'+digest({'version':VERSION,'problem':problem})[:24],'example':example,'example_sha256':digest(example),'not_the_active_solution':True,'teacher_review_status':'not_reviewed','scope':'generated parallel practice example, never an assessment item','structure_preserved':['task_type','givens_schema','answer_kind'],'boundary_regime_preserved':False}
-    return {'available':False,'reason':'no_distinct_verified_example_passed_active_item_guard'}
+        try:
+            problem = regimes.candidate(original, start + attempt)
+            result = mathcore.compute_key(problem)
+            if not result["verified"] or mk.answers_equivalent(active_key, result["key"]):
+                continue
+            if active_key.get("kind") == result["key"].get("kind") == "finite_set":
+                if any(mk.equivalent(a, b) for a in active_key["values"] for b in result["key"]["values"]):
+                    continue
+            example = {"problem": problem, "answer": result["key"], **worked(problem, result["key"])}
+            if not verify(example, original) or mathcore.leak_check(example["presentation"], active_key)["leak"]:
+                continue
+            return {
+                "available": True, "verified": True, "version": VERSION,
+                "source_question_ref": item["question_id"],
+                "active_problem_sha256": digest(original),
+                "example_id": "parallel:" + digest({"version": VERSION, "problem": problem})[:24],
+                "example": example, "example_sha256": digest(example),
+                "not_the_active_solution": True, "teacher_review_status": "not_reviewed",
+                "scope": "generated parallel practice example, never an assessment item",
+                "structure_preserved": ["task_type", "givens_schema", "answer_kind", "declared_case_signature"],
+                "boundary_regime_preserved": True, "case_signature": source_case,
+                "case_policy_version": regimes.VERSION,
+                "exact_oracle_version": reference.VERSION,
+            }
+        except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError, IndexError):
+            continue
+    return {**unavailable, "reason": "no_distinct_verified_example_passed_active_item_guard"}
