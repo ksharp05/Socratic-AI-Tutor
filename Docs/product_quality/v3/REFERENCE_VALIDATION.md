@@ -20,6 +20,8 @@ OpenStax did not review or endorse this tutor. The checker is separately impleme
 
 355 focused tests and all 1,789 full four-suite regressions pass locally. Every one of the 331 eligible public practice keys is accepted and one deliberately altered key per item is rejected. Additional independently specified cases cover every task family, negative progressions, distinct/repeated/non-real/irrational quadratic roots, invalid units/shapes, executable expressions, iteration limits and rational/expression resource bounds.
 
+[GitHub CI 42236144675](https://github.com/ksharp05/Socratic-AI-Tutor/actions/runs/42236144675) passes on source ea438cf: 1,755 portable tests, two synthetic registry tests and all three smoke gates. The 34 external-corpus cases pass locally and stay outside GitHub.
+
 This is agreement on exact answers and known-error controls. It does not validate teaching steps, relevance, diagnosis, semantic faithfulness of citations or learning outcomes. The existing worked-example renderer still has its own checks; it has not been connected to this new checker and remains parallel-example-v2.
 
 ## Release direction
