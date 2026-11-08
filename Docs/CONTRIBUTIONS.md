@@ -13,6 +13,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 
 ---
 
+### 2026-11-09 · Swati / SwatiSmitaBiswal (R4)
+- **Work:**
+  - Set up `milestone-2` locally (Python 3.12 via uv, `.venv`): `pytest -q` 378 passed; `tutor check-llm` OK with my own key; confirmed `.env` is git-ignored.
+  - Checked `config/app.toml`: none of the 25 course models is a dedicated guard model, so neither Llama Guard 4 nor Llama Guard 3 is available.
+  - Wrote the one-page [threat model](THREAT_MODEL.md) from the milestone-2 code (`guards.py`, `toolbus.py`, `approval_token.py`). PR #10.
+  - Requested and received Hugging Face access to Prompt Guard 2 (Llama 4 gated collection).
+- **AI-assisted:** setup guidance and the threat-model draft with Claude, then checked against the code and reviewed by me.
+- **Decisions:** none yet. The guard-model replacement will be tested and proposed (open item in the threat model).
+
 ### 2026-10-31 · Lakshya / ksharp05 (Lead, R1, R5)
 - **Work:**
   - Merged the proof of concept, roadmap and live-model setup into `main`.
