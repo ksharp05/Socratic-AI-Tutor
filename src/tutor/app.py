@@ -23,6 +23,7 @@ from langgraph.types import Command, interrupt
 from . import approval_token, concept_help, conversation, diagnosis_evidence, diagnostic_workflow, guards, learner, prompts, store
 from .config import SETTINGS, db_path
 from .llm import LLM
+from .mathcore import NO_TERM_ANSWER
 from .question_catalog import allowed
 from .topic_sources import cards as topic_cards, concepts as topic_concepts, misconceptions as topic_misconceptions, CHAPTERS
 from .setup_content import load
@@ -276,7 +277,7 @@ class TutorApp:
         elif item and HINT_REQUEST.search(text):
             route = "tutor"
         elif item and (ANSWER_LIKE.search(text.strip()) or
-                       (item.get('answer_domain') == 'term_count' and (re.search(r'(?i)\bno (?:valid |positive integer )?(?:term )?counts?\b', text) or re.search(r'(?i)^\s*(?:there are|the count is)\b', text)))):
+                       (item.get('answer_domain') == 'term_count' and (NO_TERM_ANSWER.search(text) or re.search(r'(?i)^\s*(?:there are|the count is)\b', text)))):
             route = "grade"
         elif definition:
             self._note(state, "planner", "source_backed_concept_help", {"concept_help_id": definition["id"]})
