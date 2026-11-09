@@ -1,3 +1,17 @@
+# Current checkpoint - R3 PRs 7-9 merged locally, findings and fix plan
+
+**9 November 2026.** Local Beta merges R3's PRs 7 (worked example after the last hint), 8 (saved revisit
+marks) and 9 ('there is no such term') as `383b261` and `831c06a`. **Not pushed and not redeployed**; the live site still
+runs be36b8c. Full local suite: **2,665 passed, 7 skipped**. Offline stub-model stress runs over all 331 practice items,
+restart/revisit scenarios and a 36-phrase answer matrix are in `scripts/qa/`. Results, nine shortcomings and the proposed
+fix order are in **Docs/m3/PR7_9_TEST_FINDINGS.md**. The top issue predates these PRs: the live beta grades "empty set"
+and similar answers wrong on the 9 term-count items that tell students to use an empty set.
+The user confirmed there is **no code freeze**; BEHAVIOUR_FREEZE.json only pins the code behind the M3 study results.
+PR 10 (Swati, R4: threat model, guard-model spike, proposed D-6) is still open against milestone-2; ask her to retarget
+it to Beta. No provider calls were made; the hosted lease and phase spend are unchanged.
+
+---
+
 # Current checkpoint - live Vercel beta and topic/source fixes
 
 **6 November 2026.** Continue Beta in Main with canonical D: cwd. The live native beta is at
