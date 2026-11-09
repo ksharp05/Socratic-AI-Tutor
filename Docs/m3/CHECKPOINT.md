@@ -1,3 +1,32 @@
+# Current checkpoint - quality and safety plan with ledgered live tests
+
+**10 November 2026.** The user asked for researched improvements to language, tone, topics, out-of-context guardrails,
+foul language, system prompts and the pipeline, and authorized the remaining USD 10 phase for testing. The plan is the
+Claude Doc "Socratic Tutor quality and safety plan" (https://claude.ai/artifact/BYPB9xB5vvhpCatA3bc7oV), with an
+appendix tab listing the 174 probe scenarios and the prototype prompts. Headline: with the same model (GPT-4.1-mini), a
+front-door classifier plus policy replies and prompt v3 raised AI-judged acceptable replies from 16% to 52% of the 174
+scenarios and cut unsafe verdicts from 7 to 1. The judges were Claude Haiku 5.5 and Gemini 3.1 Flash Lite, which agreed on
+76-88% of verdicts; this is development evidence, not human or teacher review.
+
+New tools: `eval/fixtures/quality_safety_probes_v1.py` and `scripts/qa/{live_probe_run,router_prototype,judge_probe_run,
+classifier_probe_run,summarise_runs}.py`. `tutor_eval.product_budget.ProductPhase` gains an opt-in `iteration='v4'` that
+allows one local batch beside the running hosted lease; the hosted USD 0.50 cap stays reserved and untouched (7 new tests).
+The v4 authorization is `Directions/product_quality/v4/ITERATION_AUTHORIZATION.json`, which records the user's approval
+quote and verified prices. Five v4 batches are sealed: 5,959 calls, USD 1.2373. Phase accounted spend is USD 1.4313 of 10,
+and USD 8.1186 is unallocated. Raw runs and judgements are under `Directions/product_quality/v4/runs/` (private).
+
+Key findings:
+- Claude Haiku 5.5 and Qwen 3.7 Plus return empty text under small caps unless `reasoning.enabled=false` is sent. This
+  affects D-5.
+- Gemma 4 31B is the best safety classifier: 161/174 exact, 8/8 crisis. The D-6 candidate Llama 3.1 8B missed 3 of 8
+  crisis messages.
+- Gemini 3.1 Flash Lite is best for Hindi and Hinglish teaching. GPT-4.1-mini is the safest for policy replies.
+
+Nothing is pushed or deployed. Decisions pending with the user: a model key after 16 Nov, a DPDP check (a reported
+proposal for 13 Nov 2026 is unverified), and replacing the D-6 classifier.
+
+---
+
 # Current checkpoint - R3 PRs 7-9 merged locally, findings and fix plan
 
 **9 November 2026.** Local Beta merges R3's PRs 7 (worked example after the last hint), 8 (saved revisit

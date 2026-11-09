@@ -13,13 +13,17 @@ def save(path,value):
     temp.write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8');os.replace(temp,path)
 
 class ProductPhase:
-    def __init__(self,source):
-        self.source=Path(source).resolve();self.root=self.source/'Directions/product_quality/v3'
+    def __init__(self,source,iteration='v3'):
+        if iteration not in ('v3','v4'):raise ValueError('Unknown product iteration')
+        self.source=Path(source).resolve();self.root=self.source/'Directions/product_quality'/iteration
         self.phase_path=self.source/'Directions/product_quality/v1/PHASE_AUTHORIZATION.json'
         self.authorization=self.root/'ITERATION_AUTHORIZATION.json'
         auth=read(self.authorization)
         if auth.get('status')!='approved' or auth.get('destination')!='https://openrouter.ai/api/v1' or auth.get('phase_ceiling_usd')!=10:
             raise ValueError('Explicit product phase/destination authorization missing')
+        # Opt-in only: one local batch may run while a hosted lease stays open. The hosted cap
+        # still counts toward the ceiling and is never released or spent locally.
+        self.beside_hosted=auth.get('allow_local_batch_beside_hosted_lease') is True
         self.lock=FileLock(str(self.phase_path)+'.allocation.lock',timeout=15)
 
     def _check(self,phase):
@@ -34,12 +38,15 @@ class ProductPhase:
         if not 0<max_usd<=1 or type(max_calls) is not int or max_calls<1:raise ValueError('Invalid bounded allocation')
         with self.lock:
             phase=read(self.phase_path);self._check(phase)
-            if any(not b['status'].startswith('completed') for b in phase['batch_allocations']):raise ValueError('Close the previous batch before another allocation')
+            hosted=lambda b:self.beside_hosted and bool(b.get('remote_allocation'))
+            if any(not b['status'].startswith('completed') and not hosted(b) for b in phase['batch_allocations']):raise ValueError('Close the previous batch before another allocation')
             if sum(b['max_usd'] for b in phase['batch_allocations'])+max_usd>10+1e-10:raise BudgetExceeded('New allocation exceeds the phase ceiling')
             folder=self.root/'batches'/slug
             if folder.exists():raise ValueError('Existing batch; never reset or silently repeat it')
             auth=read(self.authorization)
-            previous=self.source/(phase['batch_allocations'][-1]['wallet'] if phase['batch_allocations'] else auth['previous_provider_ledger'])
+            # Chain from the last local wallet: a hosted mirror keeps changing while its lease is open.
+            chain=[b for b in phase['batch_allocations'] if not hosted(b)]
+            previous=self.source/(chain[-1]['wallet'] if chain else auth['previous_provider_ledger'])
             previous_data=read(previous)
             if any(a['status']=='reserved' for a in previous_data['attempts']):raise ValueError('Prior request is still in flight')
             prior=previous_data['policy']['prior_calls']+len(previous_data['attempts'])
