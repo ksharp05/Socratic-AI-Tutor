@@ -1,14 +1,18 @@
 """R4 spike S4: which course model can replace Llama Guard 4 as the content-safety check?
 
 Standalone and read-only: it does not change the tutor. Run from the repo root with .venv active:
-    python scripts/r4/guard_model_spike.py
+    python scripts/r4/guard_model_spike.py --execute-live
 It reads LLM_API_KEY from .env (never printed), makes 1 call per model per case (30 calls in total)
 and prints a results table. Uses only the Python standard library.
+
+Without --execute-live it only prints what it would send and makes no call. These calls bypass the
+project's ProviderBudget ledger, so run it only with your own key, never the key that ledger tracks.
 """
 from __future__ import annotations
 
 import json
 import re
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -81,6 +85,11 @@ def classify(key: str, model: str, message: str) -> tuple[str, float, float]:
 
 
 def main() -> None:
+    if "--execute-live" not in sys.argv[1:]:
+        print(f"Dry run: would make {len(MODELS) * len(CASES)} paid calls "
+              f"({len(MODELS)} models x {len(CASES)} messages): {', '.join(MODELS)}.")
+        print("Nothing was sent. Add --execute-live to run it with the key in .env.")
+        return
     key = read_key()
     for model in MODELS:
         print(f"\n=== {model}")

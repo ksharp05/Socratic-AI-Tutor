@@ -7,8 +7,11 @@ restart/revisit scenarios and a 36-phrase answer matrix are in `scripts/qa/`. Re
 fix order are in **Docs/m3/PR7_9_TEST_FINDINGS.md**. The top issue predates these PRs: the live beta grades "empty set"
 and similar answers wrong on the 9 term-count items that tell students to use an empty set.
 The user confirmed there is **no code freeze**; BEHAVIOUR_FREEZE.json only pins the code behind the M3 study results.
-PR 10 (Swati, R4: threat model, guard-model spike, proposed D-6) is still open against milestone-2; ask her to retarget
-it to Beta. No provider calls were made; the hosted lease and phase spend are unchanged.
+PR 10 (Swati, R4: threat model, guard-model spike S4, proposed D-6) is merged into Beta as `69556b5`; **D-6 stays
+proposed**. Beta gaps in the threat model, D-6 points to settle (its Haiku fallback duplicates D-5's supervisor model)
+and her follow-ups are in **Docs/m3/PR10_REVIEW.md**. The spike script now dry-runs unless given `--execute-live`,
+because its 30 calls bypass the ProviderBudget ledger. Owners for all follow-ups are in PR7_9_TEST_FINDINGS.md.
+No provider calls were made; the hosted lease and phase spend are unchanged.
 
 ---
 
