@@ -33,6 +33,16 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
 - **D-2 follow-ups:** which of Shivam and Sharath is R6, and whether the other takes R5b.
 
 ---
+### D-6 · 2026-11-09 · Safety classifier: meta-llama/llama-3.1-8b-instruct (proposed)
+- **Decision:** `meta-llama/llama-3.1-8b-instruct` replaces `meta-llama/llama-guard-4-12b` (not on the course list; no dedicated guard model is) as the content-safety classifier, with a six-slot SAFE/UNSAFE prompt. Fallback: `anthropic/claude-haiku-5.5`. Fail closed: an error or unparseable reply counts as UNSAFE. Not yet wired into `guards.py`: behaviour was frozen on 6 Nov, so the Lead decides whether it goes in before E2.
+- **Why:**
+  - Tied best in the spike: 10/10, no false blocks on tricky safe messages ("this quadratic is killing me") and no misses. Claude Haiku 5.5 also scored 10/10; Nova Lite 9/10 (one unparseable reply).
+  - About 10× cheaper than Haiku ($0.00005 vs $0.00050 for 10 checks), and the check runs on every message.
+  - Same family as Llama Guard (its base model), as the plan's substitution rule asks, and a different model from the supervisor ([D-5](#d-5--2026-11-03--supervisor-model-anthropicclaude-haiku-55-provisional)), so one model's blind spot does not cover both.
+  - Trade-offs: slower (median 1.8 s vs 1.1 s), and the same family as the student simulator (Llama 3.3 70B).
+- **Evidence:** [spike S4](spikes/S4.md); `scripts/r4/guard_model_spike.py`, run on 9 Nov 2026. 10 development examples, one run: a sanity check, not a robustness result; E2 is the real test.
+- **Decided by:** Swati (R4), proposed; Lead to confirm in review.
+
 ### D-5 · 2026-11-03 · Supervisor model: anthropic/claude-haiku-5.5 (provisional)
 
 - **Decision:** `anthropic/claude-haiku-5.5` replaces `openai/gpt-4.1` (not on the course list) as the supervisor and planner model. Fallback: `openai/gpt-6-luna`. Provisional until the first `dev_live` run with agent specialists (R3 item 1) confirms its routing.
