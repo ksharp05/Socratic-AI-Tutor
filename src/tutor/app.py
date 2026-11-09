@@ -492,15 +492,16 @@ class TutorApp:
                 raise
 
     def _due_revisit(self, state: TutorState, chapter: str, attempted: list[str]) -> list[dict]:
-        """TP-A3: questions saved earlier for this chapter, not tried yet this session and still published."""
-        saved = {row["question_ref"] for row in state["learner"].get("revisit_items", [])
-                 if row["chapter"] == chapter} - set(attempted)
+        """TP-A3: questions saved earlier for this chapter, oldest first, not tried yet this session and still published."""
+        saved = [row["question_ref"] for row in state["learner"].get("revisit_items", [])
+                 if row["chapter"] == chapter and row["question_ref"] not in attempted]
         if not saved:
             return []
         items = self._call(state, "set_question", "question_setter", "question-bank", "list_published",
                            {"mode": "practice"})["items"]
-        return [i for i in items if i["question_id"] in saved]
-    
+        published = {i["question_id"]: i for i in items}
+        return [published[q] for q in saved if q in published]
+
     def _parallel_example(self, state: TutorState, item: dict) -> str | None:
         """TP-A2: R4's checked example, shown word for word. None means use the last-hint fallback."""
         ctx = self._ctx_for(state, "after_last_hint")
