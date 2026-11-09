@@ -43,20 +43,25 @@ After a learner is deleted, every turn raises `GONE`, which the API returns as H
    - reject other words with the count-specific message instead of turning them into values;
    - for root sets, also accept `{}` and `∅`.
 
-   Route these phrasings to grading in the router. Make the beta's format line under count questions (`answerHelp` in `static/app.js`) match the question by mentioning the empty set. Turn the phrase matrix into regression tests for the parser, the team tutor and the beta grader. Then redeploy the beta following `Docs/deploy/VERCEL_BETA.md` (no paid calls are needed). *Suggested owner: us, with Poonam reviewing the router change.*
-2. **Narrow the leak pattern: finding 3.** Flag only statements about the answer ("there is/are no (such/valid) term(s)", "no such term exists", "no valid term count"), not wording such as "no term can…" or "no term index…". Add the ordinary lines as must-pass tests. *Same change set as step 1.*
-3. **Oldest saved question first: finding 6.** Order `_due_revisit` by the `revisit_items` order `read_learner` returns. One-line change plus a test. *Poonam (her code), or us.*
+   Route these phrasings to grading in the router. Make the beta's format line under count questions (`answerHelp` in `static/app.js`) match the question by mentioning the empty set. Turn the phrase matrix into regression tests for the parser, the team tutor and the beta grader. Then redeploy the beta following `Docs/deploy/VERCEL_BETA.md` (no paid calls are needed). *Owners: Swati (`mathcore.py`), Poonam (router in `app.py`), R6 (beta format line). Lakshya merges and redeploys; under the roadmap's separation rule, R5 does not edit `mathcore.py`.*
+2. **Narrow the leak pattern: finding 3.** Flag only statements about the answer ("there is/are no (such/valid) term(s)", "no such term exists", "no valid term count"), not wording such as "no term can…" or "no term index…". Add the ordinary lines as must-pass tests. *Swati, in the same change set as step 1.*
+3. **Oldest saved question first: finding 6.** Order `_due_revisit` by the `revisit_items` order `read_learner` returns. One-line change plus a test. *Poonam; Rizwan reviews it against the memory contract.*
 4. **Safety decision: finding 8, PR 10.**
    - Ask Swati to change PR 10's base to Beta and update the threat model for the live site: real visitors, Postgres learner data, browser cookies, the hosted key and visitor consent, and the real USD cap.
    - Then decide on D-6. A classifier call per message uses the hosted 200-call lease, so options are a cheap rule prefilter, classifying only live-chat messages, or a separate small cap.
    - Fix the "hopeless at …" false alarm in the team guard.
-   *Swati builds, we review.*
+   *Swati builds. Lakshya decides the budget and builds the E2 attack set, which Swati does not see.*
 5. **Examples: findings 4 and 5.**
    - Clean up the generator wording: use 0, x², brackets around negatives, and the right step order.
    - Decide how to help on 'none' items without revealing the answer, for example a valid AP that shows the same integrality check.
    - Release as `parallel-example-v4` and never relabel v3 results.
-   *Swati (R4).*
-6. **Bring both features to the live beta: finding 7.** Add a saved revisit queue per browser profile in Postgres (migration, deletion and isolation tests) and show the checked example after the last hint in `socrates_beta`'s practice flow. Then follow the normal release and HTTPS checks. *Us.*
-7. **Cross-session question choice: finding 9.** Skip questions solved recently in earlier sessions. This is a design choice; discuss before building.
+   *Swati builds; Lakshya (R1) reviews the wording.*
+6. **Bring both features to the live beta: finding 7.** Add a saved revisit queue per browser profile in Postgres (migration, deletion and isolation tests) and show the checked example after the last hint in `socrates_beta`'s practice flow. Then follow the normal release and HTTPS checks. *Rizwan (Postgres queue, migration, deletion and isolation tests) and R6 (API and UI); Lakshya deploys.*
+7. **Cross-session question choice: finding 9.** Skip questions solved recently in earlier sessions. This is a design choice; discuss before building. *Rizwan proposes.*
+
+Alongside these steps:
+- R6 runs the pending mobile and browser check of the live beta, and adds the `scripts/qa` stress runs to CI.
+- R5b collects how students actually write answers, including Hinglish, and re-runs the stress scripts after each fix.
+- Shivam and Sharath still need to confirm which of them is R6 and which is R5b.
 
 Re-run the three `scripts/qa/` stress scripts and the full suite after each step. For example: `python scripts/qa/stress_phrases.py "D:/Work/IITB/Socratic Tutor Main" out.json` with `TUTOR_LLM=stub` and a scratch `TUTOR_VAR_DIR`.
