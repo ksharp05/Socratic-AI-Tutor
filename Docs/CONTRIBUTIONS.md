@@ -12,6 +12,13 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-11 · Poonam / Punm-Butter (R3)
+- **Work:**
+  - Contribution log entries for 3–10 Nov. PR #19.
+  - Checked with `scripts/qa/stress_phrases.py` that PR #18's answer rule reaches the grader through my router: "does not exist", "not possible" and "zero" are now graded, and a bare "no" is still asked again.
+- **AI-assisted:** the entries and the check drafted with Claude (Claude Code); I ran the check and reviewed the text.
+- **Decisions:** none.
+
 ### 2026-11-10 · Poonam / Punm-Butter (R3)
 - **Work:**
   - Saved questions now come back oldest first: `_due_revisit` keeps the order `read_learner` returns (finding 6, step 3). One new test, which fails on the old code. PR #11.
