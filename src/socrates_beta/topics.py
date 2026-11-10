@@ -36,10 +36,17 @@ def topic_labels(adapter,scope):
         if labels:return labels
     return list(dict.fromkeys(n["title"] for n in nodes))[:4]
 
-def navigation_reply(adapter,scope,*,missing=False):
+def navigation_reply(adapter,scope,*,missing=False,language='en'):
     labels=topic_labels(adapter,scope)
     if not labels:
         return "There are no reading topics in this selection yet. Could you choose an available class and subject in Explore?"
     listing=", ".join(labels[:-1])+" and "+labels[-1] if len(labels)>1 else labels[0]
-    prefix="I couldn't match that question to a source. " if missing else ""
+    if missing and language=='hi':
+        return ("अच्छा सवाल है, पर यह मुझे इस चयन के स्रोतों में नहीं मिला, इसलिए मैं अनुमान नहीं लगाऊँगा। आपके शिक्षक या पाठ्यपुस्तक मदद कर "
+                "सकते हैं। यहाँ मैं इनमें मदद कर सकता हूँ: "+listing+"। आप किससे शुरू करना चाहेंगे?")
+    if missing and language=='hinglish':
+        return ("Achha sawaal hai, par yeh mujhe is selection ke sources mein nahi mila, isliye main guess nahi karunga. Aapke teacher "
+                "ya textbook help kar sakte hain. Yahan main in topics mein help kar sakta hoon: "+listing+". Kahan se shuru karein?")
+    prefix=("That's a good question, but I can't find it in my sources for this selection, so I won't guess. Your teacher or "
+            "textbook can help with it. ") if missing else ""
     return prefix+"In this selection I can help with "+listing+". Which would you like to start with?"

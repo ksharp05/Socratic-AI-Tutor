@@ -17,6 +17,8 @@ class SupplementedKnowledge:
                      "page":0,"human_review_status":"pending","approved":0}
             self.notes[note["id"]]=passage
             self.replacements[note["replaces"]]=passage
+        # Make the note text searchable through the base index (it replaces the passage after ranking).
+        base.extra_text={pid:p.get("title","")+" "+p["text"] for pid,p in self.replacements.items()}
     def __getattr__(self,name):return getattr(self.base,name)
     def passage(self,pid):return self.notes.get(pid) or self.base.passage(pid)
     def search(self,query,scope,limit=3):

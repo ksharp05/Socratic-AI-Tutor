@@ -40,7 +40,19 @@ CHECK_REPLY={
     'hinglish':"Main is chat mein final answer check nahi kar sakta, par checked practice mein answers code se check hote hain. Main aapka method check karne mein help kar sakta hoon: aapka pehla step kya tha?",
 }
 ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)',re.I)
-SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.t (?:know|understand|get)|no idea|not sure|still unclear)\b",re.I)
+SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.?t (?:know|understand|get)|do not (?:know|understand|get)|no idea|not sure|still unclear|nahi samjh\w*|samajh nahi|samjha nahi|samajh me nahi|nahi pata)\b|^\s*\?+\s*$",re.I)
+# Feedback about the replies themselves: answer it with a shorter, different approach instead of repeating.
+FEEDBACK=re.compile(r"(?i)\b(?:too long|so long|boring|useless|explain properly|not helpful|confusing|bakwas|samajh nahi aa raha)\b")
+# A question asked anywhere in the message, used to notice that the learner has moved to a new topic.
+QUESTION=re.compile(r"(?i)\b(?:what|how|why|which|explain|define|kya|kaise|kyun|kyon|batao|samjhao)\b|[?]")
+NO_EVIDENCE={
+    'en':"I can't find that in my sources for this chapter, so I'd rather not guess. Your teacher or textbook can help with it. "
+         "Is there a part of this chapter you'd like to work through instead?",
+    'hi':"मुझे यह इस अध्याय के मेरे स्रोतों में नहीं मिला, इसलिए मैं अनुमान नहीं लगाऊँगा। आपके शिक्षक या पाठ्यपुस्तक इसमें मदद कर सकते हैं। "
+         "क्या इस अध्याय का कोई हिस्सा है जिस पर हम काम करें?",
+    'hinglish':"Mujhe yeh is chapter ke mere sources mein nahi mila, isliye main guess nahi karunga. Aapke teacher ya textbook isme "
+               "help kar sakte hain. Kya is chapter ka koi part hai jis par hum kaam karein?",
+}
 
 
 def unsafe_chemical_guidance(reply: str) -> bool:
@@ -97,10 +109,18 @@ class DialogueService:
             reply=navigation_reply(adapter,scope);move='topic_navigation'
         else:
             uncertain=bool(SMALL.search(message));analogy=bool(re.search(r'\b(analogy|everyday example|simple example)\b',message,re.I))
-            followup=uncertain or analogy or bool(re.search(r'(?i)\b(simpler|say that again|why that|what do you mean|explain again|why is that)\b',message))
+            feedback=bool(FEEDBACK.search(message))
+            followup=uncertain or analogy or feedback or bool(re.search(r'(?i)\b(simpler|say that again|why that|what do you mean|explain again|why is that)\b',message))
             correction=re.search(r'(?i)\b(?:i meant|i mean|instead explain|switch to|new topic[: ]+)\s*(.+)',message)
             new_topic=bool(re.match(r'(?i)^(?:explain|what (?:is|are)|how (?:does|do|is)|why (?:does|do|is|are)|tell me about)\b',message)) and not followup
             new_topic=new_topic or bool(broad_topic(adapter,message,scope))
+            if state['focus'] and not new_topic and not followup:
+                # A dead focus (it found no evidence) never sticks, and a question that retrieves different
+                # passages from the last turn starts a new topic, wherever its question word sits.
+                if not state.get('last_passages'):new_topic=True
+                elif QUESTION.search(message):
+                    fresh={p['id'] for p in adapter.search(message,scope,limit=3)}
+                    new_topic=bool(fresh) and not fresh&set(state['last_passages'])
             if correction:
                 state.update(focus=correction[1],stuck=0,active_problem=False);move='acknowledge_correction'
             elif not state['focus'] or new_topic:
@@ -109,7 +129,10 @@ class DialogueService:
             if uncertain:
                 state['stuck']+=1;move=['break_into_one_step','concrete_analogy','check_prerequisite'][min(2,state['stuck']-1)]
             if analogy:move='concrete_analogy'
-            active=bool(re.search(r'(?i)\b(solve|calculate|check my answer|give me the answer)\b|=',message))
+            if feedback:move='break_into_one_step'
+            # A concrete problem needs numbers: "how do I solve quadratic equations?" is a method question, not an active problem.
+            active=bool(re.search(r'(?i)\b(?:check my answer|give me the answer)\b',message)) or (
+                bool(re.search(r'\d',message)) and bool(re.search(r'(?i)\b(solve|calculate)\b|=',message)))
             if scope.subject.casefold()=='mathematics' and (re.search(r'(?i)\b(?:my answer|i got)\b',message) or
                 (re.search(r'\d',message) and re.search(r'(?i)\b(?:correct|right|check)\b',message))):active=True
             answer_check=scope.subject.casefold()=='mathematics' and bool(re.search(r'\d',message)) and bool(ANSWER_CHECK.search(message))
@@ -120,7 +143,7 @@ class DialogueService:
                 # A yes/no answer check is never judged by the model: there is no checker in chat.
                 reply=CHECK_REPLY.get(guess_language(message),CHECK_REPLY['en']);move='active_problem_coaching'
             elif not passages:
-                reply=navigation_reply(adapter,scope,missing=True);move='missing_evidence'
+                reply=navigation_reply(adapter,scope,missing=True,language=guess_language(message));move='missing_evidence'
             elif state['active_problem']:
                 reply="Let's keep the final answer for you to find. You can use checked practice for supported maths questions. What quantities are given, and what is your first step?";move='active_problem_coaching'
             elif self.language is None:
@@ -133,7 +156,11 @@ class DialogueService:
                     def generate_checked(instructions):
                         raw=self.language.generate(instructions,context).strip()
                         if raw.startswith('```') and raw.endswith('```'):raw=re.sub(r'^```(?:json)?\s*|\s*```$','',raw)
-                        reply,citations=validate_reply(json.loads(raw),passages,recent)
+                        data=json.loads(raw)
+                        if isinstance(data,dict) and data.get('citations')==[]:
+                            # The model found no support in the excerpts: say so honestly instead of a forced citation.
+                            raise ValueError('no_supporting_evidence')
+                        reply,citations=validate_reply(data,passages,recent)
                         if promises_secrecy(reply):raise ValueError('secrecy_promise')
                         if scope.subject.casefold() in ('science','chemistry') and unsafe_chemical_guidance(reply):
                             raise ValueError('unsafe_chemical_identification')
@@ -154,9 +181,11 @@ class DialogueService:
                         repaired=True
                     status='live_accepted'
                 except Exception as exc:
-                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification','secrecy_promise'}
+                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification','secrecy_promise','no_supporting_evidence'}
                     error=str(exc) if type(exc) is ValueError and str(exc) in safe else type(exc).__name__
-                    reply,citations=self.fallback(passages,state,recent);status='provider_failed_source_fallback'
+                    if error=='no_supporting_evidence':
+                        reply=NO_EVIDENCE.get(guess_language(message),NO_EVIDENCE['en']);citations=[];status='live_no_evidence';move='missing_evidence'
+                    else:reply,citations=self.fallback(passages,state,recent);status='provider_failed_source_fallback'
         sources=[self.citation(p) for p in passages if p['id'] in citations]
         state['last_passages']=[p['id'] for p in passages]
         result={'reply':reply,'citations':sources,'move':move,'provider_status':status,'validation_error':error,

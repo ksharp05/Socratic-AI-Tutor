@@ -12,6 +12,34 @@ EXTRA_STOP=set('on know understand get need explain simple english mean means di
 ALIASES={'photosyntesis':'photosynthesis','photosyntheis':'photosynthesis','co2':'carbon dioxide','a.p.':'arithmetic progression',
          'ap':'arithmetic progression','q.e.':'quadratic','trig':'trigonometry','dna copying':'dna replication'}
 TRIG_SPELLINGS={'sine':'sin','cosine':'cos','tangent':'tan'}
+# Filler words in English and Hinglish that must not drive retrieval on their own ("at", "never", "kya", "batao").
+EXTRA_STOP|=set("""a an the is are was were be been being am do does did done doing how why what when where which who whom whose
+i me my mine you your yours he she it its we our this that these those there here of in at to from by for with about as into onto over
+under up down out off and or but if then so than too very just also only even again ever never not no yes could should will shall may
+might must have has had having got gets getting made wants needs knows tell thanks thank sir maam bro yaar bhai bhaiya lol omg ok okay
+fine anyway really say said easy easily words word hindi way thing things something anything someone people everyone class today
+tomorrow test exam exams boards board marks teacher friend friends mom dad parents feel feeling stressed hard tough hate love ka ki ke
+ko kya hai hain hota hoti hote hun hoon tha thi mein me se aur par pe toh bhi nahi na kaise kyun kab kitna kitni batao bata samjha
+samjhao samajh aa raha rahi de dena karo kar karna karte nikalne nikale nikalte wala wali wale ye yeh vo woh bohot bahut thoda jaldi
+mujhe hume humein apna apni""".split())
+# NCERT Hindi and common Hinglish maths terms, mapped to the English words the index uses.
+GLOSSARY={'द्विघात':'quadratic','समीकरण':'equation','विविक्तकर':'discriminant','मूलों':'roots','मूल':'root','समांतर':'arithmetic',
+          'श्रेढ़ी':'progression','श्रेढी':'progression','सार्व':'common','अंतर':'difference','पद':'term','योग':'sum',
+          'त्रिकोणमितीय':'trigonometric','त्रिकोणमिति':'trigonometry','अनुपात':'ratio','कर्ण':'hypotenuse','कोण':'angle',
+          'मानक':'standard','सूत्र':'formula','मान':'value','samantar':'arithmetic','shredhi':'progression','mool':'root','yog':'sum',
+          'antar':'difference','sutra':'formula','discrmnt':'discriminant'}
+# Words too common in the textbook to show that a passage is about the question.
+GENERIC=set('first same each one two three term number numbers side value values use check keep zero least given find value'.split())
+# Words specific enough that one of them shows what the question is about, however chatty the rest is.
+STRONG=set('sin cos tan sine cosine tangent sec cosec cot trigonometry trigonometric hypotenuse discriminant quadratic progression arithmetic nth'.split())
+
+
+def fold(word):
+    """Singular form for matching: roots -> root, progressions -> progression."""
+    if len(word)>4 and word.endswith('ies'):return word[:-3]+'y'
+    if len(word)>4 and word.endswith('es') and word[-3] in 'sxz':return word[:-2]
+    if len(word)>3 and word.endswith('s') and not word.endswith('ss'):return word[:-1]
+    return word
 SAFE_ID=re.compile(r'^[a-z0-9][a-z0-9_-]{2,79}$')
 
 
@@ -100,8 +128,10 @@ class SqliteKnowledge:
               FROM scopes s JOIN passages p ON p.id=s.passage_id GROUP BY s.grade,p.subject,p.book ORDER BY s.grade,p.subject,p.book''')]
     def terms(self,query):
         q=query.casefold()
+        for a,b in GLOSSARY.items():q=q.replace(a,' '+b+' ')
         for a,b in ALIASES.items():q=re.sub(r'(?<!\w)'+re.escape(a)+r'(?!\w)',b,q)
         terms=[t for t in query_terms(q) if t not in EXTRA_STOP]
+        terms=[v for t in terms for v in dict.fromkeys((t,fold(t)))]
         # Keep the learner's English spelling and add mathematical abbreviations.
         terms=[variant for term in terms for variant in ((term, TRIG_SPELLINGS[term]) if term in TRIG_SPELLINGS else (term,))]
         if 'arithmetic progression' in q:terms.append('ap')
@@ -111,7 +141,7 @@ class SqliteKnowledge:
                 matches=difflib.get_close_matches(t,self.prefixes.get(t[:3],[]),n=1,cutoff=.9)
                 t=matches[0] if matches and matches[0][:3]==t[:3] else t
             fixed.append(t)
-        return list(dict.fromkeys(fixed))[:12]
+        return list(dict.fromkeys(fixed))[:16]
     def search(self,query,scope: Scope,limit=3):
         if type(scope.grade) is not int or not 8<=scope.grade<=12:raise ValueError('Unsupported grade')
         from .topics import broad_topic
@@ -131,14 +161,35 @@ class SqliteKnowledge:
         if scope.unit is not None:sql+=' AND p.unit_file_index=?';args.append(scope.unit)
         sql+=' ORDER BY rank,p.id LIMIT 40'
         with self.connect() as c:rows=[dict(r) for r in c.execute(sql,args)]
+        # Reference notes replace terse passages after ranking; their words count too, and a passage whose note alone
+        # matches is still a candidate (e.g. the nth-term note for "nth term" questions).
+        extra=getattr(self,'extra_text',{})
+        seen={p['id'] for p in rows};floor_rank=max([p['rank'] for p in rows],default=-1.0)
+        for pid,text in extra.items():
+            words={w for w in re.findall('[a-z0-9]+',text.casefold())};words|={fold(w) for w in words}
+            if pid in seen or sum(t in words for t in terms)<max(1,len(terms)/2) or not any(t in words and t not in GENERIC for t in terms):continue
+            p=self.passage(pid)
+            if p and self._in_scope(pid,scope):rows.append({**p,'rank':floor_rank})
         for p in rows:
-            expanded=p['text'].casefold()
+            expanded=(p['text']+' '+p['title']+' '+extra.get(p['id'],'')).casefold()
             for acronym,meaning in ALIASES.items():expanded+=' '+re.sub(r'(?<!\w)'+re.escape(acronym)+r'(?!\w)',meaning,p['text'].casefold())
             for spelled,short in TRIG_SPELLINGS.items():
                 if re.search(r'(?<!\w)(?:'+re.escape(spelled)+'|'+re.escape(short)+r')(?!\w)', expanded):expanded+=' '+spelled+' '+short
-            words=set(re.findall('[a-z0-9]+',expanded))
-            p['query_coverage']=sum(t in words for t in terms)/len(terms)
-            p['retrieval_score']=round(-p['rank']*(.5+p['query_coverage']),4)
+            words=set(re.findall('[a-z0-9]+',expanded));words|={fold(w) for w in words}
+            hits=[t for t in terms if t in words]
+            p['query_coverage']=len(hits)/len(terms)
+            p['domain_hits']=sum(t not in GENERIC for t in hits)
+            p['strong_hits']=sum(t in STRONG for t in hits)
+            p['_hits']=hits
+        # Rare query words say more about the question than words every candidate shares ("nth" vs "term").
+        df={t:sum(t in p['_hits'] for p in rows) for t in terms}
+        weight={t:1/df[t] for t in terms if df[t]}
+        for p in rows:
+            share=sum(weight.get(t,0) for t in p.pop('_hits'))/(sum(weight.values()) or 1)
+            p['retrieval_score']=round(-p['rank']*(.5+share),4)
+        # Relevance floor: a passage must share a subject word with the question, and enough of the question,
+        # so that filler like "at" or "zero" no longer links unrelated questions to a passage.
+        rows=[p for p in rows if p['domain_hits']>=1 and (p['query_coverage']>=.2 or p['domain_hits']>=2 or p['strong_hits'])]
         rows.sort(key=lambda p:(-p['retrieval_score'],p['id']))
         if re.search(r'(?i)\b(?:what is|what are|what makes|define)\b',query) and rows:
             with self.connect() as c:
@@ -152,6 +203,12 @@ class SqliteKnowledge:
     def passage(self,pid):
         with self.connect() as c:r=c.execute('SELECT * FROM passages WHERE id=?',(pid,)).fetchone()
         return dict(r) if r else None
+    def _in_scope(self,pid,scope):
+        sql='SELECT 1 FROM scopes s JOIN passages p ON p.id=s.passage_id WHERE p.id=? AND s.grade=? AND s.subject=?'
+        args=[pid,scope.grade,scope.subject.casefold()]
+        if scope.book:sql+=' AND p.book=?';args.append(scope.book)
+        if scope.unit is not None:sql+=' AND p.unit_file_index=?';args.append(scope.unit)
+        with self.connect() as c:return c.execute(sql,args).fetchone() is not None
     def nodes(self,scope):
         if scope.grade==10 and scope.subject.casefold()=='mathematics' and (not scope.book or scope.book=='jemh1'):
             with self.connect() as c:
@@ -175,8 +232,8 @@ class SqliteKnowledge:
         for r in rows:
             r['id']=f"reading:{r['book']}:{r['unit_file_index']}"
             r['kind']='reading';r['prerequisites']=[]
-            title=r['title'].split(' â€” ',1)[-1]
-            r['title']=titles.get((r['book'],r['unit_file_index'])) or (title if ' â€” ' in r['title'] else (f"{title} Â· Reading {r['unit_file_index']}" if r['unit_file_index'] is not None else title))
+            title=r['title'].split(' — ',1)[-1]
+            r['title']=titles.get((r['book'],r['unit_file_index'])) or (title if ' — ' in r['title'] else (f"{title} · Reading {r['unit_file_index']}" if r['unit_file_index'] is not None else title))
         return rows
 
 
