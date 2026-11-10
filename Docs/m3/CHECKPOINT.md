@@ -1,4 +1,24 @@
-# Current checkpoint - security test (USD 5 programme); course key exhausted
+# Update - no-key safety and pipeline fixes ported into the beta (10 Nov 2026, evening)
+
+- **49749be: safety.** `socrates_beta/safety.py` adds:
+  - normalised crisis, child-safety and secrecy screens (English, Hindi, Hinglish, algospeak) with fixed three-language replies;
+  - wider redaction, applied to titles and goals too;
+  - a validator rejecting secrecy promises;
+  - answer checks ("sahi hai?", "yes or no") answered with "I can't check final answers here";
+  - maths-kernel limits (6 function calls; powers above 12 only for rational bases);
+  - accurate privacy wording in the UI.
+- **bb13bd0: pipeline deep-dive fixes.**
+  - Retrieval: stoplist, Hindi glossary, note text and titles counted, rarity weighting, relevance floor. In-scope hits 67 to 75 of 92; false matches 20 to 10 of 45.
+  - Topic tracking.
+  - A narrower active-problem rule.
+  - Confusion and feedback detection.
+  - An honest no-evidence reply.
+- The deep-dive report is private: `Directions/product_quality/v4/security/pipeline_deep_dive.md`.
+- CI test set: 2,701 passed, 7 skipped. Not pushed or deployed. The fixes are verified offline only and need a live re-run when a key is available.
+
+---
+
+# Checkpoint - security test (USD 5 programme); course key exhausted
 
 **10 November 2026, later.** The user asked for much more research and many more runs for the security test, with a
 USD 5 cap ("you can spend a total of 5 dollars to complete the security test as this is one of the most important
