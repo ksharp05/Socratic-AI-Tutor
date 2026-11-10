@@ -120,3 +120,11 @@ def test_a_question_the_store_refuses_stays_marked_for_this_session(tutor, monke
     _reach_last_hint(tutor, "s1")
     state = tutor.graph.get_state({"configurable": {"thread_id": "s1"}}).values
     assert state["revisit"] == [FIRST]
+
+
+def test_the_oldest_saved_question_comes_back_first(tutor):
+    _publish(tutor, SECOND, FIRST)
+    _store(tutor, "record_revisit", FIRST)
+    _store(tutor, "record_revisit", SECOND)
+    tutor.turn("s2", LEARNER, "practice", chapter=CHAPTER)
+    assert _active(tutor, "s2") == FIRST
