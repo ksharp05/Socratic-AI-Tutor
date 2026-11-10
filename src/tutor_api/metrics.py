@@ -20,6 +20,8 @@ class Metrics:
         self.leaks_blocked = Counter("tutor_answer_leak_blocked_total",
                                      "Draft replies the output guard blocked for leaking an answer", ["detector"],
                                      registry=r)
+        for detector in LEAK_DETECTORS.values():
+            self.leaks_blocked.labels(detector)  # start at 0, so Prometheus's increase() counts the first leaks
         self.guard_failures = Counter("tutor_output_guard_failures_total",
                                       "Draft replies that failed the output guard, by reason", ["reason"], registry=r)
         self.tool_calls = Counter("tutor_tool_calls_total", "MCP tool calls through the ToolBus",
@@ -32,6 +34,10 @@ class Metrics:
         self.latency = Histogram("tutor_turn_latency_seconds", "Wall-clock latency of one student turn", ["route"],
                                  buckets=(0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 20, 30, 60), registry=r)
         self.pending = Gauge("tutor_pending_approvals", "Question sets waiting for a teacher", registry=r)
+        self.guard_checks = Counter("tutor_output_guard_checks_total",
+                                    "Draft replies the output guard checked, passed or failed", registry=r)
+        self.alerts = Counter("tutor_alerts_received_total", "Grafana alerts posted to the API, by status",
+                              ["status"], registry=r)
 
     def observe_trace(self, rows) -> None:
         """Count new trace_events rows (tool calls and output-guard decisions)."""
@@ -41,7 +47,10 @@ class Metrics:
                 self.tool_calls.labels(server, tool, row["outcome"]).inc()
                 if row["outcome"] == "denied":
                     self.tool_denied.labels(server, tool).inc()
+            elif row["kind"] == "decision" and row["node"] == "output_guard" and row["name"] == "pass":
+                self.guard_checks.inc()
             elif row["kind"] == "decision" and row["node"] == "output_guard" and row["name"] == "fail":
+                self.guard_checks.inc()
                 detail = json.loads(row["detail"] or "{}")
                 for key, detector in LEAK_DETECTORS.items():
                     if detail.get(key):
