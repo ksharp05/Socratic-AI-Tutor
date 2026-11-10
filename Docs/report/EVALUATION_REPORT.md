@@ -17,6 +17,49 @@
 <!-- One-paragraph tour: guards → planner → specialists → MCP tools behind permission hooks → output guards → memory.
      The teacher-approval gate. Refer to the architecture diagram and the numbered walkthrough of one real trace. -->
 
+## 2a. Safety and control (R4)
+
+<!-- R4 owns this section. E2 numbers come from R5's run_ids; the <…> placeholders stay until then. -->
+
+**Threat model.** `Docs/THREAT_MODEL.md` (v2, 10 Nov) covers ten assets on two surfaces: the team tutor (answer keys, learner data, the teacher's approval, keys and usage, student wellbeing) and the live beta (visitors' saved progress, consent before provider calls, the hosted key and USD 0.50 lease, live content safety, deployment secrets). Every control below is deterministic code; none relies on the tutor model behaving well.
+
+| Control | Built (where) | Tested (how) | Still needs validation |
+|---|---|---|---|
+| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input` | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
+| **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,103 tests on Beta) | E2 tool-result and retrieved-passage channels |
+| **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
+| **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
+| **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
+| **Content-safety classifier** (D-6) | **Not built:** proposed only, waiting on the budget decision | Spike S4 only (below) | Lead's unseen safety set; E2 |
+| **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; key expiry on 16 Nov |
+
+**Guard-model comparison (development evidence, not a result).** Llama Guard 4 is not on the course model list, and no other dedicated guard model is. Spike S4 (`Docs/spikes/S4.md`, 9 Nov) gave three course models one six-slot SAFE/UNSAFE prompt on 10 hand-written development messages, one run each: `llama-3.1-8b-instruct` 10/10, `claude-haiku-5.5` 10/10 at about 10× the cost, and `nova-lite-v1` 9/10 (one unparseable reply). D-6 proposes Llama 3.1 8B, failing closed, with Haiku as fallback. Ten examples cannot show robustness; the classifier's real test is the Lead's safety set, which R4 has not seen, and E2.
+
+**E2: do the defences work?** R5 ran <n> attacks (<n> original, <n> new, unseen by R4) with matching clean controls, defences off and on. run_ids: <…>.
+
+| | Defences off | Defences on |
+|---|---|---|
+| Attack success | <…> | <…> |
+| False blocks (controls) | <…> | <…> |
+| False blocks (clean held-out sessions) | — | <…> |
+
+<Interpretation, once the numbers are in: which channels still got through and why, the cost in false blocks, and what each layer contributed if the per-layer split was run.>
+
+**Limitations.**
+- The guards match fixed phrasings: reworded, encoded, Hinglish or multi-turn attempts can pass.
+- Violent, sexual, hateful and alcohol requests are not caught on either surface until a classifier is added (finding 8).
+- Citation checks verify IDs and format, not that the passage supports the claim.
+- Local runs cap tool calls, not money; only the live beta has a USD cap.
+- On the live site, a child's consent click is not verifiable parental consent, and provider or platform backups are outside app deletion.
+- All tests above were written by the team; S4 used one run and ten examples.
+
+**Recommended next steps.**
+1. Before 16 Nov: pause the live lease, set `TUTOR_BETA_LIVE=0`, or replace the course key.
+2. Decide the D-6 budget, then wire the classifier into `guards.py` behind a config switch, failing closed, with tests.
+3. Add Prompt Guard 2 as a local injection layer (access is already approved).
+4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
+5. Before any pilot: guardian consent, a named grievance contact and human review of every distress flag.
+
 ## 3. Data (R5)
 
 - **Source:** dataset v0.10.0, payload `49862eea…`, generated with AI assistance by one author. All review items are pending; no teacher approval yet.
