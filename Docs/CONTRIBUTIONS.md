@@ -12,6 +12,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-10 · Swati / SwatiSmitaBiswal (R4)
+- **Work:**
+  - Fixed findings 1-3 in `mathcore.py`: empty-set term-count answers, "no such term in this AP", and a narrower leak check; 42 regression tests. PR #12.
+  - Fixed the `hopeless at <subject>` distress false alarm in `guards.py`; 14 tests in both directions. PR #13.
+  - Threat model v2 for Beta and the live site; retargeted PR #10 to Beta.
+  - Evaluation report section 2a, safety and control. PR #14.
+  - Test runs: tests/ suite 2,145 passed (PR #12 branch) and 2,117 passed (PR #13 branch). Checked with `git stash` that the 3 `test_postgres_beta.py` failures are a missing `psycopg` on my laptop, not my changes.
+- **AI-assisted:** code fixes, tests and documents drafted with Claude, then run, checked against the code and reviewed by me.
+- **Decisions:** none recorded. Open: the R1 question on accepting "does not exist", "not possible", "no" and "zero" (PR #12), and the D-6 budget (Lead).
 
 ### 2026-11-09 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
