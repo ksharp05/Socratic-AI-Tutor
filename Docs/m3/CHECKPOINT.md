@@ -1,3 +1,17 @@
+# Update - team PRs 10-17 merged and production redeployed (10 Nov 2026, night)
+
+- PRs 10, 12, 13 and 14 (Swati, R4) and 11, 15, 16 and 17 (Poonam, R3) are merged into Beta and pushed as d15e545.
+  The CI test set gives 2,768 passed and 7 skipped.
+- Production was redeployed from d15e545 as dpl_AfxcJSjtTeovibW1Vpw3RyfSqGa3: READY and aliased to
+  https://socratic-tutor-beta.vercel.app/beta/.
+- Live check: the new privacy wording shows, and a Hinglish crisis message gets the Hinglish crisis template (human_help,
+  not_called, not_saved_urgent). One anonymous session titled "Deployment check" was created.
+- `TUTOR_BETA_LIVE` is unchanged. The course key is exhausted, so model replies fall back to labelled source reading and
+  failed attempts count toward the hosted lease. Recommended: set `TUTOR_BETA_LIVE=0` until a new key arrives.
+- R5 report: https://claude.ai/artifact/56gxdBqvGjsbYw5zPqXaGT.
+
+---
+
 # Update - no-key safety and pipeline fixes ported into the beta (10 Nov 2026, evening)
 
 - **49749be: safety.** `socrates_beta/safety.py` adds:
