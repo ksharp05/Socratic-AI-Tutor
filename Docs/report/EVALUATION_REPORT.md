@@ -14,8 +14,13 @@
 
 ## 2. The system (R3 + R6)
 
-<!-- One-paragraph tour: guards → planner → specialists → MCP tools behind permission hooks → output guards → memory.
-     The teacher-approval gate. Refer to the architecture diagram and the numbered walkthrough of one real trace. -->
+**How a message moves.** Every student message to the team tutor runs through one LangGraph session graph (`src/tutor/app.py`) with a SQLite checkpointer, so an interrupted turn can be resumed. Rule-based **input guards** flag distress, which goes straight to a fixed handoff message, as well as injection, answer-key requests, role claims and personal data, and they mark a student's own problem as unverified. `load_learner` reads the learner model and keeps a study plan. The **planner** is code: it picks one route from the learner's flagged misconceptions, the open question and the message. One **specialist** then runs: the diagnostician, tutor, grader or question setter, or a node that converses, refuses or hands off. Every tool call passes the **ToolBus hooks** (role allowlist, own learner only, 300 calls per session, scrubbed arguments in the trace) on its way to one of four FastMCP servers: `textbook-kb`, `math-tools`, `learner-store` and `question-bank`. Answer keys are computed by `math-tools` and never sent to the model. The **output guard** checks each draft for answer leaks and checks that every citation was actually retrieved; a failing draft is retried once, then replaced by a safe fallback. `update_memory` records misconceptions, mastery and the explanation style that worked. A language model, when one is configured, only writes the wording and may propose a diagnosis that code then verifies.
+
+**Teacher approval gate.** The question setter can only propose. A separate approval graph solves every proposed item, waits at `interrupt()` for the teacher, and publishes only the payload whose hash the teacher approved; any edit voids the approval.
+
+**Diagram and trace.** [ARCHITECTURE.md](ARCHITECTURE.md) has our redraw of the guide's Figure 4, coloured by role, and 12 numbered steps tied to a real 36-row trace (session `walk-1`, stub model, reproducible). It also lists where the code differs from Figure 4: routes chosen by code, rule-based guards and SQLite storage.
+
+**Serving.** Students and teachers use a Streamlit UI that talks only to a FastAPI service, which takes the role and learner from the bearer token. Prometheus and Grafana run under the Compose `ops` profile. <R6: deployment and operations detail.>
 
 ## 2a. Safety and control (R4)
 
