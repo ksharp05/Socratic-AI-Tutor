@@ -12,11 +12,34 @@ from socratic_data.tasks import oracle_answer, primary_answer
 
 _UNICODE = {"−": "-", "–": "-", "×": "*", "·": "*", "÷": "/", "²": "^2", "³": "^3", "√": "sqrt", "π": "pi"}
 _NO_ROOTS = re.compile(r"\b(no (real )?(roots?|solutions?)|none|empty|∅)\b", re.I)
+# "{}" or "∅" on its own. \b cannot match around these symbols, so they need their own pattern.
+_EMPTY_SYMBOL = re.compile(r"^\s*(?:\{\s*\}|∅)\s*[.!]?\s*$")
 _NO_COUNT = r"\bno (?:valid |positive integer )?(?:term )?counts?\b"
+_AP_NAME = r"(?:ap|a\.p\.|arithmetic progression|progression|sequence)"
+_IN_AP = rf"(?:\s+in\s+(?:this|the)\s+{_AP_NAME})?"
 # A student's whole answer, so "no such term in my notes, can you help?" stays a question.
-NO_TERM_ANSWER = re.compile(_NO_COUNT + r"|\bno (?:such |valid )?terms?(?: exists?)?\s*[.!]?\s*$", re.I)
-# Anywhere in a tutor reply, because saying it gives away an empty answer.
-NO_TERM_LEAK = re.compile(_NO_COUNT + r"|\bno (?:such |valid )?terms?\b", re.I)
+# Endings such as "in this AP" and "exists" are accepted (finding 2).
+NO_TERM_ANSWER = re.compile(
+    _NO_COUNT + rf"|\bno (?:such |valid )?terms?(?:\s+exists?)?{_IN_AP}(?:\s+exists?)?\s*[.!]?\s*$", re.I)
+# The whole answer is the empty set the question asks for: "{}", "∅", "empty set", "none",
+# "no such (finite) AP (exists)" (finding 1). Term-count answers only.
+EMPTY_SET_ANSWER = re.compile(
+    rf"^\s*(?:(?:my|the) answer is\s*[:=]?\s*)?"
+    rf"(?:\{{\s*\}}|∅|(?:the\s+)?empty\s+set|none"
+    rf"|(?:there\s+(?:is|are)\s+)?no\s+such\s+(?:finite\s+)?{_AP_NAME}(?:\s+exists?)?)"
+    rf"\s*[.!]?\s*$", re.I)
+# Anywhere in a tutor reply, but only statements about the answer (finding 3): "no valid term count",
+# "no such term", "no (valid) term exists", and "there is/are no (valid) term(s)" when it ends the clause.
+# Ordinary hints such as "there are no terms before the first one" or "no term index can be zero" pass.
+NO_TERM_LEAK = re.compile(
+    _NO_COUNT
+    + r"|\bno such terms?\b"
+    + r"|\bno (?:valid )?terms? exists?\b"
+    + rf"|\bthere (?:is|are) no (?:valid )?terms?"
+    + rf"(?=\s*(?:[.!?,;:]|$|in (?:this|the) {_AP_NAME}(?![a-z])|(?:that|which)\b))",
+    re.I)
+_COUNT_VALUE = re.compile(r"[0-9+\-*/^().]+")
+_ROOT_VALUE = re.compile(r"[0-9a-z+\-*/^().]+")
 
 
 def compute_key(problem: dict) -> dict:
@@ -41,18 +64,24 @@ def parse_answer(text: str, key: dict) -> dict:
     kind = key["kind"]
     raw = text.strip()
     if kind == "finite_set":
-        no_term = key.get("unit") == "terms" and NO_TERM_ANSWER.search(raw)
-        if key.get('unit') == 'terms':
+        terms = key.get("unit") == "terms"
+        if terms:
+            empty = bool(NO_TERM_ANSWER.search(raw) or EMPTY_SET_ANSWER.match(raw))
             raw = re.sub(r"(?i)^\s*(?:there are|the count is|my answer is)\s*", "", raw)
             raw = re.sub(r"(?i)\s+terms?\s*[.!]?\s*$", "", raw)
-        if (key.get("unit") != "terms" and _NO_ROOTS.search(raw)) or no_term:
+        else:
+            empty = bool(_NO_ROOTS.search(raw) or _EMPTY_SYMBOL.match(raw))
+        if empty:
             values: list[str] = []
         else:
             body = re.sub(r"[a-zA-Z]\s*=\s*", " ", raw.replace("{", " ").replace("}", " "))
             body = re.sub(r"(?i)\b(roots?|are|is|and|or|the|answers?)\b", ",", body)
             parts = [p for p in re.split(r"[,;]+|\s{2,}", body) if p.strip()]
             values = [normalise_expression(p) for p in parts]
-            values = [v for v in values if re.fullmatch(r"[0-9a-z+\-*/^().]+", v)]
+            allowed = _COUNT_VALUE if terms else _ROOT_VALUE
+            if terms and any(not allowed.fullmatch(v) for v in values):
+                values = []  # words are not term counts: ask again instead of grading made-up values
+            values = [v for v in values if allowed.fullmatch(v)]
             if not values:
                 return {"ok": False, "reason": ("Write a positive integer count, or say 'no valid term count'." if key.get('unit') == 'terms' else "Write your roots like: x = 2 or x = -3, or say 'no real roots'.")}
         typed = {"kind": "finite_set", "values": values}
