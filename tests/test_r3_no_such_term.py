@@ -60,3 +60,18 @@ def test_the_phrase_reaches_the_grader_in_a_real_turn(tutor):
 
 def test_a_question_about_the_phrase_is_not_graded(tutor):
     assert tutor.turn("s", LEARNER, "is there no such term?")["route"] != "grade"
+
+
+EMPTY_SET = ["empty set", "the empty set", "{}", "∅", "none", "None.", "no such AP", "No such finite AP exists."]
+
+
+@pytest.mark.parametrize("text", EMPTY_SET)
+def test_an_empty_set_answer_reaches_the_grader(tutor, text):
+    result = tutor.turn("s", LEARNER, text)
+    assert result["route"] == "grade"
+    assert result["reply"].startswith("Correct")
+
+
+@pytest.mark.parametrize("text", ["what does empty set mean here?", "can the answer be none?"])
+def test_a_question_about_the_empty_set_is_not_graded(tutor, text):
+    assert tutor.turn("s", LEARNER, text)["route"] != "grade"
