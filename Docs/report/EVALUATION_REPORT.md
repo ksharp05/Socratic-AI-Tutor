@@ -20,7 +20,7 @@
 
 **Diagram and trace.** [ARCHITECTURE.md](ARCHITECTURE.md) has our redraw of the guide's Figure 4, coloured by role, and 12 numbered steps tied to a real 36-row trace (session `walk-1`, stub model, reproducible). It also lists where the code differs from Figure 4: routes chosen by code, rule-based guards and SQLite storage.
 
-**Serving.** Students and teachers use a Streamlit UI that talks only to a FastAPI service, which takes the role and learner from the bearer token. Prometheus and Grafana run under the Compose `ops` profile. <R6: deployment and operations detail.>
+**Serving and operations.** Students and teachers use a Streamlit UI that talks only to a FastAPI service, which takes the role and learner from the bearer token. `docker compose up --build --wait` starts both. On 5 November the base stack was built from a fresh clone and kept its state across a restart (`Docs/m2/FRESH_INSTALL.md`). The `ops` profile adds Prometheus and a provisioned Grafana dashboard (turns, blocked leaks, denied tool calls, pending approvals, tool outcomes and latency), but that profile has not yet been run and checked. GitHub Actions runs on every pull request and on pushes to `main`, `milestone-2` and `Beta`: the portable test suite, a registry check and three gates (single-controller smoke, simulated students and security cases). A real CI failure and its fix are recorded in `Docs/ci_failure.md`. The public beta is a separate browser app (`socrates_beta`) on Vercel, with a Neon Postgres database, at https://socratic-tutor-beta.vercel.app/beta/. Its mobile and browser check is still pending.
 
 ## 2a. Safety and control (R4)
 
