@@ -47,8 +47,20 @@
 
 ## 6. Lessons (R3 + R1)
 
-<!-- The playbook (tag playbook-v1, hash), each accepted lesson, the rejected lesson and why (R1's review on Sat 7),
-     and any lesson linked to worse results ("harmful-lesson candidates" from E3's per-misconception table). -->
+**The playbook.** The Reflexion lessons are in `eval/fixtures/m3_candidate_playbook.json`: version `candidate-v1`, status `development_candidate_unreviewed`, SHA-256 `cf3f8f0f…`, recorded in `Docs/m3/BEHAVIOUR_FREEZE.json`. The four lessons were written on 5 November from two development reports (`Docs/m2/TESTPACK_RESULTS.md` and `Docs/m2/MULTITOPIC_EVALUATION.md`), and the E3 configurations load this file. There is no `playbook-v1` tag yet: the playbook is frozen only after its lessons are reviewed.
+
+| Lesson | Scope | What it tells the tutor to do | Review |
+|---|---|---|---|
+| `qe-zero-factor` | Quadratic equations | When dividing might lose a zero root, ask what must be true before dividing and which factor cases still need checking | Pending |
+| `ap-displacements` | Arithmetic progressions | Separate the number of terms from the number of common-difference steps; ask the learner to describe the displacement | Pending |
+| `tr-reference` | Trigonometry | When a numeric error has several possible causes, ask for the reference angle and the side labels before choosing one | Pending |
+| `context-step` | All three chapters | Ask one small question about the learner's own step and cite the source; never replace the step with a formula dump or the final answer | Pending |
+
+**Accepted and rejected lessons.** None yet. The teacher review (item 2 in `Docs/m3/v3/TEAM_ACTIONS.md`) records accept, edit or reject with a reason for each lesson. Until it happens no lesson is accepted, and we do not invent a rejection to fill this section. <R1: the decision and reason for each lesson, then the reviewed playbook's version and hash.>
+
+**Did any lesson make results worse? (Development evidence, not a result.)** In the development E3 run (48 sessions on 16 development source cards, seeds 1–3, `gpt-4.1-mini`; run_ids `m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485` and `m3_live_e3_remaining4-20261105-074756-8c7792e028ac`, against C2 `m3_live_c2-20261105-040116-9c72acbd3556`), the playbook arm and C2 had identical diagnosis counts for all 17 misconceptions. So no misconception is a harmful-lesson candidate, and none improved either. Both arms had diagnosis recall 0.042 and a success proxy of 2/48. The quiz change differed by +0.021 (bootstrap 95% interval [0.000, 0.063]), but the simulator could copy post-quiz answers in these runs, so that is not a learning estimate (`Docs/m4/E3_COMPLETE_RESULTS.md`).
+
+**What we take from it.** With diagnosis recall this low in every arm, the per-misconception tables have very few hits to compare, so "no harmful lesson" is weak evidence. Before the final E3, the lessons need their human review and a versioned playbook with its own hash, and diagnosis coverage needs to improve, because the per-misconception comparison can only judge a lesson where misconceptions are actually diagnosed.
 
 ## 7. Limitations (R5)
 
