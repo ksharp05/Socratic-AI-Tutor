@@ -31,8 +31,11 @@ RISK_PATTERN = (
     r")\b"
     r"|आत्महत्या|खुदकुशी|मरना चाहत|मर जाना|जीना नहीं"
 )
-# The core tutor also keeps its broader earlier terms (bare "hopeless", "can't go on", feeling unsafe).
-DISTRESS = re.compile(r"\b(?:no reason to live|can'?t go on|hopeless|i (?:feel|am) unsafe|"
+# The core tutor also keeps its broader earlier terms ("hopeless", "can't go on", feeling unsafe).
+# "Hopeless at/in/with <subject>" is about schoolwork, not distress (finding 8), so it is excluded;
+# "I feel hopeless at school" is still caught by RISK_PATTERN.
+_HOPELESS = r"hopeless(?!\s+(?:at|in|with)\b)"
+DISTRESS = re.compile(r"\b(?:no reason to live|can'?t go on|" + _HOPELESS + r"|i (?:feel|am) unsafe|"
                       r"i (?:do not|don['’]?t) feel safe|mar jana|jeena nahi)\b|" + RISK_PATTERN, re.I)
 ROLE_CLAIM = re.compile(r"\b(i am|i'm|im|this is)\s+(the|your|a)?\s*(teacher|admin|developer|principal)\b", re.I)
 KEY_REQUEST = re.compile(r"\b(answer key|answers? to (all|the) (quiz|questions)|show (me )?(the )?answers?|"
