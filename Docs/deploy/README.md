@@ -140,6 +140,19 @@ TUTOR_API_TOKENS="k3x9...:student:L-A,p2q8...:student:L-B,z7m1...:teacher:T-001"
 
 **How the counts are collected.** Tool calls, denials and blocked leaks are read from the `trace_events` rows that the ToolBus hooks and the output guard already write. The counts therefore match `tutor trace`.
 
+## Answer-leak alert
+
+Grafana loads the rule from `ops/grafana/provisioning/alerting/leak_alert.yml`. It fires when more than 5% of the drafts the output guard checked in the last 10 minutes were blocked as answer leaks, for 2 minutes in a row. Grafana then posts to `POST /alerts/grafana`, and teachers see it under **System alerts** on the Learners page and in `GET /teacher/alerts`.
+
+- **Token.** Compose gives Grafana and the API the same `TUTOR_ALERT_TOKEN`. Its default, `dev-grafana-alerts`, is public, so set your own outside development; with `TUTOR_ENV=production` the API refuses the default.
+- **Fire it for the demo.** With the `ops` stack running:
+  ```bash
+  docker compose exec -T api python - < scripts/fire_leak_alert.py
+  ```
+  A deliberately leaky stand-in for the model answers 20 questions. The output guard blocks every leaky draft, so no student sees one, and no live model is called. The alert turns to Firing in Grafana (Alerting → Alert rules) after about 3 minutes.
+- **Port 8000 busy?** Start the stack with `TUTOR_API_PORT=18000 docker compose --profile ops up --build --wait` and use `http://localhost:18000`.
+- **Evidence, 11 November 2026:** [the rule firing](leak_alert/1_alert_rule_firing.webp), [the dashboard after the fire script](leak_alert/2_dashboard_leaks_blocked.webp) and [the teacher's System alerts](leak_alert/3_teacher_system_alerts.webp).
+
 ## Tests
 
 `tests/test_api.py` covers:
@@ -157,14 +170,13 @@ The tests use FastAPI's `TestClient` and the stub model. CI installs the `api` e
 
 ## Not tested yet
 
-- **Docker.** When this was written, Docker was not installed and the files were never built. On 5 November 2026 the base stack was built and run from a fresh clone and kept its state across a restart; see [Milestone 2 install evidence](../m2/FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). The `ops` profile below is still untested. The image tags (`prom/prometheus:v3.5.0`, `grafana/grafana:12.1.0`) are pinned but have not been pulled.
-- **Prometheus and Grafana.** The scrape config and the provisioned dashboard have not been loaded.
+- **Docker.** When this was written, Docker was not installed and the files were never built. On 5 November 2026 the base stack was built and run from a fresh clone and kept its state across a restart; see [Milestone 2 install evidence](../m2/FRESH_INSTALL.md#compose-acceptance-after-restart---5-november-2026). The `ops` profile was run on 11 November 2026 (next item).
+- **Prometheus and Grafana.** Run by Poonam (R3) on 11 November 2026 on macOS 26.5 with Docker 29.5.3, the stub model and `TUTOR_API_PORT=18000`. All four services were healthy; Prometheus scraped the API, and Grafana loaded the dashboard, the leak alert rule and the webhook contact point. After `scripts/fire_leak_alert.py`, 20 of 40 checked drafts were blocked as leaks. The rule went from Pending to Firing (value 0.5), Grafana posted to `POST /alerts/grafana`, and the alert appeared under **System alerts** on the teacher's Learners page. A student token got 403 from `GET /teacher/alerts`. Not checked yet: the alert resolving, and the panels fed by chat turns, because the fire script bypasses the chat API.
 - **The UI.** It was checked headlessly with Streamlit's `AppTest` against a local API: a student chat turn over SSE and a teacher proposal. It has not been clicked through in a browser.
 - **Streaming.** The POC graph does not stream model tokens. `/chat/stream` runs the whole turn first, then sends the reply in chunks.
 - **Under the plan but not built here:**
   - login with passwords (`POST /auth/login`);
   - Postgres;
-  - the Grafana leak alert and its webhook (`POST /alerts/grafana`);
   - the `eval` Compose service;
   - concurrent turns.
 

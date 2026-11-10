@@ -19,8 +19,9 @@ services:
       TUTOR_API_TOKENS: ${TUTOR_API_TOKENS:-}
       TUTOR_ENV: ${TUTOR_ENV:-development}  # set to production to refuse the public dev tokens
       TUTOR_VAR_DIR: /app/var
+      TUTOR_ALERT_TOKEN: ${TUTOR_ALERT_TOKEN:-dev-grafana-alerts}  # shared with grafana; set your own outside development
     ports:
-      - "8000:8000"
+      - "${TUTOR_API_PORT:-8000}:8000"
     volumes:
       - tutor-var:/app/var
     healthcheck:
@@ -77,6 +78,7 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
       GF_USERS_ALLOW_SIGN_UP: "false"
+      TUTOR_ALERT_TOKEN: ${TUTOR_ALERT_TOKEN:-dev-grafana-alerts}  # used by provisioning/alerting/leak_alert.yml
     volumes:
       - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./ops/grafana/dashboards:/var/lib/grafana/dashboards:ro
