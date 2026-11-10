@@ -1,7 +1,8 @@
 """Run the quality and safety probe set through the real beta chat pipeline, with ledgered live model calls.
 
 Subcommands (run from the canonical workspace with the shared-checkout .venv):
-  allocate SLUG --max-usd 1 --max-calls 600 --purpose "..."   open a v4 batch (USD <= 1) in the USD 10 phase
+  allocate SLUG --max-usd 1 --max-calls 600 --purpose "..." [--program security]
+                                                                open a v4 batch (USD <= 1) in the USD 10 phase
   run SLUG --model M --label L [--config live|library] [--areas a,b] [--ids X,Y] [--addendum FILE] --execute-live
   close SLUG                                                    seal the batch ledger and release unused cap
   status SLUG                                                   print the batch snapshot
@@ -25,6 +26,28 @@ HEADERS = {"X-Socrates-Request": "1"}
 def phase():
     from tutor_eval.product_budget import ProductPhase
     return ProductPhase(CAN, iteration="v4")
+
+
+def program_headroom(phase_data, program):
+    """USD still available to a named spending programme inside the phase (e.g. the USD 5 security test).
+
+    Every batch whose name starts with the programme prefix counts: closed batches at their sealed spend,
+    running ones at their full cap. The programme file records the user's approval quote and cap.
+    """
+    used = sum(b["max_usd"] for b in phase_data["batch_allocations"] if b["batch"].startswith(program["batch_prefix"]))
+    return round(program["cap_usd"] - used, 10)
+
+
+def allocate_in_program(name, slug, purpose, max_usd, max_calls):
+    from tutor_eval.product_budget import read
+    program = read(CAN / "Directions/product_quality/v4/programs" / f"{name}.json")
+    if program.get("status") != "approved" or not slug.startswith(program["batch_prefix"]):
+        raise SystemExit(f"Batch {slug} must start with {program['batch_prefix']} and the programme must be approved")
+    p = phase()
+    headroom = program_headroom(read(p.phase_path), program)
+    if max_usd > headroom + 1e-10:
+        raise SystemExit(f"Programme {name} has USD {headroom:.4f} left of {program['cap_usd']}; asked for {max_usd}")
+    return p.allocate(slug, f"[{name} programme] {purpose}", max_usd=max_usd, max_calls=max_calls)
 
 
 class LedgeredLanguage:
@@ -161,6 +184,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("allocate"); a.add_argument("slug"); a.add_argument("--max-usd", type=float, required=True)
     a.add_argument("--max-calls", type=int, required=True); a.add_argument("--purpose", required=True)
+    a.add_argument("--program", help="spend inside a capped programme, e.g. security (Directions/product_quality/v4/programs)")
     r = sub.add_parser("run"); r.add_argument("slug"); r.add_argument("--model", required=True); r.add_argument("--label", required=True)
     r.add_argument("--config", choices=("live", "library"), default="live"); r.add_argument("--areas"); r.add_argument("--ids")
     r.add_argument("--subjects"); r.add_argument("--addendum"); r.add_argument("--cap", type=int, default=240)
@@ -169,7 +193,10 @@ def main():
     s = sub.add_parser("status"); s.add_argument("slug")
     args = ap.parse_args()
     if args.cmd == "allocate":
-        w = phase().allocate(args.slug, args.purpose, max_usd=args.max_usd, max_calls=args.max_calls)
+        if args.program:
+            w = allocate_in_program(args.program, args.slug, args.purpose, args.max_usd, args.max_calls)
+        else:
+            w = phase().allocate(args.slug, args.purpose, max_usd=args.max_usd, max_calls=args.max_calls)
         print(json.dumps(w.snapshot(), indent=1))
     elif args.cmd == "run":
         cmd_run(args)

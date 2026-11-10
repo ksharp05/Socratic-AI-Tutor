@@ -1,4 +1,55 @@
-# Current checkpoint - quality and safety plan with ledgered live tests
+# Current checkpoint - security test (USD 5 programme); course key exhausted
+
+**10 November 2026, later.** The user asked for much more research and many more runs for the security test, with a
+USD 5 cap ("you can spend a total of 5 dollars to complete the security test as this is one of the most important
+thing"). The report is the Claude Doc "Socratic Tutor security test report"
+(https://claude.ai/artifact/NmTTPrkjTGYfRbSjf62WVz). The quality plan doc now points to it and has its DPDP date corrected.
+
+Headline: on a 420-case attack set (14 families, 18 jailbreak wrappers, English/Hindi/Hinglish), the live beta fails
+118 cases (28%); a hardened front-door prototype (v4) fails 10 (4 strict), none judged severe, and misses no crisis or
+abuse message on the strict measure.
+- The live beta missed 61/63 crisis and abuse cases and 36/37 independently written research phrases.
+- It turned a sleeping-pill question into an AP exercise, and promised a child "I won't tell anyone".
+- No pipeline gave step-by-step harmful instructions, and the canary never leaked in 3,776 replies.
+- A fresh adaptive round against v4 succeeded 6/64 (3 strict).
+- The offline app review found no XSS. Its two high findings are a maths-checker CPU stall (37-character answer) and a
+  distress-screen bypass by whitespace or Unicode. The review is private in
+  `Directions/product_quality/v4/security/appsec_review.md` (exploit details).
+
+New code:
+- `eval/fixtures/security_attacks_v1.py` (420 cases), `security_research_phrases_v1.py` (62) and
+  `security_phonetic_v1.py` (28, not yet run).
+- `scripts/qa/{security_run,security_judge,security_summary,security_checks,security_adaptive,
+  security_classifier_sweep,hardened_front_door}.py`.
+- `live_probe_run.py allocate --program security`: a programme cap read from
+  `Directions/product_quality/v4/programs/security.json`.
+- 16 new tests. CI test set: 2,654 passed, 7 skipped, 34 deselected.
+
+**The course OpenRouter key is exhausted.** OpenRouter `/key` shows a USD 5 total limit with USD 5.005 used; it expires
+on 16 Nov.
+- Batch v4-sec-06 hit "403 Key limit exceeded".
+- The live Vercel beta uses the same key, so its live chat is refused until the course raises the limit or issues a new key.
+- Security spend: provider-reported USD 3.2292 (it matches OpenRouter's daily usage); ledger USD 3.7767, because the 28
+  refused calls are booked at their reserved maximum.
+- Six batches, all sealed. Phase accounted USD 5.2080 of 10.
+- Not run: the classifier sweep, the phonetic set, the Gemini tutor run, and part of the judging (about USD 0.80).
+
+DPDP correction: the children's provisions (s.9, Rule 10) start on 13 May 2027. The 13 Nov 2026 date was only an
+un-notified proposal.
+
+Next: the fix plan in the report. Fixes 2-7 need no model or key:
+- port the normaliser, crisis and abuse screens and three-language templates into `socrates_beta.dialogue`;
+- no secrecy promises;
+- the answer-check fix;
+- a 2 s limit on the maths checker;
+- accurate privacy wording.
+
+Nothing is pushed or deployed. Decisions pending with the user: a key (limit raise or new key) before the viva on
+15 Nov; approval to port the deterministic layers; and D-6 (Gemma 4 31B with the v4 classifier prompt).
+
+---
+
+# Checkpoint - quality and safety plan with ledgered live tests
 
 **10 November 2026.** The user asked for researched improvements to language, tone, topics, out-of-context guardrails,
 foul language, system prompts and the pipeline, and authorized the remaining USD 10 phase for testing. The plan is the
