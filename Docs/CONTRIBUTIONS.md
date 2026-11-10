@@ -12,6 +12,16 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-11 · Poonam / Punm-Butter (R6, standing in)
+- **Work:** done because the R6 owner has not replied; the Lead decides whether to merge it.
+  - The beta's answer hint under term-count questions now says "empty set", matching the questions and the R1 rule. Also R6's serving and operations paragraph in report section 2. PR #20.
+  - Answer-leak alert, API part: `POST /alerts/grafana`, `GET /teacher/alerts`, a System alerts table on the teacher page, leak counters that start at 0 (without this the alert could never fire), and `scripts/fire_leak_alert.py`. 6 tests. PR #21.
+  - Answer-leak alert, Grafana part: the provisioned alert rule and webhook, and the shared token in Compose. PR #22.
+  - Ran the Compose `ops` stack on macOS for the first time. Grafana loaded the dashboard and the rule, the fire script blocked 20 of 40 drafts, the rule fired, and the teacher's page showed the alert. Recorded in `Docs/deploy/README.md` with three screenshots.
+  - Test runs, stub mode only: the CI test command gave 2,781 passed (PR #20 branch) and 2,787 passed (PR #21 branch), with 7 skipped and 34 deselected.
+- **AI-assisted:** code, tests, docs and the run steps drafted with Claude (Claude Code), which tested each change in a throwaway copy first. I ran every command, the Docker stack and the tests, took the screenshots, and checked the results.
+- **Decisions:** none recorded. Open for the Lead: whether to merge PRs #20–#22, and a beta redeploy after #20.
+
 ### 2026-11-11 · Poonam / Punm-Butter (R3)
 - **Work:**
   - Contribution log entries for 3–10 Nov. PR #19.
