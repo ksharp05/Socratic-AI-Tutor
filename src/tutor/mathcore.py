@@ -23,10 +23,15 @@ NO_TERM_ANSWER = re.compile(
     _NO_COUNT + rf"|\bno (?:such |valid )?terms?(?:\s+exists?)?{_IN_AP}(?:\s+exists?)?\s*[.!]?\s*$", re.I)
 # The whole answer is the empty set the question asks for: "{}", "∅", "empty set", "none",
 # "no such (finite) AP (exists)" (finding 1). Term-count answers only.
+# R1 answer rule (10 Nov): "does not exist" and "not possible" also count, and so does "zero", because on a
+# term-count ("how many") question it means no valid count. A bare "no" is still asked again, and root
+# answers never treat "zero" as empty (0 can be a root).
 EMPTY_SET_ANSWER = re.compile(
     rf"^\s*(?:(?:my|the) answer is\s*[:=]?\s*)?"
-    rf"(?:\{{\s*\}}|∅|(?:the\s+)?empty\s+set|none"
-    rf"|(?:there\s+(?:is|are)\s+)?no\s+such\s+(?:finite\s+)?{_AP_NAME}(?:\s+exists?)?)"
+    rf"(?:\{{\s*\}}|∅|(?:the\s+)?empty\s+set|none|zero(?:\s+terms?)?"
+    rf"|(?:there\s+(?:is|are)\s+)?no\s+such\s+(?:finite\s+)?{_AP_NAME}(?:\s+exists?)?"
+    rf"|(?:(?:it|that|this|such\s+an?\s+(?:{_AP_NAME}|term))\s+)?(?:does\s+not|doesn['’]?t)\s+exist"
+    rf"|(?:(?:it|that|this)(?:['’]s|\s+is)\s+)?not\s+possible)"
     rf"\s*[.!]?\s*$", re.I)
 # Anywhere in a tutor reply, but only statements about the answer (finding 3): "no valid term count",
 # "no such term", "no (valid) term exists", and "there is/are no (valid) term(s)" when it ends the clause.
