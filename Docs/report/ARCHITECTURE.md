@@ -63,11 +63,11 @@ flowchart TB
   student --> ui --> api --> ig
   ig --> ll --> pl
   pl --> dg & tu & gr & qs & other
-  dg & tu & gr & qs & other --> og
+  spec --> og
   og -- fails --> fix --> um
   og -- passes --> um --> rs --> api
   dg & tu -.-> llm
-  ll & dg & tu & gr & qs & og & um --> hooks
+  session -- every tool call --> hooks
   hooks --> kb & mt & ls & qb
   qs --> ap
   teacher --> ui
