@@ -39,6 +39,10 @@ def exact(text: Any, bindings: dict[str, sp.Expr] | None = None) -> sp.Expr:
         raise MathInputError("Invalid mathematical syntax") from error
     if sum(1 for _ in ast.walk(tree)) > 120:
         raise UnsupportedMath("Expression node limit exceeded")
+    # Bound symbolic work as well as size: simplifying a power of a sum of many radicals or trig values can take
+    # minutes (e.g. (sqrt(2)+sqrt(3)+sqrt(5)+sqrt(7))**512, security review AS-01, 10 Nov 2026).
+    if sum(1 for n in ast.walk(tree) if isinstance(n, ast.Call)) > 6:
+        raise UnsupportedMath("Function call limit exceeded")
     if bindings and "pi" in bindings:
         raise MathInputError("The constant pi cannot be rebound")
     values = {"pi": sp.pi, **{k:sp.sympify(v) for k,v in (bindings or {}).items() if isinstance(v,(sp.Basic,int)) and not isinstance(v,bool)}}
@@ -101,6 +105,8 @@ def exact(text: Any, bindings: dict[str, sp.Expr] | None = None) -> sp.Expr:
                     return bounded(sp.sqrt(left)**int(right.p))
                 if right.is_Integer is not True or abs(right)>512:
                     raise UnsupportedMath("Only bounded integer and half-integer powers are supported")
+                if abs(right)>12 and left.is_Rational is not True:
+                    raise UnsupportedMath("Powers above 12 are supported only for rational bases")
                 if left.is_zero is True and right<=0:
                     raise UndefinedMath("Zero to a nonpositive power is not an admitted answer")
                 return bounded(left**right)

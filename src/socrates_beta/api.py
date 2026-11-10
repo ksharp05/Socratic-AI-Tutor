@@ -12,6 +12,7 @@ from .bootstrap import bootstrap
 from .repository import Repository,BetaBusy
 from .ports import Scope
 from .dialogue import DialogueService,DISTRESS
+from .safety import clean_text,redact_personal_data
 from .maths import CheckedMaths,AssessmentService
 from .study import StudyService
 from .transport import BrowserTransport
@@ -135,13 +136,15 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     @app.get('/api/library/{dataset_id}')
     def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
     @app.post('/api/preferences')
-    def preferences(body:PrefsIn,request:Request):repo.preferences(owner(request),body.model_dump());return {'saved':True}
+    def preferences(body:PrefsIn,request:Request):
+        prefs=body.model_dump();prefs['goal']=redact_personal_data(clean_text(prefs['goal']))
+        repo.preferences(owner(request),prefs);return {'saved':True}
     @app.post('/api/sessions')
     def new_session(body:SessionIn,request:Request):
         k=registry.knowledge(body.dataset_id);scope=Scope(body.grade,body.subject,body.book,body.unit)
         supported=[s for s in k.catalogue() if s['grade']==scope.grade and s['subject'].casefold()==scope.subject.casefold() and (not scope.book or s['book']==scope.book)]
         if not supported:raise ValueError('This dataset does not contain that class/subject/book combination')
-        return session_public(repo.create_session(owner(request),k.dataset_id,body.model_dump(include={'grade','subject','book','unit'}),body.title))
+        return session_public(repo.create_session(owner(request),k.dataset_id,body.model_dump(include={'grade','subject','book','unit'}),redact_personal_data(clean_text(body.title))))
     @app.get('/api/sessions')
     def sessions(request:Request):return [session_public(s) for s in repo.sessions(owner(request))]
     @app.get('/api/sessions/{sid}')

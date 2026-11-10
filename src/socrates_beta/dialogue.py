@@ -2,7 +2,8 @@ from __future__ import annotations
 import json,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
-from tutor.guards import RISK_PATTERN
+from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,
+                     guess_language,REPLIES)
 from .ports import Scope
 from .topics import broad_topic,discovery_question,navigation_reply
 
@@ -22,13 +23,22 @@ term in the question before explaining it. Ask for one small inference rather th
 In science, never suggest tasting, touching, or smelling chemicals to identify them. Discuss safe indicators
 and classroom-supervised methods instead. Do not make practical tasting instructions from textbook descriptions.
 Avoid the words correct and incorrect even as conversational modifiers; give the source-backed distinction instead. Never claim that this conversation proves learning or mastery.
+Never promise to keep a secret. If asked, say kindly that you cannot promise that when someone's safety is involved, and suggest telling a trusted adult.
+Never confirm or deny a learner's final answer, even as yes or no; ask for their steps instead.
 '''
-# Explicit risk phrases only (policy TP-D2), shared with the core tutor guard. Everyday stress
-# such as "I'm stressed about boards" is Tier 1 and keeps tutoring.
-DISTRESS=re.compile(RISK_PATTERN,re.I)
-DISTRESS_REPLY=("Your safety comes first. Please contact a trusted adult nearby now. "
-                "You can also call Tele-MANAS, India's free 24x7 mental health helpline, on 14416 or 1-800-891-4416. "
-                "If you are in immediate danger, contact your local emergency service. Can you reach someone who can stay with you?")
+# Crisis, child-safety and secrecy-request screens (safety.py): explicit and common indirect phrasing in English,
+# Hindi, Hinglish and algospeak, matched on a normalised copy so spacing and look-alike letters do not hide them.
+# Everyday stress such as "I'm stressed about boards" is Tier 1 and keeps tutoring.
+DISTRESS=UrgentScreen()
+DISTRESS_REPLY=REPLIES['crisis']['en']
+ANSWER_CHECK=re.compile(r"(?i)\b(?:my answer|i got|i get|check my|is (?:it|this|that|my answer) (?:right|correct)|am i (?:right|correct)|"
+                        r"(?:right|correct)\s*\?|(?:correct|right) (?:roots?|answers?|values?)|yes or no|haan ya na+|"
+                        r"sahi (?:hai|h|he)|galat (?:hai|h|he)|theek hai\s*\?|mila\b|aaya\b|nikla\b)|सही है|गलत है|सही हैं")
+CHECK_REPLY={
+    'en':"I can't check final answers in this chat, but checked practice can, with exact maths checking. I can help you check your method: what was your first step?",
+    'hi':"मैं इस चैट में अंतिम उत्तर नहीं जाँच सकता, पर checked practice में उत्तर कोड से जाँचे जाते हैं। मैं आपका तरीका जाँचने में मदद कर सकता हूँ: आपका पहला कदम क्या था?",
+    'hinglish':"Main is chat mein final answer check nahi kar sakta, par checked practice mein answers code se check hote hain. Main aapka method check karne mein help kar sakta hoon: aapka pehla step kya tha?",
+}
 ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)',re.I)
 SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.t (?:know|understand|get)|no idea|not sure|still unclear)\b",re.I)
 
@@ -49,10 +59,11 @@ class DialogueService:
     def session_lock(self,sid):
         with self.guard:return self.locks.setdefault(sid,threading.RLock())
     def turn(self,owner,sid,message,request_id):
-        if DISTRESS.search(message):
+        hit=urgent(message)
+        if hit:
             # Give immediate support without waiting for a provider, database,
             # profile lock, or session lookup. No notification is implied.
-            return {'reply':DISTRESS_REPLY,'citations':[],'move':'human_help',
+            return {'reply':reply_for(*hit),'citations':[],'move':'human_help','safety_kind':hit[0],
                     'provider_status':'not_called','validation_error':None,
                     'verification':'not_assessed','format_repaired':False,'repair_reason':None,
                     'dataset_id':None,'latency_ms':0,'retrieval':{'hits':0,'ids':[]},
@@ -61,7 +72,7 @@ class DialogueService:
     def _turn(self,owner,sid,message,request_id):
         start=time.monotonic();session=self.repo.session(sid,owner);state=session['state'];scope=Scope(**session['scope'])
         history=self.repo.history(sid)
-        message=redact(message.strip())
+        message=redact_personal_data(redact(clean_text(message).strip()))
         prior=next((t for t in history if t['request_id']==request_id),None)
         if prior:
             if prior['user_text']!=message:raise ValueError('Request id already used for a different message')
@@ -71,8 +82,9 @@ class DialogueService:
         recent=[]
         for t in history[-6:]:recent.extend([{'role':'user','text':t['user_text']},{'role':'assistant','text':t['result']['reply']}])
         assessment=self.repo.active_assessment(sid,owner) or self.repo.open_check(owner)
-        if DISTRESS.search(message):
-            reply=DISTRESS_REPLY;move='human_help'
+        hit=urgent(message)
+        if hit:
+            reply=reply_for(*hit);move='human_help'
         elif assessment:
             reply="Your check is active. Please answer in the practice panel; I haven't checked this message.";move='assessment_isolation'
         elif ACCESS.search(message):
@@ -100,9 +112,14 @@ class DialogueService:
             active=bool(re.search(r'(?i)\b(solve|calculate|check my answer|give me the answer)\b|=',message))
             if scope.subject.casefold()=='mathematics' and (re.search(r'(?i)\b(?:my answer|i got)\b',message) or
                 (re.search(r'\d',message) and re.search(r'(?i)\b(?:correct|right|check)\b',message))):active=True
+            answer_check=scope.subject.casefold()=='mathematics' and bool(re.search(r'\d',message)) and bool(ANSWER_CHECK.search(message))
+            if answer_check:active=True
             if active:state['active_problem']=True
-            passages=adapter.search(state['focus'],scope,limit=3)
-            if not passages:
+            passages=[] if answer_check else adapter.search(state['focus'],scope,limit=3)
+            if answer_check:
+                # A yes/no answer check is never judged by the model: there is no checker in chat.
+                reply=CHECK_REPLY.get(guess_language(message),CHECK_REPLY['en']);move='active_problem_coaching'
+            elif not passages:
                 reply=navigation_reply(adapter,scope,missing=True);move='missing_evidence'
             elif state['active_problem']:
                 reply="Let's keep the final answer for you to find. You can use checked practice for supported maths questions. What quantities are given, and what is your first step?";move='active_problem_coaching'
@@ -117,6 +134,7 @@ class DialogueService:
                         raw=self.language.generate(instructions,context).strip()
                         if raw.startswith('```') and raw.endswith('```'):raw=re.sub(r'^```(?:json)?\s*|\s*```$','',raw)
                         reply,citations=validate_reply(json.loads(raw),passages,recent)
+                        if promises_secrecy(reply):raise ValueError('secrecy_promise')
                         if scope.subject.casefold() in ('science','chemistry') and unsafe_chemical_guidance(reply):
                             raise ValueError('unsafe_chemical_identification')
                         if scope.subject.casefold()=='mathematics':
@@ -136,7 +154,7 @@ class DialogueService:
                         repaired=True
                     status='live_accepted'
                 except Exception as exc:
-                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification'}
+                    safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification','secrecy_promise'}
                     error=str(exc) if type(exc) is ValueError and str(exc) in safe else type(exc).__name__
                     reply,citations=self.fallback(passages,state,recent);status='provider_failed_source_fallback'
         sources=[self.citation(p) for p in passages if p['id'] in citations]
@@ -161,7 +179,7 @@ class DialogueService:
                  if len(sentence.split())>=6 and not re.search(r'\b(tast\w*|smell\w*|swallow\w*|ingest\w*)\b',sentence,re.I)]
         if options:p,fact=next(((candidate,sentence) for candidate,sentence in options if len(sentence.split())<=37),options[0])
         else:fact='We can inspect the cited passage together and begin with one small detail.'
-        if len(fact.split())>37:fact=' '.join(fact.split()[:34])+'â€¦'
+        if len(fact.split())>37:fact=' '.join(fact.split()[:34])+'…'
         prompts=['Which part of this idea would you like to examine first?',
                  'Which word in this passage should we unpack together?',
                  'What is one detail you can pick out from this passage?',
