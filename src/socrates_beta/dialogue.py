@@ -5,6 +5,7 @@ from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
 from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,
                      guess_language,REPLIES)
 from .ports import Scope
+from tutor.guards import INJECTION
 from .topics import broad_topic,discovery_question,navigation_reply
 
 PROMPT=SYSTEM+'''
@@ -39,7 +40,8 @@ CHECK_REPLY={
     'hi':"मैं इस चैट में अंतिम उत्तर नहीं जाँच सकता, पर checked practice में उत्तर कोड से जाँचे जाते हैं। मैं आपका तरीका जाँचने में मदद कर सकता हूँ: आपका पहला कदम क्या था?",
     'hinglish':"Main is chat mein final answer check nahi kar sakta, par checked practice mein answers code se check hote hain. Main aapka method check karne mein help kar sakta hoon: aapka pehla step kya tha?",
 }
-ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)',re.I)
+# Also the team tutor's wider injection check (R4, 11 Nov), so one pattern decides on both surfaces.
+ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)|'+INJECTION.pattern,re.I)
 SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.?t (?:know|understand|get)|do not (?:know|understand|get)|no idea|not sure|still unclear|nahi samjh\w*|samajh nahi|samjha nahi|samajh me nahi|nahi pata)\b|^\s*\?+\s*$",re.I)
 # Feedback about the replies themselves: answer it with a shorter, different approach instead of repeating.
 FEEDBACK=re.compile(r"(?i)\b(?:too long|so long|boring|useless|explain properly|not helpful|confusing|bakwas|samajh nahi aa raha)\b")

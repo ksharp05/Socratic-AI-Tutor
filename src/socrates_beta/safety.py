@@ -20,7 +20,7 @@ import binascii
 import re
 import unicodedata
 
-from tutor.guards import RISK_PATTERN
+from tutor.guards import IDIOMS as _IDIOMS, RISK_PATTERN
 
 # Invisible characters removed from every message. ZWNJ/ZWJ (U+200C/U+200D) are kept: Devanagari needs them.
 _INVISIBLE = re.compile("[­​‎‏‪-‮⁠-⁤⁦-⁩﻿︀-︎"
@@ -160,10 +160,8 @@ REPLIES = {
 }
 
 
-# Everyday exaggeration removed before matching, so the older shared pattern (bare "suicide", "want to die")
-# does not fire on it: "die laughing", "dying of boredom", "this question is suicide" (Hinglish slang for very hard).
-_IDIOMS = re.compile(r"(?i)\b(?:want|wanna|going) to die (?:laughing|of (?:laughter|boredom|embarrassment))\b|"
-                     r"\b(?:question|sawal|sawaal|sum|paper|chapter|test|exam)\s+(?:toh |to |is |hai )?(?:pura |ekdum )?suicide\b")
+# Everyday exaggeration ("die laughing", "this question is suicide") is removed before matching; the pattern, _IDIOMS,
+# now lives in tutor.guards so the team tutor and the beta agree.
 
 
 def urgent(text: str):
