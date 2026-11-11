@@ -55,6 +55,11 @@ def main():
     print(f"{len(CASES)} cases with {args.model} -> {target.name}")
     if not args.execute_live:
         print("Dry run: nothing sent."); return
+    # Operator skip list, read fresh by every run: one model ID per line. Lets a running multi-model job be cut short
+    # to save credit without killing a process mid-call (12 Nov: Nova Lite dropped to keep the key's balance).
+    skip = h.CAN / "Directions/product_quality/v4/SKIP_PAID_MODELS.txt"
+    if skip.exists() and args.model in skip.read_text(encoding="utf-8").split():
+        print(f"STOPPED EARLY: {args.model} is on the operator skip list; nothing sent"); return
     if target.exists():
         raise SystemExit("Result exists; never overwrite")
     # Create the output folder before any paid call: on 11 Nov four finished runs were lost when the write failed.
