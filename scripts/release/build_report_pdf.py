@@ -7,6 +7,7 @@ HTML comments in the Markdown are dropped. Relative links stay as text targets; 
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
@@ -45,7 +46,8 @@ def main():
     ap.add_argument("markdown"); ap.add_argument("pdf")
     args = ap.parse_args()
     md = MarkdownIt("commonmark", {"html": False}).enable("table")
-    body = md.render(Path(args.markdown).read_text(encoding="utf-8"))
+    text = re.sub(r"<!--.*?-->\s*", "", Path(args.markdown).read_text(encoding="utf-8"), flags=re.S)
+    body = md.render(text)
     title = Path(args.markdown).stem.replace("_", " ").title()
     html = f"<!doctype html><html><head><meta charset='utf-8'><title>{title}</title><style>{CSS}</style></head><body>{body}</body></html>"
     chrome = find_chrome()

@@ -47,6 +47,8 @@ def main():
         alone, combined = [], []
         for i, c in cases.items():
             pred = res[i]["predicted"]
+            if pred == "skipped":          # never sent (run stopped early): scored on the cases actually sent
+                continue
             alone.append({**c, "pred": pred, "ok_": acceptable(c, pred)})
             # D-7 design: a fixed screen that fires (crisis, child safety, injection, key request) wins; PII redaction does
             # not stop classification; otherwise the classifier decides, and a classifier error blocks (fail closed).

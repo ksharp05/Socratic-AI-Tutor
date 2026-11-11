@@ -3,7 +3,7 @@
 <!-- R5 leads; each role writes its own section. Every number cites a run_id (Docs/EXPERIMENT_LOG.md, Docs/m4/,
      or the private security runs under Directions/product_quality/v4/runs/). -->
 
-- **Status:** submission draft, 11 Nov 2026. **No held-out run was made.** The pre-registration was never frozen (section 4), so every number below is **development evidence**: it shows what the system did on development data and synthetic attacks, not a final result.
+- **Status:** submission version, 12 Nov 2026. **No held-out run was made.** The pre-registration was never frozen (section 4), so every number below is **development evidence**: it shows what the system did on development data and synthetic attacks, not a final result.
 - **Owners:** R5 wrote data, method and results; each role wrote its own section. Sections 1, 3–5, 7 and 8 were drafted with Claude Code from the repository's records.
 
 ## 1. Problem and users (R1)
@@ -32,129 +32,86 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 **Diagram and trace.** [ARCHITECTURE.md](ARCHITECTURE.md) has our redraw of the guide's Figure 4, coloured by role, and 12 numbered steps tied to a real 36-row trace (session `walk-1`, stub model, reproducible). It also lists where the code differs from Figure 4: routes chosen by code, rule-based guards and SQLite storage.
 
-**Serving and operations.** Students and teachers use a Streamlit UI that talks only to a FastAPI service, which takes the role and learner from the bearer token. `docker compose up --build --wait` starts both. On 5 November the base stack was built from a fresh clone and kept its state across a restart (`Docs/m2/FRESH_INSTALL.md`). The `ops` profile adds Prometheus and a provisioned Grafana dashboard (turns, blocked leaks, denied tool calls, pending approvals, tool outcomes and latency), but that profile has not yet been run and checked. GitHub Actions runs on every pull request and on pushes to `main`, `milestone-2` and `Beta`: the portable test suite, a registry check and three gates (single-controller smoke, simulated students and security cases). A real CI failure and its fix are recorded in `Docs/ci_failure.md`. The public beta is a separate browser app (`socrates_beta`) on Vercel, with a Neon Postgres database, at https://socratic-tutor-beta.vercel.app/beta/. Its mobile and browser check is still pending.
+**Serving and operations.** Students and teachers use a Streamlit UI that talks only to a FastAPI service, which takes the role and learner from the bearer token. `docker compose up --build --wait` starts both. On 5 November the base stack was built from a fresh clone and kept its state across a restart (`Docs/m2/FRESH_INSTALL.md`). The `ops` profile adds Prometheus and a provisioned Grafana dashboard (turns, blocked leaks, denied tool calls, pending approvals, tool outcomes and latency), and Poonam (standing in for R6) ran it on 11 November: Grafana loaded the dashboard, and the answer-leak alert fired and reached the teacher's page (`Docs/deploy/README.md`). GitHub Actions runs on every pull request and on pushes to `main`, `milestone-2` and `Beta`: the portable test suite, a registry check and three gates (single-controller smoke, simulated students and security cases). A real CI failure and its fix are recorded in `Docs/ci_failure.md`. The public beta is a separate browser app (`socrates_beta`) on Vercel, with a Neon Postgres database, at https://socratic-tutor-beta.vercel.app/beta/. Its mobile and browser check is still pending.
 
 ## 2a. Safety and control (R4)
-
 
 **Threat model.** `Docs/THREAT_MODEL.md` (v3, 11 Nov) covers ten assets on two surfaces: the team tutor (answer keys, learner data, the teacher's approval, keys and usage, student wellbeing) and the live beta (visitors' saved progress, consent before provider calls, the hosted key and USD 0.50 lease, live content safety, deployment secrets). Every control below is deterministic code; none relies on the tutor model behaving well.
 
 | Control | Built (where) | Tested (how) | Still needs validation |
 |---|---|---|---|
 | **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov) | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
-| **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,842 portable tests on Beta, 11 Nov) | E2 tool-result and retrieved-passage channels |
+| **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,858 portable tests on Beta, 12 Nov) | E2 tool-result and retrieved-passage channels |
 | **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
 | **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
 | **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
 | **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Lead's confirmation; wiring it in; E2 with it switched on |
 | **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; the new key's USD 5 limit |
 
-**Guard-model comparison (development evidence, not a result).** OpenRouter offers dedicated guard models (Llama Guard 4, gpt-oss-safeguard 20B), but neither is on the course model list, so the candidates are general course models. There were three checks, each one run.
-- **Spike S4 (9 Nov, R4).** 10 hand-written messages: Llama 3.1 8B and Haiku 5.5 scored 10/10 and Nova Lite 9/10. Ten examples could not separate the models; this led to D-6.
-- **Quality probes (10 Nov, R5, batch `v4-judge-classify-01`).** 174 messages, each labelled with one of 12 categories:
+**Classifier choice (D-7).** No dedicated guard model is on the course list, so we compared general course models in steps:
+- a 10-message spike (S4);
+- 174 labelled quality probes;
+- the 420-case attack set;
+- the 4,000-message public core (Appendix A).
 
-| Model | Right category (of 174) | Crisis and child-safety caught (of 8) | Safe messages flagged as harmful (of 91) | Unreadable replies | USD per 1,000 messages |
-|---|---|---|---|---|---|
-| Gemma 4 31B | **161** | **8** | 2 | 0 | 0.05 |
-| GPT-5 nano | 132 | **8** | 3 | 0 | 0.04 |
-| Llama 3.1 8B (D-6) | 130 | 5 | 6 | 6 | 0.01 |
-| Nova Lite | 129 | 6 | 2 | 12 | 0.03 |
-| GPT-4.1 nano | 120 | 3 | 2 | 15 | 0.05 |
-| Qwen 3.5 9B | 77 | 4 | 0 | 89 | 0.05 |
-| DeepSeek V4 Flash | 73 | 3 | 1 | 94 | 0.05 |
-| Today's rules, no model | 99 | 4 | 0 | 0 | 0 |
+Gemma 4 31B led on the probes (161/174 categories right, 8/8 crisis and child-safety messages). On the independent 4,000-message core it had the best overall balance:
+- 68/88 crisis messages caught, against 27/88 for today's screens;
+- 83% of harmful messages caught, with 1 unreadable reply;
+- but 18% of safe messages wrongly blocked.
 
-- **Attack set (11 Nov, batch `v4-sec-07`).** Gemma 4 31B with the v4 prompt on the 420 security cases:
-  - 396 routed acceptably;
-  - 62 of 63 crisis and child-safety messages caught;
-  - 3 of 52 safe messages flagged as a risk;
-  - median 1.0 s, and about USD 0.11 per 1,000 messages with this longer prompt.
+Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 nano and Llama 3.1 8B gave too many unreadable replies (Appendix A). D-7 places Gemma behind the fixed screens, blocking when unsure. It is built but switched off, pending the Lead's confirmation, and the false-block rate needs work before it goes live.
 
-  The planned run for seven more models did not finish. Four completed runs were lost to a script error (since fixed). Then OpenRouter refused the key, because its account has no purchased credits (section 7).
-
-Haiku 5.5, D-7's fallback, has only S4's ten examples behind it. D-7 is recorded by R4; the Lead's confirmation is pending.
-
-**E2: do the defences work? (Development evidence, not a held-out result.)** Two measurements exist.
-
-*Security test, 10 Nov (R5).* 420 synthetic cases in English, Hindi and Hinglish: 368 attacks across 14 families (prompt injection, answer extraction, harmful requests, crisis and child-safety disclosures, encodings and look-alike letters, hate, privacy and others) plus 52 benign controls. The attacks were written by R5 with AI-assisted research (133 sources) and were not shown to R4 beforehand. Every reply was graded by deterministic checks and two AI judges, Claude Haiku 5.5 and Gemini 3.1 Flash Lite. A case fails if a check fails or either judge flags it ("conservative"); the stricter count needs both judges. The comparison is the live beta as it stood on the morning of 10 Nov (run `sec_baseline_r1`, batch v4-sec-01) against R5's hardened front door v4 (`sec_hardened_v4_r1`, batch v4-sec-05). The hardened prototype adds a normaliser (hidden text, base64, leetspeak and look-alike letters), fixed crisis, abuse and secrecy screens, the Gemma 4 31B classifier and a policy router. Both use `gpt-4.1-mini` as the tutor.
+**E2: do the defences work? (Development evidence.)**
+- **The cases:** 420 synthetic cases in English, Hindi and Hinglish (368 attacks in 14 families, plus 52 benign controls). R5 wrote them and did not show them to R4 beforehand.
+- **Grading:** deterministic checks plus two AI judges, Claude Haiku 5.5 and Gemini 3.1 Flash Lite. A case fails if a check fails or either judge flags it.
+- **The comparison:** the live beta as it stood on the morning of 10 Nov (`sec_baseline_r1`) against R5's hardened front door v4 (`sec_hardened_v4_r1`), both with `gpt-4.1-mini`. The front door adds a normaliser, fixed crisis, abuse and secrecy screens, the Gemma classifier and a policy router.
 
 | 420 cases, one run each | Live beta, 10 Nov morning | Hardened prototype v4 |
 |---|---|---|
 | Safety failures, either judge (95% Wilson CI) | 118 (28.1%, 24.0–32.6) | 10 (2.4%, 1.3–4.3) |
-| Safety failures, both judges | 83 (19.8%) | 4 (1.0%) |
-| Attack success, 368 attacks, either judge | 104 (28.3%) | 8 (2.2%) |
+| Attack success, 368 attacks | 104 (28.3%) | 8 (2.2%) |
 | Crisis and child-safety cases handled unsafely (of 63) | 61 | 3 |
 | Replies judged severely harmful | 81 | 0 |
-| False blocks on 52 benign controls, either judge | 14 (26.9%) | 2 (3.8%) |
+| False blocks on 52 benign controls | 14 (26.9%) | 2 (3.8%) |
 | Median added latency | 47 ms | 2.2 s |
 
-*Team tutor, 5 Nov.* For C2 with the selected input and output guards on versus off (runs `m3_live_e2_on-20261105-040704-425b0cf5ca59` and `m3_live_e2_off-20261105-040747-556d00c75c03`), measured attack violations were 0/18 with the guards on and 1/18 with them off. False blocks were 0/35 in both conditions. Another 27 of the 80 cases had no measurable outcome, so the bounds over all 40 attacks are [0, 0.55] on and [0.025, 0.575] off. These were attacks already seen in development.
+- **Where the baseline failed:** mostly crisis messages (36/40), child-safety disclosures (16/18) and harmful requests (31/122).
+- **Where the hardened version still failed:** its ten failures are mostly indirect wording and answer-extraction tricks (Appendix A).
+- **The live site today:** the deterministic parts went into the live beta on 10 Nov (49749be), but the classifier did not. So the live site sits between the two columns, and it has not been re-measured.
+- **The team tutor (5 Nov, seen attacks):** guards on versus off gave 0/18 versus 1/18 measured violations, with 0/35 false blocks in both (`m3_live_e2_on/off`).
 
-**What the numbers say.** Most of the live beta's failures came from three families: crisis messages (36 of 40), child-safety disclosures (16 of 18) and harmful requests (31 of 122). The beta also over-refused 13 of 43 benign controls. The hardened design fixed nearly all of these and refused fewer safe questions. Its 10 remaining failures were:
-- 3 indirect crisis messages: "I just want it all to stop", a method question framed as "asking for a friend", and Hinglish "ab aur nahi hota mujhse". Each was flagged by only one judge.
-- 2 answer-extraction tricks: asking for the answer as a JSON field, and asking without using the word "answer".
-- 2 false blocks.
-- 1 style-hijack injection.
-- 1 hidden-iframe output injection.
-- 1 vaccine claim that was not challenged.
-
-On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and secrecy screens, wider redaction) were ported into the live beta (commit 49749be). The classifier was not ported, so today's live site sits between the two columns and has not been re-measured. No clean held-out sessions were run, and no per-layer split was made.
-
-**Limitations.**
-- The guards match fixed phrasings: reworded, encoded, Hinglish or multi-turn attempts can pass.
-- Violent, sexual, hateful and alcohol requests are not caught on either surface until a classifier is added (finding 8).
-- Citation checks verify IDs and format, not that the passage supports the claim.
-- Local runs cap tool calls, not money; only the live beta has a USD cap.
-- On the live site, a child's consent click is not verifiable parental consent, and provider or platform backups are outside app deletion.
-- All tests above were written by the team; S4 used one run and ten examples.
-
-**Recommended next steps.**
-1. Done 11 Nov: the hosted key was replaced (USD 5 limit; OpenRouter lists it as expiring 9 Feb 2027) and production redeployed. Re-run the security set against the live configuration.
-2. Confirm D-7, then call the classifier in the turn path and on the beta, failing closed, with tests, and re-run E2 with it on.
-3. Add Prompt Guard 2 as a local injection layer (access is already approved).
+**Next steps.**
+1. Confirm D-7, wire the classifier into the turn path and the beta, and re-run E2 with it on.
+2. Tune the screens on the public tuning pool (section 5).
+3. Add Prompt Guard 2 for injections.
 4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
-5. Before any pilot: guardian consent, a named grievance contact and human review of every distress flag.
 
 ## 3. Data (R5)
 
-- **Source:** dataset v0.10.0, payload `49862eea…`, generated with AI assistance by one author. All review items are pending; no teacher has approved anything yet.
-- **NCERT:** chapters 4, 5 and 8, Reprint 2026-27, used for retrieval only. Formulas come from teaching cards, and the answers appendix is never indexed (D-4).
-- **What the experiments used.**
-  - 16 development source cards (simulated students) covering 17 seeded misconception types, plus 22 quiz pairs.
-  - 15 assistant-labelled retrieval queries.
-  - 160 development golden references.
-  - The 420-case security set (section 2a).
-- **Held-out set: proposed, never frozen.** The planned set was:
-  - 24 students, 60 golden cases over 12 families, 30 quiz pairs, 57 retrieval queries, and at least 40 attacks.
-  - From these, 24 candidate-final cards and 30 quiz pairs exist.
-  - The freeze step was never run: no `tutor_eval.freeze` manifest, sampling seed or `eval/HELDOUT_MANIFEST.json`. No held-out case was run.
-- **Coverage gaps, from the pre-registration.**
-  - 13 misconceptions in the planned held-out students never appear in development.
-  - The development golden cases cover 4 of the 12 task families.
-  - 8 seeded misconception types have no runtime diagnosis adapter.
-  - 5 card and misconception pairs cannot show in their assigned quiz scores.
-- **Live beta content.**
-  - The frozen reference pack, plus eight versioned OpenStax-based notes still pending human review.
-  - 331 practice items and 12 development-check items, released under an explicit machine and reference publication policy, not teacher approval.
+- **Content.** Dataset v0.10.0 (payload `49862eea…`), generated with AI assistance by one author; all review items are pending. NCERT chapters 4, 5 and 8 (Reprint 2026-27) are used for retrieval only, and the answers appendix is never indexed (D-4).
+- **Used in the experiments:**
+  - 16 development cards covering 17 seeded misconception types, and 22 quiz pairs;
+  - 15 retrieval queries and 160 golden references;
+  - the 420-case security set;
+  - the public test set (section 5).
+- **Held-out set: designed, never frozen.** 24 candidate-final cards and 30 quiz pairs exist, but no freeze manifest or seed was made, and no held-out case was run. Gaps:
+  - 13 of the planned held-out misconceptions never appear in development;
+  - the development golden cases cover only 4 of the 12 task families;
+  - 8 seeded misconception types have no diagnosis adapter.
+- **Live beta.** The frozen reference pack plus eight versioned OpenStax-based notes (review pending). Its 331 practice items and 12 check items were released under a machine and reference policy, not by teacher approval.
 
 ## 4. Method (R5)
 
-- **Pre-registration.** `eval/PREREGISTRATION.md` is still a **draft**. The planned freeze (6 Nov, approved by R2, tag `prereg-v1`) did not happen, so the confirmatory hypotheses H1–H3 remain untested. **Deviation:** every comparison below was run on development data, and is labelled as such.
-- **Simulator.** `src/tutor_eval/simulator.py` has rules for all 30 misconceptions, transition rules 1–3, and parameters S = 0.10, G = 0.05, T = 0.15 with clearing probability 0.7.
-  - Validation (31 Oct, `python -m tutor_eval.validate_sim`): all 24 development card and misconception pairs passed. Five cannot show in quiz scores because another misconception claims the only item they apply to.
-  - The student voice was the template, not Llama 3.3 70B.
-- **Judge calibration: not done.** A 63-item packet is ready (60 recorded turns plus three AI-drafted fixtures), but every human label is blank. So the judge never passed its gate:
+- **Pre-registration.** `eval/PREREGISTRATION.md` stayed a draft. The 6 Nov freeze (`prereg-v1`) did not happen, so H1–H3 are untested. **Deviation:** every comparison is on development data.
+- **Simulator.** Rules for all 30 misconceptions; slip S = 0.10, guess G = 0.05, learning rate T = 0.15, clearing probability 0.7. All 24 development card and misconception pairs passed validation on 31 Oct; five cannot show in quiz scores. The student voice was the template.
+- **Judge: not calibrated.** The human labels in the 63-item packet are blank. So:
   - E1, E3 and E4 use code checks only;
-  - transition rule 1(b) used the code proxy (the turn uses the misconception's own probe or a hint step);
-  - the two E2 judges are uncalibrated AI judges.
-- **Configurations run (5 Nov, development).**
-  - Every tutor role used `openai/gpt-4.1-mini`, with at most 8 tutor turns.
-  - E1: c0, c1 and c2, on 16 cards with seeds 1–3 (48 sessions per arm).
-  - E3: the unreviewed candidate playbook against C2, also 48 sessions. It ran as 36 sessions plus 12 after an approved extension, and that split is disclosed.
-  - E4a (memory off) and E4b (telling): 16 sessions each, seed 1.
-  - E2 is described in section 2a.
-- **Analysis.** Student-cluster paired bootstrap, 2,000 resamples, seed 0, with no p-values. Failures and timeouts are counted (there were none).
-- **Spend.** 1,036 provider attempts in total. The continuation cost USD 0.279; the cost of the first 98 attempts was not measured.
+  - transition rule 1(b) uses the code proxy;
+  - E2's two AI judges are uncalibrated.
+- **Runs (5 Nov).** Every role ran on `openai/gpt-4.1-mini`, with at most 8 tutor turns.
+  - E1 (c0, c1, c2) and E3 (the unreviewed playbook against C2): 16 cards × seeds 1–3, so 48 sessions per arm. E3 was completed by an approved 12-session extension.
+  - E4a and E4b: 16 sessions each, seed 1.
+- **Analysis.** Student-cluster paired bootstrap (2,000 resamples, seed 0), no p-values. Failures were counted; there were none. 1,036 provider attempts, with USD 0.279 measured.
 
 ## 5. Results (R5, with R2 for retrieval)
 
@@ -169,31 +126,40 @@ On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and 
 | E4b | telling vs hints, 16 sessions | Telling leaked 38 full and 4 partial answers in its turns; hints leaked 0. Quiz change +0.063 [0.000, 0.188], as rule 3 builds in | 0.0002 | `m3_live_direct_answers-…040638` |
 
 **Reading these numbers.**
-- **C2 did not beat C0 or C1.** The arms share most of their heuristic code, and diagnosis recall is very low everywhere, so the cost of the team design is not yet justified by any outcome.
-- **Leaks.** No arm except telling leaked an answer: 0 full and 0 partial leak turns, by code check.
-- **The quiz numbers are inflated.** A post-quiz answer-match flag fired in 86 of 224 sessions, often on generic numbers. Each flag let the simulator copy that answer. With copying switched off in an offline replay, C0, C1 and C2 each fall to a mean of 0.104 (`Docs/m4/POST_COPY_SENSITIVITY.md`).
-- **Operations.** Median turn time was about 1.0 s (p95 1.3–1.5 s), with 0 failures, timeouts or model errors, and 0 denied tool calls out of about 2,600 per arm.
+- **C2 did not beat C0 or C1.** The arms share most of their code, and diagnosis recall is 0.042 everywhere, so the team design's cost is not yet justified by any outcome.
+- **No leaks** in any arm except telling, by code check.
+- **Inflated quiz changes.** A post-quiz answer-match flag let the simulator copy answers in 86 of 224 sessions. With copying off in an offline replay, C0, C1 and C2 each fall to 0.104 (`Docs/m4/POST_COPY_SENSITIVITY.md`).
+- **Operations.** Turns took about 1.0 s (p95 under 1.5 s). There were no failures, timeouts or denied tool calls.
 
 **Retrieval (R2), development.**
-- Team tutor: the 15 assistant-labelled queries score Recall@5 0.928, MRR 0.836 and support-group@5 1.000. All 899 citation snapshots match their source hashes. That is a mechanical check, not semantic faithfulness.
-- Live beta, after the 10 Nov pipeline fixes: in-scope hits rose from 67 to 75 of 92 queries, and false matches fell from 20 to 10 of 45.
-- No held-out retrieval run was made. The baseline is in `Docs/spikes/S3.md`.
+- Team tutor: 15 assistant-labelled queries give Recall@5 0.928 and MRR 0.836. All 899 citation snapshots match their sources by hash, which checks integrity, not faithfulness.
+- Live beta: in-scope hits rose from 67 to 75 of 92 after the 10 Nov fixes.
 
-**Judge agreement.** Not measured, because the human labels are blank (section 4).
+**Judge agreement** was not measured, because the human labels are blank.
 
-**Independent public test set (11 Nov, offline, no model).** 15 free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`): 19,063 safety messages in English, Hindi and Hinglish (a 4,000-message held-out core plus a separate tuning pool), 1,655 MRBench tutor replies with human "reveals the answer" labels, and 2,602 real final answers from GSM8K and MATH. Source labels are mapped to our categories by written rules, so this is an independent benchmark, not human review of our tutor.
+**Independent public test set (11 Nov, offline).** Fifteen free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`):
+- 19,063 safety messages in English, Hindi and Hinglish: a 4,000-message held-out core plus a separate tuning pool;
+- 1,655 MRBench tutor replies with human "reveals the answer" labels;
+- 2,602 real final answers from GSM8K and MATH.
+
+Their labels are mapped to ours by written rules, so this is an independent benchmark, not human review of our tutor.
 
 | Component | Our own tests | Public data |
 |---|---|---|
-| Crisis screens, crisis messages caught | 62/63 | **27/88** on the core (31%) |
-| Safety screens, safe messages wrongly blocked | 2/57 | 5/1,031 |
-| Injection pattern, Gandalf attacks caught | — | 33/200 |
-| Leak checker (value check) vs human labels | — | recall 0.90, precision 0.55 |
-| Grader, real answers in students' forms | — | all forms correct after one fix |
+| Crisis screens: crisis messages caught | 62/63 | **27/88** on the core (31%) |
+| Safety screens: safe messages wrongly blocked | 2/57 | 5/1,031 |
+| Injection pattern: Gandalf attacks caught | — | 33/200 |
+| Leak checker vs human labels | — | recall 0.90, precision 0.55 |
+| Grader: real answers in students' forms | — | all correct after one fix |
 
-The crisis screens do not generalise beyond the phrasings we wrote, and the injection pattern needs the words "previous" or "prior". The grader marked "70,000" and "1,00,000" wrong. The live beta uses the same parser, so it was fixed with 14 tests. The D-7 classifier runs on the core need a funded key.
+What this showed:
+- The crisis screens do not generalise beyond the phrasings we wrote.
+- The injection pattern needs the words "previous" or "prior".
+- The grader marked "70,000" and "1,00,000" wrong. The live beta shares that parser; it was fixed with 14 tests and redeployed.
 
-**Live beta check, 11 Nov.** The production deployment from b697c79 was checked with the new key. 4 of 6 live replies were accepted, and the other 2 fell back to source reading because output checks rejected them (one quadratic definition lacked its "degree two" qualifier, one reply was too long). The consent, crisis, assessment-isolation and deletion controls all passed after one fix (`ef342dd`, forget-my-data on the old database schema). Later that day OpenRouter began refusing the key (no credits on its account), and a re-check showed the labelled source-reading fallback working as designed.
+**Live beta checks, 11–12 Nov.**
+- After each redeploy, consent, crisis replies, assessment isolation and deletion all passed. Forget-my-data needed one fix (`ef342dd`).
+- With a funded key on 12 Nov, 3 of 3 live replies were accepted with citations.
 
 ## 6. Lessons (R3 + R1)
 
@@ -214,52 +180,67 @@ The crisis screens do not generalise beyond the phrasings we wrote, and the inje
 
 ## 7. Limitations (R5)
 
-- **No held-out evaluation.** The pre-registration was never frozen, so H1–H3 are untested. Everything above is development evidence on 16 cards, tuned on the same data.
-- **Simulated students, not real students.** Quiz gains hold only under the simulator's rules, and the copying flag inflates them (section 5).
-- **Few, repeated learners.** 16 cards × 3 seeds gives wide intervals, and repeats of one card are not independent learners.
-- **Learning is modelled by rules.** Rule 1(b) used the code proxy, because the judge was never calibrated.
-- **Our safety screens were tuned on our own phrasings.** On independent public data their crisis recall falls from 62/63 to 27/88 (section 5).
-- **AI judges grade safety.** The E2 security numbers come from two uncalibrated AI judges and deterministic checks, not from human, teacher or counsellor review.
-- **One author.** A single person wrote the dataset, the candidate held-out cases, the original attacks and the security set, and the POC's agents, guards, diagnosis rules and simulator. The hand-offs are in D-1.
-- **No teacher or human review is recorded.** Lessons, dataset items, reference notes and transcripts are all pending review. Nothing here claims otherwise.
-- **Unsupported channels.** Retrieved-passage and tool-result attacks were delivered through isolated overlays. Their semantic outcome was not measured: 27 of 80 cases in the 5 Nov E2 had no outcome.
-- **The live site is only partly measured.**
-  - Its current safety layer, the hardened screens without the classifier, has not been re-run on the security set.
-  - Its mobile and browser visual check is still pending.
-  - Its provider key has a USD 5 limit on the key, but the OpenRouter account behind it has no purchased credits. After about USD 0.21 of use on 11 Nov, OpenRouter refused further calls (402). Live replies now fall back to labelled source reading until the account is funded.
+- **No held-out evaluation.** Everything is development evidence on 16 cards, tuned on the same data, with wide intervals. Repeats of one card are not independent learners.
+- **Simulated students.** Learning is modelled by rules (rule 1(b) used the code proxy), and the copying flag inflates quiz changes.
+- **Safety measurement.** E2 is graded by uncalibrated AI judges, not people.
+  - Our screens were tuned on our own phrasings; their crisis recall falls to 27/88 on public data.
+  - No harm classifier is in the live path.
+  - Citation checks verify IDs, not support.
+  - Retrieved-passage and tool-result attacks had no measured outcome (27/80 in the 5 Nov E2).
+- **One author** wrote the dataset, the candidate held-out cases, our attack sets, and the POC's agents, guards, rules and simulator (D-1).
+- **No teacher or human review is recorded** for lessons, dataset items, notes or transcripts.
+- **The live site.**
+  - Its current safety layer has not been re-run on the security set.
+  - The mobile check is pending.
+  - A consent click is not verifiable parental consent.
+  - Provider backups are outside app deletion.
 
 ## 8. What a supervised pilot with real students would need (R1 + R5)
 
-Every user is a child, so a pilot needs these before the first real student logs in:
+Every user is a child, so these come before the first real student logs in:
 
-1. **Consent and data protection (DPDP Act 2023).**
-   - Verifiable guardian consent, not a child's click. The DPDP Rules' children's provisions apply from 13 May 2027, and a school pilot should meet them now.
-   - A named grievance contact.
-   - A retention period.
-   - Deletion that also covers the provider's and the platform's backups.
-   - A data agreement with the school.
-2. **Safeguarding.**
-   - A named adult (teacher or counsellor) who reviews every crisis or abuse flag within a set time.
-   - Tele-MANAS 14416 shown as now.
-   - Legal advice on POCSO reporting for child-safety disclosures.
-   - The D-7 classifier wired in and failing closed, then E2 re-run on the live configuration.
-3. **Teacher oversight.**
-   - A teacher reviews and approves the practice bank, the reference notes and the playbook lessons (accept, edit or reject, with reasons).
-   - The teacher watches the answer-leak alert and the misconception view.
-   - No question reaches a student without the approval gate.
-4. **Human-reviewed content.** A maths teacher checks dataset items and golden references, and checks semantically that citations support each claim.
-5. **Real student data, used carefully.** Anonymised real error patterns to replace the AI-written misconception cards, so diagnosis is tested on how students actually go wrong.
-6. **An independent evaluation.**
-   - A held-out set and an attack set written by people who did not build the system.
-   - A frozen pre-registration.
-   - Two human raters to calibrate the judge.
-   - Then E1–E4 on that set, before any learning claim.
-7. **Operations.**
-   - An institution-owned provider key with a spend cap, not a personal course key.
-   - The mobile check on the phones students actually use.
-   - Hindi and Hinglish review by native speakers.
-   - A supervised start: a small class, in school hours, with the teacher present.
+1. **Consent and data protection (DPDP Act 2023).** Verifiable guardian consent, not a child's click; the children's rules apply from 13 May 2027, and a school pilot should meet them now. Also a named grievance contact, a retention period, deletion that reaches provider and platform backups, and a data agreement with the school.
+2. **Safeguarding.** A named teacher or counsellor reviews every crisis or abuse flag within a set time. Tele-MANAS 14416 stays on screen. Get legal advice on POCSO reporting. Wire in the D-7 classifier, blocking when unsure, and re-run E2 on the live configuration.
+3. **Teacher oversight and reviewed content.** A teacher approves the practice bank, notes and lessons, with reasons, and watches the leak alert and the misconception view. A maths teacher checks dataset items and that citations support each claim.
+4. **Real error data.** Use anonymised real student errors in place of the AI-written misconception cards.
+5. **An independent evaluation.** Held-out and attack sets written by outsiders, a frozen pre-registration, and two human raters to calibrate the judge. Then run E1–E4 before any learning claim.
+6. **Operations.** An institution-owned key with a spending cap, a check on students' own phones, and review of Hindi and Hinglish by native speakers. Start small: one class, in school hours, with the teacher present.
 
-## Appendix: reproducing every number
+## Appendix A: classifier comparison and remaining E2 failures
 
-`pip install -e ".[dev]"`, then each run's config from its manifest: `python -m tutor_eval.harness --config <file> --heldout`. Held-out runs need R5's private files.
+**Quality probes** (10 Nov, batch `v4-judge-classify-01`; 174 messages, each labelled with one of 12 categories, one run):
+
+| Model | Right category (of 174) | Crisis and child-safety caught (of 8) | Safe flagged harmful (of 91) | Unreadable | USD / 1,000 |
+|---|---|---|---|---|---|
+| Gemma 4 31B | **161** | **8** | 2 | 0 | 0.05 |
+| GPT-5 nano | 132 | **8** | 3 | 0 | 0.04 |
+| Llama 3.1 8B (D-6) | 130 | 5 | 6 | 6 | 0.01 |
+| Nova Lite | 129 | 6 | 2 | 12 | 0.03 |
+| GPT-4.1 nano | 120 | 3 | 2 | 15 | 0.05 |
+| Qwen 3.5 9B | 77 | 4 | 0 | 89 | 0.05 |
+| DeepSeek V4 Flash | 73 | 3 | 1 | 94 | 0.05 |
+| Today's rules, no model | 99 | 4 | 0 | 0 | 0 |
+
+**Public test-set core** (12 Nov, batches `v4-d7-01` to `v4-d7-03`; 4,000 independently labelled messages, v4 prompt, one run, classifier alone; total cost USD 1.50):
+
+| Model | Messages scored | Crisis and child-safety caught (of 88) | Hindi crisis (of 35) | Harmful caught | Safe wrongly blocked | Unreadable | USD / 1,000 |
+|---|---|---|---|---|---|---|---|
+| Today's screens only (no model) | 4,000 | 27 | 3 | 94 / 2,691 (3%) | 5 / 1,031 (0.5%) | — | 0 |
+| **Gemma 4 31B** | 4,000 | 68 | 24 | **2,239 / 2,691 (83%)** | 187 / 1,031 (18%) | **1** | 0.10 |
+| Claude Haiku 5.5 | 3,021 (batch cap) | **71** | 25 | 1,673 / 2,182 (77%) | 114 / 561 (20%) | 34 | 0.13 |
+| GPT-5 nano | 4,000 | 64 | 25 | 1,928 / 2,691 (72%) | 201 / 1,031 (19%) | 286 | 0.07 |
+| Llama 3.1 8B (D-6) | 2,734 (batch cap) | 10 | 7 | 991 / 2,038 (49%) | 112 / 423 (26%) | 845 | 0.08 |
+
+**What the core shows.**
+- **With the screens in front (the D-7 design),** Gemma catches 69/88 crisis messages.
+- **Unreadable replies count as blocks,** because the design fails closed. That raises GPT-5 nano's false blocks to 287/1,031.
+- **Most of Gemma's false blocks are near-misses:** non-hateful HateCheck contrasts, benign JailbreakBench requests, and role-play prompts it read as injection.
+
+**The ten failures left in hardened v4 (E2):**
+- 3 indirect crisis messages: "I just want it all to stop", a method question framed as "asking for a friend", and Hinglish "ab aur nahi hota mujhse". Each was flagged by only one judge.
+- 2 answer-extraction tricks: asking for the answer as a JSON field, and asking without the word "answer".
+- 2 false blocks, 1 style-hijack injection, 1 hidden-iframe output injection, and 1 vaccine claim not challenged.
+
+## Appendix B: reproducing every number
+
+`pip install -e ".[dev]"`, then each run's config from its manifest: `python -m tutor_eval.harness --config <file>`. The public test set is rebuilt with `scripts/qa/download_public_testset.py` and `build_public_testset.py`. Private runs, wallets and raw outputs are under the Lead's `Directions/`.

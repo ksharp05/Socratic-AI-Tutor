@@ -1,0 +1,467 @@
+{
+ "screens_only": {
+  "cases": 4000,
+  "category_ok": {
+   "k": 1108,
+   "n": 4000,
+   "rate": 0.277,
+   "ci95": [
+    0.2634,
+    0.2911
+   ]
+  },
+  "harmful_caught": {
+   "k": 94,
+   "n": 2691,
+   "rate": 0.0349,
+   "ci95": [
+    0.0286,
+    0.0426
+   ]
+  },
+  "benign_blocked": {
+   "k": 5,
+   "n": 1031,
+   "rate": 0.0048,
+   "ci95": [
+    0.0021,
+    0.0113
+   ]
+  },
+  "crisis_recall": {
+   "k": 27,
+   "n": 88,
+   "rate": 0.3068,
+   "ci95": [
+    0.2202,
+    0.4096
+   ]
+  },
+  "crisis_recall_hindi": {
+   "k": 3,
+   "n": 35,
+   "rate": 0.0857,
+   "ci95": [
+    0.0296,
+    0.2238
+   ]
+  },
+  "errors_or_unparsed": 0
+ },
+ "google/gemma-4-31b-it": {
+  "alone": {
+   "cases": 4000,
+   "category_ok": {
+    "k": 3148,
+    "n": 4000,
+    "rate": 0.787,
+    "ci95": [
+     0.774,
+     0.7994
+    ]
+   },
+   "harmful_caught": {
+    "k": 2239,
+    "n": 2691,
+    "rate": 0.832,
+    "ci95": [
+     0.8174,
+     0.8457
+    ]
+   },
+   "benign_blocked": {
+    "k": 187,
+    "n": 1031,
+    "rate": 0.1814,
+    "ci95": [
+     0.1591,
+     0.2061
+    ]
+   },
+   "crisis_recall": {
+    "k": 68,
+    "n": 88,
+    "rate": 0.7727,
+    "ci95": [
+     0.6749,
+     0.8478
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 24,
+    "n": 35,
+    "rate": 0.6857,
+    "ci95": [
+     0.5202,
+     0.8145
+    ]
+   },
+   "errors_or_unparsed": 1
+  },
+  "with_screens": {
+   "cases": 4000,
+   "category_ok": {
+    "k": 3143,
+    "n": 4000,
+    "rate": 0.7857,
+    "ci95": [
+     0.7728,
+     0.7982
+    ]
+   },
+   "harmful_caught": {
+    "k": 2241,
+    "n": 2691,
+    "rate": 0.8328,
+    "ci95": [
+     0.8182,
+     0.8464
+    ]
+   },
+   "benign_blocked": {
+    "k": 188,
+    "n": 1031,
+    "rate": 0.1823,
+    "ci95": [
+     0.16,
+     0.2071
+    ]
+   },
+   "crisis_recall": {
+    "k": 69,
+    "n": 88,
+    "rate": 0.7841,
+    "ci95": [
+     0.6872,
+     0.8572
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 24,
+    "n": 35,
+    "rate": 0.6857,
+    "ci95": [
+     0.5202,
+     0.8145
+    ]
+   },
+   "errors_or_unparsed": 0
+  },
+  "p50_ms": 1172,
+  "usd_total": 0.4014,
+  "usd_per_1k": 0.1003,
+  "stopped_early": false
+ },
+ "anthropic/claude-haiku-5.5": {
+  "alone": {
+   "cases": 3021,
+   "category_ok": {
+    "k": 2146,
+    "n": 3021,
+    "rate": 0.7104,
+    "ci95": [
+     0.6939,
+     0.7263
+    ]
+   },
+   "harmful_caught": {
+    "k": 1673,
+    "n": 2182,
+    "rate": 0.7667,
+    "ci95": [
+     0.7485,
+     0.784
+    ]
+   },
+   "benign_blocked": {
+    "k": 114,
+    "n": 561,
+    "rate": 0.2032,
+    "ci95": [
+     0.172,
+     0.2385
+    ]
+   },
+   "crisis_recall": {
+    "k": 71,
+    "n": 88,
+    "rate": 0.8068,
+    "ci95": [
+     0.7122,
+     0.8757
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 25,
+    "n": 35,
+    "rate": 0.7143,
+    "ci95": [
+     0.5494,
+     0.8367
+    ]
+   },
+   "errors_or_unparsed": 34
+  },
+  "with_screens": {
+   "cases": 3021,
+   "category_ok": {
+    "k": 2155,
+    "n": 3021,
+    "rate": 0.7133,
+    "ci95": [
+     0.697,
+     0.7292
+    ]
+   },
+   "harmful_caught": {
+    "k": 1700,
+    "n": 2182,
+    "rate": 0.7791,
+    "ci95": [
+     0.7612,
+     0.796
+    ]
+   },
+   "benign_blocked": {
+    "k": 116,
+    "n": 561,
+    "rate": 0.2068,
+    "ci95": [
+     0.1753,
+     0.2422
+    ]
+   },
+   "crisis_recall": {
+    "k": 71,
+    "n": 88,
+    "rate": 0.8068,
+    "ci95": [
+     0.7122,
+     0.8757
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 25,
+    "n": 35,
+    "rate": 0.7143,
+    "ci95": [
+     0.5494,
+     0.8367
+    ]
+   },
+   "errors_or_unparsed": 0
+  },
+  "p50_ms": 1234.5,
+  "usd_total": 0.5089,
+  "usd_per_1k": 0.1272,
+  "stopped_early": true
+ },
+ "openai/gpt-5-nano": {
+  "alone": {
+   "cases": 4000,
+   "category_ok": {
+    "k": 2586,
+    "n": 4000,
+    "rate": 0.6465,
+    "ci95": [
+     0.6316,
+     0.6612
+    ]
+   },
+   "harmful_caught": {
+    "k": 1928,
+    "n": 2691,
+    "rate": 0.7165,
+    "ci95": [
+     0.6991,
+     0.7332
+    ]
+   },
+   "benign_blocked": {
+    "k": 201,
+    "n": 1031,
+    "rate": 0.195,
+    "ci95": [
+     0.1719,
+     0.2203
+    ]
+   },
+   "crisis_recall": {
+    "k": 64,
+    "n": 88,
+    "rate": 0.7273,
+    "ci95": [
+     0.6262,
+     0.8093
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 25,
+    "n": 35,
+    "rate": 0.7143,
+    "ci95": [
+     0.5494,
+     0.8367
+    ]
+   },
+   "errors_or_unparsed": 286
+  },
+  "with_screens": {
+   "cases": 4000,
+   "category_ok": {
+    "k": 2630,
+    "n": 4000,
+    "rate": 0.6575,
+    "ci95": [
+     0.6426,
+     0.672
+    ]
+   },
+   "harmful_caught": {
+    "k": 2119,
+    "n": 2691,
+    "rate": 0.7874,
+    "ci95": [
+     0.7716,
+     0.8025
+    ]
+   },
+   "benign_blocked": {
+    "k": 287,
+    "n": 1031,
+    "rate": 0.2784,
+    "ci95": [
+     0.2519,
+     0.3065
+    ]
+   },
+   "crisis_recall": {
+    "k": 65,
+    "n": 88,
+    "rate": 0.7386,
+    "ci95": [
+     0.6382,
+     0.8191
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 25,
+    "n": 35,
+    "rate": 0.7143,
+    "ci95": [
+     0.5494,
+     0.8367
+    ]
+   },
+   "errors_or_unparsed": 0
+  },
+  "p50_ms": 1312.0,
+  "usd_total": 0.2812,
+  "usd_per_1k": 0.0703,
+  "stopped_early": false
+ },
+ "meta-llama/llama-3.1-8b-instruct": {
+  "alone": {
+   "cases": 2734,
+   "category_ok": {
+    "k": 1125,
+    "n": 2734,
+    "rate": 0.4115,
+    "ci95": [
+     0.3932,
+     0.43
+    ]
+   },
+   "harmful_caught": {
+    "k": 991,
+    "n": 2038,
+    "rate": 0.4863,
+    "ci95": [
+     0.4646,
+     0.508
+    ]
+   },
+   "benign_blocked": {
+    "k": 112,
+    "n": 423,
+    "rate": 0.2648,
+    "ci95": [
+     0.225,
+     0.3088
+    ]
+   },
+   "crisis_recall": {
+    "k": 10,
+    "n": 88,
+    "rate": 0.1136,
+    "ci95": [
+     0.0629,
+     0.1967
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 7,
+    "n": 35,
+    "rate": 0.2,
+    "ci95": [
+     0.1004,
+     0.3589
+    ]
+   },
+   "errors_or_unparsed": 845
+  },
+  "with_screens": {
+   "cases": 2734,
+   "category_ok": {
+    "k": 1215,
+    "n": 2734,
+    "rate": 0.4444,
+    "ci95": [
+     0.4259,
+     0.4631
+    ]
+   },
+   "harmful_caught": {
+    "k": 1732,
+    "n": 2038,
+    "rate": 0.8499,
+    "ci95": [
+     0.8337,
+     0.8647
+    ]
+   },
+   "benign_blocked": {
+    "k": 171,
+    "n": 423,
+    "rate": 0.4043,
+    "ci95": [
+     0.3586,
+     0.4517
+    ]
+   },
+   "crisis_recall": {
+    "k": 37,
+    "n": 88,
+    "rate": 0.4205,
+    "ci95": [
+     0.3228,
+     0.5248
+    ]
+   },
+   "crisis_recall_hindi": {
+    "k": 10,
+    "n": 35,
+    "rate": 0.2857,
+    "ci95": [
+     0.1633,
+     0.4506
+    ]
+   },
+   "errors_or_unparsed": 0
+  },
+  "p50_ms": 2625,
+  "usd_total": 0.3109,
+  "usd_per_1k": 0.0777,
+  "stopped_early": true
+ }
+}

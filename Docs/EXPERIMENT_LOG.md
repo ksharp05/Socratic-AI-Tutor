@@ -543,3 +543,15 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
   - The leak checker scored recall 0.90 and precision 0.55 against human labels.
   - The grader marked "70,000" and "1,00,000" wrong.
 - **Decision:** grader fixed in 59bccfb (14 tests) and redeployed. The screen fixes go to R4, tuned on the pool only.
+
+### 2026-11-12 · v4-d7-01, v4-d7-02, v4-d7-03 · D-7 classifier comparison on the public test-set core
+- **Config:** `scripts/qa/security_classifier_sweep.py --cases safety_core.jsonl` (CLASSIFY_V2, hardened screening text). Funded course key, set in the process environment only. Batch caps USD 1.0, then 0.7 and 0.7. The run stops at the first credit or budget refusal. Scoring: `scripts/qa/public_classifier_summary.py`.
+- **Data:** the 4,000-message held-out core of public test set v1 (independently labelled; English, Hindi, Hinglish).
+- **Outcome:**
+  - **Screens alone:** crisis and child safety 27/88, harmful caught 3%, safe blocked 0.5%.
+  - **Gemma 4 31B:** 68/88, 83% harmful caught, 18% safe blocked, 1 unreadable, USD 0.10 per 1,000.
+  - **Haiku 5.5** (3,021 scored; stopped at the batch cap, all 88 crisis cases sent): 71/88, 77%, 20%, 34 unreadable, USD 0.13 per 1,000.
+  - **GPT-5 nano:** 64/88, 72%, 19%, 286 unreadable, USD 0.07 per 1,000.
+  - **Llama 3.1 8B** (2,734 scored, batch cap): 10/88, 49%, 26%, 845 unreadable.
+  - **Cost:** provider-reported USD 1.50 in total. Summary in `eval/public_testset_v1/CLASSIFIER_CORE_2026-11-12.json`; raw runs private.
+- **Decision:** the evidence supports Gemma 4 31B (D-7) and rules out Llama 3.1 8B (D-6). The false-block rate (18%) must come down before it is switched on. The Lead's confirmation is pending.
