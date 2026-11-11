@@ -3,9 +3,10 @@
 > Learning through questions, reasoning, and discovery.
 
 > [!IMPORTANT]
-> **A first proof of concept now runs end to end:** [run it in 5 minutes](Docs/poc/README.md), with no Docker and no API key.
->
-> **What each role delivers, and by when:** [Lead roadmap](Docs/LEAD_ROADMAP.md). **How we work in parallel:** [CONTRIBUTING.md](CONTRIBUTING.md).
+> **Course submission, 12 November 2026.** One command starts the tutor: `docker compose up --build --wait` ([Quick start](#quick-start)).
+> - Live browser beta: https://socratic-tutor-beta.vercel.app/beta/
+> - Evaluation report: [Docs/report/EVALUATION_REPORT.md](Docs/report/EVALUATION_REPORT.md)
+> - Release note: [Docs/releases/2026-11-12-v1.0.md](Docs/releases/2026-11-12-v1.0.md)
 
 ## Overview
 
@@ -25,15 +26,31 @@ See the [dataset report](Docs/datasets/DATASET_REPORT.md) and [NCERT source cata
 
 ## Project status
 
-**Building.** Every box of the architecture exists in a basic form. Each role now replaces the stand-in in its own box with the real version.
+**Submitted for the course (v1.0).** Every box of the architecture is built and tested.
+- **Tests:** 2,856 automated tests and three CI gates pass on a fresh clone.
+- **Evidence:** all results are development evidence, from simulated students, synthetic attacks and independently labelled public data. No real-student or teacher-reviewed result is claimed (see the report's limitations).
 
-| Document | What it covers | Status |
-|---|---|---|
-| [Socratic Tutor — Agentic AI Architecture Guide](Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct) | The architecture, the six team roles, the hand-offs between them, and who owns which folder | Reference |
-| [Project plan](Docs/plan/README.md) (24 Oct) | Builds on the guide with a dated schedule, design decisions, evaluation design, security and privacy, risks and viva preparation | Proposed |
-| [Proof of concept](Docs/poc/README.md) (24 Oct) | One chapter and two misconceptions through every box: guards, planner, specialists, MCP tools with hooks, learner model, teacher approval, traces and a simulated-student smoke test | Runs (54 tests at the time; superseded) |
-| [Milestone 2 status](Docs/m2/STATUS.md) (5 Nov) | Connected graph tutor for three Class 10 chapters, teacher approval, quizzes and plans, Docker Compose, live-model hint evidence and the development test pack | **Current**: 325 tests in `tests/`, 451 across all suites; not yet accepted |
-| [Lead roadmap](Docs/LEAD_ROADMAP.md) (31 Oct) | The team, what we found on 31 Oct, the schedule to the viva, what each role delivers at each milestone, and who owns which file | **Current** (dates confirmed at the 1 Nov meeting) |
+| Submission item | Where |
+|---|---|
+| Evaluation report (problem, system, data, method, results, lessons, limitations, pilot needs) | [Docs/report/EVALUATION_REPORT.md](Docs/report/EVALUATION_REPORT.md) |
+| Architecture diagram and numbered walkthrough of a real trace | [Docs/report/ARCHITECTURE.md](Docs/report/ARCHITECTURE.md) |
+| Threat model (v3) | [Docs/THREAT_MODEL.md](Docs/THREAT_MODEL.md) |
+| Memory policy | [Docs/MEMORY_POLICY.md](Docs/MEMORY_POLICY.md) |
+| Experiment log | [Docs/EXPERIMENT_LOG.md](Docs/EXPERIMENT_LOG.md) |
+| Contribution log | [Docs/CONTRIBUTIONS.md](Docs/CONTRIBUTIONS.md) |
+| Decision log (D-1 to D-7) | [Docs/DECISIONS.md](Docs/DECISIONS.md) |
+| Independent public test set (15 free labelled datasets) | [Docs/testing/PUBLIC_TESTSET.md](Docs/testing/PUBLIC_TESTSET.md) |
+| Live beta: deployment, consent, spending cap | [Docs/deploy/VERCEL_BETA.md](Docs/deploy/VERCEL_BETA.md) |
+| Teaching policy (what counts as giving the answer away) | [Docs/policy/TEACHING_POLICY.md](Docs/policy/TEACHING_POLICY.md) |
+| Current state and open items | [Docs/m3/CHECKPOINT.md](Docs/m3/CHECKPOINT.md) |
+
+**History:**
+- the [project plan](Docs/plan/README.md), 24 Oct;
+- the [proof of concept](Docs/poc/README.md), 24 Oct;
+- the [Milestone 2 status](Docs/m2/STATUS.md), 5 Nov;
+- the [lead roadmap](Docs/LEAD_ROADMAP.md), 31 Oct.
+
+The course's *Socratic Tutor: Agentic AI Architecture Guide* (PDF) is course material and is not redistributed here.
 
 | Key date | |
 |---|---|
@@ -51,14 +68,13 @@ See the [dataset report](Docs/datasets/DATASET_REPORT.md) and [NCERT source cata
 | R2 Knowledge and memory | Rizwan |
 | R3 Agents and orchestration | Poonam |
 | R4 Tools, control and security | Swati |
-| R6 Deployment and operations | Shivam or Sharath (to confirm) |
-| R5b Evaluation engineer (proposed) | The other of Shivam and Sharath |
+| R6 Deployment and operations | Poonam, standing in since 11 Nov (Grafana leak alert, beta hint). Shivam or Sharath to confirm |
 
 What each role owns and never does: [Lead roadmap · Team](Docs/LEAD_ROADMAP.md#team).
 
 ## Quick start
 
-**Running the browser beta:** see the [beta run guide](Docs/RUN_GUIDE.md) for setup, data access, live and offline modes, and troubleshooting. It needs a separately supplied, authorized textbook index, which a fresh clone does not contain.
+**Try it without installing anything:** the live beta at https://socratic-tutor-beta.vercel.app/beta/ covers the three chapters. It asks for consent before any model call; your progress is kept per browser, and "Forget my data" deletes it. To run the beta locally, see the [beta run guide](Docs/RUN_GUIDE.md). That needs a separately supplied, authorised textbook index, which a fresh clone does not contain.
 
 **New to the project?** Follow the [setup guide](Docs/SETUP.md) (requirements, Docker or local Python, live key, private data, troubleshooting) or its one-page [install checklist](Docs/INSTALL_CHECKLIST.md). First see what is missing; this check is read-only:
 
@@ -78,7 +94,15 @@ tutor setup
 tutor chat --learner A
 ```
 
-The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requirements-beta-dev.txt` and `pip check`. None of this needs an API key or private data. For a live model, put your own course key in `.env` and run `tutor check-llm` ([setup guide, section 6](Docs/SETUP.md#6-optional-a-live-model-with-your-own-key)).
+The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requirements-beta-dev.txt` and `pip check`. None of this needs an API key or private data. `pytest -q` runs the 2,266 tests in `tests/`.
+
+The CI command runs every suite (2,856 tests; checked from a fresh clone on 11 Nov):
+
+```powershell
+$env:TUTOR_LLM = "stub"; pytest -q --strict-markers -m "not local_corpus" tests tests_beta tests_book_pipeline tests_integration_v02
+```
+
+**For a live model,** put your own course key in `.env` (`LLM_API_KEY=`, plus `TUTOR_LLM=auto` for Docker) and run `tutor check-llm` ([setup guide, section 6](Docs/SETUP.md#6-optional-a-live-model-with-your-own-key)). R6's short version: [R6 key guide](Docs/deploy/R6_KEY_GUIDE.md).
 
 **API and web UI without Docker:** `uvicorn tutor_api.main:app` and `streamlit run ui/app.py`. Tokens, endpoints and what is still untested are in the [deployment guide](Docs/deploy/README.md).
 
@@ -99,7 +123,7 @@ The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requ
 | `src/ncert_pipeline/`, `tools/` | NCERT extraction and acquisition tools (need private source files) |
 | `scripts/` | Milestone probes, smoke runs and the development test-pack runner (`scripts/m2/`) |
 | `setup/` | Prerequisite check and Python environment install scripts |
-| `tests/` | Automated tests run by CI; `tests_beta/`, `tests_book_pipeline/`, `tests_integration_v02/` need private data |
-| `Docs/` | Setup guide, run guide, Milestone 2 evidence (`Docs/m2/`), the plan, roadmap and decision logs |
+| `tests/`, `tests_beta/`, `tests_book_pipeline/`, `tests_integration_v02/` | Automated tests run by CI. Only tests marked `local_corpus` need private data, and CI skips them |
+| `Docs/` | The report, architecture, threat model, memory policy, logs, setup and run guides, deployment guides, and milestone evidence |
 
 Never committed: `.env`, API keys, NCERT PDFs or page images, the frozen dataset build, held-out data and personal data.
