@@ -30,6 +30,13 @@ Left out: WildGuardMix (its sign-up form asks for an email), SORRY-Bench (its li
 
 ## How it is built
 
+**Rebuilding it on another machine** takes two commands. The first fetches every file at its pinned revision and checks its SHA-256 against `SOURCES.json`; it was re-checked on 11 Nov and every file matched. The second rebuilds the set.
+
+```
+python -I scripts/qa/download_public_testset.py
+python -I scripts/qa/build_public_testset.py
+```
+
 `scripts/qa/build_public_testset.py` (run with `python -I`) writes four files to `Directions/testsets/public_v1/`. Each output's hash is in [`BUILD.json`](../../eval/public_testset_v1/BUILD.json).
 
 - `safety_full.jsonl`: 19,063 messages, of which 8,668 are English, 6,160 Hindi and 4,235 Hinglish.
