@@ -1,3 +1,17 @@
+# Release v1.0 (12 Nov 2026)
+
+- **Code freeze declared by the Lead.** Tag `v1.0` is on the commit that records this. `main` is fast-forwarded to it.
+- **Production:** `dpl_FVKCMZZe7P8EgeuGeHr9j9igwX4u`, deployed from 39b94d1 (same runtime as the tag; only documents differ). The release check passed; receipt `Directions/deployment/live_chat_02/LIVE_ACCEPTANCE_04_V1.json`.
+- **CI test set:** 2,858 passed, 23 skipped; the three gates pass.
+- **Not done:**
+  - The schema-2 migration (after the viva).
+  - The demo recording (the Lead).
+  - Teammates' final log entries.
+  - The human mobile check.
+- The key expires 16 Nov.
+
+---
+
 # Update - submission day: funded key, D-7 core comparison, slides, report PDF (12 Nov 2026, early morning)
 
 - **Key and live site.** A funded course key (USD 5 limit, expires 16 Nov) is in Vercel `LLM_API_KEY`. Production was redeployed as `dpl_9Xy9N4HywKeRybTQrbaSa23P7Aj8`, and 3/3 live replies were accepted with citations. The key has USD 3.46 left after today's runs. The hosted lease stands at 94 of 200 requests.
