@@ -25,7 +25,18 @@ CREATE TABLE IF NOT EXISTS cards(id TEXT PRIMARY KEY,owner TEXT,dataset TEXT,pas
  UNIQUE(owner,dataset,passage_id));
 CREATE TABLE IF NOT EXISTS reviews(id BIGSERIAL PRIMARY KEY,owner TEXT,card_id TEXT,rating TEXT,created DOUBLE PRECISION);
 INSERT INTO beta_schema(version) VALUES(1) ON CONFLICT DO NOTHING;
+CREATE TABLE IF NOT EXISTS revisit_queue(owner TEXT NOT NULL,question_id TEXT NOT NULL,session_id TEXT NOT NULL,
+ chapter TEXT NOT NULL,content_sha256 TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('pending','resolved')),
+ reason TEXT NOT NULL,created DOUBLE PRECISION NOT NULL,updated DOUBLE PRECISION NOT NULL,
+ PRIMARY KEY(owner,question_id));
+CREATE INDEX IF NOT EXISTS owner_revisits ON revisit_queue(owner,status,created);
+INSERT INTO beta_schema(version) VALUES(2) ON CONFLICT DO NOTHING;
 """
+# Version 2 adds the saved-question queue (additive; no existing rows change). This code also runs on a
+# version-1 database with the queue switched off, so the safe order is: deploy this code, then migrate.
+# Version-1 code refuses a version-2 database, so never migrate while version-1 code is still serving.
+SCHEMA_VERSION = 2
+SUPPORTED_VERSIONS = (1, 2)
 
 class Row(dict):
     def __getitem__(self, key):
@@ -54,8 +65,12 @@ class PostgresRepository(Repository):
         if migrate:
             self.migrate()
         with self.connect() as conn:
-            if conn.execute("SELECT version FROM beta_schema").fetchall() != [Row(version=1)]:
+            versions = [row["version"] for row in conn.execute("SELECT version FROM beta_schema").fetchall()]
+            current = max(versions, default=0)
+            if current not in SUPPORTED_VERSIONS:
                 raise ValueError("Unsupported beta database schema")
+            # Until the migration runs, practice works exactly as before, without saved questions.
+            self.revisit_queue = current >= 2
     @contextmanager
     def raw_connection(self):
         # No automatic retries. Explicit transactions work with transaction pooling.

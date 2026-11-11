@@ -28,7 +28,11 @@ class Repository:
               front TEXT,back TEXT,source TEXT,bucket INTEGER,due REAL,created REAL,
               UNIQUE(owner,dataset,passage_id));
             CREATE TABLE IF NOT EXISTS reviews(id INTEGER PRIMARY KEY,owner TEXT,card_id TEXT,rating TEXT,created REAL);
-            PRAGMA user_version=1;
+            CREATE TABLE IF NOT EXISTS revisit_queue(owner TEXT NOT NULL,question_id TEXT NOT NULL,session_id TEXT NOT NULL,
+              chapter TEXT NOT NULL,content_sha256 TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,
+              created REAL NOT NULL,updated REAL NOT NULL,PRIMARY KEY(owner,question_id));
+            CREATE INDEX IF NOT EXISTS owner_revisits ON revisit_queue(owner,status,created);
+            PRAGMA user_version=2;
             ''')
 
     @contextmanager
@@ -170,9 +174,48 @@ class Repository:
             c.execute('INSERT INTO reviews(owner,card_id,rating,created) VALUES (?,?,?,?)',(owner,cid,rating,time.time()))
         return next(x for x in self.cards(owner) if x['id']==cid)
 
+    # Saved-question queue (R2). One row per browser profile and practice question. The caller supplies
+    # the item's current content hash, so a changed question is never served or cleared under an old mark.
+    # Rows hold question references only, never answers or chat text, and `forget` deletes them.
+    revisit_queue=True   # PostgresRepository sets False on a not-yet-migrated version-1 database
+    REVISIT_REASONS=('after_last_hint',)
+    REVISIT_LIMIT=100
+
+    def mark_revisit(self,owner,question_id,*,session_id,chapter,content_sha256,reason='after_last_hint',conn=None):
+        """Queue a practice question for this profile. Returns True if the queue changed.
+        Re-marking a pending question with the same content keeps its place (oldest first)."""
+        if reason not in self.REVISIT_REASONS:raise ValueError('Unknown revisit reason')
+        with self._using(conn) as c:
+            prior=c.execute('SELECT status,content_sha256 FROM revisit_queue WHERE owner=? AND question_id=?',
+                            (owner,question_id)).fetchone()
+            if prior and prior['status']=='pending' and prior['content_sha256']==content_sha256:
+                return False
+            now=time.time()
+            c.execute('INSERT INTO revisit_queue(owner,question_id,session_id,chapter,content_sha256,status,reason,created,updated) '
+                      'VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(owner,question_id) DO UPDATE SET session_id=excluded.session_id,'
+                      'chapter=excluded.chapter,content_sha256=excluded.content_sha256,status=excluded.status,'
+                      'reason=excluded.reason,created=excluded.created,updated=excluded.updated',
+                      (owner,question_id,session_id,chapter,content_sha256,'pending',reason,now,now))
+            return True
+
+    def resolve_revisit(self,owner,question_id,*,content_sha256,conn=None):
+        """Clear a pending mark after code-checked correct work on the same question content."""
+        with self._using(conn) as c:
+            return c.execute("UPDATE revisit_queue SET status='resolved',updated=? WHERE owner=? AND question_id=? "
+                             "AND status='pending' AND content_sha256=?",
+                             (time.time(),owner,question_id,content_sha256)).rowcount>0
+
+    def pending_revisits(self,owner,*,conn=None):
+        """This profile's pending marks, oldest first, capped at REVISIT_LIMIT. Callers recheck eligibility."""
+        with self._using(conn) as c:
+            rows=c.execute("SELECT question_id,session_id,chapter,content_sha256,reason,created FROM revisit_queue "
+                           "WHERE owner=? AND status='pending' ORDER BY created,question_id LIMIT "+str(self.REVISIT_LIMIT),
+                           (owner,)).fetchall()
+        return [dict(r) for r in rows]
+
     def forget(self,owner):
         with self.connect() as c:
             c.execute('DELETE FROM turns WHERE session_id IN (SELECT id FROM sessions WHERE owner=?)',(owner,))
-            for table in ('sessions','assessments','observations','cards','reviews'):
+            for table in ('sessions','assessments','observations','cards','reviews','revisit_queue'):
                 c.execute(f'DELETE FROM {table} WHERE owner=?',(owner,))
             c.execute('DELETE FROM profiles WHERE id=?',(owner,))

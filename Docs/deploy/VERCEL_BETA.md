@@ -147,6 +147,11 @@ characters and must remain stable across deployments.
 
 Schema setup is explicit with `PostgresRepository(..., migrate=True)`;
 function startup never creates or resets learner tables.
+**Schema version 2 (11 Nov, saved-question queue)** only adds the `revisit_queue` table and its index; no
+existing rows change, and migrating twice is harmless. **Order: deploy first, then migrate.** The new code
+runs on a version-1 database with saved questions switched off, so a routine deploy without the migration is
+safe. Then run the migration and saved questions switch on at the next cold start. Never migrate while
+version-1 code is still serving: it refuses a version-2 database.
 Live activation additionally requires the explicitly approved, pre-funded grant,
 `PostgresBudget.provision`, model/key settings and visitor consent.
 Do not use the file-based DeploymentBudget in serverless functions.
