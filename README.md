@@ -27,7 +27,7 @@ See the [dataset report](Docs/datasets/DATASET_REPORT.md) and [NCERT source cata
 ## Project status
 
 **Submitted for the course (v1.0).** Every box of the architecture is built and tested.
-- **Tests:** 2,856 automated tests and three CI gates pass on a fresh clone.
+- **Tests:** 2,858 automated tests and three CI gates pass. A fresh clone was checked on 11 Nov.
 - **Evidence:** all results are development evidence, from simulated students, synthetic attacks and independently labelled public data. No real-student or teacher-reviewed result is claimed (see the report's limitations).
 
 | Submission item | Where |
@@ -96,7 +96,7 @@ tutor chat --learner A
 
 The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requirements-beta-dev.txt` and `pip check`. None of this needs an API key or private data. `pytest -q` runs the 2,266 tests in `tests/`.
 
-The CI command runs every suite (2,856 tests; checked from a fresh clone on 11 Nov):
+The CI command runs every suite (2,858 tests; a fresh clone was checked on 11 Nov):
 
 ```powershell
 $env:TUTOR_LLM = "stub"; pytest -q --strict-markers -m "not local_corpus" tests tests_beta tests_book_pipeline tests_integration_v02
