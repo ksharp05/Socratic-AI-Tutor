@@ -90,6 +90,7 @@ TUTOR_API_TOKENS="k3x9...:student:L-A,p2q8...:student:L-B,z7m1...:teacher:T-001"
 |---|---|---|
 | `GET /health` | anyone | `{"status": "ok", "llm": ...}` |
 | `GET /metrics` | anyone (scraped by Prometheus) | Prometheus text format |
+| `POST /alerts/grafana` | Grafana, with `TUTOR_ALERT_TOKEN` as its bearer token | Grafana's webhook body. Stores each alert for teachers. Returns 404 when `TUTOR_ALERT_TOKEN` is unset; refuses the public default `dev-grafana-alerts` when `TUTOR_ENV=production` |
 | `GET /me` | any token | The role and ID the token maps to |
 | `POST /chat` | student | Body `{"session_id"?, "text", "mode": "practice"\|"quiz"}`. Returns the turn result: `reply`, `route`, `plan`, `diagnosis`, `checks`, `tools`, `active_item` and `citations`, plus `session_id` and `learner_id` |
 | `POST /chat/stream` | student | Same body. Server-sent events: `token` (reply chunks), `plan`, `citation` (one per cited passage) and `done` (the full result without the plan) |
@@ -103,6 +104,7 @@ TUTOR_API_TOKENS="k3x9...:student:L-A,p2q8...:student:L-B,z7m1...:teacher:T-001"
 | `POST /teacher/proposals/{set_id}/reject` | teacher | Body `{"reason"}` (optional) |
 | `POST /teacher/proposals/{set_id}/try-publish` | teacher | Body `{"token"}`. Tries an earlier approval token; a stale token gives `published: false` with `FORBIDDEN` |
 | `GET /teacher/items?concept_id=` | teacher | The development practice pool (IDs and prompts), for editing |
+| `GET /teacher/alerts` | teacher | System alerts from Grafana, newest first (at most 50) |
 | `GET /learners` | teacher | Learner IDs and aliases |
 | `GET /learners/{learner_id}` | teacher, or that learner | Mastery, misconceptions, plan and alerts |
 
@@ -133,6 +135,8 @@ TUTOR_API_TOKENS="k3x9...:student:L-A,p2q8...:student:L-B,z7m1...:teacher:T-001"
 | `tutor_api_denied_total` | `status` (`401`, `403`) |
 | `tutor_handoffs_total`, `tutor_turn_errors_total` | none |
 | `tutor_pending_approvals` (gauge) | none |
+| `tutor_output_guard_checks_total` | none (every draft the output guard checked) |
+| `tutor_alerts_received_total` | `status` (`firing`, `resolved`) |
 
 **How the counts are collected.** Tool calls, denials and blocked leaks are read from the `trace_events` rows that the ToolBus hooks and the output guard already write. The counts therefore match `tutor trace`.
 

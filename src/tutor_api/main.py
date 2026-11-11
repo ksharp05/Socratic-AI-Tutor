@@ -7,6 +7,7 @@ Endpoints and tokens are documented in Docs/deploy/README.md.
 """
 from __future__ import annotations
 
+import hmac
 import json
 import os
 import re
@@ -23,7 +24,7 @@ from filelock import Timeout
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
 
-from tutor import guards
+from tutor import guards, store
 from tutor.toolbus import CallContext, ToolCallError
 
 from .auth import Principal, load_tokens, lookup
@@ -31,6 +32,8 @@ from .metrics import Metrics
 
 SESSION_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,64}$")
 RESERVED_PREFIXES = ("qs-",)  # approval-graph threads share the checkpointer
+LEAK_ALERT = "Answer-leak spike"  # the title of Grafana's answer-leak alert rule
+DEV_ALERT_TOKEN = "dev-grafana-alerts"  # the public development default; refused when TUTOR_ENV=production
 ERROR_STATUS = {"NOT_FOUND": 404, "INVALID_INPUT": 422, "FORBIDDEN": 403, "BUDGET": 429, "BUSY": 503, "GONE": 410, "CONFLICT": 409}
 
 
@@ -62,6 +65,19 @@ class RejectIn(BaseModel):
 
 class TryPublishIn(BaseModel):
     token: str = Field(min_length=1, max_length=512)
+
+
+class GrafanaAlert(BaseModel):
+    status: str = Field(default="firing", max_length=16)
+    labels: dict[str, str] = Field(default_factory=dict)
+    annotations: dict[str, str] = Field(default_factory=dict)
+    startsAt: str | None = Field(default=None, max_length=64)
+    valueString: str | None = Field(default=None, max_length=1000)
+
+
+class GrafanaWebhookIn(BaseModel):
+    """The part of Grafana's webhook body the API keeps; other fields are ignored."""
+    alerts: list[GrafanaAlert] = Field(default_factory=list, max_length=50)
 
 
 # ---------------------------------------------------------------------- startup helpers
@@ -100,9 +116,12 @@ def configured_tutor_class():
     raise RuntimeError("TUTOR_CONTEXTUAL_HINTS must be 0 or 1")
 
 
-def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
+def create_app(tutor=None, tokens: str | None = None, alert_token: str | None = None) -> FastAPI:
     """Build the API. Pass `tutor` to wrap an existing TutorApp (tests); otherwise one is created at startup."""
     token_map = load_tokens(tokens)
+    alert_token = os.environ.get("TUTOR_ALERT_TOKEN", "") if alert_token is None else alert_token
+    if os.environ.get("TUTOR_ENV") == "production" and alert_token == DEV_ALERT_TOKEN:
+        alert_token = ""  # never accept the public default outside development
     metrics = Metrics()
     lock = threading.RLock()
     state: dict = {"tutor": tutor, "owned": tutor is None, "trace_id": 0, "beta": None}
@@ -308,6 +327,23 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
                 metrics.pending.set(row["n"])
         return Response(generate_latest(metrics.registry), media_type=CONTENT_TYPE_LATEST)
 
+    @api.post("/alerts/grafana")
+    def grafana_alert(body: GrafanaWebhookIn, creds: HTTPAuthorizationCredentials | None = Depends(bearer)) -> dict:
+        """Grafana's contact point posts here. Each alert goes into the alerts table, which teachers read."""
+        if not alert_token:
+            raise HTTPException(404, "Not Found")
+        if creds is None or not hmac.compare_digest(creds.credentials.encode(), alert_token.encode()):
+            _deny(401, "unknown alert token")
+        with lock:
+            for a in body.alerts:
+                kind = "leak_spike" if a.labels.get("alertname") == LEAK_ALERT else "grafana"
+                detail = {"status": a.status, "alertname": a.labels.get("alertname", "")[:100],
+                          "summary": a.annotations.get("summary", "")[:300], "starts_at": a.startsAt,
+                          "values": (a.valueString or "")[:300]}
+                store.alert(_tutor().conn, kind, None, detail)
+                metrics.alerts.labels("resolved" if a.status == "resolved" else "firing").inc()
+        return {"stored": len(body.alerts)}
+
     @api.get("/me")
     def me(p: Principal = Depends(principal)) -> dict:
         return {"role": p.role, "id": p.subject_id}
@@ -433,6 +469,14 @@ def create_app(tutor=None, tokens: str | None = None) -> FastAPI:
         from .traces import session_trace
         with lock, _tutor().bus.publication_lock:
             return _call(session_trace, _tutor(), session_id)
+
+    @api.get("/teacher/alerts")
+    def teacher_alerts(_: Principal = Depends(teacher)) -> dict:
+        """System alerts from Grafana (not about one learner), newest first."""
+        with lock:
+            rows = _tutor().conn.execute("SELECT ts, kind, detail FROM alerts WHERE learner_id IS NULL "
+                                         "ORDER BY id DESC LIMIT 50").fetchall()
+        return {"alerts": [{"ts": r["ts"], "kind": r["kind"], "detail": json.loads(r["detail"] or "{}")} for r in rows]}
 
     # ------------------------------------------------------------------ learners
     @api.get("/learners")

@@ -342,6 +342,10 @@ def student_progress() -> None:
 
 def teacher_learners() -> None:
     st.header("Learner overview")
+    alerts = (call("GET", "/teacher/alerts") or {}).get("alerts", [])
+    if alerts:
+        st.subheader("System alerts")
+        st.dataframe(alerts, hide_index=True, width="stretch")
     learners = (call("GET", "/learners") or {}).get("learners", [])
     if not learners:
         st.caption("No learners.")
