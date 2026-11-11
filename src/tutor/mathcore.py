@@ -23,22 +23,30 @@ NO_TERM_ANSWER = re.compile(
     _NO_COUNT + rf"|\bno (?:such |valid )?terms?(?:\s+exists?)?{_IN_AP}(?:\s+exists?)?\s*[.!]?\s*$", re.I)
 # The whole answer is the empty set the question asks for: "{}", "∅", "empty set", "none",
 # "no such (finite) AP (exists)" (finding 1). Term-count answers only.
-# R1 answer rule (10 Nov): "does not exist" and "not possible" also count, and so does "zero", because on a
-# term-count ("how many") question it means no valid count. A bare "no" is still asked again, and root
-# answers never treat "zero" as empty (0 can be a root).
+# R1 answer rule (10-11 Nov): "does not exist", "not possible" and "impossible" also count, and so do "zero"
+# and "0", because on a term-count question it means no valid count. Both term-count task types ask
+# "how many" (ap_count, ap_inverse_sum); no "which term" task uses unit "terms". A bare "no" is still asked
+# again, and root answers never treat zero as empty (0 can be a root).
 EMPTY_SET_ANSWER = re.compile(
     rf"^\s*(?:(?:my|the) answer is\s*[:=]?\s*)?"
-    rf"(?:\{{\s*\}}|∅|(?:the\s+)?empty\s+set|none|zero(?:\s+terms?)?"
+    rf"(?:\{{\s*\}}|∅|(?:the\s+)?empty\s+set|none|(?:zero|0)(?:\s+terms?)?"
     rf"|(?:there\s+(?:is|are)\s+)?no\s+such\s+(?:finite\s+)?{_AP_NAME}(?:\s+exists?)?"
     rf"|(?:(?:it|that|this|such\s+an?\s+(?:{_AP_NAME}|term))\s+)?(?:does\s+not|doesn['’]?t)\s+exist"
-    rf"|(?:(?:it|that|this)(?:['’]s|\s+is)\s+)?not\s+possible)"
+    rf"|(?:(?:it|that|this)(?:['’]s|\s+is)\s+)?(?:not\s+possible|impossible))"
     rf"\s*[.!]?\s*$", re.I)
 # Anywhere in a tutor reply, but only statements about the answer (finding 3): "no valid term count",
 # "no such term", "no (valid) term exists", and "there is/are no (valid) term(s)" when it ends the clause.
 # Ordinary hints such as "there are no terms before the first one" or "no term index can be zero" pass.
+# R1 (11 Nov): the full claims "no such AP", "such an AP/term does not (or cannot) exist" and "it is not
+# possible to have such a term" also give the answer away; "check whether such a term can exist" passes.
+_SUCH = rf"such\s+an?\s+(?:finite\s+)?(?:{_AP_NAME}|term)"
 NO_TERM_LEAK = re.compile(
     _NO_COUNT
     + r"|\bno such terms?\b"
+    + rf"|\bno\s+such\s+(?:finite\s+)?{_AP_NAME}(?![a-z])"
+    + rf"|(?<!whether )(?<!if )\b{_SUCH}\s+(?:does\s+not|doesn['’]?t|cannot|can\s+not|can['’]?t)\s+exist"
+    + rf"|\b(?:it\s+is|it['’]s)\s+(?:not\s+possible|impossible)\s+(?:to\s+(?:have|get|find|form)|for)"
+    + rf"\s+(?:{_SUCH}|such\s+terms?)"
     + r"|\bno (?:valid )?terms? exists?\b"
     + rf"|\bthere (?:is|are) no (?:valid )?terms?"
     + rf"(?=\s*(?:[.!?,;:]|$|in (?:this|the) {_AP_NAME}(?![a-z])|(?:that|which)\b))",
