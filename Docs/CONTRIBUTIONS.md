@@ -12,6 +12,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-11 · Swati / SwatiSmitaBiswal (R4)
+- **Work:**
+  - R1 answer rule in `mathcore.py`: "does not exist", "not possible" and "zero" accepted on term counts; a bare "no" asked again (PR #18, merged).
+  - Lead's follow-ups: the leak check now blocks the full claims "no such AP" and "such an AP does not exist" while hints pass; "0" behaves like "zero"; "impossible" accepted; 71 tests (PR #24). Checked that no "which term" task uses unit "terms".
+  - Reviewed `socrates_beta/safety.py` with 30 offline probes: crisis, abuse and secrecy screens catch the explicit and indirect forms and skip idioms; gaps recorded in the threat model.
+  - Threat model v3 for the beta's safety layer, the exhausted key, DPDP (13 May 2027) and POCSO; decision D-7 (Gemma 4 31B replaces D-6's Llama 3.1 8B, from R5's evidence).
+- **AI-assisted:** code changes, tests, probes and documents drafted with Claude, then run, checked against the code and R5's reports, and reviewed by me.
+- **Decisions:** D-7 recorded (Lead to confirm).
+
 ### 2026-11-10 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - Fixed findings 1-3 in `mathcore.py`: empty-set term-count answers, "no such term in this AP", and a narrower leak check; 42 regression tests. PR #12.
