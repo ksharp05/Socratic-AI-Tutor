@@ -45,7 +45,7 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 | **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
 | **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
 | **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
-| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Lead's confirmation; wiring it in; E2 with it switched on |
+| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Wiring it in; lowering false blocks; E2 with it switched on |
 | **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; the new key's USD 5 limit |
 
 **Classifier choice (D-7).** No dedicated guard model is on the course list, so we compared general course models in steps:
@@ -59,7 +59,7 @@ Gemma 4 31B led on the probes (161/174 categories right, 8/8 crisis and child-sa
 - 83% of harmful messages caught, with 1 unreadable reply;
 - but 18% of safe messages wrongly blocked.
 
-Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 nano and Llama 3.1 8B gave too many unreadable replies (Appendix A). D-7 places Gemma behind the fixed screens, blocking when unsure. It is built but switched off, pending the Lead's confirmation, and the false-block rate needs work before it goes live.
+Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 nano and Llama 3.1 8B gave too many unreadable replies (Appendix A). D-7 places Gemma behind the fixed screens, blocking when unsure. The Lead confirmed D-7 on 12 Nov. The classifier is built but stays switched off until its false-block rate comes down.
 
 **E2: do the defences work? (Development evidence.)**
 - **The cases:** 420 synthetic cases in English, Hindi and Hinglish (368 attacks in 14 families, plus 52 benign controls). R5 wrote them and did not show them to R4 beforehand.
@@ -81,7 +81,7 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 - **The team tutor (5 Nov, seen attacks):** guards on versus off gave 0/18 versus 1/18 measured violations, with 0/35 false blocks in both (`m3_live_e2_on/off`).
 
 **Next steps.**
-1. Confirm D-7, wire the classifier into the turn path and the beta, and re-run E2 with it on.
+1. Wire the D-7 classifier (confirmed 12 Nov) into the turn path and the beta, lower its false blocks on the tuning pool, and re-run E2 with it on.
 2. Tune the screens on the public tuning pool (section 5).
 3. Add Prompt Guard 2 for injections.
 4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
