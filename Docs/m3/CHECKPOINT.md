@@ -1,3 +1,23 @@
+# Update - team PRs 18-27 merged into Beta and pushed (11 Nov 2026)
+
+- **Merged.** PR 18 was merged on the night of 10 Nov (0e48bd4). On 11 Nov, PRs 19-27 were merged after a trial merge and the CI test set: 2,841 passed, 23 skipped (16 Postgres tests need a database), 34 deselected; the C1, dev_smoke and security gates pass.
+  - Swati (R4): 24 ("0" and "impossible" as empty answers; leak check blocks "no such AP"), 25 (D-7, threat model v3), 26 (D-7 classifier, off by default).
+  - Poonam (R3, R6 stand-in): 20 (answer hint says "empty set"), 21 and 22 (Grafana answer-leak alert), 19 and 23 (contribution log).
+  - Rizwan (R2): 27 (saved-question queue for the beta, schema version 2).
+- **Conflict.** `Docs/CONTRIBUTIONS.md` only; every entry is kept, newest first.
+- **Not done.** Production still runs d15e545, so PRs 18, 20, 24 and 27 are not live until a redeploy. Do not run the Neon schema-2 migration before the viva; PR 27's code runs on schema 1 with the queue off.
+- **Review notes.**
+  - D-7 needs the Lead's confirmation.
+  - The classifier is not yet called in the turn path (`app.py` still uses `screen_input`), and its Haiku fallback needs `reasoning: {enabled: false}`.
+  - The beta UI does not show `saved_for_later`.
+- **Submission gaps (due 12 Nov).**
+  - Report sections 1, 3-5, 7 and 8 are still skeletons; the E2 numbers in 2a are still placeholders, and its classifier row still says "Not built".
+  - No slides and no backup demo recording yet.
+  - The Lead's contribution entries stop at 31 Oct.
+  - Tag `v1.0` on the submitted commit.
+
+---
+
 # Update - team PRs 10-17 merged and production redeployed (10 Nov 2026, night)
 
 - PRs 10, 12, 13 and 14 (Swati, R4) and 11, 15, 16 and 17 (Poonam, R3) are merged into Beta and pushed as d15e545.
