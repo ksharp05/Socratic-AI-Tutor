@@ -1,6 +1,6 @@
 # After v1.0, on Beta only (12 Nov 2026)
 
-- **Workflow.** Everything lands on Beta first. `main` and `v1.0` stay at d139762 until the Lead moves Beta over.
+- **Workflow.** Everything lands on Beta first. On 12 Nov the Lead moved Beta over: `main` was fast-forwarded to Beta and now holds everything below. The `v1.0` tag stays at d139762, the submitted release.
 - **README rewrite** (3ed23cd).
 - **Chat: Enter sends, Shift+Enter adds a line** (db49b7d). An input-method Enter (Hindi) never sends. Tested in the local offline beta.
 - **Production now runs Beta db49b7d:** `dpl_9uoVZqtLgPJYVEARmFnLf8BBvPFH`. Health is OK, and the served `app.js` is identical to the commit. Production is therefore ahead of the `v1.0` tag (chat Enter key only).
