@@ -41,12 +41,12 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 | Control | Built (where) | Tested (how) | Still needs validation |
 |---|---|---|---|
-| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov) | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
+| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov). Crisis phrases and the injection pattern widened and shared by both surfaces on 12 Nov (PR #28) | Team suite; PR #13 adds 14 tests in both directions; PR #28 adds 56; the public test set, offline (below) | Indirect and Hindi crisis wording (40% recall on the public core); unusual PII formats |
 | **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,842 portable tests on Beta, 11 Nov) | E2 tool-result and retrieved-passage channels |
 | **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
 | **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
 | **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
-| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Lead's confirmation; wiring it in; E2 with it switched on |
+| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); a live check by R4 on 16 of her own messages (16 routed as expected, none harmful sent to teaching); the 174-message probe set and the 420-case attack set (below) | Lead's confirmation; wiring it in; E2 with it switched on |
 | **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; the new key's USD 5 limit |
 
 **Guard-model comparison (development evidence, not a result).** OpenRouter offers dedicated guard models (Llama Guard 4, gpt-oss-safeguard 20B), but neither is on the course model list, so the candidates are general course models. There were three checks, each one run.
@@ -100,20 +100,32 @@ Haiku 5.5, D-7's fallback, has only S4's ten examples behind it. D-7 is recorded
 
 On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and secrecy screens, wider redaction) were ported into the live beta (commit 49749be). The classifier was not ported, so today's live site sits between the two columns and has not been re-measured. No clean held-out sessions were run, and no per-layer split was made.
 
+**Deterministic layers on independent data (11–12 Nov, offline, no model).** R5's public test set has 19,063 messages from 15 public datasets labelled by people outside the team, split into a 15,063-message dev pool and a 4,000-message held-out core (`Docs/testing/PUBLIC_TESTSET.md`). On 11 Nov the screens caught 62 of 63 crisis messages on our own set but only 27 of 88 on the core. R4 widened the crisis phrases and the injection check using the dev pool only (PR #28) and then measured the core once:
+
+| Public core, 4,000 messages | Before (11 Nov) | After PR #28 (12 Nov) |
+|---|---|---|
+| Crisis messages caught | 27/88 | 35/88 |
+| Gandalf "ignore your instructions" attempts caught | 33/200 | 112/200 |
+| deepset injections caught | 4/125 | 26/125 |
+| Safe messages wrongly blocked | 5/1,031 | 5/1,031 |
+
+On the dev pool, safe messages blocked rose from 43 to 62, mostly prompts such as "Ignore all instructions before this one…" that the source labels safe because their content is harmless; for a children's tutor they are kept blocked. Persona patterns ("roleplay as") were tried and removed because they blocked harmless role-play.
+
 **Limitations.**
-- The guards match fixed phrasings: reworded, encoded, Hinglish or multi-turn attempts can pass.
-- Violent, sexual, hateful and alcohol requests are not caught on either surface until a classifier is added (finding 8).
+- The guards match fixed phrasings: reworded, encoded or multi-turn attempts can pass. On the independent core they still miss 60% of crisis messages, and Hindi crisis recall is 6 of 35.
+- Violent, sexual, hateful and alcohol requests are not caught on either surface until the classifier is switched on (finding 8).
 - Citation checks verify IDs and format, not that the passage supports the claim.
 - Local runs cap tool calls, not money; only the live beta has a USD cap.
 - On the live site, a child's consent click is not verifiable parental consent, and provider or platform backups are outside app deletion.
-- All tests above were written by the team; S4 used one run and ten examples.
+- Apart from the public test set, all tests were written by the team; S4 used one run and ten examples. The public labels are mapped to our categories by written rules, not human review of our tutor.
 
 **Recommended next steps.**
 1. Done 11 Nov: the hosted key was replaced (USD 5 limit; OpenRouter lists it as expiring 9 Feb 2027) and production redeployed. Re-run the security set against the live configuration.
 2. Confirm D-7, then call the classifier in the turn path and on the beta, failing closed, with tests, and re-run E2 with it on.
-3. Add Prompt Guard 2 as a local injection layer (access is already approved).
-4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
-5. Before any pilot: guardian consent, a named grievance contact and human review of every distress flag.
+3. Raise crisis recall on independent data, especially Hindi: the classifier, plus crisis phrases written by someone with safeguarding experience (no public set covers Hinglish crisis or minors' disclosures).
+4. Add Prompt Guard 2 as a local injection layer (access is already approved).
+5. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
+6. Before any pilot: guardian consent, a named grievance contact and human review of every distress flag.
 
 ## 3. Data (R5)
 
