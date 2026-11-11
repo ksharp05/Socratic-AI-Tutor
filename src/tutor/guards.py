@@ -1,7 +1,8 @@
 """Input and output guardrails (POC: deterministic rule layer).
 
-Prompt Guard 2 and Llama Guard 4 slot in as further layers once model access is confirmed; the rule layer
-stays because the course guide asks for several layers, not one filter.
+Llama Guard 4 is not on the course model list; the model layer is the D-7 classifier (safety_classifier.py,
+Gemma 4 31B), called through screen_with_classifier. The rule layer stays in front of it because the course guide
+asks for several layers, not one filter, and because it works with no model or key.
 """
 from __future__ import annotations
 
@@ -81,6 +82,22 @@ def screen_input(text: str) -> dict:
         "injection": bool(INJECTION.search(flag_text)),
         "unverified_own_problem": unverified_own_problem(normal),
     }
+
+
+def screen_with_classifier(text: str, llm, *, session_id: str | None = None, history=()) -> dict:
+    """screen_input, then the D-7 classifier on the redacted text when no fixed handoff applies.
+
+    Distress goes straight to the handoff with no model call. Otherwise "classifier" holds the category, route
+    ("teach", "policy" or "crisis") and allowed; with the classifier off it is {"source": "off", "allowed": True}.
+    """
+    from .safety_classifier import classify
+
+    flags = screen_input(text)
+    if flags["distress"]:
+        flags["classifier"] = {"source": "screen", "category": "self_harm", "route": "crisis", "allowed": False}
+        return flags
+    flags["classifier"] = classify(flags["text"], llm, session_id=session_id, history=history)
+    return flags
 
 
 def check_citations(text: str, retrieved_ids: set[str]) -> dict:

@@ -71,23 +71,25 @@ class LLM:
                 "tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens")}
 
     def complete(self, *, session_id: str | None, node: str, role: str, system: str, user: str,
-                 max_tokens: int | None = None) -> str | None:
+                 max_tokens: int | None = None, model: str | None = None) -> str | None:
+        """One call. `model` overrides the specialist model for this call only (the safety classifier, D-7)."""
         if not self.enabled:
             return None
+        model = model or self.model
         started = time.perf_counter()
         try:
             options = {} if max_tokens is None else {"max_tokens": max_tokens}
-            reply = self._chat().invoke([("system", system), ("user", user)], **options)
+            reply = self._chat(model).invoke([("system", system), ("user", user)], **options)
             usage = getattr(reply, "usage_metadata", None) or {}
             billed = (getattr(reply, "response_metadata", None) or {}).get("token_usage") or {}
-            store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=self.model,
+            store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=model,
                         latency_ms=(time.perf_counter() - started) * 1000,
                         detail={"tokens_in": usage.get("input_tokens"), "tokens_out": usage.get("output_tokens"),
                                 "cost_usd": billed.get("cost")})
             return str(reply.content).strip()
         except Exception as exc:  # fall back to templates; the failure stays visible in the trace
             self.errors.append(explain(exc))
-            store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=self.model,
+            store.trace(self.conn, session_id=session_id, node=node, role=role, kind="llm", name=model,
                         outcome="error", latency_ms=(time.perf_counter() - started) * 1000,
                         detail={"error": f"{type(exc).__name__}: {exc}"[:300]})
             return None
