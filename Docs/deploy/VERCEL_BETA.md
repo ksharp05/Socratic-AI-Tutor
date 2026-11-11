@@ -80,12 +80,17 @@ Usage can increase as consenting visitors use the site. The full USD 0.50 lease
 remains reserved while it is active. Current authoritative receipts stay private
 under Directions/deployment/live_chat_02; synchronize before quoting later totals.
 
-### Key expiry: 16 November 2026
+### Key replaced on 11 November 2026
 
-The hosted key is the existing course OpenRouter key. The course lists it as
-valid until **16 November 2026** ([setup guide](../SETUP.md)).
+The first hosted key, the course OpenRouter key, reached its USD 5 limit on
+10 November. On 11 November the user supplied a new OpenRouter key. It went
+into Vercel's encrypted production setting `LLM_API_KEY` and production was
+redeployed (`dpl_AyuhwAar2LLcsHPLxt5FAHwgzsUm`, then `dpl_5HKwSso4nSMSaRy89EpSLrewUdto`
+with the forget fix). The new key also has a **USD 5 limit**, and OpenRouter
+lists it as expiring on **9 February 2027**. The 200-request lease is unchanged:
+86 requests were used at the 11 November sync.
 
-After that date, provider calls will fail. Each chat reply then falls back to a
+When a key runs out or expires, provider calls fail. Each chat reply then falls back to a
 labelled source-reading response (`provider_failed_source_fallback` in
 `src/socrates_beta/dialogue.py`), so the site keeps working without live replies.
 Reservations are committed before each network call, so expect failed attempts
@@ -94,7 +99,7 @@ to keep counting toward the 200-request lease.
 Neither `/health` nor `/beta/api/health` will show the problem: both report the
 configured `TUTOR_BETA_LIVE` setting, not whether the key still works.
 
-Before 16 November, choose one of these:
+Before the key's limit or expiry, choose one of these:
 
 - pause the lease with `PostgresBudget.set_paused(True)`;
 - set `TUTOR_BETA_LIVE=0` and redeploy;

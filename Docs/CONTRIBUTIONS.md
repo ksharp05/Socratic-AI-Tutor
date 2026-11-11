@@ -12,6 +12,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-11 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:**
+  - Reviewed and merged PRs 18-27 into `Beta` after a trial merge and the CI test set (2,841 passed); resolved the contribution-log conflict; pushed.
+  - Put the new provider key in Vercel's encrypted settings and redeployed production from b697c79. The live check found forget-my-data failing (500) on the schema-1 database after PR 27; fixed it in `ef342dd` with a regression test and redeployed. Synthetic check profile deleted.
+  - D-7 classifier comparison: eight course models on the 420-case security set (batch v4-sec-07).
+  - Evaluation report: sections 1, 3-5, 7 and 8, and the E2 numbers in 2a.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** D-7 comparison run for the Lead's decision (see DECISIONS.md).
+
 ### 2026-11-11 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - R1 answer rule in `mathcore.py`: "does not exist", "not possible" and "zero" accepted on term counts; a bare "no" asked again (PR #18, merged).
@@ -46,6 +55,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 - **AI-assisted:** code, tests and documents drafted with Claude Code, then run and reviewed by me.
 - **Decisions:** none recorded. Open: Q1-Q4 in the proposal; the Lead runs the schema migration after deploying this code.
 
+### 2026-11-10 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:**
+  - Security test (USD 5 programme): 420 attack and control cases in English, Hindi and Hinglish, research notes, the hardened front-door prototype v4 and two AI judges; security test report.
+  - Ported the deterministic safety layer into the live beta (49749be): crisis, child-safety and secrecy screens, wider redaction, answer-check replies and maths-kernel limits.
+  - Pipeline deep-dive fixes (bb13bd0): retrieval stoplist, Hindi glossary and relevance floor; in-scope hits 67 to 75 of 92, false matches 20 to 10 of 45.
+  - Merged PRs 10-17 and redeployed production from d15e545. Quality and safety plan.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** recommended Gemma 4 31B as the safety classifier (recorded by R4 as D-7).
+
 ### 2026-11-10 · Poonam / Punm-Butter (R3)
 - **Work:**
   - Saved questions now come back oldest first: `_due_revisit` keeps the order `read_learner` returns (finding 6, step 3). One new test, which fails on the old code. PR #11.
@@ -66,6 +84,11 @@ Every member adds an entry for each day they work, newest first. The course guid
 - **AI-assisted:** code fixes, tests and documents drafted with Claude, then run, checked against the code and reviewed by me.
 - **Decisions:** none recorded. Open: the R1 question on accepting "does not exist", "not possible", "no" and "zero" (PR #12), and the D-6 budget (Lead).
 
+### 2026-11-09 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:** reviewed PRs 7-9 and PR 10; stress-tested the merged code, wrote the findings and a fix plan with owners for every role (`Docs/m3/`); put the guard-model spike behind `--execute-live`.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** none.
+
 ### 2026-11-09 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - Set up `milestone-2` locally (Python 3.12 via uv, `.venv`): `pytest -q` 378 passed; `tutor check-llm` OK with my own key; confirmed `.env` is git-ignored.
@@ -74,6 +97,11 @@ Every member adds an entry for each day they work, newest first. The course guid
   - Requested and received Hugging Face access to Prompt Guard 2 (Llama 4 gated collection).
 - **AI-assisted:** setup guidance and the threat-model draft with Claude, then checked against the code and reviewed by me.
 - **Decisions:** none yet. The guard-model replacement will be tested and proposed (open item in the threat model).
+
+### 2026-11-07 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:** distress screen now catches "don't want to live" and similar messages, with tests.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** none.
 
 ### 2026-11-07 · Poonam / Punm-Butter (R3)
 - **Work:**
@@ -84,6 +112,13 @@ Every member adds an entry for each day they work, newest first. The course guid
 - **AI-assisted:** code and tests drafted with Claude (Claude Code), then edited, run and checked by me.
 - **Decisions:** none.
 
+### 2026-11-06 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:**
+  - Deployed the live beta on Vercel with Neon Postgres: saved progress per browser profile, consent before any model call, a capped hosted lease (200 requests, USD 0.50), source-grounded live chat and eight versioned OpenStax-based notes.
+  - Exact maths validation, verified practice tools, AP practice families; v2 and v3 offline qualification and an approved live pilot; CI recovery.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** none.
+
 ### 2026-11-06 · Poonam / Punm-Butter (R3)
 - **Work:**
   - After the last hint, the tutor stops repeating that hint and marks the item for revisit, for the current session only (item 8, partial). PR #4.
@@ -92,11 +127,28 @@ Every member adds an entry for each day they work, newest first. The course guid
 - **AI-assisted:** code, tests and the write-up drafted with Claude (Claude Code), then edited, run and checked by me.
 - **Decisions:** none. `R3_SPECIALISTS.md` is waiting for the Lead's acceptance.
 
+### 2026-11-05 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:**
+  - M3/M4 development runs (E1 c0/c1/c2, E3 with an approved 12-session extension, E4a, E4b, E2 guards on and off), the post-quiz copying sensitivity and the acceptance audit (`Docs/m4/`).
+  - Fixed urgent-distress routing and numeric probes; added the prerequisite install package.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** none.
+
 ### 2026-11-05 · Poonam / Punm-Butter (R3)
 - **Work:**
   - The model writes tutor turns under the teaching policy, and writes the diagnosis question behind a safety check. Made-up citations are replaced with real ones. Added the qe_m02 sign rule and catalogue keywords. PR #3.
   - The OpenRouter cost is read safely when a reply has no response metadata. PR #2.
 - **AI-assisted:** code and tests drafted with Claude (Claude Code), then edited, run and checked by me.
+- **Decisions:** none.
+
+### 2026-11-04 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:** Milestone 2 baseline: chapter quizzes and learner plans, teacher-authorised learner deletion, publication integrity across sessions, the browser connected to the graph tutor, the integrated container start-up and two approved bounded live probes.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
+- **Decisions:** none.
+
+### 2026-11-03 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:** the Socrates beta and dataset pipelines, the Milestone 2 development baseline, homework safety and local teacher alerts, and the shared documentation clean-up.
+- **AI-assisted:** code, tests, documents and runs done with Claude Code (Claude Code sessions) at my direction; the test suite ran on every change. I approved each spend, merge, push and deploy.
 - **Decisions:** none.
 
 ### 2026-11-03 · Poonam / Punm-Butter (R3)

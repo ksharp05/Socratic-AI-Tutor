@@ -51,6 +51,8 @@ def main():
         print("Dry run: nothing sent."); return
     if target.exists():
         raise SystemExit("Result exists; never overwrite")
+    # Create the output folder before any paid call: on 11 Nov four finished runs were lost when the write failed.
+    target.parent.mkdir(parents=True, exist_ok=True)
     wallet = h.phase().open(args.slug)
     effort = "minimal" if args.model.startswith("openai/gpt-5") else None
     client = rp.client_for(args.model, wallet, 400 if effort else 160, effort)
