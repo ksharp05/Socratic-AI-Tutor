@@ -14,6 +14,15 @@ base_url = "https://openrouter.ai/api/v1"
 specialist_model = "openai/gpt-4.1-mini"
 temperature = 0.2
 timeout_s = 60
+# Safety classifier (decision D-7), behind the phrase screens. Off by default; "on" makes one extra call per
+# message that passes the screens. TUTOR_SAFETY_CLASSIFIER=on overrides this for a local run.
+safety_classifier = "off"
+safety_model = "google/gemma-4-31b-it"
+safety_fallback_model = "anthropic/claude-haiku-5.5"
+safety_max_tokens = 120
+# "closed": if both models fail or reply unreadably, the message is not taught (Lead, 9 Nov). "open": teach it,
+# relying on the phrase screens (the quality plan's option).
+safety_fail_mode = "closed"
 # Models the course keys allow (faculty email of 31 Oct 2026; keys are valid until 16 Nov 2026).
 # `tutor check-llm --all` calls each one once. openai/gpt-4.1 and meta-llama/llama-guard-4-12b,
 # which the plan uses, are not on this list.
