@@ -1,0 +1,64 @@
+# Answer-leak spike alert (R6). Grafana loads this file at start-up.
+# Fires when more than 5% of the drafts the output guard checked in the last 10 minutes were blocked
+# as answer leaks, for 2 minutes in a row. It posts to the API, which stores it for teachers
+# (GET /teacher/alerts). Make it fire for the demo with scripts/fire_leak_alert.py.
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: answer-leaks
+    folder: Socratic Tutor
+    interval: 1m
+    rules:
+      - uid: tutor-leak-spike
+        title: Answer-leak spike
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              expr: >-
+                sum(increase(tutor_answer_leak_blocked_total[10m]))
+                / clamp_min(sum(increase(tutor_output_guard_checks_total[10m])), 1)
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0.05]
+        noDataState: OK
+        execErrState: Error
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: More than 5% of tutor drafts in the last 10 minutes were blocked as answer leaks.
+
+contactPoints:
+  - orgId: 1
+    name: tutor-api
+    receivers:
+      - uid: tutor-api-webhook
+        type: webhook
+        settings:
+          url: http://api:8000/alerts/grafana
+          httpMethod: POST
+          authorization_scheme: Bearer
+          authorization_credentials: $TUTOR_ALERT_TOKEN
+
+policies:
+  - orgId: 1
+    receiver: tutor-api
+    group_by: [alertname]
+    group_wait: 10s
+    group_interval: 1m
+    repeat_interval: 4h
