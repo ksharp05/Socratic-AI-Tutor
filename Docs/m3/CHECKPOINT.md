@@ -1,3 +1,26 @@
+# Update - new key, redeploy, forget fix, report filled, D-7 comparison (11 Nov 2026, evening)
+
+- **Redeploy.** Production now runs the forget fix as `dpl_5HKwSso4nSMSaRy89EpSLrewUdto`, READY and aliased. The previous deploy was b697c79 as `dpl_AyuhwAar2LLcsHPLxt5FAHwgzsUm`.
+  - The user's new OpenRouter key is in Vercel's `LLM_API_KEY` (encrypted, production only).
+  - Schema-2 migration not run (still not before the viva).
+- **Live check.**
+  - 4 of 6 live replies accepted; 2 fell back to source reading after failing output checks.
+  - Consent, crisis, assessment isolation and consent withdrawal all pass.
+  - Forget-my-data returned 500 on the schema-1 database: PR 27's `forget` also cleared `revisit_queue`. Fixed in `ef342dd`, with a portable test that fails on the old code and a schema-1 step in the Postgres test. Re-checked on production.
+  - Receipt: `Directions/deployment/live_chat_02/LIVE_ACCEPTANCE_03.json`; the synthetic profiles were deleted.
+- **The new key's account has no credits.** OpenRouter `/credits` shows `total_credits: 0`. After about USD 0.21 it returns 402, and live replies fall back to source reading (checked).
+  - Someone must add credits to that OpenRouter account before the demo, or set `TUTOR_BETA_LIVE=0`.
+  - The hosted lease stands at 86 of 200 requests.
+- **D-7 comparison (batch v4-sec-07, closed).** Gemma 4 31B on the 420-case set: 396 acceptable, crisis and child safety 62/63, benign flagged as risk 3/52.
+  - The other seven models did not complete: four runs were lost to a missing output folder (the script is fixed), and then the 402 started.
+  - Notes: `Directions/product_quality/v4/security/README.md`. The decision is the Lead's; the evidence is in report section 2a.
+- **Report.** Sections 1, 3-5, 7 and 8 are written, plus the E2 numbers and the classifier evidence in 2a. Everything is labelled development evidence: the pre-registration was never frozen, and no held-out run was made. The report is about 4,500 words, longer than the 4-6 page target.
+- **Contribution log.** The Lead's entries for 3-11 Nov were added from git history and the checkpoints; the Lead should check them.
+- **CI.** The CI test set gives 2,842 passed and 23 skipped; the three gates pass.
+- **Still open.** Slides, the demo recording, the D-7 decision, funding the key, and the v1.0 tag (with the main branch and a push, on the Lead's word).
+
+---
+
 # Update - team PRs 18-27 merged into Beta and pushed (11 Nov 2026)
 
 - **Merged.** PR 18 was merged on the night of 10 Nov (0e48bd4). On 11 Nov, PRs 19-27 were merged after a trial merge and the CI test set: 2,841 passed, 23 skipped (16 Postgres tests need a database), 34 deselected; the C1, dev_smoke and security gates pass.

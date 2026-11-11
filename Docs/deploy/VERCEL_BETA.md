@@ -86,9 +86,15 @@ The first hosted key, the course OpenRouter key, reached its USD 5 limit on
 10 November. On 11 November the user supplied a new OpenRouter key. It went
 into Vercel's encrypted production setting `LLM_API_KEY` and production was
 redeployed (`dpl_AyuhwAar2LLcsHPLxt5FAHwgzsUm`, then `dpl_5HKwSso4nSMSaRy89EpSLrewUdto`
-with the forget fix). The new key also has a **USD 5 limit**, and OpenRouter
+with the forget fix). The new key has a **USD 5 limit**, and OpenRouter
 lists it as expiring on **9 February 2027**. The 200-request lease is unchanged:
 86 requests were used at the 11 November sync.
+
+**The key's account has no purchased credits.** OpenRouter's `/credits` shows
+`total_credits: 0`. After about USD 0.21 of use on 11 November it refused calls
+with 402 "Insufficient credits". The key's USD 5 limit is a cap, not a balance.
+Until someone adds credits to that OpenRouter account, live replies fall back to
+labelled source reading. This was checked on production after the 402 started.
 
 When a key runs out or expires, provider calls fail. Each chat reply then falls back to a
 labelled source-reading response (`provider_failed_source_fallback` in

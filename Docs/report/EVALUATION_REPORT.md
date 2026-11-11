@@ -41,15 +41,38 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 | Control | Built (where) | Tested (how) | Still needs validation |
 |---|---|---|---|
-| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input` | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
-| **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,103 tests on Beta) | E2 tool-result and retrieved-passage channels |
+| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov) | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
+| **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,842 portable tests on Beta, 11 Nov) | E2 tool-result and retrieved-passage channels |
 | **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
 | **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
 | **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
-| **Content-safety classifier** (D-6) | **Not built:** proposed only, waiting on the budget decision | Spike S4 only (below) | Lead's unseen safety set; E2 |
-| **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; key expiry on 16 Nov |
+| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Lead's confirmation; wiring it in; E2 with it switched on |
+| **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; the new key's USD 5 limit |
 
-**Guard-model comparison (development evidence, not a result).** Llama Guard 4 is not on the course model list, and no other dedicated guard model is. Spike S4 (`Docs/spikes/S4.md`, 9 Nov) gave three course models one six-slot SAFE/UNSAFE prompt on 10 hand-written development messages, one run each: `llama-3.1-8b-instruct` 10/10, `claude-haiku-5.5` 10/10 at about 10× the cost, and `nova-lite-v1` 9/10 (one unparseable reply). D-6 proposes Llama 3.1 8B, failing closed, with Haiku as fallback. Ten examples cannot show robustness; the classifier's real test is the Lead's safety set, which R4 has not seen, and E2.
+**Guard-model comparison (development evidence, not a result).** OpenRouter offers dedicated guard models (Llama Guard 4, gpt-oss-safeguard 20B), but neither is on the course model list, so the candidates are general course models. There were three checks, each one run.
+- **Spike S4 (9 Nov, R4).** 10 hand-written messages: Llama 3.1 8B and Haiku 5.5 scored 10/10 and Nova Lite 9/10. Ten examples could not separate the models; this led to D-6.
+- **Quality probes (10 Nov, R5, batch `v4-judge-classify-01`).** 174 messages, each labelled with one of 12 categories:
+
+| Model | Right category (of 174) | Crisis and child-safety caught (of 8) | Safe messages flagged as harmful (of 91) | Unreadable replies | USD per 1,000 messages |
+|---|---|---|---|---|---|
+| Gemma 4 31B | **161** | **8** | 2 | 0 | 0.05 |
+| GPT-5 nano | 132 | **8** | 3 | 0 | 0.04 |
+| Llama 3.1 8B (D-6) | 130 | 5 | 6 | 6 | 0.01 |
+| Nova Lite | 129 | 6 | 2 | 12 | 0.03 |
+| GPT-4.1 nano | 120 | 3 | 2 | 15 | 0.05 |
+| Qwen 3.5 9B | 77 | 4 | 0 | 89 | 0.05 |
+| DeepSeek V4 Flash | 73 | 3 | 1 | 94 | 0.05 |
+| Today's rules, no model | 99 | 4 | 0 | 0 | 0 |
+
+- **Attack set (11 Nov, batch `v4-sec-07`).** Gemma 4 31B with the v4 prompt on the 420 security cases:
+  - 396 routed acceptably;
+  - 62 of 63 crisis and child-safety messages caught;
+  - 3 of 52 safe messages flagged as a risk;
+  - median 1.0 s, and about USD 0.11 per 1,000 messages with this longer prompt.
+
+  The planned run for seven more models did not finish. Four completed runs were lost to a script error (since fixed). Then OpenRouter refused the key, because its account has no purchased credits (section 7).
+
+Haiku 5.5, D-7's fallback, has only S4's ten examples behind it. D-7 is recorded by R4; the Lead's confirmation is pending.
 
 **E2: do the defences work? (Development evidence, not a held-out result.)** Two measurements exist.
 
@@ -73,7 +96,9 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 - 2 false blocks.
 - 1 style-hijack injection.
 - 1 hidden-iframe output injection.
-- 1 vaccine claim that was not challenged. On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and secrecy screens, wider redaction) were ported into the live beta (commit 49749be). The classifier was not ported, so today's live site sits between the two columns and has not been re-measured. No clean held-out sessions were run, and no per-layer split was made.
+- 1 vaccine claim that was not challenged.
+
+On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and secrecy screens, wider redaction) were ported into the live beta (commit 49749be). The classifier was not ported, so today's live site sits between the two columns and has not been re-measured. No clean held-out sessions were run, and no per-layer split was made.
 
 **Limitations.**
 - The guards match fixed phrasings: reworded, encoded, Hinglish or multi-turn attempts can pass.
@@ -85,7 +110,7 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 **Recommended next steps.**
 1. Done 11 Nov: the hosted key was replaced (USD 5 limit; OpenRouter lists it as expiring 9 Feb 2027) and production redeployed. Re-run the security set against the live configuration.
-2. Decide the D-6 budget, then wire the classifier into `guards.py` behind a config switch, failing closed, with tests.
+2. Confirm D-7, then call the classifier in the turn path and on the beta, failing closed, with tests, and re-run E2 with it on.
 3. Add Prompt Guard 2 as a local injection layer (access is already approved).
 4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
 5. Before any pilot: guardian consent, a named grievance contact and human review of every distress flag.
@@ -156,7 +181,7 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 **Judge agreement.** Not measured, because the human labels are blank (section 4).
 
-**Live beta check, 11 Nov.** The production deployment from b697c79 was checked with the new key. 4 of 6 live replies were accepted, and the other 2 fell back to source reading because output checks rejected them (one quadratic definition lacked its "degree two" qualifier, one reply was too long). The consent, crisis, assessment-isolation and deletion controls all passed after one fix (`ef342dd`, forget-my-data on the old database schema).
+**Live beta check, 11 Nov.** The production deployment from b697c79 was checked with the new key. 4 of 6 live replies were accepted, and the other 2 fell back to source reading because output checks rejected them (one quadratic definition lacked its "degree two" qualifier, one reply was too long). The consent, crisis, assessment-isolation and deletion controls all passed after one fix (`ef342dd`, forget-my-data on the old database schema). Later that day OpenRouter began refusing the key (no credits on its account), and a re-check showed the labelled source-reading fallback working as designed.
 
 ## 6. Lessons (R3 + R1)
 
@@ -188,7 +213,7 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 - **The live site is only partly measured.**
   - Its current safety layer, the hardened screens without the classifier, has not been re-run on the security set.
   - Its mobile and browser visual check is still pending.
-  - Its provider key is a personal key with a USD 5 limit.
+  - Its provider key has a USD 5 limit on the key, but the OpenRouter account behind it has no purchased credits. After about USD 0.21 of use on 11 Nov, OpenRouter refused further calls (402). Live replies now fall back to labelled source reading until the account is funded.
 
 ## 8. What a supervised pilot with real students would need (R1 + R5)
 
