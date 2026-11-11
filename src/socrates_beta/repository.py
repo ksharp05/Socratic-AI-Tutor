@@ -216,6 +216,8 @@ class Repository:
     def forget(self,owner):
         with self.connect() as c:
             c.execute('DELETE FROM turns WHERE session_id IN (SELECT id FROM sessions WHERE owner=?)',(owner,))
-            for table in ('sessions','assessments','observations','cards','reviews','revisit_queue'):
+            # A not-yet-migrated version-1 Postgres database has no revisit_queue table to clear.
+            queue=('revisit_queue',) if self.revisit_queue else ()
+            for table in ('sessions','assessments','observations','cards','reviews')+queue:
                 c.execute(f'DELETE FROM {table} WHERE owner=?',(owner,))
             c.execute('DELETE FROM profiles WHERE id=?',(owner,))

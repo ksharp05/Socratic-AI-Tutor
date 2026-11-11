@@ -89,6 +89,26 @@ def test_unknown_reasons_are_rejected(repo):
         repo.mark_revisit(owner(), "q-1", session_id="s1", chapter="c", content_sha256=SHA_A, reason="free text")
 
 
+def _owned_rows(repo, who):
+    with repo.connect() as c:
+        return (c.execute("SELECT COUNT(*) AS n FROM profiles WHERE id=?", (who,)).fetchone()["n"]
+                + c.execute("SELECT COUNT(*) AS n FROM sessions WHERE owner=?", (who,)).fetchone()["n"])
+
+
+def test_forget_works_without_the_queue_table(tmp_path):
+    """Portable stand-in for an unmigrated version-1 database: no revisit_queue table, queue switched off.
+    Forget-my-data failed with a 500 on the live site on 11 Nov because it still cleared that table."""
+    repo = Repository(tmp_path / "beta.sqlite")
+    me = owner()
+    repo.profile(me)
+    new_session(repo, me)
+    with repo.connect() as c:
+        c.execute("DROP TABLE revisit_queue")
+    repo.revisit_queue = False
+    repo.forget(me)
+    assert _owned_rows(repo, me) == 0
+
+
 def test_a_mark_rolls_back_with_its_transaction(repo):
     me = owner()
     with pytest.raises(RuntimeError):
@@ -146,6 +166,11 @@ def test_version_1_database_migrates_to_2_without_changing_rows():
         responses = [service.submit("synthetic-v1", started["id"], "wrong", f"v1-wrong-{i}") for i in range(3)]
         assert not any(r.get("saved_for_later") for r in responses)
         assert service.submit("synthetic-v1", started["id"], "right", "v1-right")["status"] == "correct"
+        # Forget-my-data must still work before the migration (it failed with a 500 on 11 Nov).
+        unmigrated.profile("synthetic-v1-forget")
+        new_session(unmigrated, "synthetic-v1-forget")
+        unmigrated.forget("synthetic-v1-forget")
+        assert _owned_rows(unmigrated, "synthetic-v1-forget") == 0
         repo = postgres.PostgresRepository(scoped, migrate=True)
         assert repo.revisit_queue is True
         postgres.PostgresRepository(scoped, migrate=True)      # migrating twice is harmless
