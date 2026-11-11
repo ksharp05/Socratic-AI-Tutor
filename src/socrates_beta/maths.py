@@ -95,6 +95,8 @@ class CheckedMaths:
             return {'status':'invalid_response','correct':False,'scorable':False,'reasoning_evaluated':False}
     def hint(self,qid,stage):return self.items[qid]['hint_stages'][max(0,min(stage-1,2))]['prompt']
 
+LAST_HINT=3
+
 
 class AssessmentService:
     def __init__(self,repo,maths):
@@ -144,20 +146,51 @@ class AssessmentService:
             if question_id:
                 if mode!='practice' or question_id not in ids:raise ValueError('Requested public item is not available for this practice scope')
                 ids.remove(question_id);ids.insert(0,question_id)
+            due=self._due_revisit(session,ids,conn) if mode=='practice' and not question_id else None
+            if due:
+                ids.remove(due);ids.insert(0,due)
             limit=1 if mode=='practice' else min(5,len(ids))
             record={'id':aid,'session_id':session['id'],'owner':session['owner'],'mode':mode,'created':time.time(),
               'state':{'queue':ids,'index':0,'limit':limit,'complete':False,'hint_stage':0,'submissions':[],
-                       'concept':concept,'next_target':None,'used':[]}}
+                       'concept':concept,'next_target':None,'used':[],'revisit':bool(due)}}
             self._bind_publication(record,eligible)
             self.repo.save_assessment(record,conn=conn)
             return self.public(record,conn=conn)
+
+    def _queue_on(self):
+        return getattr(self.repo,'revisit_queue',False)
+
+    def _content_sha256(self,qid):
+        """Hash of the full public item, so a saved mark is bound to the exact question content."""
+        import hashlib
+        return hashlib.sha256(json.dumps(self.maths.items[qid],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+    def _due_revisit(self,session,ids,conn):
+        """Oldest question saved in an earlier conversation that is still eligible here, with unchanged content.
+        `ids` is already filtered by scope, mode and publication policy, so a mark never bypasses those checks."""
+        if not self._queue_on():return None
+        eligible=set(ids)
+        for row in self.repo.pending_revisits(session['owner'],conn=conn):
+            qid=row['question_id']
+            if (row['session_id']!=session['id'] and qid in eligible
+                    and row['content_sha256']==self._content_sha256(qid)):
+                return qid
+        return None
+
+    def _mark_after_last_hint(self,a,qid,conn):
+        """R2 queue: a practice question whose last hint has been shown comes back in a later conversation."""
+        if a['mode']!='practice' or a['state']['hint_stage']<LAST_HINT or not self._queue_on():return False
+        self.repo.mark_revisit(a['owner'],qid,session_id=a['session_id'],chapter=self.maths.items[qid].get('chapter',''),
+                               content_sha256=self._content_sha256(qid),conn=conn)
+        return True
 
     def public(self,a,*,conn=None):
         revoked=self._guard_mode(a,conn)
         if revoked:return revoked
         state=a['state'];done=state['complete']
         result={'id':a['id'],'mode':a['mode'],'complete':done,'position':min(state['index']+1,state['limit']),'total':state['limit'],
-                'hint_stage':state['hint_stage'],'item':None if done else self.maths.public_item(state['queue'][state['index']])}
+                'hint_stage':state['hint_stage'],'item':None if done else self.maths.public_item(state['queue'][state['index']]),
+                'revisit':bool(state.get('revisit'))}
         if done and not state.get('left_early'):
             counted=[s for s in state['submissions'] if s.get('counted')]
             result['summary']={'correct':sum(s['grade']['status']=='correct' for s in counted),
@@ -196,9 +229,16 @@ class AssessmentService:
                 self.repo.observe(owner,a['session_id'],node,'checked_answer',
                     {'status':grade['status'],'question_id':qid,'concept_ids':concepts,
                      'mode':a['mode'],'assessment_id':aid},conn=conn)
+            saved=False
             if a['mode']=='practice':
-                if grade['correct']:s['complete']=True
-                else:s['hint_stage']=min(3,s['hint_stage']+1)
+                if grade['correct']:
+                    s['complete']=True
+                    # Only code-checked correct work clears a saved mark, and only for the same content.
+                    if self._queue_on():
+                        self.repo.resolve_revisit(owner,qid,content_sha256=self._content_sha256(qid),conn=conn)
+                else:
+                    s['hint_stage']=min(3,s['hint_stage']+1)
+                    saved=self._mark_after_last_hint(a,qid,conn)
                 message=('Your submitted answer checks out mathematically. Which step did you use?' if grade['correct'] else
                          'That answer does not match yet. '+self.maths.hint(qid,s['hint_stage']))
                 status=grade['status']
@@ -230,6 +270,7 @@ class AssessmentService:
                              'concept_ids':completed_concepts,'mode':a['mode'],'assessment_id':aid},conn=conn)
                         completed['observation_recorded']=True
             response={'message':message,'status':status,'verification':'code_checked','reasoning_assessed':False,'assessment':self.public(a,conn=conn)}
+            if saved:response['saved_for_later']=True
             entry['response']=response
             self.repo.save_assessment(a,conn=conn)
             return response
@@ -246,7 +287,10 @@ class AssessmentService:
             self._ensure_no_other_check(owner,aid,conn)
             if a['mode']!='practice' or s['complete']:raise ValueError('Hints are available during active practice only')
             s['hint_stage']=min(3,s['hint_stage']+1);self.repo.save_assessment(a,conn=conn)
-            return {'hint':self.maths.hint(s['queue'][s['index']],s['hint_stage']),'stage':s['hint_stage']}
+            qid=s['queue'][s['index']]
+            result={'hint':self.maths.hint(qid,s['hint_stage']),'stage':s['hint_stage']}
+            if self._mark_after_last_hint(a,qid,conn):result['saved_for_later']=True
+            return result
 
     def leave(self,owner,aid):
         with self.repo.owner_guard(owner):

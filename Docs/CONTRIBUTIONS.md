@@ -12,6 +12,15 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-11 · Rizwan (R2)
+- **Work:**
+  - Reviewed PR 8 (saved revisit marks) and its oldest-first follow-up against the R2 memory contract: accepted, with two small R3 follow-ups and one design question ([R2_PR8_MEMORY_REVIEW.md](m3/R2_PR8_MEMORY_REVIEW.md)). Added the missing revisit-queue row to [MEMORY_POLICY.md](MEMORY_POLICY.md).
+  - Built the live beta's saved-question queue per browser profile (step 6 of the PR 7-9 fix plan): `revisit_queue` in both beta stores, Postgres schema version 2 (new code also runs on an unmigrated version-1 database with the queue off, so deploy first, then migrate; see `Docs/deploy/VERCEL_BETA.md`), and the practice hook in `socrates_beta/maths.py` (save at the last hint, serve first in a later conversation, clear only on a code-checked correct answer, never in quizzes). Additive API fields for R6: `revisit` on the assessment and `saved_for_later` on hint and submit responses.
+  - 30 tests in `tests_beta/test_revisit_queue.py`, on SQLite and on a real loopback Postgres 17: idempotence, oldest first, profile isolation, content binding, transaction rollback, Forget, the 100-row cap, v1-to-v2 migration, and the full live-site stack with restart.
+  - Proposed how to skip questions solved in earlier sessions (step 7, [R2_CROSS_SESSION_PROPOSAL.md](m3/R2_CROSS_SESSION_PROPOSAL.md)), for discussion before anything is built.
+- **AI-assisted:** code, tests and documents drafted with Claude Code, then run and reviewed by me.
+- **Decisions:** none recorded. Open: Q1-Q4 in the proposal; the Lead runs the schema migration after deploying this code.
+
 ### 2026-11-10 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - Fixed findings 1-3 in `mathcore.py`: empty-set term-count answers, "no such term in this AP", and a narrower leak check; 42 regression tests. PR #12.
