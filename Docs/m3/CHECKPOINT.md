@@ -17,7 +17,10 @@
 - **Report.** Sections 1, 3-5, 7 and 8 are written, plus the E2 numbers and the classifier evidence in 2a. Everything is labelled development evidence: the pre-registration was never frozen, and no held-out run was made. The report is about 4,500 words, longer than the 4-6 page target.
 - **Contribution log.** The Lead's entries for 3-11 Nov were added from git history and the checkpoints; the Lead should check them.
 - **CI.** The CI test set gives 2,842 passed and 23 skipped; the three gates pass.
-- **Still open.** Slides, the demo recording, the D-7 decision, funding the key, and the v1.0 tag (with the main branch and a push, on the Lead's word).
+- **Public test set v1 (later on 11 Nov).** The user approved 15 free labelled datasets. They are built into a 19,063-message safety set (4,000 held-out core plus 15,063 tuning pool), 1,655 MRBench leak cases and 2,602 grader answers. See `Docs/testing/PUBLIC_TESTSET.md`; the data is private under `Directions/`.
+  - Offline: the crisis screens catch 27/88 on the core (62/63 on our own set), and the injection pattern 33/200 Gandalf attacks. The leak checker scores recall 0.90 and precision 0.55 against human labels.
+  - The grader marked "70,000" and "1,00,000" wrong. The fix is in `mathcore.parse_answer`, with 14 tests; the live beta needs a redeploy to get it.
+- **Still open.** Slides, the demo recording, the D-7 decision, funding the key (then the classifier runs on the core), redeploying the grader fix, and the v1.0 tag (with the main branch and a push, on the Lead's word).
 
 ---
 

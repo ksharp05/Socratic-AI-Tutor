@@ -53,6 +53,10 @@ NO_TERM_LEAK = re.compile(
     re.I)
 _COUNT_VALUE = re.compile(r"[0-9+\-*/^().]+")
 _ROOT_VALUE = re.compile(r"[0-9a-z+\-*/^().]+")
+# Thousands separators in a single-value answer: international "70,000" and Indian "1,00,000" / "12,34,567".
+# Found by the public-test-set grader check (11 Nov): "70,000" was read as "000" and marked incorrect.
+# Only well-formed groups are joined, so a list such as "2,3" is left alone.
+_DIGIT_GROUPS = re.compile(r"(?<![\d,.])(?:\d{1,3}(?:,\d{3})+|\d{1,2}(?:,\d{2})*,\d{3})(?![\d,])")
 
 
 def compute_key(problem: dict) -> dict:
@@ -102,6 +106,7 @@ def parse_answer(text: str, key: dict) -> dict:
         # Recognise a few explicit English lead-ins without guessing at free-form reasoning.
         raw = re.sub(r"^\s*(?:(?:my|the) answer is|i think (?:the answer is|it(?:'s| is))|it(?:'s| is))\s*[:=]?\s*",
                      "", raw, flags=re.I)
+        raw = _DIGIT_GROUPS.sub(lambda g: g.group(0).replace(",", ""), raw)
         m = re.search(r"=?\s*([-+0-9a-z*/^().√ ]+)$", raw)
         typed = {"kind": "scalar", "value": normalise_expression(m.group(1) if m else raw)}
     else:

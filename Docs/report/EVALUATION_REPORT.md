@@ -181,6 +181,18 @@ On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and 
 
 **Judge agreement.** Not measured, because the human labels are blank (section 4).
 
+**Independent public test set (11 Nov, offline, no model).** 15 free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`): 19,063 safety messages in English, Hindi and Hinglish (a 4,000-message held-out core plus a separate tuning pool), 1,655 MRBench tutor replies with human "reveals the answer" labels, and 2,602 real final answers from GSM8K and MATH. Source labels are mapped to our categories by written rules, so this is an independent benchmark, not human review of our tutor.
+
+| Component | Our own tests | Public data |
+|---|---|---|
+| Crisis screens, crisis messages caught | 62/63 | **27/88** on the core (31%) |
+| Safety screens, safe messages wrongly blocked | 2/57 | 5/1,031 |
+| Injection pattern, Gandalf attacks caught | — | 33/200 |
+| Leak checker (value check) vs human labels | — | recall 0.90, precision 0.55 |
+| Grader, real answers in students' forms | — | all forms correct after one fix |
+
+The crisis screens do not generalise beyond the phrasings we wrote, and the injection pattern needs the words "previous" or "prior". The grader marked "70,000" and "1,00,000" wrong. The live beta uses the same parser, so it was fixed with 14 tests. The D-7 classifier runs on the core need a funded key.
+
 **Live beta check, 11 Nov.** The production deployment from b697c79 was checked with the new key. 4 of 6 live replies were accepted, and the other 2 fell back to source reading because output checks rejected them (one quadratic definition lacked its "degree two" qualifier, one reply was too long). The consent, crisis, assessment-isolation and deletion controls all passed after one fix (`ef342dd`, forget-my-data on the old database schema). Later that day OpenRouter began refusing the key (no credits on its account), and a re-check showed the labelled source-reading fallback working as designed.
 
 ## 6. Lessons (R3 + R1)
@@ -206,6 +218,7 @@ On the evening of 10 Nov the deterministic parts (normaliser, crisis, abuse and 
 - **Simulated students, not real students.** Quiz gains hold only under the simulator's rules, and the copying flag inflates them (section 5).
 - **Few, repeated learners.** 16 cards × 3 seeds gives wide intervals, and repeats of one card are not independent learners.
 - **Learning is modelled by rules.** Rule 1(b) used the code proxy, because the judge was never calibrated.
+- **Our safety screens were tuned on our own phrasings.** On independent public data their crisis recall falls from 62/63 to 27/88 (section 5).
 - **AI judges grade safety.** The E2 security numbers come from two uncalibrated AI judges and deterministic checks, not from human, teacher or counsellor review.
 - **One author.** A single person wrote the dataset, the candidate held-out cases, the original attacks and the security set, and the POC's agents, guards, diagnosis rules and simulator. The hand-offs are in D-1.
 - **No teacher or human review is recorded.** Lessons, dataset items, reference notes and transcripts are all pending review. Nothing here claims otherwise.

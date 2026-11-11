@@ -1,0 +1,419 @@
+{
+ "downloaded_utc": "2026-11-11T14:37:45.186230+00:00",
+ "approval": "user in chat, 11 Nov 2026: \"Yes, all 15\" (list with sources, licences and sizes shown first)",
+ "rule": "Private test data. Never committed, never used to tune prompts. Not executed or imported.",
+ "sources": [
+  {
+   "slug": "aegis2",
+   "repo": "nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+   "host": "hf",
+   "revision": "d86bb8bedff51d25ac834ab7838f1cc61acb7a2c",
+   "license": "cc-by-4.0",
+   "files": [
+    {
+     "path": "test.json",
+     "saved_as": "test.json",
+     "url": "https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0/resolve/d86bb8bedff51d25ac834ab7838f1cc61acb7a2c/test.json",
+     "bytes": 1731373,
+     "sha256": "b0a6d602260524866053cb34105194f074f2c2906e3691b68d43b9e6e9318f35"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0/resolve/d86bb8bedff51d25ac834ab7838f1cc61acb7a2c/README.md",
+     "bytes": 14107,
+     "sha256": "da2598e587850bacc77c0658f56d0ea430f55d1cf70b197eb06070871802d3ba"
+    }
+   ]
+  },
+  {
+   "slug": "polyguardprompts",
+   "repo": "ToxicityPrompts/PolyGuardPrompts",
+   "host": "hf",
+   "revision": "c5b466a95b64ff121db4398246b6abb7672696ec",
+   "license": "cc-by-4.0",
+   "files": [
+    {
+     "path": "data/test-00000-of-00001.parquet",
+     "saved_as": "data__test-00000-of-00001.parquet",
+     "url": "https://huggingface.co/datasets/ToxicityPrompts/PolyGuardPrompts/resolve/c5b466a95b64ff121db4398246b6abb7672696ec/data/test-00000-of-00001.parquet",
+     "bytes": 52852473,
+     "sha256": "7089d502cc8cdf710671976c9a3d83d65820018d057bbe506def2c1dbcac4e77"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/ToxicityPrompts/PolyGuardPrompts/resolve/c5b466a95b64ff121db4398246b6abb7672696ec/README.md",
+     "bytes": 4411,
+     "sha256": "89b0b5733d77420379e4a3df9cbc7eac7b0cf76d8bfcc94687fe8e5b5d2cb66b"
+    }
+   ]
+  },
+  {
+   "slug": "aya_redteaming",
+   "repo": "CohereLabs/aya_redteaming",
+   "host": "hf",
+   "revision": "5a16fee03c19d681b4f3527b6a750e1ed4d434c7",
+   "license": "apache-2.0",
+   "files": [
+    {
+     "path": "aya_hin.jsonl",
+     "saved_as": "aya_hin.jsonl",
+     "url": "https://huggingface.co/datasets/CohereLabs/aya_redteaming/resolve/5a16fee03c19d681b4f3527b6a750e1ed4d434c7/aya_hin.jsonl",
+     "bytes": 549769,
+     "sha256": "44caefa0da81dcbc8492c9abd8bc2d3e7d9773c02215fa283347645c23958031"
+    },
+    {
+     "path": "aya_eng.jsonl",
+     "saved_as": "aya_eng.jsonl",
+     "url": "https://huggingface.co/datasets/CohereLabs/aya_redteaming/resolve/5a16fee03c19d681b4f3527b6a750e1ed4d434c7/aya_eng.jsonl",
+     "bytes": 301786,
+     "sha256": "08104abe7a3d84218941df35a4195096f991751a8512355ee16dd9116035f2c5"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/CohereLabs/aya_redteaming/resolve/5a16fee03c19d681b4f3527b6a750e1ed4d434c7/README.md",
+     "bytes": 6274,
+     "sha256": "d1b405973f3fde58399b2a000463a47fb1b4b579088d64a140d3b747db1a56f9"
+    }
+   ]
+  },
+  {
+   "slug": "hatecheck_hindi",
+   "repo": "Paul/hatecheck-hindi",
+   "host": "hf",
+   "revision": "e9e68e1a4db04726b9278192377049d0f9693012",
+   "license": [
+    "cc-by-4.0"
+   ],
+   "files": [
+    {
+     "path": "test.csv",
+     "saved_as": "test.csv",
+     "url": "https://huggingface.co/datasets/Paul/hatecheck-hindi/resolve/e9e68e1a4db04726b9278192377049d0f9693012/test.csv",
+     "bytes": 858507,
+     "sha256": "ffebc31db02d59f603ac9728aa9b63d7db46de2cdc4c54468aabab82e5d8bd40"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/Paul/hatecheck-hindi/resolve/e9e68e1a4db04726b9278192377049d0f9693012/README.md",
+     "bytes": 3489,
+     "sha256": "1f05855105bd6395b5a96966226888662af1e47045af1ebc5f1bbc8d385e9a03"
+    }
+   ]
+  },
+  {
+   "slug": "textdetox_hinglish",
+   "repo": "textdetox/multilingual_toxicity_dataset",
+   "host": "hf",
+   "revision": "01907546324b0330d2d8b7669648cc18823323e5",
+   "license": "openrail++",
+   "files": [
+    {
+     "path": "data/hin-00000-of-00001.parquet",
+     "saved_as": "data__hin-00000-of-00001.parquet",
+     "url": "https://huggingface.co/datasets/textdetox/multilingual_toxicity_dataset/resolve/01907546324b0330d2d8b7669648cc18823323e5/data/hin-00000-of-00001.parquet",
+     "bytes": 473126,
+     "sha256": "4924f95ad04bbf59749716787bc0b0a40382fa1f953b495ae7c051d5d7830f49"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/textdetox/multilingual_toxicity_dataset/resolve/01907546324b0330d2d8b7669648cc18823323e5/README.md",
+     "bytes": 8910,
+     "sha256": "2dc504139596c822f880293c43b968d697b8282c7297825f703cbaec25390783"
+    }
+   ]
+  },
+  {
+   "slug": "toxicchat",
+   "repo": "lmsys/toxic-chat",
+   "host": "hf",
+   "revision": "29df8e4dba60e1f4af4b4075c0705c5b313548a8",
+   "license": "cc-by-nc-4.0",
+   "files": [
+    {
+     "path": "data/0124/toxic-chat_annotation_test.csv",
+     "saved_as": "data__0124__toxic-chat_annotation_test.csv",
+     "url": "https://huggingface.co/datasets/lmsys/toxic-chat/resolve/29df8e4dba60e1f4af4b4075c0705c5b313548a8/data/0124/toxic-chat_annotation_test.csv",
+     "bytes": 8090164,
+     "sha256": "3c2e49889626f7738dca0a29bface0ba0a0595b2ffdd17f0e02f19df7c3c4c9b"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/lmsys/toxic-chat/resolve/29df8e4dba60e1f4af4b4075c0705c5b313548a8/README.md",
+     "bytes": 5463,
+     "sha256": "70c63cac8fff2a4934c85b3d3b52d2e169b8af9fe893dd9de1ea5e4abdb51441"
+    }
+   ]
+  },
+  {
+   "slug": "xstest",
+   "repo": "Paul/XSTest",
+   "host": "hf",
+   "revision": "f600c994b256f12867dfa5b3eb3d545a3e62f8b5",
+   "license": "cc-by-4.0",
+   "files": [
+    {
+     "path": "xstest_prompts.csv",
+     "saved_as": "xstest_prompts.csv",
+     "url": "https://huggingface.co/datasets/Paul/XSTest/resolve/f600c994b256f12867dfa5b3eb3d545a3e62f8b5/xstest_prompts.csv",
+     "bytes": 38719,
+     "sha256": "11783fb294ed017473ee53c207d71f2161c7672c8d0b037501e78387f801cb5a"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/Paul/XSTest/resolve/f600c994b256f12867dfa5b3eb3d545a3e62f8b5/README.md",
+     "bytes": 1922,
+     "sha256": "9f9fd4e2fe20d4e36c695db145097e7652362119a6e054398ec6a486a1a6bd03"
+    }
+   ]
+  },
+  {
+   "slug": "deepset_injections",
+   "repo": "deepset/prompt-injections",
+   "host": "hf",
+   "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+   "license": "apache-2.0",
+   "files": [
+    {
+     "path": "data/test-00000-of-00001-701d16158af87368.parquet",
+     "saved_as": "data__test-00000-of-00001-701d16158af87368.parquet",
+     "url": "https://huggingface.co/datasets/deepset/prompt-injections/resolve/4f61ecb038e9c3fb77e21034b22511b523772cdd/data/test-00000-of-00001-701d16158af87368.parquet",
+     "bytes": 10892,
+     "sha256": "39ac797cabc157eeed58435a08593b2952bb6cb16fc394a2d383f447cc7b246e"
+    },
+    {
+     "path": "data/train-00000-of-00001-9564e8b05b4757ab.parquet",
+     "saved_as": "data__train-00000-of-00001-9564e8b05b4757ab.parquet",
+     "url": "https://huggingface.co/datasets/deepset/prompt-injections/resolve/4f61ecb038e9c3fb77e21034b22511b523772cdd/data/train-00000-of-00001-9564e8b05b4757ab.parquet",
+     "bytes": 40323,
+     "sha256": "2e10bc7ab30f542c97e4e83e2a5683000b5057d25ec10908784c631d44124c04"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/deepset/prompt-injections/resolve/4f61ecb038e9c3fb77e21034b22511b523772cdd/README.md",
+     "bytes": 500,
+     "sha256": "d90b4518dfe06154deeec938243d1ec9119bdfbfd2105aee9cf1567999764b94"
+    }
+   ]
+  },
+  {
+   "slug": "gandalf",
+   "repo": "Lakera/gandalf_ignore_instructions",
+   "host": "hf",
+   "revision": "04737b65e90a6794ec227012e4a255a7def6344b",
+   "license": "mit",
+   "files": [
+    {
+     "path": "data/test-00000-of-00001-bc92128b9288a6d1.parquet",
+     "saved_as": "data__test-00000-of-00001-bc92128b9288a6d1.parquet",
+     "url": "https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions/resolve/04737b65e90a6794ec227012e4a255a7def6344b/data/test-00000-of-00001-bc92128b9288a6d1.parquet",
+     "bytes": 7336,
+     "sha256": "56b646d133335ebc535266bd55dbe1b5bee7caa4b95bf49d040684b9b5dd9972"
+    },
+    {
+     "path": "data/validation-00000-of-00001-94481a2a09ff2fff.parquet",
+     "saved_as": "data__validation-00000-of-00001-94481a2a09ff2fff.parquet",
+     "url": "https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions/resolve/04737b65e90a6794ec227012e4a255a7def6344b/data/validation-00000-of-00001-94481a2a09ff2fff.parquet",
+     "bytes": 7464,
+     "sha256": "f51ab3e3407a368845b0f57932cc745c09280429416d7507bd178a16326a79f6"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions/resolve/04737b65e90a6794ec227012e4a255a7def6344b/README.md",
+     "bytes": 2828,
+     "sha256": "94e2abfab9caf8cb881098d16633334c2f63069e52440aaa94d7c150a8d8455f"
+    }
+   ]
+  },
+  {
+   "slug": "jbb_behaviors",
+   "repo": "JailbreakBench/JBB-Behaviors",
+   "host": "hf",
+   "revision": "886acc352a31533ffbcf4ef22c744658688086fc",
+   "license": "mit",
+   "files": [
+    {
+     "path": "data/harmful-behaviors.csv",
+     "saved_as": "data__harmful-behaviors.csv",
+     "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/harmful-behaviors.csv",
+     "bytes": 23116,
+     "sha256": "4a8ec6832056b631eb092dccc60d37a61c3d441268268888b3d006288afeffa1"
+    },
+    {
+     "path": "data/benign-behaviors.csv",
+     "saved_as": "data__benign-behaviors.csv",
+     "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/data/benign-behaviors.csv",
+     "bytes": 20570,
+     "sha256": "3cda234d21a991fa309bbfea4b6d9dae31ccdf8e9d452424b6a983e4fdc33468"
+    },
+    {
+     "path": "LICENSE",
+     "saved_as": "LICENSE",
+     "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/LICENSE",
+     "bytes": 1076,
+     "sha256": "7e1ae8f3676f39ff6e62af1743385c176a9476b1157f35bb9d05b4e6c65b7d94"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors/resolve/886acc352a31533ffbcf4ef22c744658688086fc/README.md",
+     "bytes": 6549,
+     "sha256": "fc84ea5865e60ba15f3776ff43ace47cbbf3470775f389afbb6bdb4d6333618a"
+    }
+   ]
+  },
+  {
+   "slug": "mrbench",
+   "repo": "kaushal0494/UnifyingAITutorEvaluation",
+   "host": "gh",
+   "revision": "bbef521ddb875f2cc8a5ee798f4066965a7cfd8a",
+   "license": "CC-BY-SA-4.0 (stated in README; GitHub licence field empty)",
+   "files": [
+    {
+     "path": "MRBench/MRBench_V1.json",
+     "saved_as": "MRBench__MRBench_V1.json",
+     "url": "https://raw.githubusercontent.com/kaushal0494/UnifyingAITutorEvaluation/bbef521ddb875f2cc8a5ee798f4066965a7cfd8a/MRBench/MRBench_V1.json",
+     "bytes": 1368365,
+     "sha256": "77a33ab81ca9c773d22faee2be7a7bb43b203a06497a5daa35d715f9ada3a6f3"
+    },
+    {
+     "path": "MRBench/MRBench_V2.json",
+     "saved_as": "MRBench__MRBench_V2.json",
+     "url": "https://raw.githubusercontent.com/kaushal0494/UnifyingAITutorEvaluation/bbef521ddb875f2cc8a5ee798f4066965a7cfd8a/MRBench/MRBench_V2.json",
+     "bytes": 1426725,
+     "sha256": "a8792225075533d15c23e1c903d0c649f19708ee93f5c3d8267eaa6ab623aac1"
+    },
+    {
+     "path": "BEA_Shared_Task_2025_Datasets/mrbench_v3_devset.json",
+     "saved_as": "BEA_Shared_Task_2025_Datasets__mrbench_v3_devset.json",
+     "url": "https://raw.githubusercontent.com/kaushal0494/UnifyingAITutorEvaluation/bbef521ddb875f2cc8a5ee798f4066965a7cfd8a/BEA_Shared_Task_2025_Datasets/mrbench_v3_devset.json",
+     "bytes": 1578346,
+     "sha256": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://raw.githubusercontent.com/kaushal0494/UnifyingAITutorEvaluation/bbef521ddb875f2cc8a5ee798f4066965a7cfd8a/README.md",
+     "bytes": 9525,
+     "sha256": "a3c3e49bc364b37eefcb71d47352a96e76608970276bd57970e9b7ed1ef9249f"
+    }
+   ]
+  },
+  {
+   "slug": "mathdial",
+   "repo": "eth-nlped/mathdial",
+   "host": "hf",
+   "revision": "acc3878459e0bd8c04ab840056572f0b8b1abe1f",
+   "license": "cc-by-4.0",
+   "files": [
+    {
+     "path": "test.jsonl",
+     "saved_as": "test.jsonl",
+     "url": "https://huggingface.co/datasets/eth-nlped/mathdial/resolve/acc3878459e0bd8c04ab840056572f0b8b1abe1f/test.jsonl",
+     "bytes": 1858054,
+     "sha256": "3ec54ee8ab921dc6191bf5e2ee766d4e7916b4264394eb17a6be9b3fe486e50b"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/eth-nlped/mathdial/resolve/acc3878459e0bd8c04ab840056572f0b8b1abe1f/README.md",
+     "bytes": 1930,
+     "sha256": "c63e86fd95d4e1fd60cccd78226a27d9e787ad91ed037b353d8e3083a0e5eaeb"
+    }
+   ]
+  },
+  {
+   "slug": "math_algebra_precalc",
+   "repo": "EleutherAI/hendrycks_math",
+   "host": "hf",
+   "revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+   "license": "mit",
+   "files": [
+    {
+     "path": "algebra/test-00000-of-00001.parquet",
+     "saved_as": "algebra__test-00000-of-00001.parquet",
+     "url": "https://huggingface.co/datasets/EleutherAI/hendrycks_math/resolve/21a5633873b6a120296cce3e2df9d5550074f4a3/algebra/test-00000-of-00001.parquet",
+     "bytes": 353114,
+     "sha256": "0e04a850dac9cfc758eac0c80afd2d0cc65e29ea72f916c8ac1045b12af937f5"
+    },
+    {
+     "path": "precalculus/test-00000-of-00001.parquet",
+     "saved_as": "precalculus__test-00000-of-00001.parquet",
+     "url": "https://huggingface.co/datasets/EleutherAI/hendrycks_math/resolve/21a5633873b6a120296cce3e2df9d5550074f4a3/precalculus/test-00000-of-00001.parquet",
+     "bytes": 242241,
+     "sha256": "da37474ba3761ae5727af3844a7ba963a735bd6a14c65e6137593669a4fe3b9c"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/EleutherAI/hendrycks_math/resolve/21a5633873b6a120296cce3e2df9d5550074f4a3/README.md",
+     "bytes": 3926,
+     "sha256": "2372e22a154ca3ed5865378e270b32d8ed5b615c4592fad42630a731a950bcc0"
+    }
+   ]
+  },
+  {
+   "slug": "gsm8k",
+   "repo": "openai/gsm8k",
+   "host": "hf",
+   "revision": "740312add88f781978c0658806c59bc2815b9866",
+   "license": [
+    "mit"
+   ],
+   "files": [
+    {
+     "path": "main/test-00000-of-00001.parquet",
+     "saved_as": "main__test-00000-of-00001.parquet",
+     "url": "https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/main/test-00000-of-00001.parquet",
+     "bytes": 419088,
+     "sha256": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/README.md",
+     "bytes": 7935,
+     "sha256": "a17e882503578c9e324560630e31017617714ee025c87cf4fea6fd916895f3c1"
+    }
+   ]
+  },
+  {
+   "slug": "mae_misconceptions",
+   "repo": "nanote/algebra_misconceptions",
+   "host": "hf",
+   "revision": "afce3dbe2323b3732784447b933ee81db87d2a36",
+   "license": "mit",
+   "files": [
+    {
+     "path": "data/data.json",
+     "saved_as": "data__data.json",
+     "url": "https://huggingface.co/datasets/nanote/algebra_misconceptions/resolve/afce3dbe2323b3732784447b933ee81db87d2a36/data/data.json",
+     "bytes": 188525,
+     "sha256": "3c9e07d7266c7bca4bb02b3d4f176feb44ed4127d4788cae80ca078d86549c4e"
+    },
+    {
+     "path": "LICENSE",
+     "saved_as": "LICENSE",
+     "url": "https://huggingface.co/datasets/nanote/algebra_misconceptions/resolve/afce3dbe2323b3732784447b933ee81db87d2a36/LICENSE",
+     "bytes": 1068,
+     "sha256": "181444b94e558ce2cc2167c3b07dc3cdb12d03ff968fc0ba98a3c4ac740cfc96"
+    },
+    {
+     "path": "README.md",
+     "saved_as": "README.md",
+     "url": "https://huggingface.co/datasets/nanote/algebra_misconceptions/resolve/afce3dbe2323b3732784447b933ee81db87d2a36/README.md",
+     "bytes": 7149,
+     "sha256": "fc329947c818db34a39f44e25757909854d1e48c518beb93a18f9e247147740b"
+    }
+   ]
+  }
+ ]
+}

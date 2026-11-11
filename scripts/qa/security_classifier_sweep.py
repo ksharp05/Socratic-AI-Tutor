@@ -43,9 +43,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("slug"); ap.add_argument("--model", required=True); ap.add_argument("--raw", action="store_true")
     ap.add_argument("--workers", type=int, default=10); ap.add_argument("--execute-live", action="store_true")
+    ap.add_argument("--cases", help="a JSONL case file in the attack-set schema, e.g. the public test set's safety_core.jsonl")
     args = ap.parse_args()
-    from security_attacks_v1 import CASES
-    target = h.CAN / "Directions/product_quality/v4/runs" / args.slug / f"sclassifier-{args.model.replace('/', '_')}{'-raw' if args.raw else ''}.json"
+    if args.cases:
+        CASES = [json.loads(x) for x in Path(args.cases).read_text(encoding="utf-8").splitlines() if x.strip()]
+        suffix = "-" + Path(args.cases).stem
+    else:
+        from security_attacks_v1 import CASES
+        suffix = ""
+    target = h.CAN / "Directions/product_quality/v4/runs" / args.slug / f"sclassifier-{args.model.replace('/', '_')}{suffix}{'-raw' if args.raw else ''}.json"
     print(f"{len(CASES)} cases with {args.model} -> {target.name}")
     if not args.execute_live:
         print("Dry run: nothing sent."); return

@@ -1,0 +1,87 @@
+{
+ "rules": "public-v1-rules-2026-11-11",
+ "seed": 20261111,
+ "manifest": "Directions/external_datasets/MANIFEST.json",
+ "safety_full": {
+  "rows": 19063,
+  "sha256": "4cc3018e470433286030313ce6711e6395e4193175074840ac1efa9637c6f301",
+  "by_pool": {
+   "aegis2": 1915,
+   "polyguard_en": 1699,
+   "polyguard_hi": 1697,
+   "aya_hi": 913,
+   "aya_en": 987,
+   "hatecheck_hi": 3550,
+   "textdetox_hinglish": 4235,
+   "toxicchat": 2790,
+   "xstest": 450,
+   "deepset": 404,
+   "gandalf": 223,
+   "jbb": 200
+  },
+  "by_expect": {
+   "refuse_harm": 8886,
+   "neutral": 7534,
+   "crisis": 113,
+   "privacy": 326,
+   "redirect": 226,
+   "support": 93,
+   "benign_sensitive": 1426,
+   "protect": 459
+  },
+  "by_lang": {
+   "en": 8668,
+   "hi": 6160,
+   "hinglish": 4235
+  }
+ },
+ "safety_core": {
+  "rows": 4000,
+  "sha256": "956635c2b3a589c7e72f1299964154c7083ba5f61f6c6cb99b9b61d12f93b978",
+  "by_pool": {
+   "aegis2": 700,
+   "aya_en": 150,
+   "aya_hi": 450,
+   "deepset": 250,
+   "gandalf": 200,
+   "hatecheck_hi": 300,
+   "jbb": 200,
+   "polyguard_en": 200,
+   "polyguard_hi": 300,
+   "textdetox_hinglish": 300,
+   "toxicchat": 500,
+   "xstest": 450
+  },
+  "by_expect": {
+   "refuse_harm": 2189,
+   "privacy": 130,
+   "redirect": 115,
+   "crisis": 88,
+   "neutral": 580,
+   "protect": 414,
+   "benign_sensitive": 451,
+   "support": 33
+  },
+  "by_lang": {
+   "en": 2650,
+   "hi": 1050,
+   "hinglish": 300
+  }
+ },
+ "safety_dev": {
+  "rows": 15063,
+  "sha256": "46309620d2af3219c37fc0936fe3a169e7987c3a80112a86307d32e630deac51",
+  "rule": "everything outside the core; the only rows a fix may be tuned on"
+ },
+ "leak_mrbench": {
+  "rows": 1655,
+  "sha256": "d4b939a47c12a386ad7973a17508a7bee7f3661de9ef6bde23a57b71e9b809be",
+  "gold": {
+   "No": 1389,
+   "Yes (and the answer is correct)": 237,
+   "Yes (but the answer is incorrect)": 29
+  },
+  "with_final_answer": 1160
+ },
+ "note": "Source labels mapped by the written rules in scripts/qa/build_public_testset.py; not human review of our tutor."
+}
