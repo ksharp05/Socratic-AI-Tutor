@@ -137,24 +137,24 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 
 **Judge agreement** was not measured, because the human labels are blank.
 
-**Independent public test set (11 Nov, offline).** Fifteen free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`):
+**Independent public test set (11–12 Nov, offline).** Fifteen free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`):
 - 19,063 safety messages in English, Hindi and Hinglish: a 4,000-message held-out core plus a separate tuning pool;
 - 1,655 MRBench tutor replies with human "reveals the answer" labels;
 - 2,602 real final answers from GSM8K and MATH.
 
 Their labels are mapped to ours by written rules, so this is an independent benchmark, not human review of our tutor.
 
-| Component | Our own tests | Public data |
+| Component | Our own tests | Public data (PR #28 for the screens) |
 |---|---|---|
-| Crisis screens: crisis messages caught | 62/63 | **27/88** on the core (31%) |
+| Crisis screens: crisis messages caught | 62/63 | **35/88** on the core (40%) |
 | Safety screens: safe messages wrongly blocked | 2/57 | 5/1,031 |
-| Injection pattern: Gandalf attacks caught | — | 33/200 |
+| Injection pattern: Gandalf attacks caught | — | 112/200 |
 | Leak checker vs human labels | — | recall 0.90, precision 0.55 |
 | Grader: real answers in students' forms | — | all correct after one fix |
 
 What this showed:
-- The crisis screens do not generalise beyond the phrasings we wrote.
-- The injection pattern needs the words "previous" or "prior".
+- The updated screens still missed 53 of 88 crisis messages on the public core.
+- PR #28 widened the pattern to catch instruction overrides without requiring "previous" or "prior".
 - The grader marked "70,000" and "1,00,000" wrong. The live beta shares that parser; it was fixed with 14 tests and redeployed.
 
 **Live beta checks, 11–12 Nov.**
@@ -183,7 +183,7 @@ What this showed:
 - **No held-out evaluation.** Everything is development evidence on 16 cards, tuned on the same data, with wide intervals. Repeats of one card are not independent learners.
 - **Simulated students.** Learning is modelled by rules (rule 1(b) used the code proxy), and the copying flag inflates quiz changes.
 - **Safety measurement.** E2 is graded by uncalibrated AI judges, not people.
-  - Our screens were tuned on our own phrasings; their crisis recall falls to 27/88 on public data.
+  - The screens caught 62/63 crisis messages in our own tests and 35/88 on the public core after PR #28.
   - No harm classifier is in the live path.
   - Citation checks verify IDs, not support.
   - Retrieved-passage and tool-result attacks had no measured outcome (27/80 in the 5 Nov E2).
@@ -219,13 +219,13 @@ Every user is a child, so these come before the first real student logs in:
 | GPT-4.1 nano | 120 | 3 | 2 | 15 | 0.05 |
 | Qwen 3.5 9B | 77 | 4 | 0 | 89 | 0.05 |
 | DeepSeek V4 Flash | 73 | 3 | 1 | 94 | 0.05 |
-| Today's rules, no model | 99 | 4 | 0 | 0 | 0 |
+| 10 Nov rules, no model | 99 | 4 | 0 | 0 | 0 |
 
 **Public test-set core** (12 Nov, batches `v4-d7-01` to `v4-d7-03`; 4,000 independently labelled messages, v4 prompt, one run, classifier alone; total cost USD 1.50):
 
 | Model | Messages scored | Crisis and child-safety caught (of 88) | Hindi crisis (of 35) | Harmful caught | Safe wrongly blocked | Unreadable | USD / 1,000 |
 |---|---|---|---|---|---|---|---|
-| Today's screens only (no model) | 4,000 | 27 | 3 | 94 / 2,691 (3%) | 5 / 1,031 (0.5%) | — | 0 |
+| Pre-PR #28 screens only (no model) | 4,000 | 27 | 3 | 94 / 2,691 (3%) | 5 / 1,031 (0.5%) | — | 0 |
 | **Gemma 4 31B** | 4,000 | 68 | 24 | **2,239 / 2,691 (83%)** | 187 / 1,031 (18%) | **1** | 0.10 |
 | Claude Haiku 5.5 | 3,021 (batch cap) | **71** | 25 | 1,673 / 2,182 (77%) | 114 / 561 (20%) | 34 | 0.13 |
 | GPT-5 nano | 4,000 | 64 | 25 | 1,928 / 2,691 (72%) | 201 / 1,031 (19%) | 286 | 0.07 |
