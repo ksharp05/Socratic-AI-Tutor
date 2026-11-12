@@ -33,7 +33,7 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
 - **D-2 follow-ups:** which of Shivam and Sharath is R6, and whether the other takes R5b.
 
 ---
-### D-7 · 2026-11-11 · Safety classifier: google/gemma-4-31b-it behind the phrase screens (replaces D-6)
+### D-7 · 2026-11-11 · Safety classifier: google/gemma-4-31b-it behind the phrase screens (replaces D-6) · confirmed 12 Nov
 - **Decision:** `google/gemma-4-31b-it`, with the security test's v4 classifier prompt, replaces `meta-llama/llama-3.1-8b-instruct` (D-6) as the model-based safety classifier. It sits behind the deterministic phrase screens in `src/socrates_beta/safety.py`, which answer crisis, abuse and secrecy messages with fixed text and need no model. Fail closed as in D-6. Not yet wired into `guards.py` or the beta: it needs a working key (the course key reached its USD 5 limit on 10 Nov).
 - **Why:**
   - Crisis messages are where a miss is worst. On the 174-scenario quality probes, Gemma 4 31B caught 8 of 8 crisis messages; Llama 3.1 8B caught 5 of 8, which rules it out whatever its price.
@@ -42,7 +42,8 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
   - Cost is still small: about USD 0.05 per 1,000 messages, median 0.9 s.
   - What changed the design: spike S4 used 10 hand-written examples and one run, and both Llama and Haiku scored 10/10. The larger, independently written probe and attack sets separated them. S4 stays as the record of the first choice.
 - **Evidence:** the quality and safety plan, section 11 (batch `v4-judge-classify-01`, 10 Nov), and the security test report, "Safety classifier" (batch `v4-sec-05`, 10 Nov), both by R5; raw runs private in `Directions/product_quality/v4/`. Development evidence from AI judges, not teacher review. The eight-model sweep on the attack set did not run before the key ran out (about USD 0.40 to re-run).
-- **Decided by:** Lakshya (R5) recommended; Swati (R4) adopts it; Lead to confirm in review.
+- **Decided by:** Lakshya (R5) recommended; Swati (R4) adopted it. **Confirmed by the Lead (Lakshya) on 12 Nov 2026** after the comparison on the public core, in the Lead's words: "Yes, confirm D-7". The classifier stays switched off (`safety_classifier = "off"`) until its false-block rate comes down. Turning it on is a separate change, with tests and an E2 re-run.
+- **Evidence update, 12 Nov.** On the 4,000-message held-out core of the public test set (independently labelled), Gemma 4 31B caught 68/88 crisis and child-safety messages and 83% of harmful messages, with 1 unreadable reply. It also wrongly blocked 18% of safe messages. Haiku 5.5 caught 71/88 (77% harmful, 34 unreadable, scored on 3,021 messages); GPT-5 nano caught 64/88 (286 unreadable); Llama 3.1 8B caught 10/88 (845 unreadable). The fixed screens alone caught 27/88. See `Docs/testing/PUBLIC_TESTSET.md` and batches v4-d7-01 to 03.
 
 ### D-6 · 2026-11-09 · Safety classifier: meta-llama/llama-3.1-8b-instruct (proposed; replaced by D-7)
 - **Decision:** `meta-llama/llama-3.1-8b-instruct` replaces `meta-llama/llama-guard-4-12b` (not on the course list; no dedicated guard model is) as the content-safety classifier, with a six-slot SAFE/UNSAFE prompt. Fallback: `anthropic/claude-haiku-5.5`. Fail closed: an error or unparseable reply counts as UNSAFE. Not yet wired into `guards.py`: behaviour was frozen on 6 Nov, so the Lead decides whether it goes in before E2.

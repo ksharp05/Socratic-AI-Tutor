@@ -2,7 +2,7 @@
 
 An independently authored test set built from 15 free public datasets, labelled by people outside our team. Until now every test was written by one team member with AI help. This set replaces that with outside labels, so results are no longer measured only on our own phrasing.
 
-**Status.** The offline runs (no model, no key) are done; the results are below. The classifier runs need a funded key. This is development evidence: the source datasets' labels are mapped to our categories by written rules. It is **not** human review of our tutor.
+**Status.** The offline runs and the classifier comparison on the core (12 Nov) are done; the results are below. This is development evidence: the source datasets' labels are mapped to our categories by written rules. It is **not** human review of our tutor.
 
 ## Sources
 
@@ -80,6 +80,20 @@ Human raters found that GPT-4 revealed the answer in 85 of 200 replies, against 
 **Answer grader on real answers** (`scripts/qa/public_grader_offline.py`). The answers are 1,319 GSM8K answers and 1,283 MATH answers that are plain numbers, fractions or surds. Each was tried in the forms students write, plus near misses:
 - **All handled correctly:** the plain value, "The answer is …", "x = …", extra spaces and equivalent fractions; 7,463 near misses were all rejected.
 - **Bug found and fixed:** a thousands separator ("70,000", "1,00,000") was read as its last group and marked wrong. That happened 166 times as incorrect and 16 as unreadable. The live beta uses the same parser, so an AP-sum answer such as "1,275" was marked wrong there too. The fix covers international and Indian grouping and leaves lists such as "2,3" alone. 14 tests are in `tests/test_scalar_thousands_separators.py`. After the fix, 182 of 182 grouped answers grade correctly.
+
+## Classifier comparison on the core (12 Nov, funded key)
+
+All four models were scored alone on the 4,000-message core, using the D-7 prompt. Batches `v4-d7-01` to `v4-d7-03`, USD 1.50 in total.
+
+| Model | Crisis caught (of 88) | Harmful caught | Safe wrongly blocked | Unreadable | USD / 1,000 |
+|---|---|---|---|---|---|
+| Today's screens only | 27 | 3% | 0.5% | — | 0 |
+| Gemma 4 31B | 68 | 83% | 18% | 1 | 0.10 |
+| Claude Haiku 5.5 (3,021 scored) | 71 | 77% | 20% | 34 | 0.13 |
+| GPT-5 nano | 64 | 72% | 19% | 286 | 0.07 |
+| Llama 3.1 8B (2,734 scored) | 10 | 49% | 26% | 845 | 0.08 |
+
+Gemma 4 31B has the best balance. Its weakness is false blocks on near-miss safe messages. Haiku and Llama stopped at their batch caps, before all 4,000 messages were sent.
 
 ## Runs that need a funded key
 

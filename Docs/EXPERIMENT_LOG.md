@@ -490,3 +490,68 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
 - **Source:** clean `e6796bf`; frozen public protocol in `scripts/product_quality/run_public_journeys.py`, separate offline-first qualification.
 - **Outcome:** eight offline and live cases passed; 14 live turns, nine requests, USD 0.0023244, zero errors/refusals, four accepted buffered practice generations, nine mechanical citation snapshots. All costs match trace and wallet.
 - **Decision:** bounded product development, AI-authored cases/synthetic approval fixtures, not final E1-E4 or human review. Existing batches and wallets preserved; no further requests scheduled for completed cases.
+
+### 2026-11-09 · S4 · Guard-model spike (R4)
+- **Config:** `scripts/r4/guard_model_spike.py`; `meta-llama/llama-3.1-8b-instruct`, `anthropic/claude-haiku-5.5`, `amazon/nova-lite-v1`; one run each.
+- **Data:** 10 hand-written development messages.
+- **Outcome:** Llama 3.1 8B 10/10, Haiku 5.5 10/10, Nova Lite 9/10 (one unparseable reply). See [S4](spikes/S4.md).
+- **Decision:** D-6 proposed (Llama 3.1 8B). Later replaced by D-7 on larger evidence.
+
+### 2026-11-10 · v4-baseline-01, v4-router-01, v4-models-01/02, v4-judge-classify-01 · Product-quality iteration v4 (R5)
+- **Config:** live-beta chat pipeline and front-door router prototypes (`scripts/qa/`). Tutor `openai/gpt-4.1-mini` and alternatives; judges Claude Haiku 5.5 (reasoning off) and Gemini 3.1 Flash Lite. Ledgered batches in the USD 10 v4 phase.
+- **Data:** 174 labelled quality probes (development; written by R5 with AI help).
+- **Outcome:** classifier comparison `v4-judge-classify-01` across 7 course models and the current rules:
+  - Gemma 4 31B 161/174 categories right, 8/8 crisis and child-safety, 2/91 safe messages flagged, 0 unreadable.
+  - Llama 3.1 8B 130/174, 5/8 crisis.
+  - Spend: baseline USD 0.175, router 0.363, models 0.283 + 0.337, classify 0.079.
+  - Raw runs are private in `Directions/product_quality/v4/runs/`.
+- **Decision:** recommended Gemma 4 31B as the classifier (recorded by R4 as D-7).
+
+### 2026-11-10 · v4-sec-01 to v4-sec-06 · Security test (R5, USD 5 programme)
+- **Config:**
+  - The live beta as deployed that morning (`sec_baseline_r1`, batch v4-sec-01).
+  - The hardened front door v4 (`sec_hardened_v4_r1`, batch v4-sec-05): normaliser, fixed screens, Gemma 4 31B classifier, policy router.
+  - Tutor `gpt-4.1-mini`; two AI judges (Claude Haiku 5.5, Gemini 3.1 Flash Lite); one run each.
+- **Data:** 420 synthetic cases (368 attacks in 14 families, 52 benign controls; English, Hindi, Hinglish), written by R5 with AI-assisted research and not shown to R4 beforehand.
+- **Outcome:**
+  - Safety failures (either judge): 118/420 on the baseline, 10/420 on hardened v4.
+  - Crisis and child-safety failures: 61/63 and 3/63.
+  - False blocks on the 52 benign controls: 14 and 2.
+  - The provider limit of the course key was reached during v4-sec-06 (402/403 refusals booked at their reservation).
+  - Provider-reported USD 3.23 across the programme.
+- **Decision:** the deterministic layers were ported into the beta (49749be). The classifier was not ported (D-7 pending). Report section 2a.
+
+### 2026-11-11 · v4-sec-07 · D-7 classifier comparison on the 420 cases (partial)
+- **Config:** `scripts/qa/security_classifier_sweep.py`, CLASSIFY_V2; new key, set in the process environment only.
+- **Data:** the 420-case security set.
+- **Outcome:**
+  - Gemma 4 31B: 396/420 acceptable, crisis and child safety 62/63, benign flagged as risk 3/52.
+  - Failures: four completed runs were lost (missing output folder; fixed), then the key's account had no credits (402). 37 calls with unknown or refused outcomes were booked at their reservation: accounted USD 0.9996, provider-reported USD 0.2027.
+- **Decision:** the script now creates its folder first and stops at the first credit or budget refusal.
+
+### 2026-11-11 · LIVE_ACCEPTANCE_03 · Live beta check after the redeploy from b697c79
+- **Config:** `Directions/deployment/live_chat_02/live_acceptance_03.py` (private); production `dpl_AyuhwAar2LLcsHPLxt5FAHwgzsUm`.
+- **Outcome:** 4/6 live replies accepted; 2 fell back after output checks. The consent, crisis and isolation controls passed. **Forget-my-data returned 500** on the schema-1 database.
+- **Decision:** fixed in ef342dd, redeployed and re-checked.
+
+### 2026-11-11 · public-testset-v1 offline runs · Independent public test set (no model)
+- **Config:** `scripts/qa/build_public_testset.py` (rules `public-v1-rules-2026-11-11`, seed 20261111); runners `public_testset_offline.py`, `public_leak_offline.py`, `public_grader_offline.py`; hashes in `eval/public_testset_v1/BUILD.json`.
+- **Data:** 15 free labelled datasets ([PUBLIC_TESTSET.md](testing/PUBLIC_TESTSET.md)): a 4,000-message held-out core, a 15,063-message tuning pool, 1,655 MRBench replies, and 2,602 GSM8K and MATH answers.
+- **Outcome:**
+  - The crisis screens caught 27/88 on the core (62/63 on our own set); 5/1,031 safe messages were blocked.
+  - The injection pattern caught 33/200 Gandalf attacks.
+  - The leak checker scored recall 0.90 and precision 0.55 against human labels.
+  - The grader marked "70,000" and "1,00,000" wrong.
+- **Decision:** grader fixed in 59bccfb (14 tests) and redeployed. The screen fixes go to R4, tuned on the pool only.
+
+### 2026-11-12 · v4-d7-01, v4-d7-02, v4-d7-03 · D-7 classifier comparison on the public test-set core
+- **Config:** `scripts/qa/security_classifier_sweep.py --cases safety_core.jsonl` (CLASSIFY_V2, hardened screening text). Funded course key, set in the process environment only. Batch caps USD 1.0, then 0.7 and 0.7. The run stops at the first credit or budget refusal. Scoring: `scripts/qa/public_classifier_summary.py`.
+- **Data:** the 4,000-message held-out core of public test set v1 (independently labelled; English, Hindi, Hinglish).
+- **Outcome:**
+  - **Screens alone:** crisis and child safety 27/88, harmful caught 3%, safe blocked 0.5%.
+  - **Gemma 4 31B:** 68/88, 83% harmful caught, 18% safe blocked, 1 unreadable, USD 0.10 per 1,000.
+  - **Haiku 5.5** (3,021 scored; stopped at the batch cap, all 88 crisis cases sent): 71/88, 77%, 20%, 34 unreadable, USD 0.13 per 1,000.
+  - **GPT-5 nano:** 64/88, 72%, 19%, 286 unreadable, USD 0.07 per 1,000.
+  - **Llama 3.1 8B** (2,734 scored, batch cap): 10/88, 49%, 26%, 845 unreadable.
+  - **Cost:** provider-reported USD 1.50 in total. Summary in `eval/public_testset_v1/CLASSIFIER_CORE_2026-11-12.json`; raw runs private.
+- **Decision:** the evidence supports Gemma 4 31B (D-7) and rules out Llama 3.1 8B (D-6). The false-block rate (18%) must come down before it is switched on. The Lead's confirmation is pending.

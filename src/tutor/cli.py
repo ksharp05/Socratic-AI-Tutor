@@ -186,9 +186,9 @@ def cmd_teacher(args) -> None:
     teacher = args.teacher
     try:
         if args.action == "propose":
-            out = app.propose_set(args.concept)
+            out = app.propose_set(args.concept, args.mode)
             prop = app.proposal(out["set_id"])
-            print(f"Proposed {out['set_id']} for {args.concept} (waiting for teacher: {out['waiting_for_teacher']})")
+            print(f"Proposed {args.mode} {out['set_id']} for {args.concept} (waiting for teacher: {out['waiting_for_teacher']})")
             _print_proposal(prop)
         elif args.action == "pending":
             rows = app.conn.execute("SELECT set_id, concept_id, status, revision, payload_sha256 FROM proposals "
@@ -269,6 +269,8 @@ def main(argv: list[str] | None = None) -> None:
     sp.add_argument("action", choices=["propose", "pending", "show", "approve", "edit", "reject", "try-publish"])
     sp.add_argument("set_id", nargs="?")
     sp.add_argument("--concept", default="qe04")
+    sp.add_argument("--mode", choices=["practice", "quiz"], default="practice",
+                    help="propose a practice set (default) or a quiz set, as the API already allows")
     sp.add_argument("--teacher", default="T-001")
     sp.add_argument("--drop", help="question ID to remove (edit)")
     sp.add_argument("--add", help="question ID to add (edit)")

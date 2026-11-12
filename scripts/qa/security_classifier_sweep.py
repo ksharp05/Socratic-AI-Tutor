@@ -7,7 +7,7 @@ Each case is classified on its final turn with earlier student turns as context,
 Output: Directions/product_quality/v4/runs/SLUG/sclassifier-<model>[-raw].json. Every call is ledgered.
 """
 from __future__ import annotations
-import argparse, concurrent.futures, json, re, sys, time
+import argparse, concurrent.futures, json, re, sys, threading, time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -55,6 +55,11 @@ def main():
     print(f"{len(CASES)} cases with {args.model} -> {target.name}")
     if not args.execute_live:
         print("Dry run: nothing sent."); return
+    # Operator skip list, read fresh by every run: one model ID per line. Lets a running multi-model job be cut short
+    # to save credit without killing a process mid-call (12 Nov: Nova Lite dropped to keep the key's balance).
+    skip = h.CAN / "Directions/product_quality/v4/SKIP_PAID_MODELS.txt"
+    if skip.exists() and args.model in skip.read_text(encoding="utf-8").split():
+        print(f"STOPPED EARLY: {args.model} is on the operator skip list; nothing sent"); return
     if target.exists():
         raise SystemExit("Result exists; never overwrite")
     # Create the output folder before any paid call: on 11 Nov four finished runs were lost when the write failed.
@@ -63,8 +68,16 @@ def main():
     effort = "minimal" if args.model.startswith("openai/gpt-5") else None
     client = rp.client_for(args.model, wallet, 400 if effort else 160, effort)
 
+    # Stop sending at the first credit, key-limit or budget refusal. On 11 Nov refused calls kept going and each was
+    # booked at its full reservation, filling the batch cap with no results.
+    stop = threading.Event()
+    STOP_SIGNS = ("402", "Insufficient credits", "Key limit exceeded", "BudgetExceeded", "budget exhausted")
+
     def classify(case):
         started = time.monotonic()
+        if stop.is_set():
+            return {"id": case["id"], "family": case["family"], "expect": case["expect"], "ok": case["ok"], "predicted": "skipped",
+                    "acceptable": False, "error": "not sent: run stopped after a credit or budget refusal", "ms": 0}
         earlier = [{"role": "student", "text": hd.redact(hd.normalise(t)[0])[0][:600]} for t in case["turns"][:-1]]
         clean, screen, flags = hd.normalise(case["turns"][-1])
         latest = hd.redact(clean if args.raw else screen)[0]
@@ -78,12 +91,17 @@ def main():
             return {"id": case["id"], "family": case["family"], "expect": case["expect"], "ok": case["ok"], "predicted": pred,
                     "acceptable": acceptable(case, pred), "raw": raw[:200], "ms": round((time.monotonic() - started) * 1000), "cost": cost}
         except Exception as exc:
+            if any(sign in f"{type(exc).__name__}: {exc}" for sign in STOP_SIGNS):
+                stop.set()
             return {"id": case["id"], "family": case["family"], "expect": case["expect"], "ok": case["ok"], "predicted": "error",
                     "acceptable": False, "error": f"{type(exc).__name__}: {str(exc)[:160]}", "ms": round((time.monotonic() - started) * 1000)}
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
         out = list(pool.map(classify, CASES))
-    target.write_text(json.dumps({"model": args.model, "raw": args.raw, "results": out}, indent=1, ensure_ascii=False), encoding="utf-8")
+    target.write_text(json.dumps({"model": args.model, "raw": args.raw, "cases_file": args.cases, "stopped_early": stop.is_set(),
+                                  "results": out}, indent=1, ensure_ascii=False), encoding="utf-8")
+    if stop.is_set():
+        print(f"STOPPED EARLY after a credit or budget refusal: {sum(o['predicted'] == 'skipped' for o in out)} cases not sent")
     crisis = [o for o in out if o["expect"] in ("crisis", "child_protect")]
     benign = [o for o in out if o["expect"] in ("teach", "support", "benign_sensitive")]
     snap = wallet.snapshot()

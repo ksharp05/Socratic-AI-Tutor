@@ -1,3 +1,48 @@
+# After v1.0, on Beta only (12 Nov 2026)
+
+- **Workflow.** Everything lands on Beta first. On 12 Nov the Lead moved Beta over: `main` was fast-forwarded to Beta and now holds everything below. The `v1.0` tag stays at d139762, the submitted release.
+- **README rewrite** (3ed23cd).
+- **Chat: Enter sends, Shift+Enter adds a line** (db49b7d). An input-method Enter (Hindi) never sends. Tested in the local offline beta.
+- **Production now runs Beta db49b7d:** `dpl_9uoVZqtLgPJYVEARmFnLf8BBvPFH`. Health is OK, and the served `app.js` is identical to the commit. Production is therefore ahead of the `v1.0` tag (chat Enter key only).
+
+---
+
+# Release v1.0 (12 Nov 2026)
+
+- **Code freeze declared by the Lead.** Tag `v1.0` is on the commit that records this. `main` is fast-forwarded to it.
+- **Production:** `dpl_FVKCMZZe7P8EgeuGeHr9j9igwX4u`, deployed from 39b94d1 (same runtime as the tag; only documents differ). The release check passed; receipt `Directions/deployment/live_chat_02/LIVE_ACCEPTANCE_04_V1.json`.
+- **CI test set:** 2,858 passed, 23 skipped; the three gates pass.
+- **Not done:**
+  - The schema-2 migration (after the viva).
+  - The demo recording (the Lead).
+  - Teammates' final log entries.
+  - The human mobile check.
+- The key expires 16 Nov.
+
+---
+
+# Update - submission day: funded key, D-7 core comparison, slides, report PDF (12 Nov 2026, early morning)
+
+- **Key and live site.** A funded course key (USD 5 limit, expires 16 Nov) is in Vercel `LLM_API_KEY`. Production was redeployed as `dpl_9Xy9N4HywKeRybTQrbaSa23P7Aj8`, and 3/3 live replies were accepted with citations. The key has USD 3.46 left after today's runs. The hosted lease stands at 94 of 200 requests.
+- **D-7 comparison on the public core** (batches v4-d7-01 to 03, provider-reported USD 1.50):
+  - Gemma 4 31B: crisis 68/88, harmful caught 83%, safe blocked 18%, 1 unreadable.
+  - Haiku 5.5: 71/88 (3,021 scored).
+  - GPT-5 nano: 64/88, 286 unreadable.
+  - Llama 3.1 8B: 10/88, 845 unreadable.
+  - Screens alone: 27/88.
+  - Recorded in the report (2a, Appendix A), DECISIONS D-7, the experiment log and PUBLIC_TESTSET.md.
+  - **D-7 confirmed by the Lead on 12 Nov** ("Yes, confirm D-7"). The classifier stays switched off until its false-block rate comes down.
+- **Sweep guards.** The sweep stops at the first credit or budget refusal and reads an operator skip list. Batches are closed after in-flight calls are settled as errors.
+- **Submission material.**
+  - Slides: 15-slide web deck, https://claude.ai/artifact/H855MDZyJVMkcdSrtZkQ4a.
+  - Report: trimmed to a 6-page body plus appendices; PDF in the canonical `submission/2026-11-12/`, built with `scripts/release/build_report_pdf.py`.
+  - Demo script: `Docs/demo/DEMO_SCRIPT.md`, rehearsed offline.
+  - The README is refreshed for submission.
+- **CLI.** `tutor teacher propose --mode quiz` (the quiz demo needed it), with 2 tests.
+- **Still open.** Recording the demo, teammates' final log entries, grader access to the private repo, then tag `v1.0`, move main up and push.
+
+---
+
 # Update - new key, redeploy, forget fix, report filled, D-7 comparison (11 Nov 2026, evening)
 
 - **Redeploy.** Production now runs the forget fix as `dpl_5HKwSso4nSMSaRy89EpSLrewUdto`, READY and aliased. The previous deploy was b697c79 as `dpl_AyuhwAar2LLcsHPLxt5FAHwgzsUm`.
