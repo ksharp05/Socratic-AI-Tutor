@@ -12,6 +12,14 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-12 · Swati / SwatiSmitaBiswal (R4)
+- **Work:**
+  - D-7 classifier wired into `guards.py`, off by default, fail closed; live check with my own key, locally only: 16/16 of my own messages routed as expected (PR #26, merged).
+  - Crisis screens and injection check improved from the public test set, tuned on the dev pool only. New shared crisis forms (self-punishment, purging and starving, falls and poisons, indirect intent, Hindi and Hinglish self-harm); the injection check no longer needs "previous" or "prior"; one idiom filter shared by the team tutor and the beta; the beta's ACCESS uses the same injection pattern. Persona patterns tried and removed because they blocked harmless role-play on the dev pool.
+  - Dev pool: crisis missed 19 to 3, injections missed 480 to 449, safe blocked 43 to 62 (mostly "ignore all instructions" prompts labelled safe). Core, measured once after tuning: crisis caught 27/88 to 35/88, Gandalf 33/200 to 112/200, deepset 4/125 to 26/125, safe blocked 5/1,031 unchanged.
+- **AI-assisted:** patterns, tests and helper scripts drafted with Claude, then run, checked on the dev pool and reviewed by me.
+- **Decisions:** none new. Open for the Lead: whether "ignore all previous instructions" prompts with harmless content should count as blocked (they do now).
+
 ### 2026-11-11 · Lakshya / ksharp05 (Lead, R1, R5)
 - **Work:**
   - Reviewed and merged PRs 18-27 into `Beta` after a trial merge and the CI test set (2,841 passed); resolved the contribution-log conflict; pushed.

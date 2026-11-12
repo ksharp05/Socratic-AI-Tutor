@@ -40,12 +40,12 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 
 | Control | Built (where) | Tested (how) | Still needs validation |
 |---|---|---|---|
-| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov) | Team suite; PR #13 adds 14 tests in both directions (schoolwork wording must not flag, real distress must) | E2; indirect and Hinglish phrasing; unusual PII formats |
+| **Input guards:** PII redaction; flags for distress, role claims, answer-key requests, injection | `guards.screen_input`; on the beta, `socrates_beta/safety.py` (normaliser and crisis, abuse and secrecy screens, 10 Nov). Crisis phrases and the injection pattern widened and shared by both surfaces (PR #28, 12 Nov) | Team suite; PR #13 adds 14 tests in both directions; PR #28 adds 56; the public core (below) | E2; indirect and Hindi crisis wording; unusual PII formats |
 | **Tool hooks:** per-role allowlist, learner pinning, 300 tool calls per session, length-only logging, no records after deletion | `toolbus` | Team suite (2,858 portable tests on Beta, 12 Nov) | E2 tool-result and retrieved-passage channels |
 | **Approval gate:** HMAC over the payload's SHA-256 and teacher ID; any edit voids it | `approval_token` | Team suite | Required `APPROVAL_SECRET` outside development; token expiry |
 | **Output guards:** retrieved-only citations; answer-leak checks, narrowed for empty-set items | `guards`, `mathcore.leak_check` (PR #12) | PR #12: 42 regression tests from the findings' phrases | Live-model replies on the 9 empty-answer items |
 | **Distress handoff** with Tele-MANAS 14416, no claim that anyone was notified | `guards.DISTRESS`, `RISK_PATTERN` | 14 tests (PR #13) | A human escalation path; indirect wording |
-| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); the 174-message probe set and the 420-case attack set (below) | Wiring it in; lowering false blocks; E2 with it switched on |
+| **Content-safety classifier** (D-7: Gemma 4 31B, fallback Haiku 5.5, fail closed) | **Built, switched off:** `tutor/safety_classifier.py` (PR #26). Not yet called in the turn path, and not on the live beta | Unit tests (PR #26); a live check on 16 of R4's own messages (16 routed as expected); the 174-message probe set, the 420-case attack set and the public core (below) | Wiring it in; lowering false blocks; E2 with it switched on |
 | **Live beta controls:** consent before provider calls; Secure, HttpOnly, SameSite=Strict cookies; profile isolation; forget-my-data; row-locked spend ledger | `socrates_beta` (`Docs/deploy/VERCEL_BETA.md`) | Lead's HTTPS checks; deletion confirmed on a synthetic profile | Guardian consent; mobile check; the new key's USD 5 limit |
 
 **Classifier choice (D-7).** No dedicated guard model is on the course list, so we compared general course models in steps:
@@ -55,7 +55,7 @@ Explaining a general idea with a cited NCERT passage or reference note is allowe
 - the 4,000-message public core (Appendix A).
 
 Gemma 4 31B led on the probes (161/174 categories right, 8/8 crisis and child-safety messages). On the independent 4,000-message core it had the best overall balance:
-- 68/88 crisis messages caught, against 27/88 for today's screens;
+- 68/88 crisis messages caught, against 27/88 for the screens on 11 Nov (35/88 after PR #28);
 - 83% of harmful messages caught, with 1 unreadable reply;
 - but 18% of safe messages wrongly blocked.
 
@@ -82,7 +82,7 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 
 **Next steps.**
 1. Wire the D-7 classifier (confirmed 12 Nov) into the turn path and the beta, lower its false blocks on the tuning pool, and re-run E2 with it on.
-2. Tune the screens on the public tuning pool (section 5).
+2. Done 12 Nov (PR #28): the screens were tuned on the public tuning pool only, then measured once on the core. Crisis caught rose from 27/88 to 35/88, Gandalf injections from 33/200 to 112/200 and deepset injections from 4/125 to 26/125; safe messages wrongly blocked stayed at 5/1,031. Hindi crisis recall stays low, so the classifier is still needed.
 3. Add Prompt Guard 2 for injections.
 4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
 
