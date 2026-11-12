@@ -1,0 +1,114 @@
+# Three blocks of 20 standalone questions, then ten sessions of four turns.
+[Quadratics]
+What makes an equation quadratic?
+What does the discriminant tell us about roots?
+Why must the coefficient of x squared be nonzero?
+How do you recognise a repeated root?
+What is the purpose of completing the square?
+How is factoring related to finding roots?
+What does a root of a quadratic represent?
+How does the quadratic formula use the coefficients?
+Why are there two signs before the square root?
+When does the quadratic formula give no real roots?
+What is the standard form of a quadratic equation?
+How do you tell the degree after collecting terms?
+Why set each factor to zero?
+What does a negative discriminant mean?
+How do you choose between factoring and the quadratic formula?
+What happens to the roots when the discriminant is zero?
+What is the difference between a quadratic expression and an equation?
+Explain how a perfect square helps solve a quadratic.
+Which coefficients matter when finding the discriminant?
+What do two distinct real roots mean?
+[Arithmetic progressions]
+What is an arithmetic progression?
+How do I recognise a common difference?
+What does the nth term of an AP mean?
+How do you find the sum of an arithmetic progression?
+What is the role of the first term in the nth-term rule?
+Why do we multiply the common difference by one less than the term number?
+Can the common difference be negative?
+How do I tell whether a sequence is arithmetic?
+What is the difference between a term and a partial sum?
+Why pair the first and last terms to find an AP sum?
+How is an AP written when it is decreasing?
+Can an AP have all equal terms?
+What does a positive common difference mean?
+How does the last term affect the sum formula?
+Where does the factor of one half in the AP sum come from?
+How can two consecutive terms help identify an AP?
+How do consecutive differences help check a sequence?
+How do I know when to use the nth-term rule?
+What does the term number refer to in an AP?
+How are the first term and common difference used together?
+[Trigonometry]
+How do I tell sine and cosine apart?
+Which side is the hypotenuse?
+How do you define tangent in a right triangle?
+What is the adjacent side of an acute angle?
+What makes the opposite side depend on the chosen angle?
+What is the relationship between sine and cosecant?
+How are cosine and secant related?
+How do tangent and cotangent compare?
+How do I label the sides before using a trig ratio?
+Why is the hypotenuse always across from the right angle?
+What happens to the names of the legs when I switch the reference angle?
+What is a trigonometric ratio?
+Which trigonometric ratio uses the two legs?
+What is the relationship between sine squared and cosine squared?
+Why do similar right triangles have the same trigonometric ratios?
+How does cosine use the leg next to the angle?
+How can I identify the leg across from the reference angle?
+How does tangent relate to sine and cosine?
+What is a reciprocal trigonometric ratio?
+Why do we choose an acute angle when naming the legs?
+[Quadratics]
+Can you introduce quadratic equations?
+Could you put the definition more simply?
+What part of it should I look at first?
+Can you explain why the coefficient condition matters?
+[Arithmetic progressions]
+Tell me about the nth term of an arithmetic progression.
+Could you say the rule in words?
+I'm not sure where to begin with it.
+Can you explain what the position in the list means?
+[Trigonometry]
+Explain sine for a beginner.
+Can you describe the relevant sides more slowly?
+Can you give me a smaller step?
+How would I label them if I chose the other angle?
+[Quadratics]
+How does factorisation solve a quadratic equation?
+I don't understand why zero matters in this method.
+Can you make that clearer?
+When would I use a different method?
+[Arithmetic progressions]
+Explain the AP sum formula.
+Can you show why the first and last terms are paired?
+That explanation was too long.
+Which idea should I understand before trying the formula?
+[Trigonometry]
+Could you introduce the tangent ratio?
+Can you explain it in plain words?
+What if I keep mixing up the two legs?
+Can we go through the labelling again?
+[Quadratics]
+What can I learn from the sign of the discriminant?
+What changes when it is positive?
+Can you make the zero case clearer?
+How does that differ from the negative case?
+[Arithmetic progressions]
+What is the common difference in a sequence?
+How can I spot it without the formula?
+Could you make that more concrete?
+What if each term is smaller than the previous one?
+[Trigonometry]
+How do complementary angles connect sine and cosine?
+Can you explain the connection more simply?
+I still don't see how the angle choice matters.
+Which side stays the same when I switch angles?
+[Quadratics]
+What is completing the square in a quadratic?
+How does the squared part help?
+Can you break that idea into one step?
+When does the quadratic formula become useful?

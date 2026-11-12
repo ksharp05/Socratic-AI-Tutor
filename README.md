@@ -81,6 +81,32 @@ The full diagram, and a numbered walkthrough of a real 36-row trace, are in [ARC
 
 All of this is **development evidence**: simulated students, synthetic attacks and AI judges, with no real students and no teacher review yet. The [evaluation report](Docs/report/EVALUATION_REPORT.md) explains each number and its limits.
 
+## Beta review · 100-query latency waterfall
+
+[Download the interactive report and data](https://github.com/ksharp05/Socratic-AI-Tutor/raw/refs/heads/Beta/Docs/report/beta-latency/socrates-beta-latency-report.zip). Extract the ZIP and open `latency-report.html` in a browser. Select any of the 100 queries to inspect the timed stages, or jump to the median or slowest request.
+
+| Measurement | Result |
+|---|---:|
+| Local offline Beta turnaround | 23.24 ms median · 25.87 ms p95 |
+| Progress writes | 15.88 ms average · 59% of time across the ten slowest local requests |
+| Archived hosted chat turnaround | 1.80–1.96 s run medians across 28 requests |
+
+![Median local request waterfall showing timed stages and actual offsets](Docs/report/beta-latency/median-query-waterfall.png)
+
+![Stage time across the ten slowest local requests, with progress writes accounting for 59 percent](Docs/report/beta-latency/slow-query-stage-cost.png)
+
+The local workload used SQLite and offline source replies. The archived hosted runs recorded total request time. The report includes the timing breakdown, methodology and proposed work by role.
+
+<details>
+<summary>Review the evidence and rerun the benchmark</summary>
+
+- [Per-query timing CSV](Docs/report/beta-latency/timings-detailed.csv)
+- [Raw waterfall spans and run metadata](Docs/report/beta-latency/traces-detailed.json)
+- [Benchmark and reproduction steps](Docs/report/beta-latency/README.md)
+- [Hinglish crisis screening evidence](Docs/report/HINGLISH_SCREENING_RESULTS.md)
+
+</details>
+
 ## Quick start
 
 **One command (Docker Desktop):**

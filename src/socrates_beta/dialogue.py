@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json,re,threading,time
+import json,logging,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
 from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,
@@ -18,7 +18,7 @@ Keep analogies brief and preserve causal mechanism. The supplied teaching move g
 but honour the learner's explicit request for simpler wording or a different approach. Do not ask them to invent
 an example if they just said they don't understand the underlying word. Use a concrete, smaller question.
 Do not put citation ids in prose; return them only in the citations list. No Markdown tables or headings.
-Acknowledge a topic correction briefly. Aim for 35-45 words so the hard 60-word limit is met.
+Acknowledge a topic correction or expressed frustration briefly. Aim for 35-45 words so the hard 60-word limit is met.
 The follow-up question must be answerable from the explanation you just gave. Do not introduce a new technical
 term in the question before explaining it. Ask for one small inference rather than a large new application.
 In science, never suggest tasting, touching, or smelling chemicals to identify them. Discuss safe indicators
@@ -41,7 +41,11 @@ CHECK_REPLY={
     'hinglish':"Main is chat mein final answer check nahi kar sakta, par checked practice mein answers code se check hote hain. Main aapka method check karne mein help kar sakta hoon: aapka pehla step kya tha?",
 }
 # Also the team tutor's wider injection check (R4, 11 Nov), so one pattern decides on both surfaces.
-ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)|'+INJECTION.pattern,re.I)
+ACCESS=re.compile(r'ignore (?:all |the )?(?:previous|prior) instructions|\bignore (?:your |the )(?:guidelines|rules|instructions)\b|system prompt|answer key|(?:i am|i.m) (?:the |an? )?(?:admin|developer|teacher)|'+INJECTION.pattern,re.I)
+CHAT_PRIVACY=re.compile(r"\b(?:chats?|conversations?|messages?|chat history|my data)\b",re.I)
+PRIVACY_ACTION=re.compile(r"\b(?:store|stor(?:ed|age)|sav(?:e|ed)|keep|delet(?:e|ed|ion)|forget|privacy|retention)\b",re.I)
+TOPIC_CUE=re.compile(r"\b(?:trigonometry|trig|discriminant|quadratic equations?|arithmetic progressions?)\b",re.I)
+LEARNING_DISTRESS=re.compile(r"\b(?:hopeless at|terrible at|bad at|struggling with|stressed about)\b",re.I)
 SMALL=re.compile(r"\b(idk|dunno|confused|stuck|don.?t (?:know|understand|get)|do not (?:know|understand|get)|no idea|not sure|still unclear|nahi samjh\w*|samajh nahi|samjha nahi|samajh me nahi|nahi pata)\b|^\s*\?+\s*$",re.I)
 # Feedback about the replies themselves: answer it with a shorter, different approach instead of repeating.
 FEEDBACK=re.compile(r"(?i)\b(?:too long|so long|boring|useless|explain properly|not helpful|confusing|bakwas|samajh nahi aa raha)\b")
@@ -67,13 +71,32 @@ def unsafe_chemical_guidance(reply: str) -> bool:
         r'\bwhich (?:sample|chemical|acid|base)[^.!?]{0,30}\b(?:tastes|smells)\b',text))
 
 
+_safety_log = logging.getLogger("socrates_beta.safety")
+
+
+def _screen_urgent(message: str, stage: str):
+    if not _safety_log.isEnabledFor(logging.DEBUG):
+        return urgent(message)
+
+    start = time.perf_counter_ns()
+    hit = urgent(message)
+    _safety_log.debug(
+        "urgent_screen stage=%s verdict=%s duration_us=%d",
+        stage,
+        hit[0] if hit else "clear",
+        (time.perf_counter_ns() - start) // 1000,
+    )
+    return hit
+
+
 class DialogueService:
-    def __init__(self,repo,registry,language=None):
+    def __init__(self,repo,registry,language=None,*,check_consent=None):
         self.repo,self.registry,self.language=repo,registry,language;self.locks={};self.guard=threading.Lock()
+        self.check_consent=check_consent
     def session_lock(self,sid):
         with self.guard:return self.locks.setdefault(sid,threading.RLock())
     def turn(self,owner,sid,message,request_id):
-        hit=urgent(message)
+        hit=_screen_urgent(message, "input")
         if hit:
             # Give immediate support without waiting for a provider, database,
             # profile lock, or session lookup. No notification is implied.
@@ -82,23 +105,32 @@ class DialogueService:
                     'verification':'not_assessed','format_repaired':False,'repair_reason':None,
                     'dataset_id':None,'latency_ms':0,'retrieval':{'hits':0,'ids':[]},
                     'human_review_status':'pending','persistence':'not_saved_urgent'}
+        if self.check_consent is not None:
+            self.check_consent(owner)
         with self.repo.owner_guard(owner), self.session_lock(sid):return self._turn(owner,sid,message,request_id)
     def _turn(self,owner,sid,message,request_id):
-        start=time.monotonic();session=self.repo.session(sid,owner);state=session['state'];scope=Scope(**session['scope'])
-        history=self.repo.history(sid)
-        message=redact_personal_data(redact(clean_text(message).strip()))
-        prior=next((t for t in history if t['request_id']==request_id),None)
-        if prior:
-            if prior['user_text']!=message:raise ValueError('Request id already used for a different message')
-            return prior['result']
-        if len(history)>=500:raise ValueError('Start a new conversation to keep this session manageable')
+        start=time.monotonic()
+        original_message=message
+        with self.repo.connect() as conn:
+            session=self.repo.session(sid,owner,conn=conn)
+            prior,history,turn_count=self.repo.dialogue_history(sid,request_id,conn=conn)
+            message=redact_personal_data(redact(clean_text(message).strip()))
+            if prior:
+                if prior['user_text']!=message:raise ValueError('Request id already used for a different message')
+                return prior['result']
+            if turn_count>=500:raise ValueError('Start a new conversation to keep this session manageable')
+            assessment=self.repo.active_assessment(sid,owner,conn=conn) or self.repo.open_check(owner,conn=conn)
+        state=session['state'];scope=Scope(**session['scope'])
         adapter=self.registry.knowledge(session['dataset']);passages=[];citations=[];move='diagnostic';status='not_called';error=None;repaired=False;repair_reason=None
         recent=[]
-        for t in history[-6:]:recent.extend([{'role':'user','text':t['user_text']},{'role':'assistant','text':t['result']['reply']}])
-        assessment=self.repo.active_assessment(sid,owner) or self.repo.open_check(owner)
-        hit=urgent(message)
+        for t in history:recent.extend([{'role':'user','text':t['user_text']},{'role':'assistant','text':t['result']['reply']}])
+        hit=_screen_urgent(message, "redacted_input") if message!=original_message else None
         if hit:
             reply=reply_for(*hit);move='human_help'
+        elif CHAT_PRIVACY.search(message) and PRIVACY_ACTION.search(message):
+            reply = ("Your conversations are saved on our server and linked to this browser profile. "
+                     "You can delete them using Forget my data under Your progress.")
+            move = 'privacy_help'
         elif assessment:
             reply="Your check is active. Please answer in the practice panel; I haven't checked this message.";move='assessment_isolation'
         elif ACCESS.search(message):
@@ -110,23 +142,29 @@ class DialogueService:
         elif discovery_question(message):
             reply=navigation_reply(adapter,scope);move='topic_navigation'
         else:
-            uncertain=bool(SMALL.search(message));analogy=bool(re.search(r'\b(analogy|everyday example|simple example)\b',message,re.I))
+            topic_cues={m.group().casefold() for m in TOPIC_CUE.finditer(message)}
+            previous_cues={m.group().casefold() for m in TOPIC_CUE.finditer(state['focus'] or '')}
+            learning_distress=bool(LEARNING_DISTRESS.search(message))
+            distress_topic=TOPIC_CUE.search(message) if learning_distress and len(topic_cues)==1 else None
+            uncertain=learning_distress or bool(SMALL.search(message));analogy=bool(re.search(r'\b(analogy|everyday example|simple example)\b',message,re.I))
             feedback=bool(FEEDBACK.search(message))
             followup=uncertain or analogy or feedback or bool(re.search(r'(?i)\b(simpler|say that again|why that|what do you mean|explain again|why is that)\b',message))
             correction=re.search(r'(?i)\b(?:i meant|i mean|instead explain|switch to|new topic[: ]+)\s*(.+)',message)
             new_topic=bool(re.match(r'(?i)^(?:explain|what (?:is|are)|how (?:does|do|is)|why (?:does|do|is|are)|tell me about)\b',message)) and not followup
-            new_topic=new_topic or bool(broad_topic(adapter,message,scope))
+            new_topic=new_topic or bool(topic_cues-previous_cues) or bool(broad_topic(adapter,message,scope))
+            fresh_passages=None
             if state['focus'] and not new_topic and not followup:
                 # A dead focus (it found no evidence) never sticks, and a question that retrieves different
                 # passages from the last turn starts a new topic, wherever its question word sits.
                 if not state.get('last_passages'):new_topic=True
                 elif QUESTION.search(message):
-                    fresh={p['id'] for p in adapter.search(message,scope,limit=3)}
+                    fresh_passages=adapter.search(message,scope,limit=3)
+                    fresh={p['id'] for p in fresh_passages}
                     new_topic=bool(fresh) and not fresh&set(state['last_passages'])
             if correction:
                 state.update(focus=correction[1],stuck=0,active_problem=False);move='acknowledge_correction'
             elif not state['focus'] or new_topic:
-                state.update(focus=message,stuck=0,active_problem=False)
+                state.update(focus=distress_topic.group() if distress_topic else message,stuck=0,active_problem=False)
             else:move='connect_to_recent_reasoning'
             if uncertain:
                 state['stuck']+=1;move=['break_into_one_step','concrete_analogy','check_prerequisite'][min(2,state['stuck']-1)]
@@ -140,7 +178,9 @@ class DialogueService:
             answer_check=scope.subject.casefold()=='mathematics' and bool(re.search(r'\d',message)) and bool(ANSWER_CHECK.search(message))
             if answer_check:active=True
             if active:state['active_problem']=True
-            passages=[] if answer_check else adapter.search(state['focus'],scope,limit=3)
+            if not answer_check:
+                focus=state['focus']
+                passages=fresh_passages if fresh_passages is not None and focus==message else adapter.search(focus,scope,limit=3)
             if answer_check:
                 # A yes/no answer check is never judged by the model: there is no checker in chat.
                 reply=CHECK_REPLY.get(guess_language(message),CHECK_REPLY['en']);move='active_problem_coaching'
@@ -185,9 +225,12 @@ class DialogueService:
                 except Exception as exc:
                     safe={'response_schema','response_length','one_focused_question','citations_schema','unknown_or_missing_citation','unverified_grading_or_answer','repeated_question','self_report_instead_of_reasoning','missing_quadratic_qualifier','unsupported_graph_fact','unsafe_chemical_identification','secrecy_promise','no_supporting_evidence'}
                     error=str(exc) if type(exc) is ValueError and str(exc) in safe else type(exc).__name__
+                    logging.getLogger(__name__).info('live_reply_fallback reason=%s',error)
                     if error=='no_supporting_evidence':
                         reply=NO_EVIDENCE.get(guess_language(message),NO_EVIDENCE['en']);citations=[];status='live_no_evidence';move='missing_evidence'
                     else:reply,citations=self.fallback(passages,state,recent);status='provider_failed_source_fallback'
+            if learning_distress and status in {'offline_source_fallback','provider_failed_source_fallback'}:
+                reply='It can feel frustrating when a topic has not clicked yet. '+reply
         sources=[self.citation(p) for p in passages if p['id'] in citations]
         state['last_passages']=[p['id'] for p in passages]
         result={'reply':reply,'citations':sources,'move':move,'provider_status':status,'validation_error':error,
@@ -208,7 +251,12 @@ class DialogueService:
         # Prefer a short safe sentence; avoid practical chemical-identification cues in recovery text.
         options=[(candidate,sentence) for candidate in passages for sentence in re.split(r'(?<=[.!])\s+',candidate['text'])
                  if len(sentence.split())>=6 and not re.search(r'\b(tast\w*|smell\w*|swallow\w*|ingest\w*)\b',sentence,re.I)]
-        if options:p,fact=next(((candidate,sentence) for candidate,sentence in options if len(sentence.split())<=37),options[0])
+        if options:
+            focus_terms={m.group().casefold() for m in TOPIC_CUE.finditer(state.get('focus') or '')}
+            relevant=[(candidate,sentence) for candidate,sentence in options
+                      if focus_terms & {m.group().casefold() for m in TOPIC_CUE.finditer(candidate['title']+' '+sentence)}]
+            choices=relevant or options
+            p,fact=next(((candidate,sentence) for candidate,sentence in choices if len(sentence.split())<=37),choices[0])
         else:fact='We can inspect the cited passage together and begin with one small detail.'
         if len(fact.split())>37:fact=' '.join(fact.split()[:34])+'…'
         prompts=['Which part of this idea would you like to examine first?',

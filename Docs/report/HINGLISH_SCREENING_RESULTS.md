@@ -27,3 +27,9 @@ All four locked offline configurations scored the same 1,750 messages from the s
 | Urgent third-party | 10/20 | 17/20 | 17/20 | 18/20 |
 
 The supplied pack is synthetic and labels await independent bilingual adjudication. These are offline component results. The acceptance denominator excludes hard negatives and ambiguous cases. The frozen release and runtime are outside the scope of this report update.
+
+## Follow-up offline experiments
+
+On the frozen 1,550-message synthetic holdout, the confidence-only route caught **188/200** crisis cases with **0/1,100** benign alerts and **0/250** hard-negative alerts. The holdout used 20 base crisis scenarios with repeated variants.
+
+On a separate set of 136 individually written synthetic conversations, the latest message caught **8/16** indirect cases. Adding one usable earlier turn at the same cutoff caught **11/16**. A lower cutoff for turns with usable history caught **12/16**, with **0/104** benign alerts and **0/16** hard-negative alerts. Both history cutoffs reused the same score and had **78.98 ms** local p95. Latest-message p95 was **75.37 ms**. The labels await independent adjudication, and the confidence-based routes were evaluated offline.

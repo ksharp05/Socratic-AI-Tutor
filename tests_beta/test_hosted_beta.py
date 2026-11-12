@@ -171,7 +171,9 @@ def test_live_consent_and_paid_acknowledgement_replay_are_separate(tmp_path,monk
     with TestClient(app,base_url=ORIGIN) as client:
         session=client.post("/beta/api/sessions",headers=HEADERS,json={"grade":10,"subject":"Mathematics"}).json()
         body={"session_id":session["id"],"text":"Explain a quadratic equation","request_id":"synthetic-chat-1"}
-        assert client.post("/beta/api/chat",headers=HEADERS,json=body).status_code==403
+        rejected=client.post("/beta/api/chat",headers=HEADERS,json=body)
+        assert rejected.status_code==403
+        assert rejected.json()["detail"]["code"]=="model_consent_required"
         assert fake.calls==0
         urgent={**body,"text":"I want to hurt myself","request_id":"synthetic-urgent-1"}
         assert client.post("/beta/api/chat",headers=HEADERS,json=urgent).json()["move"]=="human_help"

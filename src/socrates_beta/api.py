@@ -11,7 +11,7 @@ from . import __version__
 from .bootstrap import bootstrap
 from .repository import Repository,BetaBusy
 from .ports import Scope
-from .dialogue import DialogueService,DISTRESS
+from .dialogue import DialogueService
 from .safety import clean_text,redact_personal_data
 from .maths import CheckedMaths,AssessmentService
 from .study import StudyService
@@ -59,7 +59,12 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
         from .language import TeamLanguage
         language=TeamLanguage(app_root,settings.get('max_live_calls',60),audit_directory=settings.get('audit_directory'))
     maths=maths or CheckedMaths(app_root)
-    dialogue=DialogueService(repo,registry,language)
+    def check_consent(profile_owner):
+        if not repo.profile(profile_owner)['preferences'].get('model_consent'):
+            raise HTTPException(403,{'code':'model_consent_required','message':'Confirm live model use in Learning preferences before sending this message.'})
+
+    consent_check=check_consent if settings.get('require_live_consent') and language else None
+    dialogue=DialogueService(repo,registry,language,check_consent=consent_check)
     if settings.get('assessment_policy')=='reference_checked_beta':
         if tutor_provider is not None:raise ValueError('Reference beta publication does not imply graph teacher approval')
         from .reference_policy import ReferenceCheckedAssessmentService
@@ -129,9 +134,10 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     @app.get('/api/bootstrap')
     def initial(request:Request):
         entry=registry.public();k=registry.knowledge()
+        current_health=health()
         return {'version':__version__,'library':entry,'catalogue':k.catalogue(),'profile':repo.profile(owner(request))['preferences'],
-          'dashboard':study.dashboard(owner(request)),'language':health()['language'],
-          'assessment_policy':health()['assessment_policy'],'graph_journey':health()['graph_journey'],
+          'dashboard':study.dashboard(owner(request)),'language':current_health['language'],
+          'assessment_policy':current_health['assessment_policy'],'graph_journey':current_health['graph_journey'],
           'model_consent_required':bool(settings.get('require_live_consent') and language),'beta':True}
     @app.get('/api/library/{dataset_id}')
     def library(dataset_id:str):return {'dataset_id':dataset_id,'catalogue':registry.knowledge(dataset_id).catalogue()}
@@ -157,8 +163,6 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
                     'assessment':assess.public(active) if active and not paused else None,'assessment_paused':paused}
     @app.post('/api/chat')
     def chat(body:ChatIn,request:Request):
-        if settings.get('require_live_consent') and language and not DISTRESS.search(body.text) and not repo.profile(owner(request))['preferences'].get('model_consent'):
-            raise HTTPException(403,'Confirm live model use in Learning preferences before sending a chat message.')
         return dialogue.turn(owner(request),body.session_id,body.text,body.request_id)
     @app.post('/api/practice')
     def practice(body:StartIn,request:Request):

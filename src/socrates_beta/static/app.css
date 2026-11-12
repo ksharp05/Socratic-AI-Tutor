@@ -3,3 +3,24 @@
 @media(max-width:760px){.app-shell{display:block}.sidebar{height:auto;position:relative;padding:17px 18px;gap:12px}.brand{font-size:14px}.brand-mark{height:34px;width:32px;font-size:23px}.brand small{font-size:10px}.beta-label{position:absolute;right:18px;top:24px;font-size:9px}.sidebar nav{display:flex;flex-wrap:wrap;gap:5px}.sidebar nav a{padding:6px 9px;font-size:11px;gap:5px}.side-bottom{display:none}.topbar{height:57px;padding:0 18px}.top-actions{gap:8px}.top-actions .avatar{display:none}main{padding:24px 18px 45px}.hero{display:block;padding:26px}.hero-art{display:none}h1{font-size:35px}.page-heading h1{font-size:31px}.grid,.grid.two,.check-grid{grid-template-columns:1fr}.page-heading{flex-wrap:wrap}.scope-bar{padding:13px;gap:10px}.scope-bar label{min-width:110px}.chat-log{padding:8px 15px;max-height:530px}.chat-header{padding:15px}.chat-compose{padding:14px}.chat-compose form{gap:8px}.chat-compose button{padding:10px 12px}.chat-aside{grid-template-columns:1fr}.chat-compose textarea{min-height:90px}.message{max-width:100%}.practice-answer{flex-wrap:wrap}.practice-answer label{min-width:180px}.practice-question{font-size:21px}.path-row{padding:18px;gap:12px;flex-wrap:wrap}.path-row button{padding:7px 12px}.form-grid{grid-template-columns:1fr}dialog{padding:25px}.focus-panel{padding:12px 18px}.chart-row{grid-template-columns:100px 1fr 48px;gap:7px;font-size:11px}.history-row{align-items:start}.history-row h3{font-size:14px}.flashcard{padding:28px 22px}#toast{left:15px;right:15px;bottom:15px}.topbar #crumb{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important}}[hidden]{display:none!important}
 
 .plan-reason{font-size:15px;line-height:1.5;color:var(--ink);margin:18px 0 14px}
+
+#model-consent-label:not([hidden]) {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .85rem;
+  border: 1px solid currentColor;
+  border-radius: .6rem;
+  cursor: pointer;
+}
+#model-consent-label input {
+  flex: 0 0 auto;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: .1rem 0 0;
+  padding: 0;
+}
+#model-consent-label input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

@@ -110,6 +110,29 @@ class Repository:
     def history(self,sid):
         with self.connect() as c:return [self.decode(r) for r in c.execute('SELECT * FROM turns WHERE session_id=? ORDER BY id',(sid,))]
 
+    def dialogue_history(self, sid, request_id, *, conn=None):
+        """Read the replay, context window and turn count in one database round trip."""
+        with self._using(conn) as connection:
+            rows = connection.execute(
+                """WITH recent AS (
+                       SELECT id, user_text, result FROM turns
+                       WHERE session_id=? ORDER BY id DESC LIMIT 6
+                   ), selected AS (
+                       SELECT id, user_text, result, 0 AS replay FROM recent
+                       UNION ALL
+                       SELECT id, user_text, result, 1 AS replay FROM turns
+                       WHERE session_id=? AND request_id=?
+                   ), total AS (
+                       SELECT count(*) AS turn_count FROM turns WHERE session_id=?
+                   )
+                   SELECT selected.*, total.turn_count
+                   FROM total LEFT JOIN selected ON 1=1 ORDER BY selected.id""",
+                (sid, sid, request_id, sid),
+            ).fetchall()
+        replay = next((self.decode(row) for row in rows if row["replay"] == 1), None)
+        recent = [] if replay else [self.decode(row) for row in rows if row["replay"] == 0]
+        return replay, recent, rows[0]["turn_count"]
+
     def prior_turn(self,sid,key):
         with self.connect() as c:r=c.execute('SELECT result FROM turns WHERE session_id=? AND request_id=?',(sid,key)).fetchone()
         return json.loads(r[0]) if r else None
