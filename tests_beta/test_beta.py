@@ -425,3 +425,373 @@ def test_diagnostic_branches_to_observed_concept_after_miss(services,registry,ma
     assert response['status']=='recorded'
     assert check['item']['concepts'][0] in response['assessment']['item']['concepts']
     assert response['assessment']['position']==2 and not p.contexts
+
+
+@pytest.mark.local_corpus
+def test_practice_step_feedback_clarifies_without_grading_or_consuming_hints(tmp_path, registry, maths):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    qid = next(q["question_id"] for q in maths.items.values()
+               if q["problem"].get("task_type") == "trig_triangle_ratio"
+               and q["problem"]["givens"]["ratio"] == "sin"
+               and "practice" in q["mode_policy"]["allowed_modes"])
+    with TestClient(app) as client:
+        session_id = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                                 headers=HEADERS).json()["id"]
+        practice = client.post("/api/practice", json={"session_id": session_id, "question_id": qid},
+                               headers=HEADERS).json()
+        assert practice["item"]["supports_step_feedback"] is True
+        path = f"/api/practice/{practice['id']}/hint"
+
+        def hint(step):
+            response = client.post(path, json={"step": step}, headers=HEADERS)
+            assert response.status_code == 200
+            return response.json()
+
+        first = hint("3/5")
+        assert first.pop("continuation")
+        assert first == {
+            "hint": "Which side did you put on top, and which side underneath?",
+            "stage": 0, "status": "step_feedback",
+        }
+        assert hint("I put the hypotenuse in the denominator.")["hint"].startswith("That denominator fits.")
+        assert hint("sine: opposite over adjacent")["hint"].startswith("Check the denominator.")
+        assert hint("Sine compares the opposite side and hypotenuse.")["hint"].endswith("Which one goes on top?")
+        assert hint("Which side should I use?")["hint"] == "Are you choosing the numerator or the denominator?"
+        relabel = hint("Reference angle badal gaya lekin maine opposite side same rakhi.")["hint"]
+        assert relabel.startswith("Reference angle badalne par") and relabel.count("?") == 1
+        clear = hint("साइन में सामने वाली भुजा को कर्ण से भाग दिया।")
+        assert clear["status"] == "step_feedback" and clear["stage"] == 0
+        assert "क्रम सही है" in clear["hint"]
+        safety = hint("I'm so stressed about my board exams that I don't want to live anymore.")
+        assert safety["status"] == "human_help" and safety["persistence"] == "not_saved_urgent"
+        owner = client.cookies["socrates_beta_profile"].split(".")[0]
+        repo = app.state.services["repo"]
+        assert not repo.history(session_id) and not repo.observations(owner)
+        state = repo.assessment(practice["id"], owner)["state"]
+        assert state["hint_stage"] == 0 and not state["submissions"]
+        assert client.post(path, json={}, headers=HEADERS).json()["stage"] == 1
+        assert client.post(path, json={"step": "x" * 513}, headers=HEADERS).status_code == 422
+
+
+@pytest.mark.local_corpus
+def test_practice_step_feedback_keeps_assessment_boundaries(tmp_path, registry, maths):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    with TestClient(app) as client, TestClient(app) as other:
+        session_id = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                                 headers=HEADERS).json()["id"]
+        quiz = client.post("/api/practice", json={"session_id": session_id, "mode": "quiz"},
+                           headers=HEADERS).json()
+        path = f"/api/practice/{quiz['id']}/hint"
+        body = {"step": "opposite over hypotenuse"}
+        assert client.post(path, json=body, headers=HEADERS).status_code == 400
+        assert other.post(path, json=body, headers=HEADERS).status_code == 404
+
+
+@pytest.mark.local_corpus
+def test_numeric_step_uses_the_active_reference_angle_and_keeps_final_answer_private(tmp_path, registry, maths):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    question = next(q for q in maths.items.values()
+                    if q["problem"].get("task_type") == "trig_triangle_ratio"
+                    and q["problem"]["givens"] == {
+                        "ratio": "sin", "reference": "C", "opposite": 12, "adjacent": 5, "hypotenuse": 13,
+                    })
+    with TestClient(app) as client:
+        session_id = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                                 headers=HEADERS).json()["id"]
+        practice = client.post("/api/practice", json={
+            "session_id": session_id, "question_id": question["question_id"],
+        }, headers=HEADERS).json()
+        path = f"/api/practice/{practice['id']}/hint"
+        reply = client.post(path, json={
+            "step": "Opposite 5 cm aur longest 13 cm hai to sine 5/13 liya.",
+        }, headers=HEADERS).json()
+        assert reply["status"] == "step_feedback" and reply["stage"] == 0
+        assert reply["hint"].startswith("Side labels aur unka order sahi hai.")
+        assert "5/13" not in reply["hint"]
+        wrong_triangle = client.post(path, json={
+            "step": "sine = 12/13 because 12 is opposite and 13 is hypotenuse.",
+        }, headers=HEADERS).json()
+        assert "don't match the active triangle" in wrong_triangle["hint"]
+        assert "5/13" not in wrong_triangle["hint"]
+        setup = client.post(path, json={
+            "step": "Using angle C. Opposite is 5 cm, adjacent is 12 cm, hypotenuse is 13 cm.",
+        }, headers=HEADERS).json()
+        assert setup["status"] == "step_feedback" and setup["stage"] == 0
+        assert setup["hint"] == (
+            "Those side labels fit the marked angle. Which two sides does the requested ratio use?"
+        )
+        setup = client.post(path, json={
+            "step": "Angle C, opposite 5, hypotenuse 13.",
+        }, headers=HEADERS).json()
+        assert setup["hint"].endswith("Which leg is adjacent to the marked angle?")
+        identity = client.post(path, json={"step": "sin(C) = cos(A)"}, headers=HEADERS).json()
+        assert identity["hint"].startswith("That identity fits the two acute angles.")
+        assert identity["hint"].count("?") == 1 and "5/13" not in identity["hint"]
+        assert identity["stage"] == 0
+
+        def hint(step, previous=None):
+            payload = {"step": step}
+            if previous:
+                payload["continuation"] = previous["continuation"]
+            reply = client.post(path, json=payload, headers=HEADERS).json()
+            assert reply["status"] == "step_feedback" and reply["stage"] == 0
+            assert "5/13" not in reply["hint"] and reply["hint"].count("?") == 1
+            return reply
+
+        wrong = hint("sin(C) = opposite / hypotenuse = 12/13")
+        assert "numerator" in wrong["hint"]
+        still_wrong = hint("12", wrong)
+        assert still_wrong["hint"] == wrong["hint"]
+        fixed = hint("5", still_wrong)
+        assert fixed["hint"].startswith("Your side labels and their order fit")
+        assert "continuation" not in fixed
+
+        reversed_lengths = hint("sin(C) = opposite / hypotenuse = 13/5")
+        partial = hint("5", reversed_lengths)
+        assert partial["hint"].startswith("That length fits on top.")
+        assert hint("5/13", partial)["hint"].startswith("Your side labels and their order fit")
+
+        order = hint("cos(A) = adjacent / hypotenuse")
+        mixed = hint("5 cm / 13 m", order)
+        assert "different units" in mixed["hint"]
+        assert hint("10/26", mixed)["hint"].startswith("That fraction has the same value.")
+        assert hint("5/13", order)["hint"].startswith("Your side labels and their order fit")
+        chain = hint("sin(C) = cos(A) = adjacent(A) / hypotenuse = 12/13")
+        assert "numerator" in chain["hint"]
+        assert hint("5", chain)["hint"].startswith("Your side labels and their order fit")
+        assert hint("sin(C) = cos(A) = 5/13")["hint"].startswith("The angle identity fits.")
+        assert hint("sin(C) = cos(A) = adjacent(C) / hypotenuse")["hint"].startswith("Which marked angle")
+        assert hint("sin(C) = tan(A) = adjacent / hypotenuse")["hint"].startswith("Check the relationship")
+        assert hint("sin(C) = AB/AC = 5/13")["hint"].startswith("Your side labels and their order fit")
+        assert hint("sin(C) = AB/AD")["hint"].startswith("I can use the labels for triangle ABC.")
+        assert hint("right angle at C; sin(C) = AB/AC")["hint"].startswith("Check the labels on the triangle.")
+
+
+@pytest.mark.parametrize(('first', 'replies', 'expected'), [
+    ('I put the opposite side in the numerator.', ('the hypotenuse',), 'That side order fits.'),
+    ('I put the opposite side in the numerator.', ("It's the hypotenuse.",), 'That side order fits.'),
+    ('I put the opposite side in the numerator.', ('sin（C）＝opposite ÷ hypotenuse',), 'That side order fits.'),
+    ('I put the opposite side in the numerator.', ('sin(A) = opposite / hypotenuse', 'C', 'opposite', 'hypotenuse'), 'That side order fits.'),
+    ('I put the opposite side in the numerator.', ('adjacent', 'hypotenuse'), 'That side order fits.'),
+    ('Sine compares the opposite side and the hypotenuse.', ('opposite',), 'That side order fits.'),
+    ('Can I use the opposite side for sine?', ('hypotenuse', 'opposite'), 'That side order fits.'),
+    ('I wrote 3/5.', ('the opposite side and hypotenuse', 'opposite'), 'That side order fits.'),
+    ('I wrote 3/5.', ('AB and AC', 'AB'), 'That side order fits.'),
+    ('I wrote 3/5.', ('ac and ab', 'ab'), 'That side order fits.'),
+    ('I wrote 3/5.', ('AB and the hypotenuse', 'AB'), 'That side order fits.'),
+    ('I wrote 3/5.', ('AB and BC', 'AB and AC', 'AB'), 'That side order fits.'),
+    ('I wrote 3/5.', ('AB and AD', 'AB and AC', 'AB'), 'That side order fits.'),
+    ('I wrote 3/5.', ('AB(A) and AC',), 'Which marked angle'),
+    ('Maine 3/5 liya, sahi?', ('AB aur AC', 'AB'), 'Sides ka order sahi hai.'),
+    ('मैंने 3/5 लिखा।', ('AB और कर्ण', 'AB'), 'भुजाओं का क्रम सही है।'),
+    ('3/5', ('opposite', 'hypotenuse', 'opposite'), 'That side order fits.'),
+    ("I don't know where to start.", ('C', 'AB', 'AC'), 'That side order fits.'),
+    ("I got 5 cm. What next?", ('AB', 'AC', 'AB'), 'That side order fits.'),
+    ("I only have 13 cm so far.", ('AD', 'hypotenuse', 'opposite', 'opposite'), 'That side order fits.'),
+    ("I wrote 5 cm.", ('adjacent', 'opposite and hypotenuse', 'opposite'), 'That side order fits.'),
+    ("अभी सिर्फ 5 सेमी लिखा है, आगे?", ('AB', 'AC', 'AB'), 'भुजाओं का क्रम सही है।'),
+    ("Maine bas 5 cm likha, ab kya?", ('AB', 'AC', 'AB'), 'Sides ka order sahi hai.'),
+    ("I'm hopeless at trigonometry.", ('C', 'opposite', 'hypotenuse'), 'That side order fits.'),
+    ("I don't understand which side is opposite.", ('BC', 'AB', 'AB', 'AC'), 'That side order fits.'),
+    ('कहाँ से शुरू करूँ?', ('C', 'AB', 'AC'), 'भुजाओं का क्रम सही है।'),
+    ('Opposite side kaunsi hai?', ('AB', 'AB', 'AC'), 'Sides ka order sahi hai.'),
+    ('I put the opposite side in the numerator.',
+     ('I wrote adjacent/hypotenuse, but I meant opposite/hypotenuse.',), 'That side order fits.'),
+    ('I wrote adjacent/hypotenuse. Correction: Should I use the opposite side for sine?',
+     ('hypotenuse', 'opposite'), 'That side order fits.'),
+    ('sin(C) = AC/AB', ('AB',), 'That side order fits.'),
+    ('I put the opposite side in the numerator.', ('the side ac',), 'That side order fits.'),
+    ('cos(A) = CA/BA', ('BA',), 'That setup works from the other acute angle.'),
+    ('cosine = opposite over hypotenuse', ('tangent', 'sine', 'hypotenuse and opposite', 'opposite'), 'That side order fits.'),
+    ('Angle C, opposite 5, adjacent 12, hypotenuse 13.', ('hypotenuse', 'opposite', 'opposite'), 'That side order fits.'),
+    ('3/5', ('opposite(A) and hypotenuse', 'C', 'opposite', 'hypotenuse'), 'That side order fits.'),
+    ('sine = adjacent over opposite', ('adjacent and hypotenuse', 'opposite and hypotenuse', 'opposite'), 'That side order fits.'),
+    ('Which side should I use?', ('denominator', 'hypotenuse', 'opposite'), 'That side order fits.'),
+    ('Which angle should I use?', ('A', 'C', 'opposite', 'hypotenuse'), 'That side order fits.'),
+    ('sine: opposite over adjacent', ('hypotenuse', 'opposite'), 'That side order fits.'),
+    ('cos A = hypotenuse / adjacent', ('opposite', 'adjacent'), 'That setup works from the other acute angle.'),
+    ('कोण C, सामने वाली भुजा 5 सेमी और कर्ण 13 सेमी है।', ('12 m', '12 सेमी'), 'भुजाओं के नाम'),
+    ('Sine mein hypotenuse ko denominator liya maine.', ('opposite',), 'Sides ka order sahi hai.'),
+])
+@pytest.mark.local_corpus
+def test_practice_clarification_understands_short_replies(tmp_path, registry, maths, first, replies, expected):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    qid = "q_a299429314e72ad14d4a"
+    with TestClient(app) as client:
+        session = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                              headers=HEADERS).json()
+        practice = client.post("/api/practice", json={"session_id": session["id"], "question_id": qid},
+                               headers=HEADERS).json()
+        path = f"/api/practice/{practice['id']}/hint"
+        reply = client.post(path, json={"step": first}, headers=HEADERS).json()
+        for text in replies:
+            assert reply["continuation"] and reply["stage"] == 0
+            reply = client.post(path, json={"step": text, "continuation": reply["continuation"]},
+                                headers=HEADERS).json()
+        assert reply["hint"].startswith(expected)
+        assert "5/13" not in reply["hint"] and reply["stage"] == 0
+        owner = client.cookies["socrates_beta_profile"].split(".")[0]
+        repo = app.state.services["repo"]
+        assert not repo.history(session["id"]) and not repo.observations(owner)
+        assert not repo.assessment(practice["id"], owner)["state"]["submissions"]
+
+
+@pytest.mark.parametrize(('first', 'prompt', 'replies', 'result'), [
+    ("I wrote opposite over hypotenuse or adjacent over hypotenuse.",
+     "Which of those sides are you using on top?", ("opposite",), "That side order fits."),
+    ("I wrote opposite/hypotenuse or opposite/adjacent.",
+     "Which of those sides are you using on the bottom?", ("adjacent", "hypotenuse", "opposite"), "That side order fits."),
+    ("Should I use AB/AC or BC/AC?",
+     "Which of those sides are you using on top?", ("AD", "AB"), "That side order fits."),
+    ("Should I use AB/AC or BC/AC?",
+     "Which of those sides are you using on top?", ("BC",), "Check the numerator."),
+    ("Should I use AB/AC or AC/BC?",
+     "Can you write just the fraction you want me to check?", ("AB/AC",), "That side order fits."),
+    ("Maine AB/AC ya BC/AC likha.",
+     "Inmein se kaunsi side upar rakhi?", ("AB",), "Sides ka order sahi hai."),
+    ("मैंने सामने वाली भुजा/कर्ण या पास वाली भुजा/कर्ण लिखा।",
+     "इनमें से कौन-सी भुजा अंश में रखी?", ("सामने वाली भुजा",), "भुजाओं का क्रम सही है।"),
+])
+@pytest.mark.local_corpus
+def test_practice_asks_only_for_the_part_that_differs(tmp_path, registry, maths, first, prompt, replies, result):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    with TestClient(app) as client:
+        session = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                              headers=HEADERS).json()
+        practice = client.post("/api/practice", json={
+            "session_id": session["id"], "question_id": "q_a299429314e72ad14d4a",
+        }, headers=HEADERS).json()
+        path = f"/api/practice/{practice['id']}/hint"
+
+        def hint(step, previous=None):
+            body = {"step": step}
+            if previous and previous.get("continuation"):
+                body["continuation"] = previous["continuation"]
+            response = client.post(path, json=body, headers=HEADERS)
+            assert response.status_code == 200
+            reply = response.json()
+            assert reply["status"] == "step_feedback" and reply["stage"] == 0
+            assert reply["hint"].count("?") == 1 and "5/13" not in reply["hint"]
+            return reply
+
+        reply = hint(first)
+        assert reply["hint"] == prompt
+        assert bool(reply.get("continuation")) == ("just the fraction" not in prompt)
+        for step in replies:
+            reply = hint(step, reply)
+        assert reply["hint"].startswith(result)
+        owner = client.cookies["socrates_beta_profile"].split(".")[0]
+        repo = app.state.services["repo"]
+        assert not repo.history(session["id"]) and not repo.observations(owner)
+        assert not repo.assessment(practice["id"], owner)["state"]["submissions"]
+
+
+@pytest.mark.local_corpus
+def test_practice_clarification_cannot_cross_assessments_or_override_safety(tmp_path, registry, maths):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    with TestClient(app) as client, TestClient(app) as other:
+        def start():
+            session = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                                  headers=HEADERS).json()
+            practice = client.post("/api/practice", json={
+                "session_id": session["id"], "question_id": "q_a299429314e72ad14d4a",
+            }, headers=HEADERS).json()
+            return f"/api/practice/{practice['id']}"
+        path = start()
+        reply = client.post(path+"/hint", json={
+            "step": "I put the opposite side in the numerator.",
+        }, headers=HEADERS).json()
+        token = reply["continuation"]
+        body = {"step": "hypotenuse", "continuation": token}
+        assert other.post(path+"/hint", json=body, headers=HEADERS).status_code == 404
+        tampered = {"step": "hypotenuse", "continuation": "partial_numerator"+token[token.index("."):]}
+        response = client.post(path+"/hint", json=tampered, headers=HEADERS).json()
+        assert response["hint"] == "Which side did you put on top, and which side underneath?"
+        urgent = client.post(path+"/hint", json={
+            "step": "I'm so stressed about my board exams that I don't want to live anymore.",
+            "continuation": token,
+        }, headers=HEADERS).json()
+        assert urgent["status"] == "human_help" and urgent["persistence"] == "not_saved_urgent"
+        assert "continuation" not in urgent
+        assert client.post(path+"/leave", json={}, headers=HEADERS).status_code == 200
+        assert client.post(path+"/hint", json=body, headers=HEADERS).status_code == 400
+        other_path = start()
+        response = client.post(other_path+"/hint", json=body, headers=HEADERS).json()
+        assert response["hint"] == "Which side did you put on top, and which side underneath?"
+
+
+@pytest.mark.parametrize(("text", "opening"), [
+    ("I need immediate emotional support; don't evaluate a triangle exercise.", "I'm glad you asked"),
+    ("I need emotional support, please.", "I'm glad you asked"),
+    ("Mujhe abhi emotional support chahiye.", "Aapne support maanga"),
+    ("मुझे अभी भावनात्मक सहारा चाहिए।", "आपने मदद माँगी"),
+])
+@pytest.mark.local_corpus
+def test_direct_emotional_support_skips_model_and_math_and_is_not_saved(
+    tmp_path, registry, maths, monkeypatch, text, opening,
+):
+    from tutor import triangle_reasoning
+
+    def unexpected_check(*args, **kwargs):
+        pytest.fail("An emotional-support request reached the maths checker")
+
+    monkeypatch.setattr(triangle_reasoning, "ratio_step_feedback", unexpected_check)
+    language = Language()
+    app = create_app({
+        "app_root": str(APP), "data_directory": str(tmp_path), "require_live_consent": True,
+    }, registry=registry, maths=maths, language=language, testing=True)
+    with TestClient(app) as client:
+        sid = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                          headers=HEADERS).json()["id"]
+        practice = client.post("/api/practice", json={"session_id": sid, "question_id": "q_a299429314e72ad14d4a"},
+                               headers=HEADERS).json()
+        chat = client.post("/api/chat", json={"session_id": sid, "text": text, "request_id": "support-turn"},
+                           headers=HEADERS).json()
+        hint = client.post(f"/api/practice/{practice['id']}/hint", json={"step": text}, headers=HEADERS).json()
+        assert chat["move"] == hint["status"] == "emotional_support"
+        assert chat["provider_status"] == "not_called"
+        assert chat["persistence"] == hint["persistence"] == "not_saved_support"
+        assert chat["reply"] == hint["hint"] and hint["hint"].startswith(opening)
+        assert hint["stage"] == 0 and "continuation" not in hint
+        owner = client.cookies["socrates_beta_profile"].split(".")[0]
+        repo = app.state.services["repo"]
+        assert repo.history(sid) == [] and repo.observations(owner) == []
+        assert repo.assessment(practice["id"], owner)["state"]["hint_stage"] == 0
+        assert language.contexts == []
+
+
+@pytest.mark.parametrize("text", [
+    "I'm hopeless at trigonometry.",
+    "I need emotional support examples for my essay.",
+    'The character says, "I need emotional support."',
+    "I do not need emotional support.",
+    "Translate I need emotional support into Hindi.",
+    "I need emotional supporter advice for a project.",
+])
+def test_emotional_support_ignores_study_frustration_and_mentions(text):
+    from socrates_beta.safety import emotional_support_reply
+    assert emotional_support_reply(text) is None
+
+
+@pytest.mark.local_corpus
+def test_urgent_route_takes_priority_over_emotional_support(tmp_path, registry, maths):
+    app = create_app({"app_root": str(APP), "data_directory": str(tmp_path)},
+                     registry=registry, maths=maths, testing=True)
+    text = "I need emotional support. I don't want to live anymore. Correction: sin C = AB/AC."
+    with TestClient(app) as client:
+        sid = client.post("/api/sessions", json={"grade": 10, "subject": "Mathematics", "unit": 8},
+                          headers=HEADERS).json()["id"]
+        practice = client.post("/api/practice", json={"session_id": sid, "question_id": "q_a299429314e72ad14d4a"},
+                               headers=HEADERS).json()
+        chat = client.post("/api/chat", json={"session_id": sid, "text": text, "request_id": "urgent-support"},
+                           headers=HEADERS).json()
+        hint = client.post(f"/api/practice/{practice['id']}/hint", json={"step": text}, headers=HEADERS).json()
+        assert chat["move"] == hint["status"] == "human_help"
+        assert chat["safety_kind"] == "crisis"
+        assert chat["persistence"] == hint["persistence"] == "not_saved_urgent"

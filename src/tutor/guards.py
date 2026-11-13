@@ -76,11 +76,23 @@ _OVERRIDE = r"(?:ignore|disregard|forget|override|bypass|cancel|drop|discard|del
 _SCOPE = (r"(?:your|my|the|all|any|these|those|previous|prior|above|earlier|preceding|original|initial|existing|given|"
           r"hard-?coded|system|safety)")
 _THEIR = r"(?:instructions?|guidelines?|prompts?|directives?|programming|restrictions?|guardrails?|filters?|system message)"
+_PROTECTED_VALUE = (
+    r"(?:pass(?:word|phrase|code)|secret (?:word|phrase|code|key)|system (?:prompt|message)|"
+    r"hidden (?:prompt|instructions))"
+)
+_PROTECTED_VALUE_REQUEST = (
+    r"\b(?:reveal|disclose|output|print|display|repeat|say|tell|show|give|provide|write|share)"
+    r"\s+(?:(?:me|us)\s+)?(?:(?:the|your)\s+)"
+    rf"(?:actual\s+|current\s+|exact\s+)?{_PROTECTED_VALUE}\b"
+    r"|\b(?:tell|show|give)\s+(?:me|us)\s+what\s+(?:your|the)\s+"
+    rf"{_PROTECTED_VALUE}\s+is\b"
+)
 INJECTION = re.compile(r"(ignore (all |the )?(previous|above|prior) (instructions|rules)|disregard (your|the) rules|"
                        r"you are now|system prompt|reveal (the|your) (prompt|instructions)|act as (an? )?(admin|teacher)|"
                        r"print (all )?(the )?(answers?|keys?)"
                        rf"|\b{_OVERRIDE}\b(?:\s+\w+){{0,3}}?\s+{_SCOPE}\s+(?:\S+\s+){{0,2}}?{_THEIR}\b"
                        rf"|\b{_OVERRIDE}\s+(?:all\s+)?your\s+rules\b"
+                       rf"|{_PROTECTED_VALUE_REQUEST}"
                        r"|(?:^|[.!?:;]\s*|\b(?:now|please|just|so|ok|okay)\s+)(?:forget|ignore|disregard)\s+(?:everything|all of that|all that)\b"
                        r"(?!\s+(?:i|we)\s+(?:learn|learnt|learned|study|studied))"
                        r"|\bforget everything (?:before|above|so far|you (?:were|have been) told|i said)\b"

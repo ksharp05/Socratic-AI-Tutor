@@ -100,7 +100,7 @@ class ApprovedAssessmentService(AssessmentService):
             self._available = visible
             return self._submit(owner, aid, text, request_id)
 
-    def hint(self, owner, aid):
+    def hint(self, owner, aid, step=None, continuation=None):
         with self.repo.owner_guard(owner), self.lock, self._published() as visible:
             self._available = visible
-            return self._hint(owner, aid)
+            return self._hint(owner, aid, step, continuation)

@@ -2,9 +2,9 @@ from __future__ import annotations
 import json,logging,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
-from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,
+from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,emotional_support_reply,
                      guess_language,REPLIES)
-from .ports import Scope
+from .ports import SafetyScreenPort, Scope
 from tutor.guards import INJECTION
 from .topics import broad_topic,discovery_question,navigation_reply
 
@@ -90,24 +90,34 @@ def _screen_urgent(message: str, stage: str):
 
 
 class DialogueService:
-    def __init__(self,repo,registry,language=None,*,check_consent=None):
+    def __init__(self,repo,registry,language=None,*,check_consent=None,
+                 supplemental_screen: SafetyScreenPort | None = None):
         self.repo,self.registry,self.language=repo,registry,language;self.locks={};self.guard=threading.Lock()
         self.check_consent=check_consent
+        self.supplemental_screen=supplemental_screen
     def session_lock(self,sid):
         with self.guard:return self.locks.setdefault(sid,threading.RLock())
     def turn(self,owner,sid,message,request_id):
         hit=_screen_urgent(message, "input")
         if hit:
-            # Give immediate support without waiting for a provider, database,
-            # profile lock, or session lookup. No notification is implied.
-            return {'reply':reply_for(*hit),'citations':[],'move':'human_help','safety_kind':hit[0],
+            return self._urgent_response(hit)
+        if support := emotional_support_reply(message):
+            return {'reply':support,'citations':[],'move':'emotional_support',
                     'provider_status':'not_called','validation_error':None,
                     'verification':'not_assessed','format_repaired':False,'repair_reason':None,
                     'dataset_id':None,'latency_ms':0,'retrieval':{'hits':0,'ids':[]},
-                    'human_review_status':'pending','persistence':'not_saved_urgent'}
+                    'human_review_status':'pending','persistence':'not_saved_support'}
         if self.check_consent is not None:
             self.check_consent(owner)
         with self.repo.owner_guard(owner), self.session_lock(sid):return self._turn(owner,sid,message,request_id)
+    @staticmethod
+    def _urgent_response(hit):
+        return {'reply':reply_for(*hit),'citations':[],'move':'human_help','safety_kind':hit[0],
+                'provider_status':'not_called','validation_error':None,
+                'verification':'not_assessed','format_repaired':False,'repair_reason':None,
+                'dataset_id':None,'latency_ms':0,'retrieval':{'hits':0,'ids':[]},
+                'human_review_status':'pending','persistence':'not_saved_urgent'}
+
     def _turn(self,owner,sid,message,request_id):
         start=time.monotonic()
         original_message=message
@@ -120,20 +130,31 @@ class DialogueService:
                 return prior['result']
             if turn_count>=500:raise ValueError('Start a new conversation to keep this session manageable')
             assessment=self.repo.active_assessment(sid,owner,conn=conn) or self.repo.open_check(owner,conn=conn)
+        hit=_screen_urgent(message, "redacted_input") if message!=original_message else None
+        if hit:
+            return self._urgent_response(hit)
+
+        screening = None
+        if self.supplemental_screen is not None:
+            previous = history[-1]['user_text'] if history else None
+            try:
+                screening = self.supplemental_screen(message, previous)
+            except (OSError, ValueError):
+                _safety_log.warning("Supplemental safety screen unavailable")
+            if screening == 'crisis':
+                return self._urgent_response(('crisis', guess_language(message)))
+
         state=session['state'];scope=Scope(**session['scope'])
         adapter=self.registry.knowledge(session['dataset']);passages=[];citations=[];move='diagnostic';status='not_called';error=None;repaired=False;repair_reason=None
         recent=[]
         for t in history:recent.extend([{'role':'user','text':t['user_text']},{'role':'assistant','text':t['result']['reply']}])
-        hit=_screen_urgent(message, "redacted_input") if message!=original_message else None
-        if hit:
-            reply=reply_for(*hit);move='human_help'
-        elif CHAT_PRIVACY.search(message) and PRIVACY_ACTION.search(message):
+        if CHAT_PRIVACY.search(message) and PRIVACY_ACTION.search(message):
             reply = ("Your conversations are saved on our server and linked to this browser profile. "
                      "You can delete them using Forget my data under Your progress.")
             move = 'privacy_help'
         elif assessment:
             reply="Your check is active. Please answer in the practice panel; I haven't checked this message.";move='assessment_isolation'
-        elif ACCESS.search(message):
+        elif screening == 'injection' or ACCESS.search(message):
             reply='I can help with the textbook, but a chat message cannot change access or reveal private material. Which concept would you like to explore?';move='access_boundary'
         elif re.fullmatch(r'(hi|hello|hey|thanks|thank you|bye)[!. ]*',message,re.I):
             reply='We can take this one step at a time. Which idea would you like to explore?';move='social'
@@ -236,11 +257,12 @@ class DialogueService:
         result={'reply':reply,'citations':sources,'move':move,'provider_status':status,'validation_error':error,
           'verification':'not_assessed','format_repaired':repaired,'repair_reason':repair_reason,'dataset_id':session['dataset'],'latency_ms':round((time.monotonic()-start)*1000),
           'retrieval':{'hits':len(passages),'ids':[p['id'] for p in passages]},'human_review_status':'pending','reference_bundle':getattr(adapter,'reference_bundle',None)}
-        self.repo.save_turn(sid,request_id,message,result,state)
-        if sources:
-            p=next(p for p in passages if p['id']==sources[0]['id'])
-            node=p.get('concept_id') or (p['id'].split(':',1)[1] if p['id'].startswith('normalized:') else f"reading:{p['book']}:{p['unit_file_index']}")
-            self.repo.observe(owner,sid,node,'explored',{'dataset':session['dataset'],'passage_id':p['id']})
+        with self.repo.connect() as conn:
+            self.repo.save_turn(sid,request_id,message,result,state,conn=conn)
+            if sources:
+                p=next(p for p in passages if p['id']==sources[0]['id'])
+                node=p.get('concept_id') or (p['id'].split(':',1)[1] if p['id'].startswith('normalized:') else f"reading:{p['book']}:{p['unit_file_index']}")
+                self.repo.observe(owner,sid,node,'explored',{'dataset':session['dataset'],'passage_id':p['id']},conn=conn)
         return result
     @staticmethod
     def citation(p):

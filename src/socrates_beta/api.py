@@ -10,9 +10,9 @@ from pydantic import BaseModel,ConfigDict,Field
 from . import __version__
 from .bootstrap import bootstrap
 from .repository import Repository,BetaBusy
-from .ports import Scope
+from .ports import SafetyScreenPort, Scope
 from .dialogue import DialogueService
-from .safety import clean_text,redact_personal_data
+from .safety import clean_text,redact_personal_data,reply_for,urgent
 from .maths import CheckedMaths,AssessmentService
 from .study import StudyService
 from .transport import BrowserTransport
@@ -32,6 +32,10 @@ class StartIn(Closed):
     session_id:str;mode:Literal['practice','diagnostic','quiz']='practice';concept:str|None=None;question_id:str|None=None
 class SubmitIn(Closed):
     answer:str=Field(min_length=1,max_length=512);request_id:str=Field(min_length=8,max_length=80)
+class HintIn(BaseModel):
+    model_config=ConfigDict(strict=True)
+    step:str|None=Field(default=None,max_length=512)
+    continuation:str|None=Field(default=None,max_length=160)
 class CardIn(Closed):session_id:str;passage_id:str
 class ReviewIn(Closed):rating:Literal['again','hard','good','easy']
 class PrefsIn(Closed):
@@ -40,7 +44,8 @@ class PrefsIn(Closed):
     model_consent:bool=False
 
 
-def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False,tutor_provider=None,browser_secret=None):
+def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=None,repository=None,maths=None,testing=False,tutor_provider=None,browser_secret=None,
+               supplemental_screen: SafetyScreenPort | None = None):
     settings=json.loads(Path(config or ROOT/'config/beta/local.json').read_text(encoding='utf-8-sig')) if not isinstance(config,dict) else config
     transport=BrowserTransport.configured(settings.get('public_origin'),testing=testing,additional_origins=settings.get('additional_origins',()))
     if settings.get('assessment_policy') not in (None,'reference_checked_beta'):
@@ -64,7 +69,8 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
             raise HTTPException(403,{'code':'model_consent_required','message':'Confirm live model use in Learning preferences before sending this message.'})
 
     consent_check=check_consent if settings.get('require_live_consent') and language else None
-    dialogue=DialogueService(repo,registry,language,check_consent=consent_check)
+    dialogue=DialogueService(repo,registry,language,check_consent=consent_check,
+                             supplemental_screen=supplemental_screen)
     if settings.get('assessment_policy')=='reference_checked_beta':
         if tutor_provider is not None:raise ValueError('Reference beta publication does not imply graph teacher approval')
         from .reference_policy import ReferenceCheckedAssessmentService
@@ -172,7 +178,25 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     def submit(aid:str,body:SubmitIn,request:Request):
         return assess.submit(owner(request),aid,body.answer,body.request_id)
     @app.post('/api/practice/{aid}/hint')
-    def hint(aid:str,request:Request):return assess.hint(owner(request),aid)
+    def hint(aid:str,request:Request,body:HintIn|None=None):
+        step=body.step.strip() if body and body.step else None
+        if step and (hit:=urgent(step)):
+            return {'status':'human_help','hint':reply_for(*hit),'persistence':'not_saved_urgent'}
+        profile = owner(request)
+        continuation = None
+        if step and body.continuation:
+            question, separator, signature = body.continuation.rpartition('.')
+            key, _, language = question.rpartition('.')
+            if separator and key and language in ('en','hi','hinglish'):
+                signed = hmac.new(secret, f'practice-followup:{profile}:{aid}:{question}'.encode(), hashlib.sha256).hexdigest()
+                if re.fullmatch('[0-9a-f]{64}', signature) and hmac.compare_digest(signed, signature):
+                    continuation = (key, language)
+        result = assess.hint(profile,aid,step,continuation)
+        if followup := result.pop('_followup', None):
+            question = '.'.join(followup)
+            signed = hmac.new(secret, f'practice-followup:{profile}:{aid}:{question}'.encode(), hashlib.sha256).hexdigest()
+            result['continuation'] = f'{question}.{signed}'
+        return result
     @app.post('/api/practice/{aid}/leave')
     def leave(aid:str,request:Request):return assess.leave(owner(request),aid)
     @app.get('/api/map')

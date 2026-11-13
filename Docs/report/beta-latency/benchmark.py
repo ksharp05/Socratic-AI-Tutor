@@ -134,6 +134,22 @@ def trace_summary(spans):
     for item in spans:
         if item["parentId"] is not None:
             children[item["parentId"]].append(item)
+    connections = {}
+    for item in spans:
+        parent = item["parentId"]
+        if item["name"] == "Progress connection enter":
+            connections[parent] = item
+        elif item["name"] == "Progress connection exit":
+            entry = connections.pop(parent)
+            # A shared connection can open outside the nested write methods.
+            wrote = any(child["stage"] == "writes"
+                        and entry["end_ns"] <= child["start_ns"]
+                        and child["end_ns"] <= item["start_ns"]
+                        for child in children[parent])
+            if wrote:
+                for edge in (entry, item):
+                    edge["stage"] = "writes"
+                    edge["service"] = STAGES["writes"]
     exclusive = Counter()
     root = spans[0]
     for item in spans:

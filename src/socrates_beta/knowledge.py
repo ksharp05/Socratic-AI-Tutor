@@ -1,6 +1,7 @@
 from __future__ import annotations
 import difflib,hashlib,json,os,re,shutil,sqlite3,subprocess,threading,time
 from contextlib import contextmanager
+from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urlparse
 from ncert_pipeline.build import SCHEMA,insert_passage
@@ -40,6 +41,23 @@ def fold(word):
     if len(word)>4 and word.endswith('es') and word[-3] in 'sxz':return word[:-2]
     if len(word)>3 and word.endswith('s') and not word.endswith('ss'):return word[:-1]
     return word
+@lru_cache(maxsize=1024)
+def _source_words(text: str) -> frozenset[str]:
+    words = set(re.findall('[a-z0-9]+',text.casefold()))
+    return frozenset(words | {fold(word) for word in words})
+
+
+@lru_cache(maxsize=1024)
+def _passage_words(text: str, title: str, note: str) -> frozenset[str]:
+    expanded = (text+' '+title+' '+note).casefold()
+    for acronym,meaning in ALIASES.items():
+        expanded += ' '+re.sub(r'(?<!\w)'+re.escape(acronym)+r'(?!\w)',meaning,text.casefold())
+    for spelled,short in TRIG_SPELLINGS.items():
+        if re.search(r'(?<!\w)(?:'+re.escape(spelled)+'|'+re.escape(short)+r')(?!\w)',expanded):
+            expanded += ' '+spelled+' '+short
+    return _source_words(expanded)
+
+
 SAFE_ID=re.compile(r'^[a-z0-9][a-z0-9_-]{2,79}$')
 
 
@@ -166,16 +184,13 @@ class SqliteKnowledge:
         extra=getattr(self,'extra_text',{})
         seen={p['id'] for p in rows};floor_rank=max([p['rank'] for p in rows],default=-1.0)
         for pid,text in extra.items():
-            words={w for w in re.findall('[a-z0-9]+',text.casefold())};words|={fold(w) for w in words}
-            if pid in seen or sum(t in words for t in terms)<max(1,len(terms)/2) or not any(t in words and t not in GENERIC for t in terms):continue
+            if pid in seen:continue
+            words=_source_words(text)
+            if sum(t in words for t in terms)<max(1,len(terms)/2) or not any(t in words and t not in GENERIC for t in terms):continue
             p=self.passage(pid)
             if p and self._in_scope(pid,scope):rows.append({**p,'rank':floor_rank})
         for p in rows:
-            expanded=(p['text']+' '+p['title']+' '+extra.get(p['id'],'')).casefold()
-            for acronym,meaning in ALIASES.items():expanded+=' '+re.sub(r'(?<!\w)'+re.escape(acronym)+r'(?!\w)',meaning,p['text'].casefold())
-            for spelled,short in TRIG_SPELLINGS.items():
-                if re.search(r'(?<!\w)(?:'+re.escape(spelled)+'|'+re.escape(short)+r')(?!\w)', expanded):expanded+=' '+spelled+' '+short
-            words=set(re.findall('[a-z0-9]+',expanded));words|={fold(w) for w in words}
+            words=_passage_words(p['text'],p['title'],extra.get(p['id'],''))
             hits=[t for t in terms if t in words]
             p['query_coverage']=len(hits)/len(terms)
             p['domain_hits']=sum(t not in GENERIC for t in hits)

@@ -48,7 +48,8 @@ class CheckedMaths:
         x=self.items[qid];kind=x['answer_contract']['allowed_kinds'][0]
         return {'id':qid,'prompt':x['prompt'],'concepts':x['problem']['concept_ids'],'chapter':x['chapter'],
           'answer_kind':kind,'units':x['answer_contract'].get('required_units_by_kind',{}).get(kind),
-          'difficulty':x['difficulty']['level'],'source_passages':x['supporting_passage_ids']}
+          'difficulty':x['difficulty']['level'],'source_passages':x['supporting_passage_ids'],
+          'supports_step_feedback':x['problem'].get('task_type')=='trig_triangle_ratio'}
     def parse(self,text,item):
         if not isinstance(text,str) or not text.strip() or len(text)>512:raise ValueError('Use a short exact answer')
         kind=item['answer_contract']['allowed_kinds'][0];raw=text.strip()
@@ -275,19 +276,33 @@ class AssessmentService:
             self.repo.save_assessment(a,conn=conn)
             return response
 
-    def hint(self,owner,aid):
+    def hint(self,owner,aid,step=None,continuation=None):
         with self.repo.owner_guard(owner):
-            return self._hint(owner,aid)
+            return self._hint(owner,aid,step,continuation)
 
-    def _hint(self,owner,aid):
+    def _hint(self,owner,aid,step=None,continuation=None):
         with self.lock, self.repo.transaction() as conn:
             a=self.repo.assessment(aid,owner,conn=conn);s=a['state']
             revoked=self._guard_assessment(a,conn)
             if revoked:return {'status':'question_revoked','hint':revoked['message'],'stage':0,'assessment':revoked}
             self._ensure_no_other_check(owner,aid,conn)
             if a['mode']!='practice' or s['complete']:raise ValueError('Hints are available during active practice only')
-            s['hint_stage']=min(3,s['hint_stage']+1);self.repo.save_assessment(a,conn=conn)
             qid=s['queue'][s['index']]
+            if step:
+                from .safety import emotional_support_reply
+
+                if support := emotional_support_reply(step):
+                    return {'hint':support,'stage':s['hint_stage'],'status':'emotional_support',
+                            'persistence':'not_saved_support'}
+                from .ratio_hint import ratio_hint
+                tailored = ratio_hint(self.maths.items[qid]['problem'], step, continuation)
+                if tailored is not None:
+                    text, followup = tailored
+                    result = {'hint':text,'stage':s['hint_stage'],'status':'step_feedback'}
+                    if followup:
+                        result['_followup'] = followup
+                    return result
+            s['hint_stage']=min(3,s['hint_stage']+1);self.repo.save_assessment(a,conn=conn)
             result={'hint':self.maths.hint(qid,s['hint_stage']),'stage':s['hint_stage']}
             if self._mark_after_last_hint(a,qid,conn):result['saved_for_later']=True
             return result

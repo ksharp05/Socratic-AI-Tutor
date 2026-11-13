@@ -164,10 +164,88 @@ REPLIES = {
 # now lives in tutor.guards so the team tutor and the beta agree.
 
 
+# Strip the mention itself only. A disclosure elsewhere in the same message
+# still reaches the crisis screen, as do child-safety and secrecy cues.
+_RISK_TERM = r"\b(?:suicid\w*|self[- ]?harm\w*)\b|आत्महत्या|खुदकुशी"
+_ACADEMIC_TERM = re.compile(
+    rf"""\b(?:textbook|dictionary|worksheet|essay|nlp project)\s+(?:mein|me|में|pe|par|in|on)\s+"""
+    rf"""['"“‘]?(?P<term>(?:{_RISK_TERM}))"""
+    rf"""(?=[^.!?;\n]{{0,95}}\b(?:meaning|heading|adjective|usage|definition|category name|interpretation|term)\b)""",
+    re.I,
+)
+_REFERENCED_TERM = re.compile(
+    rf"""(?P<term>(?:{_RISK_TERM}))"""
+    r"""(?=-related case study\b|\s+ideation['"’”]?\s+term in (?:a |the )?research abstract\b"""
+    r"""|['"’”]?\s+word (?:aaya hai|google result)\b)""",
+    re.I,
+)
+_PREVENTION_TERM = re.compile(
+    r"\b(?:suicide|self[- ]?harm) prevention\b"
+    r"(?=[^.!?;\n]{0,75}\b(?:heading|meaning|awareness|poster|infographic|tagline)\b)"
+    r"|\b(?:report|essay|project) (?:about|on) (?:suicide|self[- ]?harm) prevention\b"
+    r"|आत्महत्या रोकथाम(?=[^.!?।;\n]{0,55}(?:पोस्टर|शीर्षक))",
+    re.I,
+)
+_ATTRIBUTED_QUOTE = re.compile(
+    r"""\b(?:novel|story|play|paragraph|sentence)\b[^.!?;\n'"“‘]{0,75}?"""
+    r"""(?:["“](?P<double>[^"”\n]{1,100})["”]|"""
+    r"""['‘](?P<single>(?:[a-z]['’][a-z]|[^'’\n]){1,90})['’](?![a-z]))"""
+    r"""(?=[^.!?;\n]{0,110}\b(?:narrator|dialogue|reported speech|protagonist|context|analyse|analyze|meaning)\b)""",
+    re.I,
+)
+_FICTION_QUOTE = re.compile(
+    r"""['"“‘](?P<quote>[^'"”’\n]{1,70})['"”’]"""
+    r"""(?=\s+(?:is a fictional quote\b[^.!?\n]{0,30}\bpassive voice\b|"""
+    r"""koi real thought (?:nahi|nhi|नहीं),?\s+speech competition ke script ka line hai\b))""",
+    re.I,
+)
+_DEFINITION_TERM = re.compile(rf"\bdefinition of\s+(?P<term>(?:{_RISK_TERM}))(?=\s+(?:chahiye|for)\b)", re.I)
+_HINDI_QUOTE = re.compile(
+    r"कहानी के किरदार\s*ने ['‘“](?P<quote>[^'’”\n]{1,90})['’”] कहा है(?=[^।.!?\n]{0,50}समझाओ)"
+)
+_EXPLICIT_DENIAL = re.compile(
+    r"\bself[- ]?harm(?: ka (?:koi|कोई) thought| thoughts?) (?:nahi|nahin|nhi|ni|नहीं)(?![\w\u0900-\u097f])"
+    r"|\b(?:not suicidal|no desire to hurt myself)\b(?=\s*(?:[,;.!?]|\n|$))"
+    r"|(?:apne aap ko hurt karne ka koi iraada|खुद को नुकसान पहुँचाने के बारे में) (?:nahi|नहीं)(?![\w\u0900-\u097f])",
+    re.I,
+)
+_CONTEXTUAL_CRISIS = re.compile(
+    r"\b(?:i(?:'m| am) not safe right now|i(?:'m| am) about to do something to myself|"
+    r"i wish i could stop existing|i(?:'m| am) genuinely thinking of dying|"
+    r"(?:she|he|they) (?:might|may|will) (?:hurt|harm) (?:herself|himself|themselves)|"
+    r"(?:he|she|they) can(?:'t|not) keep (?:himself|herself|themselves) safe|"
+    r"(?:my|meri|mera) (?:friend|(?:younger )?brother|sister) [^.!?\n]{0,35}\bwants to die|"
+    r"khud se danger lag|apni jaan (?:lene|khatam karne)|"
+    r"(?:marne ke khayal|kaash aankh hi na khule|jeena band karne ka|"
+    r"permanently disappear ho ja(?:un|oon)|meri safety pe help))\b"
+    r"|apne aap ko (?:safe|सेफ|सुरक्षित) (?:nahi|nhi|नहीं) rakh"
+    r"|(?:अपनी जान लेने के विचार|सच में नहीं जीना चाहत|कल का दिन देखना नहीं चाहता)",
+    re.I,
+)
+
+
+def _mask_mentioned_span(match: re.Match) -> str:
+    group = match.lastgroup
+    start, end = match.span(group)
+    offset = match.start()
+    return match[0][:start - offset] + " " + match[0][end - offset:]
+
+
+def _crisis_context(screen: str) -> str:
+    for pattern in (_ACADEMIC_TERM, _REFERENCED_TERM, _DEFINITION_TERM, _ATTRIBUTED_QUOTE, _FICTION_QUOTE, _HINDI_QUOTE):
+        screen = pattern.sub(_mask_mentioned_span, screen)
+    screen = _PREVENTION_TERM.sub(" ", screen)
+    return _EXPLICIT_DENIAL.sub(" ", screen)
+
+
 def urgent(text: str):
     """Return (kind, language) for a crisis, child-safety or secrecy-request message, else None."""
     screen = _IDIOMS.sub(" ", screening_text(text))
-    for kind, pattern in (("crisis", CRISIS), ("child_safety", CHILD_SAFETY), ("secrecy", SECRECY)):
+    if CRISIS.search(screen) or _CONTEXTUAL_CRISIS.search(screen):
+        context = _crisis_context(screen)
+        if context == screen or CRISIS.search(context) or _CONTEXTUAL_CRISIS.search(context):
+            return "crisis", guess_language(text)
+    for kind, pattern in (("child_safety", CHILD_SAFETY), ("secrecy", SECRECY)):
         if pattern.search(screen):
             return kind, guess_language(text)
     return None
@@ -177,6 +255,46 @@ def reply_for(kind: str, language: str) -> str:
     table = REPLIES[kind]
     return table.get(language, table["en"])
 
+
+# A direct request for support can be answered without classifying it as a crisis.
+_SUPPORT_REQUESTS = {
+    "en": re.compile(
+        r"(?:i (?:need|want|could use|would like)|can i (?:get|have)|can you (?:give|offer) me)"
+        r" (?:some |a little )?(?:(?:immediate|urgent) )?emotional support"
+    ),
+    "hi": re.compile(
+        r"मुझे (?:(?:अभी|तुरंत) )?(?:कुछ )?(?:भावनात्मक (?:सहारा|समर्थन|मदद)|इमोशनल सपोर्ट) चाहिए"
+    ),
+    "hinglish": re.compile(
+        r"mujhe (?:(?:abhi|turant|thoda|thodi) )*(?:emotional support|emotional help|jazbaati sahara)"
+        r" (?:chahiye|chaiye)"
+    ),
+}
+_SUPPORT_END = re.compile(r"(?:[ ,]+(?:right now|abhi|अभी|please|कृपया))*[.!?।;]*(?:\s|$)")
+_SUPPORT_REPLIES = {
+    "en": "I'm glad you asked for support. We can pause the exercise. "
+          "Is there a trusted adult or school counsellor you can talk to?",
+    "hi": "आपने मदद माँगी, यह अच्छा किया। हम सवाल को थोड़ी देर के लिए रोक सकते हैं। "
+          "क्या कोई भरोसेमंद बड़ा या स्कूल काउंसलर है जिससे आप बात कर सकें?",
+    "hinglish": "Aapne support maanga, yeh achha kiya. Hum exercise ko abhi pause kar sakte hain. "
+                "Kya kisi bharosemand bade ya school counsellor se baat kar sakte ho?",
+}
+
+
+def emotional_support_reply(text: str) -> str | None:
+    """Answer an explicit first-person request after the urgent screen has cleared it."""
+    message = " ".join(unicodedata.normalize("NFC", clean_text(text)).casefold().split())
+    if message.startswith("please "):
+        message = message.removeprefix("please ")
+    for language, pattern in _SUPPORT_REQUESTS.items():
+        match = pattern.match(message)
+        if not match:
+            continue
+        suffix = message[match.end():]
+        boundary = _SUPPORT_END.match(suffix)
+        if boundary and (boundary.end() == len(suffix) or boundary[0].rstrip().endswith((".", "!", "?", "।", ";"))):
+            return _SUPPORT_REPLIES[language]
+    return None
 
 class UrgentScreen:
     """Drop-in for the old DISTRESS regex: .search(text) is truthy for any message that gets a fixed safety reply."""

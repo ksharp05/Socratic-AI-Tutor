@@ -137,9 +137,9 @@ class Repository:
         with self.connect() as c:r=c.execute('SELECT result FROM turns WHERE session_id=? AND request_id=?',(sid,key)).fetchone()
         return json.loads(r[0]) if r else None
 
-    def save_turn(self,sid,key,text,result,state):
+    def save_turn(self,sid,key,text,result,state,*,conn=None):
         now=time.time()
-        with self.connect() as c:
+        with self._using(conn) as c:
             c.execute('INSERT INTO turns(session_id,request_id,user_text,result,created) VALUES (?,?,?,?,?)',
               (sid,key,text,json.dumps(result),now))
             c.execute('UPDATE sessions SET state=?,updated=? WHERE id=?',(json.dumps(state),now,sid))

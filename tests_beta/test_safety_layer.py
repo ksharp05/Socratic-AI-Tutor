@@ -94,3 +94,28 @@ def test_maths_checker_refuses_expensive_expressions(expr):
 
 def test_maths_checker_still_accepts_normal_answers():
     assert exact("(1+sqrt(2))**4") is not None and exact("2**100") == 2**100 and exact("sqrt(3)/2") is not None
+
+
+@pytest.mark.parametrize("text", [
+    "Dictionary mein 'suicidal' adjective ka usage explain karo.",
+    "English textbook mein 'suicide prevention' ka heading hai, Hindi meaning batao.",
+    "Novel ke character ne bola 'I don't want to live', narrator ka tone analyse karo.",
+    "कहानी के किरदार ने 'जीना नहीं चाहता' कहा है, उसके भाव समझाओ।",
+    "Mujhe koi self-harm thoughts नहीं hain, bas homework mein help chahiye.",
+    "I am not suicidal, I need help writing a report about suicide prevention.",
+])
+def test_crisis_screen_allows_clear_mentions_and_denials(text):
+    assert safety.urgent(text) is None
+
+
+@pytest.mark.parametrize("text", [
+    "English textbook mein 'suicide prevention' ka heading hai, but I don't want to live.",
+    "Novel ke character ne bola 'I don't want to live', narrator ka tone analyse karo. I feel like hurting myself.",
+    "I am not suicidal, but I can't keep myself safe right now. I might hurt myself.",
+    "मुझे अभी भावनात्मक सहारा चाहिए। अपनी जान लेने के विचार आ रहे हैं।",
+    "My friend says he can't keep himself safe right now. What should I do?",
+    "Main apne aap ko safe nahi rakh paunga, please help.",
+    "I am not suicidal enough to tell anyone yet.",
+])
+def test_crisis_screen_retains_personal_and_third_party_disclosures(text):
+    assert safety.urgent(text)[0] == "crisis"

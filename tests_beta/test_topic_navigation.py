@@ -111,3 +111,32 @@ def test_topic_probe_reuses_identical_retrieval(service,monkeypatch):
     result=dialogue.turn(owner,sid,question,"switch-request")
     assert result["citations"][0]["id"].startswith("normalized:tr")
     assert calls==[question]
+
+
+def test_cited_turn_and_observation_commit_together(service,monkeypatch):
+    dialogue,repo,registry=service
+    owner=uuid.uuid4().hex
+    session=repo.create_session(owner,registry.public()["active"],{"grade":10,"subject":"Mathematics"},"Synthetic")
+    sid=session["id"]
+    message="What is the discriminant?"
+    request_id="atomic-request"
+    observe=repo.observe
+
+    def fail_after_observation(*args,**kwargs):
+        observe(*args,**kwargs)
+        raise RuntimeError("Synthetic write failure")
+
+    with monkeypatch.context() as override:
+        override.setattr(repo,"observe",fail_after_observation)
+        with pytest.raises(RuntimeError,match="Synthetic write failure"):
+            dialogue.turn(owner,sid,message,request_id)
+
+    assert repo.history(sid)==[]
+    assert repo.observations(owner)==[]
+    assert repo.session(sid,owner)["state"]==session["state"]
+
+    result=dialogue.turn(owner,sid,message,request_id)
+    assert result["citations"]
+    assert dialogue.turn(owner,sid,message,request_id)==result
+    assert len(repo.history(sid))==1
+    assert len(repo.observations(owner))==1
