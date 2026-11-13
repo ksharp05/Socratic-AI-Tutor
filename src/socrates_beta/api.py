@@ -81,7 +81,8 @@ def create_app(config: Path|dict|None=None,*,live=False,language=None,registry=N
     else:
         assess=AssessmentService(repo,maths)
     study=StudyService(repo,registry)
-    app=FastAPI(title='Socrates beta',version=__version__,docs_url='/api/docs' if testing else None,redoc_url=None)
+    app=FastAPI(title='Socrates beta',version=__version__,docs_url='/api/docs' if testing else None,redoc_url=None,
+                openapi_url='/api/openapi.json' if testing else None)  # AS-10: no public route map in production
     app.state.services={'repo':repo,'registry':registry,'dialogue':dialogue,'assessment':assess,'study':study,'language':language,'maths':maths}
     if browser_secret is not None:
         secret=browser_secret

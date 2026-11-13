@@ -20,6 +20,18 @@ Every member adds an entry for each day they work, newest first. The course guid
 - **AI-assisted:** the review, the probes, the tests and the note were drafted with Claude (Claude Code), which ran them in a throwaway copy first. I checked the findings, ran the tests and opened the PR.
 - **Decisions:** none recorded. Open for R1: C2-1 (is confirming a correct substitution teaching help or an answer oracle?).
 
+### 2026-11-13 · Swati / SwatiSmitaBiswal (R4)
+- **Work:**
+  - A6 from the team plan, the four app-security fixes, one test each (`tests_beta/test_r4_security_fixes.py`):
+    - Secrecy-promise check now catches curly apostrophes ("I won’t tell anyone"); the fixed secrecy reply is still not flagged.
+    - Maths checker wall-clock limit (AS-01): grading stops waiting after 2 s and treats the answer as unreadable; at most two runaway checks may still compute.
+    - No `/beta/openapi.json` outside tests (AS-10): the inner beta app still published its route map; the outer app already did not.
+    - Bounded session locks (AS-08): 256 fixed lock stripes instead of one lock per session forever.
+  - Tests: the new file 4 passed; `tests_beta` 554 passed (5 failed and 14 errors, all Postgres tests needing `psycopg`, the same as before); related `tests/` 446 passed.
+- **AI-assisted:** fixes and tests drafted with Claude, then run and reviewed by me.
+- **Decisions:** none. Note for R6: a child process could stop a runaway check outright, at a cold-start cost.
+
+
 ### 2026-11-12 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - D-7 classifier wired into `guards.py`, off by default, fail closed; live check with my own key, locally only: 16/16 of my own messages routed as expected (PR #26, merged).

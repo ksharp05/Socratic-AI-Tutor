@@ -12,6 +12,16 @@ def load_team_modules(app_root):
     sys.path.insert(0,str(app_root/'src'))
 
 
+# AS-01: one pathological answer (for example a huge power of a sum of surds) once held the exact-maths checker
+# for over a minute while practice for everyone waited. Grading now runs in a worker thread with a wall-clock
+# limit; past it the answer is treated as unreadable. A thread cannot be killed, so at most MAX_OVERRUNNING
+# runaway checks may still be computing; while that many are running, new answers are also refused rather
+# than piling up. A child process could stop the work outright, at a cold-start cost (left for R6 to judge).
+GRADE_SECONDS = 2.0
+MAX_OVERRUNNING = 2
+_OVERRUN_GUARD = threading.Lock()
+
+
 class CheckedMaths:
     def __init__(self,app_root: Path):
         load_team_modules(app_root)
@@ -87,12 +97,29 @@ class CheckedMaths:
         unit=item['answer_contract'].get('required_units_by_kind',{}).get(kind)
         if unit:typed['unit']=unit
         return typed
+    def _grade_with_limit(self,typed,key):
+        with _OVERRUN_GUARD:
+            running=getattr(self,'_overrunning',None)
+            if running is None:running=self._overrunning=set()
+            running.difference_update([t for t in running if not t.is_alive()])
+            if len(running)>=MAX_OVERRUNNING:raise TimeoutError('The maths checker is busy')
+        box={}
+        def work():
+            try:box['result']=self.core.grade(typed,key)
+            except BaseException as exc:box['error']=exc
+        worker=threading.Thread(target=work,name='checked-maths-grade',daemon=True)
+        worker.start();worker.join(GRADE_SECONDS)
+        if worker.is_alive():
+            with _OVERRUN_GUARD:running.add(worker)
+            raise TimeoutError('The maths checker took too long')
+        if 'error' in box:raise box['error']
+        return box['result']
     def grade(self,qid,text):
         item=self.items[qid]
         try:
             typed=self.parse(text,item)
-            return self.core.grade(typed,self.key(qid))
-        except (ValueError,TypeError,KeyError,json.JSONDecodeError):
+            return self._grade_with_limit(typed,self.key(qid))
+        except (ValueError,TypeError,KeyError,json.JSONDecodeError,TimeoutError):
             return {'status':'invalid_response','correct':False,'scorable':False,'reasoning_evaluated':False}
     def hint(self,qid,stage):return self.items[qid]['hint_stages'][max(0,min(stage-1,2))]['prompt']
 
