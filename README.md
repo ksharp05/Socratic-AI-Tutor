@@ -169,16 +169,6 @@ A scripted tour of every demo, rehearsed command by command, is in [DEMO_SCRIPT.
 | Release note and current state | [v1.0 release note](Docs/releases/2026-11-12-v1.0.md) · [checkpoint](Docs/m3/CHECKPOINT.md) |
 | Dataset coverage and sources | [dataset report](Docs/datasets/DATASET_REPORT.md) · [NCERT catalogue](Docs/datasets/NCERT_CATALOGUE.md) |
 
-## Team
-
-| Who | Role | What they built |
-|---|---|---|
-| Lakshya | Lead, R1 domain and product, R5 evaluation and red team | Teaching policy, evaluation pipeline and simulator, E1–E4, security test, public test set, live beta, integration |
-| Rizwan | R2 knowledge and memory | Memory review, the saved-question queue for the live beta, the cross-session proposal |
-| Poonam | R3 agents and orchestration; R6 stand-in | Specialist rules, the worked example after the last hint, saved questions, the architecture walkthrough, the Grafana leak alert |
-| Swati | R4 tools, control and security | Threat model, guards and leak-check fixes, answer rules, the guard-model spike, the safety classifier (D-7) |
-
-R6 deployment and operations: Poonam has stood in since 11 Nov; Shivam or Sharath to confirm. Who owns what: [lead roadmap](Docs/LEAD_ROADMAP.md#team).
 
 ## What it can't claim yet
 
