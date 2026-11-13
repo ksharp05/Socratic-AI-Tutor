@@ -35,7 +35,7 @@ Only question references and timestamps are stored. No answers or chat text are 
 
 ## Effect on evaluation (important)
 
-Question selection changed results before. The v3 task-pool audit traced the diagnosis decline to practice selection ([TASK_POOL_AUDIT.md](../product_quality/v3/TASK_POOL_AUDIT.md)). This change alters selection from the second session on, so:
+Question selection changed results before. The v3 task-pool audit traced the diagnosis decline to practice selection ([TASK_POOL_AUDIT.md](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/product_quality/v3/TASK_POOL_AUDIT.md)). This change alters selection from the second session on, so:
 
 - the switch defaults to **off** for every existing `eval/configs/*.toml` and for frozen runs; old results must never be relabelled;
 - with memory off (the E4a `memory_off` arm), the history is neither read nor written;

@@ -217,6 +217,6 @@ Every member adds an entry for each day they work, newest first. The course guid
 ### 2026-10-24 · ksharp05 (Lead)
 - **Work:**
   - Wrote the proposed project plan ([Docs/plan](plan/README.md)) and updated it to use faculty-provided API keys.
-  - Built proof of concept v0: the session and approval graphs, four MCP servers with hooks, guardrails, learner model, a simulated-student smoke test and 25 tests ([Docs/poc](poc/README.md)).
+  - Built proof of concept v0: the session and approval graphs, four MCP servers with hooks, guardrails, learner model, a simulated-student smoke test and 25 tests ([Docs/poc](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/poc/README.md)).
 - **AI-assisted:** research, code and documents written with Claude Code, then reviewed and tested.
 - **Decisions:** none. The plan remains proposed.

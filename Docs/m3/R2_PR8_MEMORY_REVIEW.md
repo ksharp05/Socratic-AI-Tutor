@@ -3,7 +3,7 @@
 **11 November 2026 · Rizwan (R2).** Step 3 of the fix plan in [PR7_9_TEST_FINDINGS.md](PR7_9_TEST_FINDINGS.md) asks R2 to review PR 8 against the memory contract.
 
 - **Code reviewed:** PR 8 (`deb260f`, *save revisit marks across sessions*) and its follow-up `0ac3f5f` (*bring back the oldest saved question first*), as merged on Beta.
-- **Contract:** the R2 section of [TOOLS_HANDOFF.md](../product_quality/v3/TOOLS_HANDOFF.md#persistent-revisit-queue-r2), the store in `src/tutor/mcp_servers/learner_store.py`, and [MEMORY_POLICY.md](../MEMORY_POLICY.md).
+- **Contract:** the R2 section of [TOOLS_HANDOFF.md](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/product_quality/v3/TOOLS_HANDOFF.md#persistent-revisit-queue-r2), the store in `src/tutor/mcp_servers/learner_store.py`, and [MEMORY_POLICY.md](../MEMORY_POLICY.md).
 - **Tests:** `tests/test_r2_revisit_store.py` and `tests/test_r3_saved_revisit.py`, 16 tests in all, pass on Python 3.12 with `TUTOR_LLM=stub`.
 
 **Verdict: accepted.** PR 8 meets every clause of the contract. There are no blocking findings. Two small follow-ups are for R3 (F2 and F3), and one documentation gap belonged to R2 and is fixed in this change (F1).

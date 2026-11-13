@@ -243,7 +243,7 @@ tutor ask --learner A "I solved x^2 = 5x by dividing both sides by x and got x =
 tutor chat --learner A
 ```
 
-`tutor setup` resets local state in `var/` and seeds demo learners A and B. In `chat`, type `practice`, `hint`, `/plan`, `/trace` or `/exit`. The other subcommands are `trace`, `learners`, `tools`, `teacher` (`propose`, `pending`, `show`, `approve`, `edit`, `reject`, `try-publish`), `eval` and `check-llm`; see `tutor --help` and [the POC guide](poc/README.md#things-to-try).
+`tutor setup` resets local state in `var/` and seeds demo learners A and B. In `chat`, type `practice`, `hint`, `/plan`, `/trace` or `/exit`. The other subcommands are `trace`, `learners`, `tools`, `teacher` (`propose`, `pending`, `show`, `approve`, `edit`, `reject`, `try-publish`), `eval` and `check-llm`; see `tutor --help` and [the POC guide](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/poc/README.md#things-to-try).
 
 API and web UI without Docker, in two terminals with `.venv` active:
 
@@ -302,7 +302,7 @@ A fresh clone contains no NCERT PDFs, extracted indexes, frozen dataset builds o
 | --- | --- |
 | `tests_beta/` (except `test_portable_registry.py`), `tests_book_pipeline/`, `tests_integration_v02/` | `SOCRATES_SOURCE_WORKSPACE` pointing to a workspace with the prepared dataset. Without it, a fresh clone gives 34 setup errors in these folders; that is expected, not an install problem |
 | The browser beta, `socrates.ps1 serve` (port 8770) | A registered, hash-verified textbook index: see the [beta run guide](RUN_GUIDE.md) |
-| `docker-compose.integrated.yml` | `TUTOR_INDEX_PATH` to an authorized `knowledge.sqlite` and its separately trusted `TUTOR_INDEX_SHA256`: see [integrated Compose](m2/INTEGRATED_COMPOSE.md) |
+| `docker-compose.integrated.yml` | `TUTOR_INDEX_PATH` to an authorized `knowledge.sqlite` and its separately trusted `TUTOR_INDEX_SHA256`: see [integrated Compose](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/m2/INTEGRATED_COMPOSE.md) |
 | `book_pipeline.ps1`, PDF ingestion (`python -m tutor.retrieval.ingest`) | NCERT PDFs in `data/ncert/` (git-ignored) and poppler's `pdftotext` on PATH |
 
 To run all four test folders with the data:

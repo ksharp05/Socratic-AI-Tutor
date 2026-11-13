@@ -1,3 +1,21 @@
+# Integration and cleanup (14 Nov 2026)
+
+- **Merged and pushed to `Beta`:**
+  - PR #29 (R3, C2 review);
+  - PR #30 (R4, A6 security fixes);
+  - the R1/R5 reviews;
+  - the offline front-door safety gate in CI, with `tests/regressions/`;
+  - fixes for C2-2 and C2-3.
+- **Decisions:**
+  - D-8: the crisis masking is off by default.
+  - D-9: the B3 safety pre-registration is frozen, approved by the Lead; tag `prereg-safety-b3`.
+  - C2-1 is open for the team.
+- **Docs cleanup:**
+  - 93 superseded files were removed (m2 notes, product_quality v1–v3, m3/v3, dataset integration v0.2, POC, specs, Milestone 2 requirements), together with the course PDF.
+  - Evidence cited by the report stays: `m4/`, three `m2/` files, two `m3/v3/` files and `ci_failure.md`.
+  - Everything removed is at tag `docs-archive-2026-11-14`, and links point there. Start at `Docs/README.md`.
+- **Read the sections below as history.** Paths in them may now be at the archive tag.
+
 # Team plan and Beta push (13 Nov 2026)
 
 - **Pushed to `origin/Beta` (f670035):**

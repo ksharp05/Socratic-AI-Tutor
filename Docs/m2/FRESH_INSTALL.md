@@ -29,7 +29,7 @@ Local ignored evidence: `Directions/git_delivery/m2_clean_install_current.json`,
 1. Restart Windows when ready, then open Docker Desktop and allow its WSL backend to initialise. No automatic restart was performed.
 2. In a new terminal run `wsl --version`, `docker version` and `docker compose version`. `docker version` must show a responding server as well as the client.
 3. Verify Docker's actual storage location. The installer requested `D:\DockerData\wsl`; first-start settings/VHD placement have not yet been observed.
-4. Follow [integrated Compose preparation](INTEGRATED_COMPOSE.md) and the [run guide](../RUN_GUIDE.md), supplying the authorised index and separately trusted expected hash. Verify image build, service readiness, authenticated UI and restart/persistent-volume behavior with retained logs.
+4. Follow [integrated Compose preparation](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/m2/INTEGRATED_COMPOSE.md) and the [run guide](../RUN_GUIDE.md), supplying the authorised index and separately trusted expected hash. Verify image build, service readiness, authenticated UI and restart/persistent-volume behavior with retained logs.
 
 Docker Desktop was stopped at verification. Engine startup, image builds, container health, integrated overlay execution and volume recovery remain unverified until after the restart. These installation results do not change content-review or live-model acceptance gates.
 

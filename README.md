@@ -3,7 +3,7 @@
 **A Class 10 maths tutor that asks instead of tells.**
 
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB)
-![Tests: 2,858 passing](https://img.shields.io/badge/tests-2%2C858%20passing-2ea44f)
+![Tests: 3,340 in CI](https://img.shields.io/badge/tests-3%2C340%20in%20CI-2ea44f)
 ![Release: v1.0](https://img.shields.io/badge/release-v1.0-1F2A44)
 ![Live beta](https://img.shields.io/badge/live%20beta-online-E07A2F)
 
@@ -77,7 +77,7 @@ The full diagram, and a numbered walkthrough of a real 36-row trace, are in [ARC
 | Safety failures in our 420-case security test (English, Hindi, Hinglish) | 118 (live beta, 10 Nov) | **10** (hardened design) |
 | Crisis messages caught on 4,000 independently labelled messages | 27 / 88 (fixed screens) | **68 / 88** (D-7 classifier) |
 | Answers given away in 16 simulated sessions | 38 full, 4 partial (telling) | **0** (Socratic hints) |
-| Automated tests | | **2,858 passing**, plus three CI gates |
+| Automated tests | | **3,340 in CI**, plus four eval gates |
 
 All of this is **development evidence**: simulated students, synthetic attacks and AI judges, with no real students and no teacher review yet. The [evaluation report](Docs/report/EVALUATION_REPORT.md) explains each number and its limits.
 
@@ -131,14 +131,14 @@ Then install and try it:
 ```powershell
 powershell -ExecutionPolicy Bypass -File setup\install_python_env.ps1   # macOS/Linux: bash setup/install_python_env.sh
 .venv\Scripts\Activate.ps1                                               # macOS/Linux: source .venv/bin/activate
-pytest -q                     # the 2,266 tests in tests/
+pytest -q                     # the 2,694 tests in tests/
 tutor setup                   # demo learners A and B
 tutor chat --learner A
 ```
 
 The install script creates `.venv`, runs `pip install -e ".[dev,api,ui]" -r requirements-beta-dev.txt` and `pip check`. None of this needs an API key or private data.
 
-The CI command runs every suite (2,858 tests; a fresh clone was checked on 11 Nov):
+The CI command runs every suite (3,340 tests on 14 Nov):
 
 ```powershell
 $env:TUTOR_LLM = "stub"; pytest -q --strict-markers -m "not local_corpus" tests tests_beta tests_book_pipeline tests_integration_v02
@@ -162,7 +162,7 @@ A scripted tour of every demo, rehearsed command by command, is in [DEMO_SCRIPT.
 | Memory policy | [MEMORY_POLICY.md](Docs/MEMORY_POLICY.md) |
 | Experiment log | [EXPERIMENT_LOG.md](Docs/EXPERIMENT_LOG.md) |
 | Contribution log | [CONTRIBUTIONS.md](Docs/CONTRIBUTIONS.md) |
-| Decision log (D-1 to D-7) | [DECISIONS.md](Docs/DECISIONS.md) |
+| Decision log (D-1 to D-9) | [DECISIONS.md](Docs/DECISIONS.md) |
 | Independent public test set (15 free, labelled datasets) | [PUBLIC_TESTSET.md](Docs/testing/PUBLIC_TESTSET.md) |
 | Live beta: deployment, consent, spending cap | [VERCEL_BETA.md](Docs/deploy/VERCEL_BETA.md) |
 | Teaching policy | [TEACHING_POLICY.md](Docs/policy/TEACHING_POLICY.md) |
@@ -173,7 +173,7 @@ A scripted tour of every demo, rehearsed command by command, is in [DEMO_SCRIPT.
 ## What it can't claim yet
 
 - **Simulated students only.** No result here is evidence of real learning.
-- **No held-out run and no teacher review.** The pre-registration was never frozen, and lessons and content still await a teacher.
+- **No held-out run and no teacher review.** The B3 safety pre-registration was frozen on 14 Nov (D-9), but the sealed set is not written yet, and lessons and content still await a teacher.
 - **The safety classifier (D-7) is confirmed but switched off.** It blocks about 18% of safe messages, so it waits until that comes down.
 
 What a supervised pilot with real students would need is in report section 8.
@@ -197,7 +197,7 @@ What a supervised pilot with real students would need is in report section 8.
 | `scripts/` | Probes, smoke runs, the test-pack runner, the public test set and release tools |
 | `setup/` | Prerequisite check and Python environment install scripts |
 | `tests/`, `tests_beta/`, `tests_book_pipeline/`, `tests_integration_v02/` | Automated tests run by CI. Only tests marked `local_corpus` need private data, and CI skips them |
-| `Docs/` | The report, architecture, threat model, memory policy, logs, guides and milestone evidence |
+| `Docs/` | The latest report, architecture, threat model, policies, logs and guides. Start at [Docs/README.md](Docs/README.md); older milestone notes are at the tag `docs-archive-2026-11-14` |
 
 Never committed: `.env`, API keys, NCERT PDFs or page images, the frozen dataset build, held-out data and personal data. The course's *Socratic Tutor: Agentic AI Architecture Guide* (PDF) is course material and is not redistributed here.
 </details>
@@ -207,10 +207,10 @@ Never committed: `.env`, API keys, NCERT PDFs or page images, the frozen dataset
 
 | Date | Milestone |
 |---|---|
-| 24 Oct | [Project plan](Docs/plan/README.md) and [proof of concept](Docs/poc/README.md) |
+| 24 Oct | [Project plan](Docs/plan/README.md) and [proof of concept](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/poc/README.md) |
 | 31 Oct | [Lead roadmap](Docs/LEAD_ROADMAP.md) |
 | 1 Nov | Team meeting: roles confirmed |
-| 5 Nov | [Milestone 2](Docs/m2/STATUS.md): connected graph tutor for three chapters, development experiments E1–E4 |
+| 5 Nov | [Milestone 2](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/m2/STATUS.md): connected graph tutor for three chapters, development experiments E1–E4 |
 | 6 Nov | Live beta on Vercel with saved progress and consent |
 | 10 Nov | Security test (420 cases); the hardened safety layer went live |
 | 11 Nov | Team PRs merged; independent public test set built |

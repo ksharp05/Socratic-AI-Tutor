@@ -2,7 +2,7 @@
 
 **Status:** proposed by R3 (Poonam) on 6 November 2026. Not yet accepted by the Lead.
 
-The tutor does not use `create_agent`. It is a LangGraph graph: code picks the route and the tools, each specialist runs under a role allowlist, and the model writes wording and can propose a diagnosis. R3 proposes this as the "equivalent" in item 1 of [R3_AGENTS.md](../specs/R3_AGENTS.md). The main gap is that the model never chooses a tool.
+The tutor does not use `create_agent`. It is a LangGraph graph: code picks the route and the tools, each specialist runs under a role allowlist, and the model writes wording and can propose a diagnosis. R3 proposes this as the "equivalent" in item 1 of [R3_AGENTS.md](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/specs/R3_AGENTS.md). The main gap is that the model never chooses a tool.
 
 ## Who does what
 

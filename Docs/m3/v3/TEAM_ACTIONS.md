@@ -1,6 +1,6 @@
 # M3/M4: next actions after the v3 offline checkpoint
 
-Latest AI-authored product changes and current C1/C2/UI evidence are in [the product checkpoint](../../product_quality/v1/README.md). The v3 evidence below remains historical. Current evidence is in [STATUS.md](STATUS.md) and [PILOT_RESULTS.md](PILOT_RESULTS.md). The six-session pilot is complete; the user chose to keep Beta local and authorized a subsequent product-development phase capped at USD 10. This sheet is a handoff, not a record that the named people have reviewed or approved anything. No messages have been sent on their behalf.
+Latest AI-authored product changes and current C1/C2/UI evidence are in [the product checkpoint](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/product_quality/v1/README.md). The v3 evidence below remains historical. Current evidence is in [STATUS.md](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/m3/v3/STATUS.md) and [PILOT_RESULTS.md](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/m3/v3/PILOT_RESULTS.md). The six-session pilot is complete; the user chose to keep Beta local and authorized a subsequent product-development phase capped at USD 10. This sheet is a handoff, not a record that the named people have reviewed or approved anything. No messages have been sent on their behalf.
 
 | Priority / owner | Concrete action | Inputs ready | Evidence needed to close |
 | --- | --- | --- | --- |

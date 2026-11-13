@@ -7,7 +7,7 @@
 | **Project** | Agentic AI Capstone · Project 3 (Socratic Tutor) · team of six |
 | **Scope** | Class 10 Maths in English: Quadratic Equations, Arithmetic Progressions, Introduction to Trigonometry |
 | **Plan status** | **Proposed:** for team review before kickoff · version 2 · 24 Oct 2026 |
-| **Builds on** | [Socratic Tutor — Agentic AI Architecture Guide](../Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct). See [how they relate](#how-this-plan-relates-to-the-architecture-guide) |
+| **Builds on** | [Socratic Tutor — Agentic AI Architecture Guide](https://github.com/ksharp05/Socratic-AI-Tutor/blob/docs-archive-2026-11-14/Docs/Socratic%20Tutor%20%E2%80%94%20Agentic%20AI%20Architecture%20Guide.pdf) (Poonam, 19 Oct). See [how they relate](#how-this-plan-relates-to-the-architecture-guide) |
 | **Kickoff** | Sunday 25 Oct 2026 |
 | **Submission** | Thursday 12 Nov 2026, end of day |
 | **Review, demo and viva** | Sunday 15 Nov 2026 |
