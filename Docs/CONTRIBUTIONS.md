@@ -12,6 +12,14 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-14 · Lakshya / ksharp05 (Lead, R1, R5)
+- **Work:**
+  - Merged PR #29 (R3, C2 review) and PR #30 (R4, A6 security fixes) into Beta, with the R1/R5 review branch (F2 masking review, B3 pre-registration draft, safe-messaging audit, DPDP note, decision briefs). The full suite passes locally, including the local-corpus tests.
+  - B6, offline part, and the testing pyramid: `tutor_eval.beta_front_door` runs about 500 development cases through Beta's screens. On development data: crisis 54/61, child safety 16/17, benign false alarms 1/117, injection caught by the screen 15/65. It is now a CI gate against a per-case baseline. Added the regression rule and folder, `tests/regressions/`, with the F2 probes as strict expected failures.
+  - Fixed R3 review findings C2-2 (an on-top/below pair is now read without a ratio name) and C2-3 (short Roman-Hindi words now give a Hinglish reply). Poonam's two xfail tests now pass.
+- **AI-assisted:** the gate, the tests and the fixes were drafted with Claude (Claude Code). I chose what to merge and reviewed the results.
+- **Decisions:** none new. F2 masking and C2-1 still wait for the Lead's call.
+
 ### 2026-11-13 · Poonam / Punm-Butter (R3)
 - **Work:**
   - Task C2: independent review of the new step-feedback code (`triangle_reasoning.py`, `ratio_hint.py`, commit `cf14173`), in [R3_C2_STEP_FEEDBACK_REVIEW.md](m3/R3_C2_STEP_FEEDBACK_REVIEW.md). Verdict: safe to build on. One decision for R1: the step box confirms a correct substitution, so it can act as an unrecorded answer check (C2-1). Two small bugs: a full on-top/below pair is not read without a ratio name (C2-2), and Hinglish without cue words gets an English reply (C2-3).

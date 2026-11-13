@@ -4,7 +4,10 @@ import re
 from .safety import guess_language
 
 
-_HINGLISH_CUE = re.compile(r'\b(?:maine|mein|badal|saamne|samne|paas|bagal|aayegi|rakhi|kaunsi|shuru|mujhse)\b', re.I)
+# Short Roman-Hindi function words count too (R3 review C2-3): "opposite ko hypotenuse se divide kiya" has none
+# of the longer cues. None of these is an English word a learner would type in a ratio step.
+_HINGLISH_CUE = re.compile(r'\b(?:maine|mein|badal|saamne|samne|paas|bagal|aayegi|rakhi|kaunsi|shuru|mujhse|'
+                           r'ko|se|kiya|kiye|karke|hai|hain|likha|likhi|liya|aur|kya|nahi|nahin|toh|bhi)\b', re.I)
 
 
 HINT_TEXT = {

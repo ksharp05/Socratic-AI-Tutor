@@ -675,7 +675,7 @@ def ratio_step_feedback(problem: dict, response: str, *, check_values=True) -> t
     # Repeating a pair elsewhere stays ambiguous.
     pairs = {}
     for pattern, reverse in (*((pattern, False) for pattern in _ORDERED_PAIRS),
-                             *(_POSITIONAL_PAIRS if names else ())):
+                             *_POSITIONAL_PAIRS):
         for match in pattern.finditer(text):
             positions = match.start('first'), match.start('second')
             pairs.setdefault(positions, (read_pair(match, reverse), match.span()))

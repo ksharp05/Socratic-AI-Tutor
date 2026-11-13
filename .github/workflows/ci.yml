@@ -48,6 +48,11 @@ jobs:
         run: python -m tutor_eval.harness --config eval/configs/dev_smoke.toml
         env:
           TUTOR_LLM: stub
+      # Offline: about 500 development cases through the beta's screens; fails if any case regresses.
+      - name: Eval gate - beta safety front door
+        run: python -m tutor_eval.beta_front_door
+        env:
+          TUTOR_LLM: stub
       - name: Eval gate - security cases
         run: python -m tutor_eval.security --cases eval/fixtures/security_smoke.jsonl --name ci_security --gate
         env:

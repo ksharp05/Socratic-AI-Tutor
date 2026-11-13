@@ -322,16 +322,21 @@ def test_every_ratio_has_side_roles():
     assert set(_RATIO_ROLES) == {'sin', 'cos', 'tan', 'sec', 'csc', 'cot'}
 
 
-# ---------------------------------------------------------------- found in review (strict xfail: flips to a failure once fixed)
+# ---------------------------------------------------------------- found in review, fixed by the Lead on 14 Nov
 
-@pytest.mark.xfail(strict=True, reason='R3 review C2-2: a full positional pair is read only when a ratio is named')
 def test_positional_pair_without_a_ratio_name_is_understood():
-    # Today this asks "Which side did you put on top, and which side underneath?",
-    # the question the learner has just answered.
+    # C2-2: this used to ask "Which side did you put on top, and which side underneath?",
+    # the question the learner had just answered.
     assert ratio_step_feedback(C_SIN, 'I put opposite on top and hypotenuse on the bottom') == ('definition_correct', 'order')
 
 
-@pytest.mark.xfail(strict=True, reason='R3 review C2-3: Hinglish without the cue words gets an English reply')
 def test_hinglish_step_without_cue_words_gets_a_hinglish_reply():
+    # C2-3: short Roman-Hindi words ("ko", "se", "kiya") now mark the step as Hinglish.
     reply, _ = ratio_hint(C_SIN, 'opposite ko hypotenuse se divide kiya')
     assert reply == HINT_TEXT['hinglish']['order']
+
+
+def test_english_steps_stay_english_after_the_c2_3_cues():
+    for step in ('I put opposite over hypotenuse', 'opposite divided by hypotenuse', 'so it is opposite/hypotenuse'):
+        reply, _ = ratio_hint(C_SIN, step)
+        assert reply in HINT_TEXT['en'].values(), step
