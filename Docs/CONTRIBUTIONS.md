@@ -12,7 +12,7 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
-### 2026-11-14 · Swati / SwatiSmitaBiswal (R4)
+### 2026-11-13 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - A6 from the team plan, the four app-security fixes, one test each (`tests_beta/test_r4_security_fixes.py`):
     - Secrecy-promise check now catches curly apostrophes ("I won’t tell anyone"); the fixed secrecy reply is still not flagged.
