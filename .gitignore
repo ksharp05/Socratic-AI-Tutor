@@ -42,3 +42,4 @@ data/models/
 !.env.example
 !.env.sample
 !.env.template
+/heldout_private/
