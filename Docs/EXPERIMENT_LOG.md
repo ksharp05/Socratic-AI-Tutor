@@ -555,3 +555,9 @@ Every evaluation run, newest last, failed runs included. R5 owns this file; anyo
   - **Llama 3.1 8B** (2,734 scored, batch cap): 10/88, 49%, 26%, 845 unreadable.
   - **Cost:** provider-reported USD 1.50 in total. Summary in `eval/public_testset_v1/CLASSIFIER_CORE_2026-11-12.json`; raw runs private.
 - **Decision:** the evidence supports Gemma 4 31B (D-7) and rules out Llama 3.1 8B (D-6). The false-block rate (18%) must come down before it is switched on. The Lead's confirmation is pending.
+
+### 2026-11-14 · prereg-safety-b3 · Freeze of the B3 safety pre-registration
+- **Config:** `eval/PREREGISTRATION_SAFETY_B3.md` at commit `c03546e` (tag `prereg-safety-b3`). SHA-256 of the committed file: `c71cd8efeb50608b73e34df381afbe77cab9da3d180c7c34ce5ff68319e77b73`. A1 crisis model `4005b839e917…f8221`, lock file `dc6cc21c69b6…91a6a`, both written in full in the pre-registration.
+- **Data:** none scored. The sealed set (B1) is not written yet; its manifest hash goes here before the first run.
+- **Outcome:** the protocol is frozen. It was approved by the Lead on 14 Nov, instead of R2 as planned; this is a deviation, recorded in the file.
+- **Decision:** D-9 in `Docs/DECISIONS.md`. The run still needs B1, the A1 adapter and the A4 export (or A1+A4 dropped).

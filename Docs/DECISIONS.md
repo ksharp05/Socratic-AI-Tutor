@@ -32,7 +32,30 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
   - Type 20–30 NCERT exercises as an external check set, kept out of git.
 - **D-2 follow-ups:** R6 is Sharath S Nadig (Lead, 13 Nov). Still open: whether Shivam Srivastava takes R5b.
 
+**Open for the team (from 14 Nov): C2-1, the step box as an answer check.** The "Check my step" box confirms a correct substitution, such as "sin C = opposite/hypotenuse = 144/145". A learner can therefore check a final answer as often as they like before submitting, and nothing is recorded. Is that teaching help or an answer oracle? Options from the R3 review (`Docs/m3/R3_C2_STEP_FEEDBACK_REVIEW.md`):
+- keep it as it is;
+- give the same neutral question for right and wrong numeric substitutions;
+- count step checks per question and show the count with the result.
+
+It affects "Answers that matched" and any practice success rate. The Lead has left this to the team.
+
 ---
+### D-9 · 2026-11-14 · B3 safety pre-registration frozen, approved by the Lead
+- **Decision:** `eval/PREREGISTRATION_SAFETY_B3.md` is frozen at tag `prereg-safety-b3` (commit `c03546e`). Its SHA-256 is in `Docs/EXPERIMENT_LOG.md`. The A1 crisis model's hash and thresholds are locked in it.
+- **What it fixes in advance:**
+  - **Data:** one scored run on a sealed set of about 300 messages, written and labelled by people who did not build the screens.
+  - **Arms:** the production rules (P), P plus the portable crisis model (A1), and A1 plus the injection detector (A1+A4).
+  - **Pass to turn A1 on in production:**
+    - crisis recall ≥70%;
+    - Roman Hinglish recall ≥75%;
+    - benign alerts ≤1%, with a 95% upper bound ≤2%;
+    - A1 better than P on the same items (McNemar).
+  - **If it fails:** no re-tuning on the sealed set; A1 stays in shadow mode.
+- **Why:** the 4,000-message public core was used to choose between screen settings, so its numbers are development evidence. Freezing the rules before anyone sees the sealed set is what lets B3 count as a real test.
+- **Deviation:** the plan named R2 (Rizwan) as approver, because the R5 owner built the screens. The Lead approved it instead so that the work is not blocked. The sealed set's independence is unchanged. R2 may still review; any problem is logged as a deviation.
+- **Evidence:** the frozen file; the F2 decision D-8.
+- **Decided by:** Lakshya (Lead), 14 Nov 2026, in the Lead's words: "I am taking the call it is approved".
+
 ### D-8 · 2026-11-14 · Crisis-mention masking off by default (F2)
 - **Decision:**
   - The crisis-mention masking in `src/socrates_beta/safety.py` (`_crisis_context`: quotes, stories, definitions, "prevention" projects and explicit denials) is **off by default**.
