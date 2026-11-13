@@ -12,6 +12,14 @@ Every member adds an entry for each day they work, newest first. The course guid
 ```
 
 ---
+### 2026-11-13 · Poonam / Punm-Butter (R3)
+- **Work:**
+  - Task C2: independent review of the new step-feedback code (`triangle_reasoning.py`, `ratio_hint.py`, commit `cf14173`), in [R3_C2_STEP_FEEDBACK_REVIEW.md](m3/R3_C2_STEP_FEEDBACK_REVIEW.md). Verdict: safe to build on. One decision for R1: the step box confirms a correct substitution, so it can act as an unrecorded answer check (C2-1). Two small bugs: a full on-top/below pair is not read without a ratio name (C2-2), and Hinglish without cue words gets an English reply (C2-3).
+  - `tests/test_r3_step_feedback.py`: 174 portable tests, covering 83 first-step branches, 53 follow-up branches, next-question mapping, language choice, no numbers in any reply, 3,000 random steps and long-input timing, plus two strict-xfail tests for C2-2 and C2-3. CI now runs `ratio_hint.py` (0% to 100% of lines) and 94% of `triangle_reasoning.py` (was 67%). Eight deliberate breaks of the code each made a test fail.
+  - Test runs, stub mode only: the CI test command gave 3,289 passed, 23 skipped, 92 deselected and 2 xfailed; the registry test, the C1 and dev-smoke harnesses and the security gate all pass.
+- **AI-assisted:** the review, the probes, the tests and the note were drafted with Claude (Claude Code), which ran them in a throwaway copy first. I checked the findings, ran the tests and opened the PR.
+- **Decisions:** none recorded. Open for R1: C2-1 (is confirming a correct substitution teaching help or an answer oracle?).
+
 ### 2026-11-12 · Swati / SwatiSmitaBiswal (R4)
 - **Work:**
   - D-7 classifier wired into `guards.py`, off by default, fail closed; live check with my own key, locally only: 16/16 of my own messages routed as expected (PR #26, merged).
