@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import os
 import re
 import unicodedata
 
@@ -238,10 +239,23 @@ def _crisis_context(screen: str) -> str:
     return _EXPLICIT_DENIAL.sub(" ", screen)
 
 
+# F2 decision (Lead, 14 Nov 2026; Docs/DECISIONS.md D-8): the crisis-mention masking above is OFF by default.
+# It changed no decision on 15,483 development messages, but let 7 of 8 disguised disclosures through ("it's for a
+# story", "what does this line mean", "not suicidal, but ..."). It stays in the code only for the A3 shadow run:
+# set SOCRATES_CRISIS_MASKING=1 to switch it on. Never switch it on in production without a new decision.
+_MASKING_ENV = "SOCRATES_CRISIS_MASKING"
+
+
+def crisis_masking_enabled() -> bool:
+    return os.environ.get(_MASKING_ENV, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
 def urgent(text: str):
     """Return (kind, language) for a crisis, child-safety or secrecy-request message, else None."""
     screen = _IDIOMS.sub(" ", screening_text(text))
     if CRISIS.search(screen) or _CONTEXTUAL_CRISIS.search(screen):
+        if not crisis_masking_enabled():
+            return "crisis", guess_language(text)
         context = _crisis_context(screen)
         if context == screen or CRISIS.search(context) or _CONTEXTUAL_CRISIS.search(context):
             return "crisis", guess_language(text)

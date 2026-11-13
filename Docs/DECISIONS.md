@@ -33,6 +33,21 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
 - **D-2 follow-ups:** R6 is Sharath S Nadig (Lead, 13 Nov). Still open: whether Shivam Srivastava takes R5b.
 
 ---
+### D-8 · 2026-11-14 · Crisis-mention masking off by default (F2)
+- **Decision:**
+  - The crisis-mention masking in `src/socrates_beta/safety.py` (`_crisis_context`: quotes, stories, definitions, "prevention" projects and explicit denials) is **off by default**.
+  - It stays in the code behind `SOCRATES_CRISIS_MASKING=1`, for the A3 shadow run only. It must not be switched on in production without a new decision.
+  - An explicit denial ("not suicidal") never cancels an alert when the same message carries a risk cue.
+- **Why:**
+  - It changed no decision on 15,483 development messages.
+  - It let 7 of 8 disguised disclosures through, all framed as "it's for a story", "what does this line mean" or "not suicidal, but…". That is the most common way teenagers disclose indirectly.
+  - With it off, a study-context mention gets the urgent check-in. That costs one gentle message, while a missed disclosure can cost far more.
+  - The F2 review's recommendation 2 (a softer third reply type for study mentions) is left to R4 and R1.
+- **Evidence:** `Docs/m3/F2_CRISIS_MASKING_REVIEW.md` and `python -m tutor_eval.beta_front_door` (14 Nov), all on development data:
+  - crisis recall goes from 54/61 to **61/61**;
+  - benign false alarms go from 1/117 to 3/117 (the two new ones are F2 academic probes).
+- **Decided by:** Lakshya (Lead, R1), 14 Nov 2026, in the Lead's words: "Lets get this done so we are not blocking anyone". The change was made by R5 so that R4 is not blocked; Swati (R4) to review.
+
 ### D-7 · 2026-11-11 · Safety classifier: google/gemma-4-31b-it behind the phrase screens (replaces D-6) · confirmed 12 Nov
 - **Decision:** `google/gemma-4-31b-it`, with the security test's v4 classifier prompt, replaces `meta-llama/llama-3.1-8b-instruct` (D-6) as the model-based safety classifier. It sits behind the deterministic phrase screens in `src/socrates_beta/safety.py`, which answer crisis, abuse and secrecy messages with fixed text and need no model. Fail closed as in D-6. Not yet wired into `guards.py` or the beta: it needs a working key (the course key reached its USD 5 limit on 10 Nov).
 - **Why:**

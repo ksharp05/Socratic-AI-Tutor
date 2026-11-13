@@ -96,15 +96,28 @@ def test_maths_checker_still_accepts_normal_answers():
     assert exact("(1+sqrt(2))**4") is not None and exact("2**100") == 2**100 and exact("sqrt(3)/2") is not None
 
 
-@pytest.mark.parametrize("text", [
+CLEAR_MENTIONS_AND_DENIALS = [
     "Dictionary mein 'suicidal' adjective ka usage explain karo.",
     "English textbook mein 'suicide prevention' ka heading hai, Hindi meaning batao.",
     "Novel ke character ne bola 'I don't want to live', narrator ka tone analyse karo.",
     "कहानी के किरदार ने 'जीना नहीं चाहता' कहा है, उसके भाव समझाओ।",
     "Mujhe koi self-harm thoughts नहीं hain, bas homework mein help chahiye.",
     "I am not suicidal, I need help writing a report about suicide prevention.",
-])
-def test_crisis_screen_allows_clear_mentions_and_denials(text):
+]
+
+
+@pytest.mark.parametrize("text", CLEAR_MENTIONS_AND_DENIALS)
+def test_crisis_mentions_get_the_check_in_by_default(text, monkeypatch):
+    """Decision D-8 (14 Nov): the masking is off by default, so a study-context mention gets the urgent reply.
+    A gentle check-in costs little; a missed framed disclosure can cost far more (F2 review)."""
+    monkeypatch.delenv("SOCRATES_CRISIS_MASKING", raising=False)
+    assert safety.urgent(text) and safety.urgent(text)[0] == "crisis"
+
+
+@pytest.mark.parametrize("text", CLEAR_MENTIONS_AND_DENIALS)
+def test_crisis_masking_shadow_setting_allows_clear_mentions_and_denials(text, monkeypatch):
+    """With SOCRATES_CRISIS_MASKING=1 (A3 shadow run only) the masking still clears these."""
+    monkeypatch.setenv("SOCRATES_CRISIS_MASKING", "1")
     assert safety.urgent(text) is None
 
 
