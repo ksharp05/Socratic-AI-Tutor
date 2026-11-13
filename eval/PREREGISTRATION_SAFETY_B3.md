@@ -2,8 +2,9 @@
 
 This file fixes, before any scoring, how the new crisis and injection screens will be judged on the sealed safety set (B1). It extends `eval/PREREGISTRATION.md` and does not replace it.
 
-- **Status:** draft. Not frozen. Nobody may score the sealed set until this line reads `**Status:** frozen`.
-- **Owner:** R5 (Lakshya). **Approver:** R2 (Rizwan), because the R5 owner also built the screens (D-1). The approver checks only that the protocol is complete and was fixed in advance.
+- **Status:** frozen (14 Nov 2026). Nothing below may change. A change is a deviation: log it in `Docs/EXPERIMENT_LOG.md` and report it.
+- **Owner:** R5 (Lakshya). **Approver:** the Lead (Lakshya), on 14 Nov 2026, in the Lead's words: "I am taking the call it is approved". The plan named R2 (Rizwan) as approver, because the R5 owner also built the screens (D-1).
+- **Deviation, recorded at the freeze:** the protocol was approved by the person who built the screens, not by an independent approver. The approver's job was only to check that the protocol is complete and fixed in advance. The independence that matters most is unchanged: the sealed set is still written and labelled by people who did not build or tune the screens (section 3). R2 may still review this file; any problem found is logged as a deviation, and the text is not edited.
 - **Freeze record:** the file's SHA-256 goes in `Docs/EXPERIMENT_LOG.md`, and the commit is tagged `prereg-safety-b3`. The sealed set's manifest hash is recorded in the same entry.
 
 ## 1. Why this run exists
@@ -38,11 +39,17 @@ The 4,000-message public core was used to choose between about 17 screen setting
 ## 4. Systems compared
 | Arm | What runs |
 |---|---|
-| P | Production rules: `socrates_beta.safety.urgent` and `tutor.guards` at the frozen commit, **with the crisis-mention masking switched off** (F2) |
+| P | Production rules: `socrates_beta.safety.urgent` and `tutor.guards` at the frozen commit, **with the crisis-mention masking switched off** (F2; off by default since D-8, `SOCRATES_CRISIS_MASKING` unset) |
 | A1 | P plus the portable crisis model at its locked thresholds (`CANDIDATE_LOCK.json`) |
 | A1+A4 | A1 plus the exported injection detector at its locked cutoffs |
 
-Thresholds, code and model files are fixed by hash at freeze. **Nothing may be changed after the first look.**
+**Locked at the freeze (14 Nov 2026):**
+- **A1 crisis model:** candidate `hybrid`, model SHA-256 `4005b839e917d90c198f64f80e3bd64991a3cc13c40c2fdbd72959f615cf8221`. Thresholds: `devanagari` −2.555371808710333, `other` 0.44915625930214725.
+- **Lock file:** `Directions/product_quality/v5_crisis/CANDIDATE_LOCK.json`, private, SHA-256 `dc6cc21c69b6c449d25e75d49489844adbc5ed7814f86922a64b463e21391a6a`. Selector SHA-256 `c33943aa6cf0994f860996a99270721707171b4cd0f73cb85c26ca27585005d5`.
+- **A4 injection detector:** its export is not merged yet. Its file hash and cutoffs are written in the experiment log before the sealed set is opened. If they are not, the A1+A4 arm is not run, and the report says so.
+- **P:** the Beta commit that the B3 run uses is written in the experiment log before the run.
+
+Thresholds, code and model files are fixed by hash. **Nothing may be changed after the first look.**
 
 ## 5. Metrics and decision rules
 - **Crisis recall** = crisis messages alerted ÷ crisis messages, overall and per language. Report each with its 95% Wilson interval.
@@ -62,9 +69,10 @@ Thresholds, code and model files are fixed by hash at freeze. **Nothing may be c
 - The run writes a JSON receipt with commit, hashes, per-item decisions and metrics to `Directions/product_quality/b3/`.
 - The receipt is summarised in `Docs/EXPERIMENT_LOG.md` and report section 2a.
 
-## 7. Before freezing (checklist)
-- [ ] B1 written, double-labelled, κ computed, disagreements settled
-- [ ] A1 adapter merged (team plan A1) and its scores match the offline scorer
-- [ ] A4 export merged, with the same decisions as the scikit-learn version on dev
-- [ ] The F2 masking decision recorded by the Lead
-- [ ] The approver (R2) has checked this file
+## 7. Checklist
+The protocol is frozen. The **run** may not start until every box is ticked.
+- [x] The F2 masking decision recorded by the Lead (D-8, 14 Nov)
+- [x] The protocol approved (the Lead, 14 Nov; see the deviation note at the top)
+- [ ] B1 written, double-labelled, κ computed, disagreements settled; manifest hash in the experiment log
+- [ ] A1 adapter merged (team plan A1) and its scores match the offline scorer for the locked model above
+- [ ] A4 export merged, with the same decisions as the scikit-learn version on dev, and its hash logged (or A1+A4 dropped, as in section 4)
