@@ -83,7 +83,7 @@ All of this is **development evidence**: simulated students, synthetic attacks a
 
 ## Beta review · 100-query latency waterfall
 
-[Download the interactive report and data](https://github.com/ksharp05/Socratic-AI-Tutor/raw/refs/heads/Beta/Docs/report/beta-latency/socrates-beta-latency-report.zip). Extract the ZIP and open `latency-report.html` in a browser. Select any of the 100 queries to inspect the timed stages, or jump to the median or slowest request.
+[Download the interactive report](https://github.com/ksharp05/Socratic-AI-Tutor/raw/refs/heads/Beta/Docs/report/beta-latency/latency-report.html) and open `latency-report.html` in a browser; the data and benchmark are in [the same folder](Docs/report/beta-latency/). Select any of the 100 queries to inspect the timed stages, or jump to the median or slowest request.
 
 | Measurement | Result |
 |---|---:|

@@ -93,7 +93,7 @@ $env:PYTHONPATH = '<project-checkout>\src'
 
 The cases are `Docs/beta/DEVELOPMENT_CASES.json`; their bytes are frozen into every run. Each run pins dataset hash and runtime source hashes. All runs and any raw development audits stay under `Directions/beta_data/evaluation_runs/`. Results used during fixes are development evidence, not an independent final test. No held-out evaluation files were read. Format repairs consume actual additional model calls and are reported.
 
-See `EVALUATION_RESULTS.json` for recorded results, `QUESTIONS_TO_TRY.md` for the strongest/weakest questions and interpretation, and `performance.png` / `performance.svg` for the graph. `question_results.csv` is the tabular export. The graph measures declared technical task completion and latency, not factual accuracy, teaching quality or learning gains. The chemistry description guard's false-positive diagnosis is preserved in the run history.
+See `EVALUATION_RESULTS.json` for recorded results (the app shows them at `/api/evidence`), and [SUGGESTED_QUESTIONS.md](SUGGESTED_QUESTIONS.md) for questions that worked in the live check on 6 Nov. The 3 Nov question list, graph and CSV export (`QUESTIONS_TO_TRY.md`, `performance.png`/`.svg`, `question_results.csv`) are at the [archive tag](https://github.com/ksharp05/Socratic-AI-Tutor/tree/docs-archive-2026-11-14/Docs/beta); `scripts/beta/render_results.py` regenerates them. The graph measures declared technical task completion and latency, not factual accuracy, teaching quality or learning gains. The chemistry description guard's false-positive diagnosis is preserved in the run history.
 
 ## Beta testing next
 

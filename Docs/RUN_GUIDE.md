@@ -92,7 +92,7 @@ The PowerShell launcher picks `SOCRATES_PYTHON` first, then `.venv_beta`, then `
 1. Open [http://127.0.0.1:8770/api/health](http://127.0.0.1:8770/api/health). A healthy local setup reports `status: ok`, the dataset and language mode. The dataset integrity status should be `verified`.
 2. Open the main page, choose an available subject and ask a concept question in English. Check the cited source and the displayed provider/fallback status.
 3. For checked practice, choose Class 10 Maths and one of Quadratic Equations, Arithmetic Progressions or Introduction to Trigonometry. These are the current supported maths-practice chapters; other subjects are source-grounded concept conversation, not equivalent checked practice.
-4. Try the documented examples in [questions to try](beta/QUESTIONS_TO_TRY.md). The development results and graph are not an independent evaluation or proof of teaching quality.
+4. Try the documented examples in [suggested questions](beta/SUGGESTED_QUESTIONS.md). The development results and graph are not an independent evaluation or proof of teaching quality.
 
 ## Troubleshooting
 
