@@ -189,7 +189,7 @@ Day-by-day tasks for each role are in [08 · Schedule](08-schedule.md).
 | **R3** Agents and orchestration engineer | Poonam | LangGraph graph; planner; four specialists; baselines; Reflexion loop |
 | **R4** Tools, control and security engineer | Swati | Four MCP servers; hooks; guardrails; approval gate; answer adapter; threat model |
 | **R5** Evaluation and red-team engineer | Lakshya (also Lead and R1) | Held-out sets; attacks; harness; simulated students; judge calibration; experiments; report tables |
-| **R6** Deployment and operations engineer | Shivam or Sharath (to confirm) | Docker Compose; API; UI; auth; Prometheus and Grafana; alerts; CI; README; recording |
+| **R6** Deployment and operations engineer | Sharath S Nadig | Docker Compose; API; UI; auth; Prometheus and Grafana; alerts; CI; README; recording |
 
 Two separations keep the results honest:
 - R3, who tunes the agents, never sees the held-out cases.

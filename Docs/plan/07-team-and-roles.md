@@ -13,7 +13,7 @@ Names proposed in the team group on 31 Oct ([D-2](../DECISIONS.md)); confirmed a
 | **R3** Agents and orchestration engineer | Poonam Ramnaresh Prajapati | `tutor/graph/`, agents and prompts, planner, self-correction loop, C0 and C1 baselines, Reflexion code, diagnosis rules (with R2) | **Read `eval/private/`, or look at held-out results before the freeze** |
 | **R4** Tools, control and security engineer | Swati Smita Biswal | `tutor/mcp_servers/`, hooks, guardrails, approval gate, answer adapter, threat model | **See R5's new attacks before E2** |
 | **R5** Evaluation and red-team engineer | Lakshya Yadav (ksharp05; also Lead and R1) | `eval/` (harness, simulator engine and rules, judge, scorers, configurations, pre-registration), the held-out freeze, new attacks, results tables | **Edit prompts, agents or guards** |
-| **R6** Deployment and operations engineer | Shivam Srivastava or Sharath S Nadig (to confirm which) | Compose, Dockerfiles, API, UI, authentication, Prometheus and Grafana, alerting, CI, README, clean-machine test, demo recording | — |
+| **R6** Deployment and operations engineer | Sharath S Nadig (confirmed 13 Nov) | Compose, Dockerfiles, API, UI, authentication, Prometheus and Grafana, alerting, CI, README, clean-machine test, demo recording | — |
 
 ## Separation rules
 

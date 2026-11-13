@@ -30,7 +30,7 @@ The open decisions Q1–Q9 in the [plan overview](plan/README.md#open-decisions)
   - Never index the answers appendix.
   - Leave Science unused.
   - Type 20–30 NCERT exercises as an external check set, kept out of git.
-- **D-2 follow-ups:** which of Shivam and Sharath is R6, and whether the other takes R5b.
+- **D-2 follow-ups:** R6 is Sharath S Nadig (Lead, 13 Nov). Still open: whether Shivam Srivastava takes R5b.
 
 ---
 ### D-7 · 2026-11-11 · Safety classifier: google/gemma-4-31b-it behind the phrase screens (replaces D-6) · confirmed 12 Nov
@@ -102,7 +102,7 @@ Model:    openai/gpt-4.1-mini
 - **Decision:**
   - Lakshya: Lead, R1 and R5. R1 is shared, with everyone contributing.
   - Rizwan: R2. Poonam: R3. Swati: R4.
-  - Shivam or Sharath: R6, to confirm which.
+  - Sharath S Nadig: R6 (confirmed by the Lead on 13 Nov 2026).
   - The other of the two: proposed as R5b, evaluation engineer. R5b covers the judge runner, metrics, cost logging, report tables and the NCERT check set, and is the second judge rater and held-out spot-checker. Fallback: split R6 into app and platform.
 - **Why:** nobody picked R5, and Lakshya holds the dataset, so Lakshya takes R5 alongside R1 ([D-1](#d-1--2026-10-30--the-lead-also-holds-r1-and-r5)). Six people fill five role slots, so the sixth takes the R5 work that needs no held-out access.
 - **Evidence:** team WhatsApp group, 31 Oct; [lead roadmap](LEAD_ROADMAP.md#team).

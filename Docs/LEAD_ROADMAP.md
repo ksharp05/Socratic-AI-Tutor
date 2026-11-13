@@ -23,8 +23,8 @@ Proposed in the team group on 31 Oct ([D-2](DECISIONS.md)); confirmed at the mee
 | **R3** Agents and orchestration | Poonam | LangGraph graph, prompts, planner, the four specialists, baselines, Reflexion loop, diagnosis rules with R2 | **Open held-out cases, or look at held-out results before the freeze** |
 | **R4** Tools, control and security | Swati | The four MCP servers, hooks, guardrails, approval gate, threat model, all refusal and safety wording | **See R5's new attacks before E2** |
 | **R5** Evaluation and red team | Lakshya | Held-out sets, new attacks, harness, simulator, pre-registration, experiments, results tables | **Edit prompts, agents, guards or diagnosis rules** |
-| **R6** Deployment and operations | Shivam or Sharath (**to confirm which**) | Compose, API, UI, auth, Prometheus and Grafana, alerts, CI, README, demo recording | — |
-| **R5b** Evaluation engineer (**proposed**) | The other of Shivam and Sharath | Judge runner, metrics, cost logging, report tables, the NCERT check set; second judge rater and held-out spot-checker. Builds on development data only; sees held-out cases only for the spot-check | **Edit prompts, agents, guards or diagnosis rules** |
+| **R6** Deployment and operations | Sharath S Nadig (confirmed by the Lead, 13 Nov) | Compose, API, UI, auth, Prometheus and Grafana, alerts, CI, README, demo recording | — |
+| **R5b** Evaluation engineer (**proposed**) | Shivam Srivastava (proposed; to confirm) | Judge runner, metrics, cost logging, report tables, the NCERT check set; second judge rater and held-out spot-checker. Builds on development data only; sees held-out cases only for the spot-check | **Edit prompts, agents, guards or diagnosis rules** |
 
 **Why R5b:** six people and Lakshya holds two roles, so one person has no role yet. R5 carries the heaviest load in the last week, and R5b takes the parts that need no held-out access. **Fallback:** split R6 into app (API, UI, auth) and platform (Compose, CI, dashboards).
 

@@ -150,7 +150,7 @@ Each workstream has one accountable owner. "With" means that role contributes an
 | F2 | **Review the crisis-mention masking** (`_FICTION_QUOTE`, `_ATTRIBUTED_QUOTE`, `_CONTEXTUAL_CRISIS` in `safety.py`) with R4. Some of its phrases match rows in the synthetic Hinglish pack's error file. Either keep it, with new independent test cases, or narrow it. | A decision recorded. That pack is marked "contaminated" for future evaluation. |
 | F3 | Safe-messaging audit of the urgent and support replies against WHO/IASP (2023) and the JED Foundation's AI guidance (2025): no method talk, encourage a trusted adult, give the helpline, never promise secrecy, do not resume maths straight away. | A checklist with each reply marked pass or fail. |
 | F4 | DPDP readiness note. The child-data duties (Section 9, Rule 10: verifiable parental consent) start in **May 2027**; one source says March 2027, so confirm it in the e-Gazette. Plan a parental-consent step and retention limits before any real school pilot. | A one-page note in `Docs/policy/`. |
-| F5 | Name the R6 owner and a second R5 person. Demo recording and grader access. | Team table updated in `Docs/LEAD_ROADMAP.md`. |
+| F5 | R6 is Sharath (done, 13 Nov). Confirm a second R5 person (proposed: Shivam Srivastava as R5b). Demo recording and grader access. | Team table updated in `Docs/LEAD_ROADMAP.md`. |
 
 ---
 
@@ -182,13 +182,13 @@ Each workstream has one accountable owner. "With" means that role contributes an
 - **Do not:** look at R5's B1 set before B3 is scored.
 - **Viva prep:** the threat model v3, D-7, and why fail-open vs fail-closed matters.
 
-### R5 · Evaluation and red-team engineer · Lakshya, plus a second person (to name)
+### R5 · Evaluation and red-team engineer · Lakshya (Lead), with a second person (proposed: Shivam Srivastava as R5b)
 - **Owns:** B1–B6.
 - **Reviews:** every PR that touches `eval/`.
 - **Start with:** B2 (freeze the pre-registration) and B1 (write the sealed set). The second person should write and label B1, so the screens are not tested by the person who tuned them.
 - **Viva prep:** why the core is now development evidence, and Wilson bounds.
 
-### R6 · Deployment and operations engineer · Shivam Srivastava or Sharath S Nadig (to confirm)
+### R6 · Deployment and operations engineer · Sharath S Nadig
 - **Owns:** E1–E6.
 - **Reviews:** A1 (bundle and cold start), D4 (migration).
 - **Start with:** E5 (clean-machine install and mobile check) to learn the stack, then E1.
@@ -214,7 +214,7 @@ Each workstream has one accountable owner. "With" means that role contributes an
 | Core numbers are optimistic | We overclaim in the report or viva | Say "development evidence"; B1–B3 | R5 |
 | A screen fails open silently | Crisis missed with no trace | A2: count, alert and time out | R4, R6 |
 | No funded key after 16 Nov | Live replies fall back to source reading | E6; `TUTOR_BETA_LIVE=0` | R6 |
-| One person holds Lead, R1 and R5 | No independence for labels or held-out sets | F5: name a second R5 | Lead |
+| One person holds Lead, R1 and R5, and tuned the safety screens | No independence for labels or held-out sets | F5: confirm Shivam as R5b to write and label B1 | Lead |
 | Neon Free at 1 GB | Writes fail | E6 monitoring | R6 |
 | Child-data law from 2027 | Can't pilot in schools without parental consent | F4 | R1 |
 
