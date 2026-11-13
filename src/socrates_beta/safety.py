@@ -323,5 +323,10 @@ _SECRET_PROMISE = re.compile(r"(?i)\b(?:i|we)\s+(?:promise|swear|will|won'?t)\b[
                              r"\bkisi ko nahi bata(?:unga|ungi|yenge)\b|किसी को नहीं बताऊँगा")
 
 
+# Phones and models often type a curly apostrophe ("I won’t tell anyone"); the pattern above uses a straight one.
+# Map the common apostrophe look-alikes to "'" before matching (A6, 13 Nov).
+_APOSTROPHES = str.maketrans({"\u2019": "'", "\u2018": "'", "\u02bc": "'", "\uff07": "'", "`": "'"})
+
+
 def promises_secrecy(reply: str) -> bool:
-    return bool(_SECRET_PROMISE.search(reply or ""))
+    return bool(_SECRET_PROMISE.search((reply or "").translate(_APOSTROPHES)))

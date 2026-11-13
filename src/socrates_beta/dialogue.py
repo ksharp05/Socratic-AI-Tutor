@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json,logging,re,threading,time
+import hashlib,json,logging,re,threading,time
 from dataclasses import asdict
 from ncert_pipeline.dialogue import SYSTEM,redact,validate_reply
 from .safety import (UrgentScreen,urgent,reply_for,clean_text,redact_personal_data,promises_secrecy,emotional_support_reply,
@@ -89,14 +89,20 @@ def _screen_urgent(message: str, stage: str):
     return hit
 
 
+# AS-08: one lock per session id grew without limit. A fixed set of lock stripes keeps memory bounded; two
+# sessions occasionally share a stripe, which only makes their turns wait for each other (as in repository.py).
+SESSION_LOCK_STRIPES = 256
+
+
 class DialogueService:
     def __init__(self,repo,registry,language=None,*,check_consent=None,
                  supplemental_screen: SafetyScreenPort | None = None):
-        self.repo,self.registry,self.language=repo,registry,language;self.locks={};self.guard=threading.Lock()
+        self.repo,self.registry,self.language=repo,registry,language;self.locks=tuple(threading.RLock() for _ in range(SESSION_LOCK_STRIPES));self.guard=threading.Lock()
         self.check_consent=check_consent
         self.supplemental_screen=supplemental_screen
     def session_lock(self,sid):
-        with self.guard:return self.locks.setdefault(sid,threading.RLock())
+        stripe=int.from_bytes(hashlib.sha256(str(sid).encode('utf-8')).digest()[:4],'big')%len(self.locks)
+        return self.locks[stripe]
     def turn(self,owner,sid,message,request_id):
         hit=_screen_urgent(message, "input")
         if hit:
