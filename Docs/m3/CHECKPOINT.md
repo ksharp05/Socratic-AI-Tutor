@@ -1,3 +1,19 @@
+# Team plan and Beta push (13 Nov 2026)
+
+- **Pushed to `origin/Beta` (f670035):**
+  - step feedback in practice;
+  - the emotional-support reply;
+  - crisis-mention masking (needs an R1 and R4 review before production);
+  - the `SafetyScreenPort` socket (nothing connected yet);
+  - the retrieval cache and single write transaction;
+  - the password and system-prompt injection guard.
+- **Tests:** CI set 3,117 passed, 23 skipped. The 87 `local_corpus` tests pass locally. Eight new corpus-dependent tests are now marked `local_corpus`.
+- **Team plan:** `Docs/m3/TEAM_ROLE_PLAN_2026-11-13.md`, with workstreams A–F, role cards, a timeline to 29 Nov, risks and sources.
+- **Key finding:** the 68/88 crisis result needs local Gemma. The Vercel-deployable portable model gives 59/88 crisis and 7/1,031 benign blocks. The public core has been used for selection, so treat it as development evidence until there is a sealed set (B1).
+- **Production is unchanged** (db49b7d).
+
+---
+
 # After v1.0, on Beta only (12 Nov 2026)
 
 - **Workflow.** Everything lands on Beta first. On 12 Nov the Lead moved Beta over: `main` was fast-forwarded to Beta and now holds everything below. The `v1.0` tag stays at d139762, the submitted release.
