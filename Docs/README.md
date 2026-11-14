@@ -9,6 +9,7 @@ The latest version of each document lives here. Earlier milestone notes, superse
 | How it is put together | [report/ARCHITECTURE.md](report/ARCHITECTURE.md) |
 | Where the project stands today | [m3/CHECKPOINT.md](m3/CHECKPOINT.md) (top section) |
 | Who does what next | [m3/TEAM_ROLE_PLAN_2026-11-13.md](m3/TEAM_ROLE_PLAN_2026-11-13.md) |
+| Each role's area, who built it, and viva notes | [roles/](roles/README.md) |
 | Install and run | [SETUP.md](SETUP.md), [INSTALL_CHECKLIST.md](INSTALL_CHECKLIST.md), [RUN_GUIDE.md](RUN_GUIDE.md) |
 
 ## Living logs (add to these, never rewrite them)
