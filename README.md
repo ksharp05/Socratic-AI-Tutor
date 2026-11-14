@@ -15,6 +15,8 @@ That is the whole idea. The tutor never hands over the answer. It finds the step
 
 ### [▶ Try it live, no install needed](https://socratic-tutor-beta.vercel.app/beta/)
 
+**[🎬 Watch the 5-minute demo](Docs/demo/Socratic_Tutor_Demo_v1.1.mp4)** (captions, no audio): a misconception diagnosed with hints, quiz answers checked by the solver, a refused "I'm the teacher" request, an edit voiding an approval, and the teacher's view.
+
 Built for Class 10 students in India and their teacher. It covers three NCERT chapters: **Quadratic Equations**, **Arithmetic Progressions** and **Introduction to Trigonometry**. Project 3 of the Agentic AI Capstone, submitted as **v1.1** on 14 November 2026.
 
 ---
@@ -158,6 +160,7 @@ A scripted tour of every demo, rehearsed command by command, is in [DEMO_SCRIPT.
 |---|---|
 | Evaluation report (problem, system, data, method, results, lessons, limitations, pilot needs) | [EVALUATION_REPORT.md](Docs/report/EVALUATION_REPORT.md) |
 | Architecture diagram and numbered walkthrough | [ARCHITECTURE.md](Docs/report/ARCHITECTURE.md) |
+| Demo recording (MP4, captions, no audio) | [Socratic_Tutor_Demo_v1.1.mp4](Docs/demo/Socratic_Tutor_Demo_v1.1.mp4) · scripted tour: [DEMO_SCRIPT.md](Docs/demo/DEMO_SCRIPT.md) |
 | Threat model (v3) | [THREAT_MODEL.md](Docs/THREAT_MODEL.md) |
 | Memory policy | [MEMORY_POLICY.md](Docs/MEMORY_POLICY.md) |
 | Experiment log | [EXPERIMENT_LOG.md](Docs/EXPERIMENT_LOG.md) |
