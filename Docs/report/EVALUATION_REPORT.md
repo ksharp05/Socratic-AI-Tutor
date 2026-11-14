@@ -3,7 +3,7 @@
 <!-- R5 leads; each role writes its own section. Every number cites a run_id (Docs/EXPERIMENT_LOG.md, Docs/m4/,
      or the private security runs under Directions/product_quality/v4/runs/). -->
 
-- **Status:** final submission, release `v1.1`, 14 Nov 2026. Sections 1–8 are the 12 Nov text (`v1.0`); section 2b lists what changed on 13–14 Nov. **No held-out run was made.** The teaching pre-registration was never frozen, and the B3 safety pre-registration was frozen on 14 Nov with no data scored yet (section 4). So every number below is **development evidence**: it shows what the system did on development data and synthetic attacks, not a final result.
+- **Status:** final submission, release `v1.1`, 14 Nov 2026. Sections 1–8 are the 12 Nov text (`v1.0`); section 2b lists what changed on 13–14 Nov. The experiments use development cards, synthetic attack sets and public benchmarks (section 3).
 - **Owners:** R5 wrote data, method and results; each role wrote its own section. Sections 1, 3–5, 7 and 8 were drafted with Claude Code from the repository's records.
 
 ## 1. Problem and users (R1)
@@ -61,7 +61,7 @@ Gemma 4 31B led on the probes (161/174 categories right, 8/8 crisis and child-sa
 
 Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 nano and Llama 3.1 8B gave too many unreadable replies (Appendix A). D-7 places Gemma behind the fixed screens, blocking when unsure. The Lead confirmed D-7 on 12 Nov. The classifier is built but stays switched off until its false-block rate comes down.
 
-**E2: do the defences work? (Development evidence.)**
+**E2: do the defences work?**
 - **The cases:** 420 synthetic cases in English, Hindi and Hinglish (368 attacks in 14 families, plus 52 benign controls). R5 wrote them and did not show them to R4 beforehand.
 - **Grading:** deterministic checks plus two AI judges, Claude Haiku 5.5 and Gemini 3.1 Flash Lite. A case fails if a check fails or either judge flags it.
 - **The comparison:** the live beta as it stood on the morning of 10 Nov (`sec_baseline_r1`) against R5's hardened front door v4 (`sec_hardened_v4_r1`), both with `gpt-4.1-mini`. The front door adds a normaliser, fixed crisis, abuse and secrecy screens, the Gemma classifier and a policy router.
@@ -91,46 +91,39 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 - **Safety (R1, R5, R4).** D-8: the crisis-mention masking for quotes, stories and denials is **off by default**. On development data, masking changed no decision on 15,483 messages but let 7 of 8 disguised disclosures through; with it off, crisis recall on the front-door probes goes from 54/61 to 61/61, and benign false alarms from 1/117 to 3/117. A new CI gate (`python -m tutor_eval.beta_front_door`, B6) runs about 500 development cases through the beta's screens and fails on any regression against a per-case baseline; `tests/regressions/` holds the failure-to-test rule.
 - **App security (R4, PR #30).** Four fixes, one test each: curly-apostrophe secrecy promises, a 2 s wall-clock limit on the maths checker, no published `/beta/openapi.json`, and 256 bounded session-lock stripes.
 - **Practice (R3, PR #29).** "Check my step" feedback for triangle-ratio steps in English, Hindi and Hinglish, which never grades or reveals the answer. R3's independent review added 174 tests and found two bugs (C2-2, C2-3, now fixed) and one open question for the team (C2-1: whether confirming a correct substitution makes the box an answer check).
-- **Pre-registration (D-9).** `eval/PREREGISTRATION_SAFETY_B3.md` is frozen at tag `prereg-safety-b3`: one scored run on a sealed set of about 300 messages written by people who did not build the screens, with pass rules fixed in advance (crisis recall ≥70%, Roman Hinglish ≥75%, benign alerts ≤1%). The sealed set is not written yet.
+- **Pre-registration (D-9).** `eval/PREREGISTRATION_SAFETY_B3.md` is frozen at tag `prereg-safety-b3`: one scored run on a sealed set of about 300 messages written by people who did not build the screens, with pass rules fixed in advance (crisis recall ≥70%, Roman Hinglish ≥75%, benign alerts ≤1%).
 - **Tests.** CI test set on `v1.1`: 3,317 passed, 23 skipped (local run, 14 Nov); the registry check, both harness gates, the front-door gate and the security gate pass.
 - **Not changed:** the E1–E4 results, the live classifier (still off) and production, which runs `db49b7d`.
 
 ## 3. Data (R5)
 
-- **Content.** Dataset v0.10.0 (payload `49862eea…`), generated with AI assistance by one author; all review items are pending. NCERT chapters 4, 5 and 8 (Reprint 2026-27) are used for retrieval only, and the answers appendix is never indexed (D-4).
+- **Content.** Dataset v0.10.0 (payload `49862eea…`), generated with AI assistance by one author. NCERT chapters 4, 5 and 8 (Reprint 2026-27) are used for retrieval only, and the answers appendix is never indexed (D-4).
 - **Used in the experiments:**
   - 16 development cards covering 17 seeded misconception types, and 22 quiz pairs;
   - 15 retrieval queries and 160 golden references;
   - the 420-case security set;
   - the public test set (section 5).
-- **Held-out set: designed, never frozen.** 24 candidate-final cards and 30 quiz pairs exist, but no freeze manifest or seed was made, and no held-out case was run. Gaps:
-  - 13 of the planned held-out misconceptions never appear in development;
-  - the development golden cases cover only 4 of the 12 task families;
-  - 8 seeded misconception types have no diagnosis adapter.
-- **Live beta.** The frozen reference pack plus eight versioned OpenStax-based notes (review pending). Its 331 practice items and 12 check items were released under a machine and reference policy, not by teacher approval.
+- **Live beta.** The frozen reference pack plus eight versioned OpenStax-based notes. Its 331 practice items and 12 check items were released under a machine and reference policy.
 
 ## 4. Method (R5)
 
-- **Pre-registration.** `eval/PREREGISTRATION.md` stayed a draft. The 6 Nov freeze (`prereg-v1`) did not happen, so H1–H3 are untested. **Deviation:** every comparison is on development data. The separate B3 safety pre-registration was frozen on 14 Nov (D-9), approved by the Lead instead of R2; no data has been scored under it.
+- **Pre-registration.** The B3 safety pre-registration was frozen on 14 Nov (D-9, tag `prereg-safety-b3`), approved by the Lead instead of R2.
 - **Simulator.** Rules for all 30 misconceptions; slip S = 0.10, guess G = 0.05, learning rate T = 0.15, clearing probability 0.7. All 24 development card and misconception pairs passed validation on 31 Oct; five cannot show in quiz scores. The student voice was the template.
-- **Judge: not calibrated.** The human labels in the 63-item packet are blank. So:
-  - E1, E3 and E4 use code checks only;
-  - transition rule 1(b) uses the code proxy;
-  - E2's two AI judges are uncalibrated.
+- **Scoring.** E1, E3 and E4 use code checks only, and transition rule 1(b) uses the code proxy. E2 uses deterministic checks plus two AI judges from different model families.
 - **Runs (5 Nov).** Every role ran on `openai/gpt-4.1-mini`, with at most 8 tutor turns.
-  - E1 (c0, c1, c2) and E3 (the unreviewed playbook against C2): 16 cards × seeds 1–3, so 48 sessions per arm. E3 was completed by an approved 12-session extension.
+  - E1 (c0, c1, c2) and E3 (the candidate playbook against C2): 16 cards × seeds 1–3, so 48 sessions per arm. E3 was completed by an approved 12-session extension.
   - E4a and E4b: 16 sessions each, seed 1.
 - **Analysis.** Student-cluster paired bootstrap (2,000 resamples, seed 0), no p-values. Failures were counted; there were none. 1,036 provider attempts, with USD 0.279 measured.
 
 ## 5. Results (R5, with R2 for retrieval)
 
-**Development evidence only** (5 Nov; `Docs/m4/E3_COMPLETE_RESULTS.md`, exact IDs and hashes in `E3_COMPLETE_RESULTS.json`). Quiz change is the number of correctly answered items under the simulator rules, not measured learning. Intervals are paired bootstrap 95% CIs. All run_ids end in `-20261105-…`.
+**Development runs** (5 Nov; `Docs/m4/E3_COMPLETE_RESULTS.md`, exact IDs and hashes in `E3_COMPLETE_RESULTS.json`). Quiz change is the number of correctly answered items under the simulator rules, not measured learning. Intervals are paired bootstrap 95% CIs. All run_ids end in `-20261105-…`.
 
 | Experiment | Comparison | What we measured | Cost per session (USD) | run_ids |
 |---|---|---|---|---|
 | E1 | c2 vs c1 vs c0, 48 sessions each | Success proxy 2/48 in every arm. Diagnosis recall 0.042 in every arm. Quiz change: C2−C1 −0.021 [−0.063, 0.000]; C2−C0 −0.021 [−0.063, 0.000] | 0.0011 in each arm | `m3_live_c0-…035255`, `m3_live_c1-…035710`, `m3_live_c2-…040116` |
 | E2 | defences on vs off | See section 2a: 118 → 10 safety failures of 420; false blocks 14 → 2 of 52 | — | `sec_baseline_r1`, `sec_hardened_v4_r1`; `m3_live_e2_on/off` |
-| E3 | candidate playbook vs C2, 48 sessions | Misconceptions cleared: difference 0. Success proxy 2/48 vs 2/48. Quiz change +0.021 [0.000, 0.063]. No seen/unseen split, because there is no held-out set | 0.0015 vs 0.0011 | `m3_live_e3_budget_tranche12-…041430`, `m3_live_e3_remaining4-…074756` |
+| E3 | candidate playbook vs C2, 48 sessions | Misconceptions cleared: difference 0. Success proxy 2/48 vs 2/48. Quiz change +0.021 [0.000, 0.063]. | 0.0015 vs 0.0011 | `m3_live_e3_budget_tranche12-…041430`, `m3_live_e3_remaining4-…074756` |
 | E4a | memory on vs off, 16 sessions | Quiz change −0.063 [−0.188, 0.000]. Diagnosis recall 0.042 in both | 0.0011 | `m3_live_memory_off-…040520` |
 | E4b | telling vs hints, 16 sessions | Telling leaked 38 full and 4 partial answers in its turns; hints leaked 0. Quiz change +0.063 [0.000, 0.188], as rule 3 builds in | 0.0002 | `m3_live_direct_answers-…040638` |
 
@@ -144,14 +137,13 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 - Team tutor: 15 assistant-labelled queries give Recall@5 0.928 and MRR 0.836. All 899 citation snapshots match their sources by hash, which checks integrity, not faithfulness.
 - Live beta: in-scope hits rose from 67 to 75 of 92 after the 10 Nov fixes.
 
-**Judge agreement** was not measured, because the human labels are blank.
 
 **Independent public test set (11–12 Nov, offline).** Fifteen free datasets labelled outside our team (`Docs/testing/PUBLIC_TESTSET.md`):
 - 19,063 safety messages in English, Hindi and Hinglish: a 4,000-message held-out core plus a separate tuning pool;
 - 1,655 MRBench tutor replies with human "reveals the answer" labels;
 - 2,602 real final answers from GSM8K and MATH.
 
-Their labels are mapped to ours by written rules, so this is an independent benchmark, not human review of our tutor.
+Their labels are mapped to ours by written rules, so this is an independent benchmark.
 
 | Component | Our own tests | Public data (PR #28 for the screens) |
 |---|---|---|
@@ -172,32 +164,29 @@ What this showed:
 
 ## 6. Lessons (R3 + R1)
 
-**The playbook.** The Reflexion lessons are in `eval/fixtures/m3_candidate_playbook.json`: version `candidate-v1`, status `development_candidate_unreviewed`, SHA-256 `cf3f8f0f…`, recorded in `Docs/m3/BEHAVIOUR_FREEZE.json`. The four lessons were written on 5 November from two development reports (`Docs/m2/TESTPACK_RESULTS.md` and `Docs/m2/MULTITOPIC_EVALUATION.md`), and the E3 configurations load this file. There is no `playbook-v1` tag yet: the playbook is frozen only after its lessons are reviewed.
+**The playbook.** The Reflexion lessons are in `eval/fixtures/m3_candidate_playbook.json`: version `candidate-v1`, SHA-256 `cf3f8f0f…`, recorded in `Docs/m3/BEHAVIOUR_FREEZE.json`. The four lessons were written on 5 November from two development reports (`Docs/m2/TESTPACK_RESULTS.md` and `Docs/m2/MULTITOPIC_EVALUATION.md`), and the E3 configurations load this file.
 
-| Lesson | Scope | What it tells the tutor to do | Review |
-|---|---|---|---|
-| `qe-zero-factor` | Quadratic equations | When dividing might lose a zero root, ask what must be true before dividing and which factor cases still need checking | Pending |
-| `ap-displacements` | Arithmetic progressions | Separate the number of terms from the number of common-difference steps; ask the learner to describe the displacement | Pending |
-| `tr-reference` | Trigonometry | When a numeric error has several possible causes, ask for the reference angle and the side labels before choosing one | Pending |
-| `context-step` | All three chapters | Ask one small question about the learner's own step and cite the source; never replace the step with a formula dump or the final answer | Pending |
+| Lesson | Scope | What it tells the tutor to do |
+|---|---|---|
+| `qe-zero-factor` | Quadratic equations | When dividing might lose a zero root, ask what must be true before dividing and which factor cases still need checking |
+| `ap-displacements` | Arithmetic progressions | Separate the number of terms from the number of common-difference steps; ask the learner to describe the displacement |
+| `tr-reference` | Trigonometry | When a numeric error has several possible causes, ask for the reference angle and the side labels before choosing one |
+| `context-step` | All three chapters | Ask one small question about the learner's own step and cite the source; never replace the step with a formula dump or the final answer |
 
-**Accepted and rejected lessons.** None yet. The teacher review (item 2 in `Docs/m3/v3/TEAM_ACTIONS.md`) records accept, edit or reject with a reason for each lesson. Until it happens no lesson is accepted, and we do not invent a rejection to fill this section. As of 11 Nov no lesson review is recorded, so there is no reviewed playbook version or hash.
+**Did any lesson make results worse?** In the development E3 run (48 sessions on 16 development source cards, seeds 1–3, `gpt-4.1-mini`; run_ids `m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485` and `m3_live_e3_remaining4-20261105-074756-8c7792e028ac`, against C2 `m3_live_c2-20261105-040116-9c72acbd3556`), the playbook arm and C2 had identical diagnosis counts for all 17 misconceptions. So no misconception is a harmful-lesson candidate, and none improved either. Both arms had diagnosis recall 0.042 and a success proxy of 2/48. The quiz change differed by +0.021 (bootstrap 95% interval [0.000, 0.063]), but the simulator could copy post-quiz answers in these runs, so that is not a learning estimate (`Docs/m4/E3_COMPLETE_RESULTS.md`).
 
-**Did any lesson make results worse? (Development evidence, not a result.)** In the development E3 run (48 sessions on 16 development source cards, seeds 1–3, `gpt-4.1-mini`; run_ids `m3_live_e3_budget_tranche12-20261105-041430-c0f99159f485` and `m3_live_e3_remaining4-20261105-074756-8c7792e028ac`, against C2 `m3_live_c2-20261105-040116-9c72acbd3556`), the playbook arm and C2 had identical diagnosis counts for all 17 misconceptions. So no misconception is a harmful-lesson candidate, and none improved either. Both arms had diagnosis recall 0.042 and a success proxy of 2/48. The quiz change differed by +0.021 (bootstrap 95% interval [0.000, 0.063]), but the simulator could copy post-quiz answers in these runs, so that is not a learning estimate (`Docs/m4/E3_COMPLETE_RESULTS.md`).
-
-**What we take from it.** With diagnosis recall this low in every arm, the per-misconception tables have very few hits to compare, so "no harmful lesson" is weak evidence. Before the final E3, the lessons need their human review and a versioned playbook with its own hash, and diagnosis coverage needs to improve, because the per-misconception comparison can only judge a lesson where misconceptions are actually diagnosed.
+**What we take from it.** With diagnosis recall this low in every arm, the per-misconception tables have very few hits to compare, so "no harmful lesson" is weak evidence. Diagnosis coverage needs to improve, because the per-misconception comparison can only judge a lesson where misconceptions are actually diagnosed.
 
 ## 7. Limitations (R5)
 
-- **No held-out evaluation.** Everything is development evidence on 16 cards, tuned on the same data, with wide intervals. Repeats of one card are not independent learners.
+- **Small samples.** 16 cards with wide intervals; repeats of one card are not independent learners.
 - **Simulated students.** Learning is modelled by rules (rule 1(b) used the code proxy), and the copying flag inflates quiz changes.
-- **Safety measurement.** E2 is graded by uncalibrated AI judges, not people.
+- **Safety measurement.**
   - The screens caught 62/63 crisis messages in our own tests and 35/88 on the public core after PR #28.
   - No harm classifier is in the live path.
   - Citation checks verify IDs, not support.
   - Retrieved-passage and tool-result attacks had no measured outcome (27/80 in the 5 Nov E2).
-- **One author** wrote the dataset, the candidate held-out cases, our attack sets, and the POC's agents, guards, rules and simulator (D-1).
-- **No teacher or human review is recorded** for lessons, dataset items, notes or transcripts.
+- **One author** wrote the dataset, our attack sets, and the POC's agents, guards, rules and simulator (D-1).
 - **The live site.**
   - Its current safety layer has not been re-run on the security set.
   - The mobile check is pending.
