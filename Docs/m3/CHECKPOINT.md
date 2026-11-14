@@ -1,3 +1,11 @@
+# Release v1.1, final submission (14 Nov 2026)
+
+- **Pushed:** `Beta` = `main` = tag `v1.1`, the submitted state.
+- **Report:** new section 2b covers the 13–14 Nov work. The report, slides and release note describe what was done. [Release note](../releases/2026-11-14-v1.1.md).
+- **Role notes:** [Docs/roles/](../roles/README.md) has one note per role, covering its area and who built it, for the viva on 15 Nov.
+- **Tests:** CI test set 3,317 passed and 23 skipped. The registry, harness, front-door and security gates pass.
+- **Production is unchanged:** Beta `db49b7d`, `dpl_9uoVZqtLgPJYVEARmFnLf8BBvPFH`. The provider key expires on 16 Nov.
+
 # Integration and cleanup (14 Nov 2026)
 
 - **Merged and pushed to `Beta`:**

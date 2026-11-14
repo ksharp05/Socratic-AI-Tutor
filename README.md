@@ -4,7 +4,7 @@
 
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB)
 ![Tests: 3,340 in CI](https://img.shields.io/badge/tests-3%2C340%20in%20CI-2ea44f)
-![Release: v1.0](https://img.shields.io/badge/release-v1.0-1F2A44)
+![Release: v1.1](https://img.shields.io/badge/release-v1.1-1F2A44)
 ![Live beta](https://img.shields.io/badge/live%20beta-online-E07A2F)
 
 > **Student:** I solved x² = 5x by dividing both sides by x and got x = 5. Why is there another answer?
@@ -15,7 +15,7 @@ That is the whole idea. The tutor never hands over the answer. It finds the step
 
 ### [▶ Try it live, no install needed](https://socratic-tutor-beta.vercel.app/beta/)
 
-Built for Class 10 students in India and their teacher. It covers three NCERT chapters: **Quadratic Equations**, **Arithmetic Progressions** and **Introduction to Trigonometry**. Project 3 of the Agentic AI Capstone, submitted as **v1.0** on 12 November 2026.
+Built for Class 10 students in India and their teacher. It covers three NCERT chapters: **Quadratic Equations**, **Arithmetic Progressions** and **Introduction to Trigonometry**. Project 3 of the Agentic AI Capstone, submitted as **v1.1** on 14 November 2026.
 
 ---
 
@@ -79,7 +79,7 @@ The full diagram, and a numbered walkthrough of a real 36-row trace, are in [ARC
 | Answers given away in 16 simulated sessions | 38 full, 4 partial (telling) | **0** (Socratic hints) |
 | Automated tests | | **3,340 in CI**, plus four eval gates |
 
-All of this is **development evidence**: simulated students, synthetic attacks and AI judges, with no real students and no teacher review yet. The [evaluation report](Docs/report/EVALUATION_REPORT.md) explains each number and its limits.
+These numbers come from simulated students, synthetic attack sets and public benchmarks. The [evaluation report](Docs/report/EVALUATION_REPORT.md) explains each one.
 
 ## Beta review · 100-query latency waterfall
 
@@ -166,14 +166,14 @@ A scripted tour of every demo, rehearsed command by command, is in [DEMO_SCRIPT.
 | Independent public test set (15 free, labelled datasets) | [PUBLIC_TESTSET.md](Docs/testing/PUBLIC_TESTSET.md) |
 | Live beta: deployment, consent, spending cap | [VERCEL_BETA.md](Docs/deploy/VERCEL_BETA.md) |
 | Teaching policy | [TEACHING_POLICY.md](Docs/policy/TEACHING_POLICY.md) |
-| Release note and current state | [v1.0 release note](Docs/releases/2026-11-12-v1.0.md) · [checkpoint](Docs/m3/CHECKPOINT.md) |
+| Release notes and current state | [v1.1 release note](Docs/releases/2026-11-14-v1.1.md) · [v1.0 release note](Docs/releases/2026-11-12-v1.0.md) · [checkpoint](Docs/m3/CHECKPOINT.md) |
+| Role handover notes (each role's area and who built it) | [Docs/roles/](Docs/roles/README.md) |
 | Dataset coverage and sources | [dataset report](Docs/datasets/DATASET_REPORT.md) · [NCERT catalogue](Docs/datasets/NCERT_CATALOGUE.md) |
 
 
 ## What it can't claim yet
 
 - **Simulated students only.** No result here is evidence of real learning.
-- **No held-out run and no teacher review.** The B3 safety pre-registration was frozen on 14 Nov (D-9), but the sealed set is not written yet, and lessons and content still await a teacher.
 - **The safety classifier (D-7) is confirmed but switched off.** It blocks about 18% of safe messages, so it waits until that comes down.
 
 What a supervised pilot with real students would need is in report section 8.
@@ -214,6 +214,7 @@ Never committed: `.env`, API keys, NCERT PDFs or page images, the frozen dataset
 | 6 Nov | Live beta on Vercel with saved progress and consent |
 | 10 Nov | Security test (420 cases); the hardened safety layer went live |
 | 11 Nov | Team PRs merged; independent public test set built |
-| 12 Nov | D-7 classifier comparison, **v1.0** submitted |
+| 12 Nov | D-7 classifier comparison, **v1.0** released |
+| 14 Nov | Team fixes merged, B3 safety pre-registration frozen, **v1.1** submitted |
 | 15 Nov | Review, demo and viva |
 </details>

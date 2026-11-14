@@ -1,3 +1,5 @@
+> **Historical note (6 Nov 2026).** This file is kept as a record. For the current state see [README.md](README.md), the [v1.1 release note](Docs/releases/2026-11-14-v1.1.md) and [Docs/README.md](Docs/README.md).
+
 # Current checkpoint - live Vercel beta and topic/source fixes
 
 **6 November 2026.** Continue Beta in Main with canonical D: cwd. The live native beta is at
