@@ -3,7 +3,7 @@
 <!-- R5 leads; each role writes its own section. Every number cites a run_id (Docs/EXPERIMENT_LOG.md, Docs/m4/,
      or the private security runs under Directions/product_quality/v4/runs/). -->
 
-- **Status:** submission version, 12 Nov 2026. **No held-out run was made.** The pre-registration was never frozen (section 4), so every number below is **development evidence**: it shows what the system did on development data and synthetic attacks, not a final result.
+- **Status:** final submission, release `v1.1`, 14 Nov 2026. Sections 1–8 are the 12 Nov text (`v1.0`); section 2b lists what changed on 13–14 Nov. **No held-out run was made.** The teaching pre-registration was never frozen, and the B3 safety pre-registration was frozen on 14 Nov with no data scored yet (section 4). So every number below is **development evidence**: it shows what the system did on development data and synthetic attacks, not a final result.
 - **Owners:** R5 wrote data, method and results; each role wrote its own section. Sections 1, 3–5, 7 and 8 were drafted with Claude Code from the repository's records.
 
 ## 1. Problem and users (R1)
@@ -86,6 +86,15 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 3. Add Prompt Guard 2 for injections.
 4. Require `APPROVAL_SECRET` outside development, and expire approval tokens.
 
+## 2b. Changes after v1.0 (13–14 Nov, release v1.1)
+
+- **Safety (R1, R5, R4).** D-8: the crisis-mention masking for quotes, stories and denials is **off by default**. On development data, masking changed no decision on 15,483 messages but let 7 of 8 disguised disclosures through; with it off, crisis recall on the front-door probes goes from 54/61 to 61/61, and benign false alarms from 1/117 to 3/117. A new CI gate (`python -m tutor_eval.beta_front_door`, B6) runs about 500 development cases through the beta's screens and fails on any regression against a per-case baseline; `tests/regressions/` holds the failure-to-test rule.
+- **App security (R4, PR #30).** Four fixes, one test each: curly-apostrophe secrecy promises, a 2 s wall-clock limit on the maths checker, no published `/beta/openapi.json`, and 256 bounded session-lock stripes.
+- **Practice (R3, PR #29).** "Check my step" feedback for triangle-ratio steps in English, Hindi and Hinglish, which never grades or reveals the answer. R3's independent review added 174 tests and found two bugs (C2-2, C2-3, now fixed) and one open question for the team (C2-1: whether confirming a correct substitution makes the box an answer check).
+- **Pre-registration (D-9).** `eval/PREREGISTRATION_SAFETY_B3.md` is frozen at tag `prereg-safety-b3`: one scored run on a sealed set of about 300 messages written by people who did not build the screens, with pass rules fixed in advance (crisis recall ≥70%, Roman Hinglish ≥75%, benign alerts ≤1%). The sealed set is not written yet.
+- **Tests.** CI test set on `v1.1`: 3,317 passed, 23 skipped (local run, 14 Nov); the registry check, both harness gates, the front-door gate and the security gate pass.
+- **Not changed:** the E1–E4 results, the live classifier (still off) and production, which runs `db49b7d`.
+
 ## 3. Data (R5)
 
 - **Content.** Dataset v0.10.0 (payload `49862eea…`), generated with AI assistance by one author; all review items are pending. NCERT chapters 4, 5 and 8 (Reprint 2026-27) are used for retrieval only, and the answers appendix is never indexed (D-4).
@@ -102,7 +111,7 @@ Haiku 5.5 caught slightly more crisis messages (71/88) at 1.3× the cost. GPT-5 
 
 ## 4. Method (R5)
 
-- **Pre-registration.** `eval/PREREGISTRATION.md` stayed a draft. The 6 Nov freeze (`prereg-v1`) did not happen, so H1–H3 are untested. **Deviation:** every comparison is on development data.
+- **Pre-registration.** `eval/PREREGISTRATION.md` stayed a draft. The 6 Nov freeze (`prereg-v1`) did not happen, so H1–H3 are untested. **Deviation:** every comparison is on development data. The separate B3 safety pre-registration was frozen on 14 Nov (D-9), approved by the Lead instead of R2; no data has been scored under it.
 - **Simulator.** Rules for all 30 misconceptions; slip S = 0.10, guess G = 0.05, learning rate T = 0.15, clearing probability 0.7. All 24 development card and misconception pairs passed validation on 31 Oct; five cannot show in quiz scores. The student voice was the template.
 - **Judge: not calibrated.** The human labels in the 63-item packet are blank. So:
   - E1, E3 and E4 use code checks only;
